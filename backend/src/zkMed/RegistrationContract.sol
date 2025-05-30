@@ -3,7 +3,7 @@ pragma solidity ^0.8.21;
 
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
-import {EmailDomainProver, OrganizationData} from "./EmailDomainProver.sol";
+import {EmailDomainProver, OrganizationVerificationData} from "./EmailDomainProver.sol";
 
 contract RegistrationContract is Verifier {
     
@@ -17,6 +17,7 @@ contract RegistrationContract is Verifier {
         Role role;
         uint256 registrationTimestamp;
         bool verified;
+        bytes32 emailHash; // Hash of the verified email address
     }
     
     struct PackedRegistration {
@@ -47,6 +48,12 @@ contract RegistrationContract is Verifier {
     // Domain to address mapping (prevents domain reuse)
     mapping(string => address) public domainToAddress;
     
+    // Email hash to address mapping (prevents email reuse)
+    mapping(bytes32 => address) public emailHashToAddress;
+    
+    // Tracks used email hashes to prevent replay attacks
+    mapping(bytes32 => bool) public usedEmailHashes;
+    
     // Registration timestamps
     mapping(address => uint256) public registrationTimestamps;
     
@@ -72,6 +79,14 @@ contract RegistrationContract is Verifier {
     event EmailProofVerified(
         address indexed organization,
         string domain,
+        bytes32 emailHash,
+        uint256 timestamp
+    );
+    
+    event DomainVerified(
+        address indexed user,
+        string domain,
+        bytes32 emailHash,
         uint256 timestamp
     );
     
@@ -167,69 +182,30 @@ contract RegistrationContract is Verifier {
     
     // ============ ORGANIZATION REGISTRATION ============
     
-    /// @notice Verify and register an organization using vlayer email proof
-    /// @param proof The vlayer proof of email domain verification
-    /// @param orgData Organization data from the prover
-    /// @param _role The role (Hospital or Insurer)
-    function registerOrganization(
+    /// @notice Verify domain ownership using vlayer email proof
+    /// @param proof The vlayer proof from EmailDomainProver.verifyDomainOwnership
+    /// @param emailHash Hash of the verified email address
+    /// @param targetWallet The wallet address from the email subject
+    /// @param domain The verified domain
+    function verifyDomainOwnership(
         Proof calldata proof,
-        OrganizationData calldata orgData,
-        Role _role
+        bytes32 emailHash,
+        address targetWallet,
+        string calldata domain
     ) external 
         notRegistered
-        validDomain(orgData.domain)
-        onlyVerified(emailDomainProver, EmailDomainProver.verifyOrganization.selector)
-    {
-        require(_role == Role.Hospital || _role == Role.Insurer, "Invalid organization role");
-        require(bytes(orgData.name).length > 0, "Organization name cannot be empty");
-        
-        // Register the organization
-        organizations[msg.sender] = Organization({
-            name: orgData.name,
-            domain: orgData.domain,
-            role: _role,
-            registrationTimestamp: block.timestamp,
-            verified: true
-        });
-        
-        // Assign role and verification status
-        roles[msg.sender] = _role;
-        verified[msg.sender] = true;
-        registrationTimestamps[msg.sender] = block.timestamp;
-        
-        // Reserve the domain
-        domainToAddress[orgData.domain] = msg.sender;
-        
-        emit OrganizationRegistered(
-            msg.sender,
-            orgData.domain,
-            orgData.name,
-            _role,
-            block.timestamp
-        );
-        emit RoleAssigned(msg.sender, _role, block.timestamp);
-        emit EmailProofVerified(msg.sender, orgData.domain, block.timestamp);
-    }
-    
-    /// @notice Alternative registration method that separates email proof verification
-    /// @param proof The vlayer proof of domain ownership
-    /// @param domain The verified domain
-    /// @param timestamp The verification timestamp
-    function verifyAndStoreURL(
-        Proof calldata proof,
-        string calldata domain,
-        uint256 timestamp
-    ) external 
+        validDomain(domain)
         onlyVerified(emailDomainProver, EmailDomainProver.verifyDomainOwnership.selector)
     {
-        require(roles[msg.sender] == Role.None, "Already registered");
-        require(bytes(domain).length > 0, "Domain cannot be empty");
-        require(domainToAddress[domain] == address(0), "Domain already verified");
+        require(targetWallet == msg.sender, "Target wallet mismatch");
+        require(!usedEmailHashes[emailHash], "Email hash already used");
         
-        // Mark domain as verified for this address
+        // Mark email as used and reserve domain
+        usedEmailHashes[emailHash] = true;
         domainToAddress[domain] = msg.sender;
+        emailHashToAddress[emailHash] = msg.sender;
         
-        emit EmailProofVerified(msg.sender, domain, timestamp);
+        emit DomainVerified(msg.sender, domain, emailHash, block.timestamp);
     }
     
     /// @notice Complete organization registration after domain verification
@@ -245,13 +221,19 @@ contract RegistrationContract is Verifier {
         require(_role == Role.Hospital || _role == Role.Insurer, "Invalid organization role");
         require(bytes(organizationName).length > 0, "Organization name cannot be empty");
         
+        // Get the email hash for this domain verification
+        bytes32 emailHash = bytes32(0);
+        // Find the email hash associated with this address and domain
+        // In a more complex implementation, you might store this mapping directly
+        
         // Register the organization
         organizations[msg.sender] = Organization({
             name: organizationName,
             domain: domain,
             role: _role,
             registrationTimestamp: block.timestamp,
-            verified: true
+            verified: true,
+            emailHash: emailHash
         });
         
         // Assign role and verification
@@ -267,6 +249,80 @@ contract RegistrationContract is Verifier {
             block.timestamp
         );
         emit RoleAssigned(msg.sender, _role, block.timestamp);
+    }
+    
+    /// @notice Single-step organization registration with complete email proof
+    /// @param proof The vlayer proof from EmailDomainProver.verifyOrganization
+    /// @param orgData Complete organization verification data
+    /// @param _role The organization role (Hospital or Insurer)
+    function registerOrganization(
+        Proof calldata proof,
+        OrganizationVerificationData calldata orgData,
+        Role _role
+    ) external 
+        notRegistered
+        validDomain(orgData.domain)
+        onlyVerified(emailDomainProver, EmailDomainProver.verifyOrganization.selector)
+    {
+        require(orgData.targetWallet == msg.sender, "Target wallet mismatch");
+        require(_role == Role.Hospital || _role == Role.Insurer, "Invalid organization role");
+        require(bytes(orgData.name).length > 0, "Organization name cannot be empty");
+        require(!usedEmailHashes[orgData.emailHash], "Email hash already used");
+        
+        // Mark email as used
+        usedEmailHashes[orgData.emailHash] = true;
+        
+        // Register the organization
+        organizations[msg.sender] = Organization({
+            name: orgData.name,
+            domain: orgData.domain,
+            role: _role,
+            registrationTimestamp: block.timestamp,
+            verified: true,
+            emailHash: orgData.emailHash
+        });
+        
+        // Assign role and verification status
+        roles[msg.sender] = _role;
+        verified[msg.sender] = true;
+        registrationTimestamps[msg.sender] = block.timestamp;
+        
+        // Reserve the domain and email
+        domainToAddress[orgData.domain] = msg.sender;
+        emailHashToAddress[orgData.emailHash] = msg.sender;
+        
+        emit OrganizationRegistered(
+            msg.sender,
+            orgData.domain,
+            orgData.name,
+            _role,
+            block.timestamp
+        );
+        emit RoleAssigned(msg.sender, _role, block.timestamp);
+        emit EmailProofVerified(msg.sender, orgData.domain, orgData.emailHash, block.timestamp);
+    }
+    
+    /// @notice Simple domain verification for backward compatibility
+    /// @param proof The vlayer proof from EmailDomainProver.simpleDomainVerification
+    /// @param domain The verified domain
+    /// @param emailHash Hash of the verified email
+    function verifyAndStoreURL(
+        Proof calldata proof,
+        string calldata domain,
+        bytes32 emailHash
+    ) external 
+        notRegistered
+        validDomain(domain)
+        onlyVerified(emailDomainProver, EmailDomainProver.simpleDomainVerification.selector)
+    {
+        require(!usedEmailHashes[emailHash], "Email hash already used");
+        
+        // Mark email as used and reserve domain
+        usedEmailHashes[emailHash] = true;
+        domainToAddress[domain] = msg.sender;
+        emailHashToAddress[emailHash] = msg.sender;
+        
+        emit DomainVerified(msg.sender, domain, emailHash, block.timestamp);
     }
     
     // ============ ADMIN FUNCTIONS ============
@@ -304,6 +360,11 @@ contract RegistrationContract is Verifier {
         
         verified[_user] = _verified;
         emit VerificationStatusChanged(_user, _verified, block.timestamp);
+    }
+    
+    /// @notice Emergency function to reset email hash usage (admin only)
+    function resetEmailHash(bytes32 _emailHash) external onlyAdmin {
+        usedEmailHashes[_emailHash] = false;
     }
     
     // ============ VIEW FUNCTIONS ============
@@ -348,5 +409,15 @@ contract RegistrationContract is Verifier {
     /// @notice Get address associated with a domain
     function getDomainOwner(string calldata _domain) external view returns (address) {
         return domainToAddress[_domain];
+    }
+    
+    /// @notice Check if an email hash has been used
+    function isEmailHashUsed(bytes32 _emailHash) external view returns (bool) {
+        return usedEmailHashes[_emailHash];
+    }
+    
+    /// @notice Get address associated with an email hash
+    function getEmailHashOwner(bytes32 _emailHash) external view returns (address) {
+        return emailHashToAddress[_emailHash];
     }
 } 
