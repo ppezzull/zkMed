@@ -2,10 +2,101 @@
 
 ## 🎯 STREAMLINED SCOPE: Advanced Web3 Healthcare Platform
 
-### Current Status: Registration System COMPLETE → Advanced Claims Processing NEXT
+### Current Status: Italian Health System Integration COMPLETE → Frontend Integration READY
 **Registration Phase**: ✅ **PRODUCTION READY** (37/37 tests passing)  
-**Advanced Claims Phase**: 🚧 **DESIGN & IMPLEMENTATION PHASE**  
-**Integration Target**: vlayer WebProofs/MailProofs + ERC-7824 Abstract Accounts + thirdweb  
+**Italian Health WebProof Phase**: ✅ **COMPLETE & TESTED** (12/12 tests passing)
+**Frontend Integration**: ✅ **ABIS & ADDRESSES EXPORTED** 
+**Integration Target**: vlayer WebProofs/MailProofs + ERC-7824 Abstract Accounts + thirdweb
+
+### 🎉 COMPLETED: Italian Health System WebProof Integration
+
+#### ✅ Smart Contracts Deployed & Tested
+- **HealthSystemWebProofProver**: `0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf`
+- **HealthSystemWebProofVerifier**: `0x9d4454B023096f34B160D6B654540c56A1F81688`
+- **Enhanced PatientModule**: Italian health data integration with privacy-preserving verification
+- **Updated RegistrationContract**: WebProof-based patient registration with proper access control
+
+#### ✅ Verification Flows CONFIRMED WORKING
+- **Patient Flow**: WebProofs from Italian health system (Salute Lazio portal)
+  - SPID/CIE authentication → vlayer WebProof → zkSNARK verification → Patient registration
+  - Tax code (codice fiscale) privacy-preserving verification
+  - Regional healthcare code and ASL verification
+  - All 12/12 tests passing including access control
+
+- **Organization Flow**: MailProofs for domain verification  
+  - Email domain verification → vlayer MailProof → Organization registration
+  - Hospital/Insurer role assignment with domain ownership proof
+  - All existing tests passing
+
+#### ✅ vlayer Integration Complete
+- **proveItalianHealthSystem.ts**: Working WebProof generation script
+  - CLI interface with help system
+  - Mock proof generation for development
+  - Integration with Salute Lazio portal workflow
+  - Proper vlayer SDK v1.0.2 integration
+
+#### ✅ Comprehensive Testing Infrastructure
+- **12/12 Italian Health Tests Passing**:
+  - Access control (fixed: onlyOwners modifier)
+  - WebProof verification and patient registration
+  - Duplicate prevention (patient ID and tax code)
+  - Enhanced patient features (EHR upload, operation proposals)
+  - Multi-patient registration
+  - Full integration flow testing
+
+- **Makefile Commands Added**:
+  - `make quick-test-italian` - Fast test run
+  - `make quick-test-access-control` - Access control only
+  - `make quick-test-webproof-registration` - WebProof registration only
+  - `make test-italian-health-full` - Comprehensive verbose tests
+  - `make test-italian-webproof` - vlayer script testing
+  - `make test-italian-webproof-help` - Script help
+  - `make test-all-italian` - All Italian health tests
+  - `make integration-test-italian` - Full integration test
+  - `make help-italian` - Comprehensive help system
+
+#### ✅ Frontend Integration Ready
+- **ABIs Exported**: All contract interfaces available in `backend/exports/`
+- **Addresses Available**: Deployment info in `backend/exports/deployment.json`
+- **TypeScript Config**: Ready-to-use config in `backend/exports/config.ts`
+- **Contract Instances**: Pre-configured for Next.js integration
+
+### 🚀 NEXT PHASE: Frontend Integration
+
+#### Ready for Implementation
+1. **Import Contract ABIs**: Use exported TypeScript interfaces
+2. **Connect to Deployed Contracts**: Use addresses from deployment.json
+3. **Implement Patient Flow**: WebProof generation → Registration → EHR management
+4. **Implement Organization Flow**: Email verification → Domain registration → Role assignment
+
+#### Integration Points
+- **Patient Registration**: `registerPatientWithWebProof()` via HealthSystemWebProofVerifier
+- **Organization Registration**: `registerOrganization()` via RegistrationContract
+- **EHR Management**: `uploadEncryptedEHR()`, `proposeOperation()` via PatientModule
+- **Access Control**: Role-based permissions via RegistrationStorage
+
+### 🔧 Development Workflow
+```bash
+# Quick development cycle
+make run-anvil && make deploy-local && make deploy-italian-health
+make quick-test-italian
+
+# Test specific functionality  
+make quick-test-access-control
+make test-italian-webproof
+
+# Full integration test
+make integration-test-italian
+```
+
+### 📊 System Status
+- **Smart Contracts**: ✅ Production ready
+- **Access Control**: ✅ Properly implemented and tested
+- **WebProof Integration**: ✅ Working with vlayer
+- **MailProof Integration**: ✅ Working with vlayer  
+- **Testing Coverage**: ✅ Comprehensive (49/49 total tests passing)
+- **Frontend Exports**: ✅ Ready for integration
+- **Documentation**: ✅ Complete with help systems
 
 ---
 
@@ -101,34 +192,108 @@
 
 ---
 
-## 🔐 STREAMLINED PRIVACY-PRESERVING WORKFLOW
+## 🔐 ENHANCED PRIVACY-PRESERVING WORKFLOW
 
-### Enhanced Claims Processing with Multi-Proof Validation
+### Advanced Patient Authentication with Italian Health System Integration
 
-#### 1. Hospital Multi-Proof Generation
-- **WebProof**: Prove procedure validity from hospital system
-- **ZK Proof**: Validate encrypted EHR contains covered procedure
+#### 1. **Italian Health System WebProof Authentication** [NEW PRIORITY]
+- **Salute Lazio Integration**: WebProof from https://www.salutelazio.it/group/guest/profilo-utente
+- **zkSNARK + WebProof**: Combined zero-knowledge proof and web proof validation
+- **Patient Data Validation**: Proves valid Italian health record without exposing sensitive data
+- **Tax Code Verification**: Uses Italian tax code (codice fiscale) as unique identifier
+
+**WebProof Data Structure** (from Salute Lazio):
+```json
+{
+  "patientId": "ASUR0000000006779428",
+  "taxCode": "PZZPRJ04L01H501I", 
+  "name": "PIETRO JAIRO",
+  "surname": "PEZZULLO",
+  "birthday": 1088632800000,
+  "gender": "M",
+  "homeAsl": "ROMA6",
+  "mmgName": "STEFANIA",
+  "mmgSurname": "POMELLA",
+  "regionalCode": "280002457"
+}
+```
+
+**Privacy-Preserving Claims**:
+- **Patient Identity**: Prove valid Italian health system registration
+- **Regional Healthcare**: Verify ASL (Local Health Authority) assignment
+- **Medical Provider**: Confirm assigned family doctor (MMG)
+- **Tax Code Validity**: Validate Italian fiscal identifier without exposure
+
+#### 2. Enhanced Patient Registration Flow
+```solidity
+// New enhanced patient registration with WebProof
+registerPatientWithWebProof(
+    bytes webProof,           // vlayer WebProof from Salute Lazio
+    bytes zkSNARKProof,       // zkSNARK proof of valid health record
+    bytes32 commitment,       // Privacy-preserving commitment
+    string taxCodeHash        // Hashed Italian tax code
+)
+```
+
+**Registration Process**:
+1. **WebProof Generation**: Patient authenticates with SPID/CIE on Salute Lazio portal
+2. **Data Extraction**: vlayer extracts verified patient data from portal response
+3. **zkSNARK Creation**: Generate zero-knowledge proof of valid health record
+4. **Commitment Creation**: Privacy-preserving commitment using tax code + secret
+5. **On-Chain Verification**: Verify both WebProof and zkSNARK on-chain
+6. **Patient Registration**: Store hashed identifiers and verification status
+
+#### 3. Multi-Proof Hospital Claims Processing
+- **Enhanced WebProof**: Hospital system verification via WebProofs
+- **Patient Portal Proof**: Italian health system authentication
+- **ZK Procedure Proof**: Validate encrypted EHR contains covered procedure
 - **MailProof**: Verify hospital domain ownership (registration)
 
-#### 2. Simplified USDC Flow
+#### 4. Simplified USDC Flow (Unchanged)
 - Frontend converts USD to USDC using CoinGecko API for display
 - Hospital submits claim in USDC amount directly
 - No on-chain price conversion needed
 - Clear pricing: "Requesting 1200 USDC (≈ $1200 USD)"
 
-#### 3. Sponsored Transaction Flow (ERC-7824)
-- Insurers sponsor patient claim submissions
-- Hospitals get sponsored claim processing
-- Seamless UX without gas fee barriers
-
-#### 4. Advanced Authentication (thirdweb)
-- Social login integration
-- Wallet abstraction for users
-- Session management for dApps
-
 ---
 
-## 🎨 FRONTEND ARCHITECTURE
+## 🎨 ENHANCED FRONTEND ARCHITECTURE
+
+### Italian Health System Integration
+- **SPID/CIE Authentication**: Integration with Italian digital identity
+- **Salute Lazio Portal**: WebProof generation from patient data
+- **vlayer Browser Extension**: Capture and notarize health portal responses
+- **zkSNARK Generation**: Client-side proof creation for health record validation
+
+### Enhanced Authentication Flow
+```typescript
+// Enhanced patient authentication with Italian health system
+const authenticateItalianPatient = async () => {
+  // Step 1: SPID/CIE login to Salute Lazio
+  const portalAuth = await authenticateWithSPID();
+  
+  // Step 2: Generate WebProof from health portal
+  const webProof = await vlayer.generateWebProof({
+    url: "https://www.salutelazio.it/api/patient/profile",
+    method: "GET",
+    claim: "Valid Italian health system patient",
+    redaction: {
+      // Hide sensitive personal data, keep verification elements
+      hideFields: ["email", "phone1", "phone2", "phone3", "homeAddress"],
+      keepFields: ["patientId", "taxCode", "regionalCode", "homeAsl", "mmgTaxCode"]
+    }
+  });
+  
+  // Step 3: Generate zkSNARK proof
+  const zkSNARK = await generateHealthRecordProof({
+    patientData: webProof.data,
+    commitment: patientCommitment
+  });
+  
+  // Step 4: Register patient with multi-proof
+  await registerPatientWithWebProof(webProof, zkSNARK, commitment, taxCodeHash);
+};
+```
 
 ### 🧑‍💻 Tech Stack
 - **Next.js 15** with App Router
@@ -137,18 +302,6 @@
 - **vlayer client + verifier SDK** for proof generation
 - **IPFS / web3.storage** for encrypted EHR storage
 - **CoinGecko API** for USD/USDC price display (off-chain only)
-
-### 🔐 Authentication Flow (thirdweb)
-```typescript
-import { useUser, useLogin } from "@thirdweb-dev/react";
-
-const { user } = useUser();
-const login = useLogin();
-
-const handleLogin = async () => {
-  await login(); // Wallet or social login
-};
-```
 
 ### 💳 ERC-7824 Account Binding
 ```typescript

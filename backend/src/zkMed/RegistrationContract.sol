@@ -139,6 +139,41 @@ contract RegistrationContract is Ownable {
         emit RoleAssigned(msg.sender, Role.Patient, block.timestamp);
     }
     
+    /// @notice Register a patient with Italian health system WebProof
+    /// @param _patient The patient address
+    /// @param _commitment Privacy-preserving commitment
+    /// @param _patientId Italian health system patient ID
+    /// @param _taxCodeHash Hashed Italian tax code
+    /// @param _regionalCode Regional healthcare code
+    /// @param _homeAsl Local Health Authority
+    function registerPatientWithWebProof(
+        address _patient,
+        bytes32 _commitment,
+        string memory _patientId,
+        bytes32 _taxCodeHash,
+        string memory _regionalCode,
+        string memory _homeAsl
+    ) 
+        external
+        validCommitment(_commitment)
+        onlyOwners
+    {
+        // Only authorized verifiers (owners) should be able to call this
+        // This includes the HealthSystemWebProofVerifier contract
+        
+        patientModule.registerPatientWithWebProof(
+            _patient,
+            _commitment,
+            _patientId,
+            _taxCodeHash,
+            _regionalCode,
+            _homeAsl
+        );
+        
+        emit RoleAssigned(_patient, Role.Patient, block.timestamp);
+        emit PatientRegistered(_patient, _commitment, block.timestamp);
+    }
+    
     function verifyPatientCommitment(string memory _secret) external view returns (bool) {
         return patientModule.verifyPatientCommitment(msg.sender, _secret);
     }

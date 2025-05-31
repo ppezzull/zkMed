@@ -790,6 +790,44 @@
   },
   {
     "type": "function",
+    "name": "registerPatientWithWebProof",
+    "inputs": [
+      {
+        "name": "_patient",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_commitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_patientId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_taxCodeHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_regionalCode",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_homeAsl",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "registrationTimestamps",
     "inputs": [
       {

@@ -791,6 +791,44 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "registerPatientWithWebProof",
+    "inputs": [
+      {
+        "name": "_patient",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_commitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_patientId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_taxCodeHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_regionalCode",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_homeAsl",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "registrationTimestamps",
     "inputs": [
       {
@@ -1544,6 +1582,7 @@ export interface RegistrationContractContract {
   patientModule(): Promise<string>;
   registerOrganization(proof: any, orgData: any, _role: number): Promise<void>;
   registerPatient(_commitment: string): Promise<void>;
+  registerPatientWithWebProof(_patient: string, _commitment: string, _patientId: string, _taxCodeHash: string, _regionalCode: string, _homeAsl: string): Promise<void>;
   registrationTimestamps(_user: string): Promise<bigint>;
   removeAdmin(_admin: string): Promise<void>;
   removeOwner(_owner: string): Promise<void>;
@@ -1582,7 +1621,7 @@ export type RegistrationContractAddress = `0x${string}`;
 
 // Usage example with viem:
 // const contract = getContract({
-//   address: "0x...", // from deployment-local.json
+//   address: deployment.contracts.registrationContract,
 //   abi: RegistrationContractABI,
 //   client: publicClient,
 // });
@@ -1591,6 +1630,6 @@ export type RegistrationContractAddress = `0x${string}`;
 // const contract = getContract({
 //   client,
 //   chain: defineChain(31337),
-//   address: "0x...", // from deployment-local.json
+//   address: deployment.contracts.registrationContract,
 //   abi: RegistrationContractABI,
 // });

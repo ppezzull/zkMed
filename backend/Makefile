@@ -1,7 +1,7 @@
 # zkMed Smart Contract Development Makefile
 # Modular Registration System - Direct Module Deployment
 
-.PHONY: help install build test deploy-local clean export-abis run-vlayer stop-vlayer run-anvil stop-anvil start-services stop-services status health test-email-proof deploy-production dev-stack
+.PHONY: help install build test deploy-local clean export-abis run-vlayer stop-vlayer run-anvil stop-anvil start-services stop-services status health test-email-proof deploy-production dev-stack deploy-italian-health test-italian-health test-italian-health-full vlayer-italian-setup test-italian-webproof test-italian-webproof-help test-all-italian integration-test-italian quick-test-italian quick-test-access-control quick-test-webproof-registration help-italian
 .DEFAULT_GOAL := help
 
 # ============ VARIABLES ============
@@ -205,3 +205,122 @@ help: ## Show this help message
 	@echo "📡 Services:"
 	@echo "  Anvil:  http://localhost:8545"
 	@echo "  vlayer: Background service for email proofs"
+
+# Italian Health System WebProof Integration
+deploy-italian-health:
+	@echo "🏥 Deploying Italian Health System WebProof contracts..."
+	@if [ ! -f .env ]; then echo "❌ .env file not found. Please create it with PRIVATE_KEY."; exit 1; fi
+	@export $$(grep -v '^#' .env | xargs) && \
+	export REGISTRATION_CONTRACT=$$(jq -r '.registrationContract // empty' deployments/local.json 2>/dev/null || echo "") && \
+	if [ -z "$$REGISTRATION_CONTRACT" ]; then \
+		echo "❌ No existing RegistrationContract found. Please deploy the main system first with 'make deploy-local'"; \
+		exit 1; \
+	else \
+		echo "✅ Using existing RegistrationContract: $$REGISTRATION_CONTRACT"; \
+		forge script script/DeployItalianHealthWebProof.s.sol:DeployItalianHealthWebProof \
+			--rpc-url http://localhost:8545 \
+			--broadcast \
+			--private-key $$PRIVATE_KEY; \
+	fi
+
+test-italian-health:
+	@echo "🧪 Running Italian Health System WebProof tests..."
+	forge test --match-contract ItalianHealthWebProofTest -vv
+
+test-italian-health-full:
+	@echo "🧪 Running comprehensive Italian Health System tests..."
+	@echo "Testing access controls, WebProof verification, and patient registration..."
+	forge test --match-contract ItalianHealthWebProofTest -vvv
+
+vlayer-italian-setup:
+	@echo "🔧 Setting up vlayer for Italian Health System integration..."
+	@cd vlayer && \
+	if [ ! -f package.json ]; then \
+		echo "❌ vlayer directory not properly configured. Please run 'make vlayer-setup' first."; \
+		exit 1; \
+	fi && \
+	echo "📋 Installing additional dependencies for Italian health integration..." && \
+	bun install && \
+	echo "✅ vlayer setup complete for Italian health system"
+
+test-italian-webproof:
+	@echo "🏥 Testing Italian Health System WebProof generation..."
+	@cd vlayer && \
+	if [ ! -f proveItalianHealthSystem.ts ]; then \
+		echo "❌ proveItalianHealthSystem.ts not found"; \
+		exit 1; \
+	fi && \
+	echo "📋 Running WebProof generation test..." && \
+	bun run proveItalianHealthSystem.ts \
+		--address 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 \
+		--commitment 0x1234567890123456789012345678901234567890123456789012345678901234
+
+test-italian-webproof-help:
+	@echo "📋 Showing Italian Health System WebProof help..."
+	@cd vlayer && bun run proveItalianHealthSystem.ts --help
+
+test-all-italian:
+	@echo "🔄 Running all Italian Health System tests..."
+	@make test-italian-health
+	@make test-italian-webproof
+	@echo "✅ All Italian Health System tests completed!"
+
+integration-test-italian:
+	@echo "🔄 Running full Italian Health System integration test..."
+	@make run-anvil
+	@sleep 2
+	@make deploy-local
+	@make deploy-italian-health
+	@make test-italian-health-full
+	@make test-italian-webproof
+	@echo "✅ Italian Health System integration test completed!"
+
+# Fast testing commands
+quick-test-italian:
+	@echo "⚡ Quick Italian health test (no verbose output)..."
+	forge test --match-contract ItalianHealthWebProofTest
+
+quick-test-access-control:
+	@echo "🔒 Testing access control for Italian health registration..."
+	forge test --match-test testOnlyVerifierCanRegister -v
+
+quick-test-webproof-registration:
+	@echo "🏥 Testing WebProof registration flow..."
+	forge test --match-test testPatientRegistrationWithWebProof -v
+
+help-italian:
+	@echo "🏥 Italian Health System WebProof Integration Commands:"
+	@echo ""
+	@echo "Deployment & Setup:"
+	@echo "  deploy-italian-health     Deploy Italian health WebProof contracts"
+	@echo "  vlayer-italian-setup      Set up vlayer for Italian health integration"
+	@echo ""
+	@echo "Testing Commands:"
+	@echo "  test-italian-health       Run Italian health WebProof tests"
+	@echo "  test-italian-health-full  Run comprehensive tests with verbose output"
+	@echo "  test-italian-webproof     Test Italian health WebProof generation"
+	@echo "  test-italian-webproof-help Show WebProof script help"
+	@echo "  test-all-italian          Run all Italian health tests"
+	@echo "  integration-test-italian  Run full integration test"
+	@echo ""
+	@echo "Quick Tests:"
+	@echo "  quick-test-italian        Fast test run (no verbose output)"
+	@echo "  quick-test-access-control Test access control only"
+	@echo "  quick-test-webproof-registration Test WebProof registration only"
+	@echo ""
+	@echo "Prerequisites:"
+	@echo "  1. Anvil running (make run-anvil)"
+	@echo "  2. Main system deployed (make deploy-local)"
+	@echo "  3. vlayer setup completed (make vlayer-italian-setup)"
+	@echo ""
+	@echo "Example workflows:"
+	@echo "  # Complete setup and test"
+	@echo "  make integration-test-italian"
+	@echo ""
+	@echo "  # Quick development cycle"
+	@echo "  make run-anvil && make deploy-local && make deploy-italian-health"
+	@echo "  make quick-test-italian"
+	@echo ""
+	@echo "  # Test specific functionality"
+	@echo "  make quick-test-access-control"
+	@echo "  make test-italian-webproof"

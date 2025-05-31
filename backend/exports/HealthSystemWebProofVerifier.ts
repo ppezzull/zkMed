@@ -1,0 +1,564 @@
+// Auto-generated TypeScript interface for HealthSystemWebProofVerifier
+export const HealthSystemWebProofVerifierABI = [
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_prover",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_registrationContract",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "_setTestVerifier",
+    "inputs": [
+      {
+        "name": "newVerifier",
+        "type": "address",
+        "internalType": "contract IProofVerifier"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getPatientByHealthId",
+    "inputs": [
+      {
+        "name": "patientId",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isItalianPatientVerified",
+    "inputs": [
+      {
+        "name": "patient",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isTaxCodeUsed",
+    "inputs": [
+      {
+        "name": "taxCodeHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "patientIdToAddress",
+    "inputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "prover",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registrationContract",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IRegistrationContract"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "updateProver",
+    "inputs": [
+      {
+        "name": "_prover",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateRegistrationContract",
+    "inputs": [
+      {
+        "name": "_registrationContract",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "usedTaxCodeHashes",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifiedItalianPatients",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifier",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IProofVerifier"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifyAndRegisterItalianPatient",
+    "inputs": [
+      {
+        "name": "proof",
+        "type": "tuple",
+        "internalType": "struct Proof",
+        "components": [
+          {
+            "name": "seal",
+            "type": "tuple",
+            "internalType": "struct Seal",
+            "components": [
+              {
+                "name": "verifierSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "seal",
+                "type": "bytes32[8]",
+                "internalType": "bytes32[8]"
+              },
+              {
+                "name": "mode",
+                "type": "uint8",
+                "internalType": "enum ProofMode"
+              }
+            ]
+          },
+          {
+            "name": "callGuestId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "length",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "callAssumptions",
+            "type": "tuple",
+            "internalType": "struct CallAssumptions",
+            "components": [
+              {
+                "name": "proverContractAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "functionSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "settleChainId",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockNumber",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockHash",
+                "type": "bytes32",
+                "internalType": "bytes32"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "verifiedData",
+        "type": "tuple",
+        "internalType": "struct HealthSystemWebProofProver.VerifiedPatientData",
+        "components": [
+          {
+            "name": "patientId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "taxCodeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "regionalCode",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "homeAsl",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "mmgTaxCodeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "patientAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "verifyHealthSystemRegistration",
+    "inputs": [
+      {
+        "name": "proof",
+        "type": "tuple",
+        "internalType": "struct Proof",
+        "components": [
+          {
+            "name": "seal",
+            "type": "tuple",
+            "internalType": "struct Seal",
+            "components": [
+              {
+                "name": "verifierSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "seal",
+                "type": "bytes32[8]",
+                "internalType": "bytes32[8]"
+              },
+              {
+                "name": "mode",
+                "type": "uint8",
+                "internalType": "enum ProofMode"
+              }
+            ]
+          },
+          {
+            "name": "callGuestId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "length",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "callAssumptions",
+            "type": "tuple",
+            "internalType": "struct CallAssumptions",
+            "components": [
+              {
+                "name": "proverContractAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "functionSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "settleChainId",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockNumber",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockHash",
+                "type": "bytes32",
+                "internalType": "bytes32"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "isValid",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "patientId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "homeAsl",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "ItalianPatientVerified",
+    "inputs": [
+      {
+        "name": "patient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "patientId",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "taxCodeHash",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "regionalCode",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "homeAsl",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PatientRegisteredWithWebProof",
+    "inputs": [
+      {
+        "name": "patient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "patientId",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "homeAsl",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyVerified",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidChainId",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidProof",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "RegistrationFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TaxCodeAlreadyUsed",
+    "inputs": []
+  }
+] as const;
+
+export interface HealthSystemWebProofVerifierContract {
+  _setTestVerifier(newVerifier: string): Promise<void>;
+  getPatientByHealthId(patientId: string): Promise<string>;
+  isItalianPatientVerified(patient: string): Promise<boolean>;
+  isTaxCodeUsed(taxCodeHash: string): Promise<boolean>;
+  patientIdToAddress(: string): Promise<string>;
+  prover(): Promise<string>;
+  registrationContract(): Promise<string>;
+  updateProver(_prover: string): Promise<void>;
+  updateRegistrationContract(_registrationContract: string): Promise<void>;
+  usedTaxCodeHashes(: string): Promise<boolean>;
+  verifiedItalianPatients(: string): Promise<boolean>;
+  verifier(): Promise<string>;
+  verifyAndRegisterItalianPatient(proof: any, verifiedData: any, patientAddress: string): Promise<void>;
+  verifyHealthSystemRegistration(proof: any, isValid: boolean, patientId: string, homeAsl: string): Promise<boolean>;
+}
+
+export interface HealthSystemWebProofVerifierEvents {
+  ItalianPatientVerified: { patient: string, patientId: string, taxCodeHash: string, regionalCode: string, homeAsl: string, timestamp: bigint };
+  PatientRegisteredWithWebProof: { patient: string, patientId: string, homeAsl: string };
+}
+
+export type HealthSystemWebProofVerifierAddress = `0x${string}`;
+
+// Usage example with viem:
+// const contract = getContract({
+//   address: deployment.contracts.healthSystemWebProofVerifier,
+//   abi: HealthSystemWebProofVerifierABI,
+//   client: publicClient,
+// });
+
+// Usage example with thirdweb:
+// const contract = getContract({
+//   client,
+//   chain: defineChain(31337),
+//   address: deployment.contracts.healthSystemWebProofVerifier,
+//   abi: HealthSystemWebProofVerifierABI,
+// });
