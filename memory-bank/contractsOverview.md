@@ -1,6 +1,6 @@
-# zkMed Contracts Overview - Advanced Web3 System Architecture
+# zkMed Contracts Overview - Streamlined Web3 System Architecture
 
-**Purpose**: Birds-eye view of every on-chain contract in the zkMed privacy-preserving healthcare platform with advanced Web3 integrations including ERC-7824 abstract accounts, vlayer WebProofs/MailProofs, Flare FTSO, and thirdweb authentication.
+**Purpose**: Birds-eye view of every on-chain contract in the zkMed privacy-preserving healthcare platform with streamlined Web3 integrations including ERC-7824 abstract accounts, vlayer WebProofs/MailProofs, and thirdweb authentication.
 
 ---
 
@@ -88,11 +88,11 @@ uploadEncryptedEHR(string cid, bytes preKey)
 
 #### WebProof Operation Proposals:
 ```solidity
-proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedCost)
+proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedUSDCCost)
 ```
 - Validates vlayer WebProof from patient portal
 - Proves patient has legitimate medical need
-- Creates operation proposal without revealing details
+- Creates operation proposal without revealing details (direct USDC amount)
 
 #### ERC-7824 Sponsored Actions:
 ```solidity
@@ -128,7 +128,7 @@ submitClaimWithWebProof(bytes webProof, ClaimData data)
 ```
 - Submits insurance claim with WebProof validation
 - Proves procedure was actually performed via hospital system
-- Forwards to ClaimProcessingContract for validation
+- Forwards to ClaimProcessingContract for validation (with direct USDC amount)
 
 #### Insurer Operations:
 ```solidity
@@ -190,45 +190,35 @@ function batchExecute(
 
 ---
 
-### 6. InsuranceContract.sol (Enhanced Policy & Claims Manager)
+### 6. InsuranceContract.sol (Simplified Policy & Claims Manager)
 
-**Role**: Manages insurance policies, processes claims with real-time pricing, and handles payouts with advanced Web3 integrations.
+**Role**: Manages insurance policies, processes claims with direct USDC handling, and manages payouts with streamlined Web3 integrations.
 
 **Primary Responsibilities**:
 
 #### Policy Management:
 ```solidity
-createPolicy(address patient, string policyId, uint256 totalCoverageUSD, string metadataCID)
+createPolicy(address patient, string policyId, uint256 totalCoverageUSDC, string metadataCID)
 ```
-- Creates policy with USD-denominated coverage
+- Creates policy with USDC-denominated coverage (no USD conversion)
 - Stores encrypted policy metadata on IPFS
 - Links policy to patient's commitment hash
 
-#### Advanced Claim Processing:
+#### Simplified Claim Processing:
 ```solidity
 submitClaim(
     address patient,
     address hospital,
     bytes32 procedureCodeHash,
-    uint256 requestedUSD,
+    uint256 requestedUSDC, // Direct USDC amount
     string encryptedEHRCID,
     bytes ehrPREKey,
     bytes[] multiProofs  // WebProof + ZK Proof array
 ) external
 ```
 - Processes claims with multiple proof validations
-- Converts USD amounts using Flare FTSO real-time pricing
+- Accepts USDC amounts directly (no price conversion)
 - Maintains privacy while ensuring claim validity
-
-#### Flare FTSO Integration:
-```solidity
-function _getUSDCPrice() internal view returns (uint256) {
-    return ftsoV2.getCurrentPrice(USDC_USD);
-}
-```
-- Real-time USD to USDC conversion
-- Live oracle data for accurate claim amounts
-- Support for multiple currency pairs
 
 #### ERC-7824 Sponsored Approvals:
 ```solidity
@@ -242,15 +232,14 @@ function approveClaimSponsored(uint256 claimId, ERC7824ForwardRequest req) exter
 - `mapping(address → Policy) patientPolicies;`
 - `mapping(uint256 → Claim) claims;`
 - `mapping(address → uint256) hospitalEscrow;`
-- `IERC20 public stablecoin; // USDC token`
-- `IFlareFtsoV2 public ftsoV2; // Real-time price oracle`
+- `IERC20 public usdc; // USDC token`
 - `ERC7824Gateway public gateway; // Meta-transaction router`
 
 ---
 
-### 7. ClaimProcessingContract.sol (Advanced Multi-Proof Validator)
+### 7. ClaimProcessingContract.sol (Streamlined Multi-Proof Validator)
 
-**Role**: Enhanced claim validation with multiple proof types, real-time pricing, and sponsored transaction support.
+**Role**: Simplified claim validation with multiple proof types, direct USDC handling, and sponsored transaction support.
 
 **Primary Responsibilities**:
 
@@ -259,7 +248,7 @@ function approveClaimSponsored(uint256 claimId, ERC7824ForwardRequest req) exter
 function submitClaimWithMultiProof(
     address patient,
     bytes32 procedureCodeHash,
-    uint256 requestedUSD,
+    uint256 requestedUSDC, // Direct USDC amount
     string encryptedEHRCID,
     bytes ehrPREKey,
     bytes zkProof,        // ZK proof of covered procedure
@@ -268,11 +257,11 @@ function submitClaimWithMultiProof(
 ) external onlyVerifiedHospital
 ```
 
-**Enhanced Validation Process**:
+**Streamlined Validation Process**:
 1. **ZK Proof Validation**: Confirms encrypted EHR contains covered procedure
 2. **WebProof Validation**: Verifies procedure from patient portal
 3. **Hospital WebProof**: Confirms procedure performed in hospital system
-4. **Flare FTSO Pricing**: Real-time USD to USDC conversion
+4. **Direct USDC Processing**: No price conversion needed
 5. **Coverage Check**: Validates sufficient policy coverage
 6. **Forward to Insurance**: Submits validated claim
 
@@ -288,16 +277,17 @@ function submitClaimSponsored(
 - Validates meta-transaction signature
 - Forwards to InsuranceContract with sponsorship context
 
-#### Real-Time Price Integration:
-- Live Flare FTSO price feeds
-- Automatic USD to stablecoin conversion
-- Multi-currency support capability
+#### Simplified Processing Benefits:
+- No external oracle dependencies
+- Faster transaction processing
+- Reduced gas costs
+- Better reliability
 
 ---
 
 ## 🔄 CONTRACT INTERACTION FLOW
 
-### Enhanced Multi-Proof Claims Workflow
+### Streamlined Multi-Proof Claims Workflow
 
 ```mermaid
 graph TB
@@ -305,11 +295,15 @@ graph TB
     PM --> |WebProof Operation| CPH[ClaimProcessingContract]
     H[Hospital] --> OM[OrganizationModule]
     OM --> |WebProof + ZK Proof| CPH
-    CPH --> |Flare FTSO| FO[Price Oracle]
-    CPH --> |Multi-Proof Validation| IC[InsuranceContract]
+    CPH --> |Direct USDC Amount| IC[InsuranceContract]
+    CPH --> |Multi-Proof Validation| IC
     IC --> |Sponsored Approval| ERC[ERC7824Gateway]
     ERC --> |Meta-Transaction| IC
     IC --> |USDC Payout| H
+    
+    %% Frontend Price Display
+    UI[Frontend] --> |CoinGecko API| PD[Price Display]
+    PD --> |USD to USDC Rate| UI
 ```
 
 ### ERC-7824 Sponsored Transaction Flow
@@ -326,7 +320,7 @@ graph TB
 
 ---
 
-## 🎯 HACKATHON PRIZE INTEGRATION
+## 🎯 STREAMLINED PRIZE INTEGRATION
 
 ### Target Prize Tracks
 
@@ -334,11 +328,6 @@ graph TB
 - **MailProofs**: Organization domain verification via email
 - **WebProofs**: Patient portal and hospital system verification
 - **Multi-Proof Architecture**: Combined proof validation for maximum security
-
-#### Flare Integration → **Flare FTSO Track** + **Real-time data**
-- **FTSO Price Feeds**: Live USD to USDC conversion for claims
-- **Multi-Currency Support**: Flexible pricing across different tokens
-- **Real-time Validation**: Dynamic claim amount calculation
 
 #### ERC-7824 Integration → **Abstract Account Innovation**
 - **Sponsored Transactions**: Gas-free patient interactions
@@ -355,8 +344,8 @@ graph TB
 | `PatientModule`           | EHR management, operation proposals          | WebProofs, ERC-7824 sponsorship    |
 | `OrganizationModule`      | Hospital/insurer operations                  | WebProofs, multi-proof validation  |
 | `ERC7824Gateway`          | Meta-transaction routing                     | Sponsored transactions, batch ops  |
-| `InsuranceContract`       | Policy management, claim processing          | Flare FTSO, ERC-7824, WebProofs   |
-| `ClaimProcessingContract` | Multi-proof validation, price conversion     | ZK+Web proofs, FTSO, sponsorship  |
+| `InsuranceContract`       | Policy management, claim processing          | ERC-7824, WebProofs, Direct USDC  |
+| `ClaimProcessingContract` | Multi-proof validation, streamlined flow     | ZK+Web proofs, ERC-7824, Direct USDC |
 
 ---
 
@@ -365,6 +354,7 @@ graph TB
 - **Privacy-First**: Medical data never exposed, only validated
 - **Multi-Proof Security**: WebProofs + MailProofs + ZK proofs combined
 - **Sponsored UX**: Gas-free interactions via ERC-7824
-- **Real-time Pricing**: Live oracle data for accurate claim amounts
+- **Simplified Processing**: Direct USDC handling eliminates oracle complexity
 - **Modular Architecture**: Each contract has specific, well-defined roles
 - **Advanced Authentication**: thirdweb integration for seamless onboarding 
+- **Reduced Dependencies**: No external price oracles needed 

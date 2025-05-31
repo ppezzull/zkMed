@@ -1,10 +1,10 @@
 # zkMed Development Progress
 
-## 🎯 PROJECT STATUS: Advanced Web3 Healthcare Platform
+## 🎯 PROJECT STATUS: Streamlined Web3 Healthcare Platform
 
-**Current Phase**: Advanced Claims Processing with Multi-Protocol Integration  
+**Current Phase**: Advanced Claims Processing with Focused Protocol Integration  
 **Registration System**: ✅ **PRODUCTION READY** (All tests passing)  
-**New Focus**: ERC-7824 + vlayer WebProofs + Flare FTSO + thirdweb Integration  
+**New Focus**: ERC-7824 + vlayer WebProofs + thirdweb Integration + Direct USDC Processing  
 
 ---
 
@@ -43,9 +43,9 @@
 
 ---
 
-## 🚧 IN DEVELOPMENT: Advanced Web3 Claims System
+## 🚧 IN DEVELOPMENT: Streamlined Web3 Claims System
 
-### Phase 2: Enhanced Contract Architecture [CURRENT FOCUS] 🚧
+### Phase 2: Streamlined Contract Architecture [CURRENT FOCUS] 🚧
 
 #### 1. ERC7824Gateway.sol [NEW PRIORITY 1] 🔄
 **Purpose**: Meta-transaction router for sponsored transactions
@@ -76,7 +76,7 @@ addSponsor(address sponsor, uint256 gasLimit)
 
 **New Functions to Add**:
 ```solidity
-proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedCost)
+proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedUSDC)
 proposeOperationSponsored(ERC7824ForwardRequest req, bytes signature)
 ```
 
@@ -93,25 +93,25 @@ submitClaimWithWebProof(bytes webProof, ClaimData data)
 reviewClaimWithProofs(uint256 claimId, bool approved)
 ```
 
-#### 4. Enhanced InsuranceContract.sol [PRIORITY 3] 🔄
-**Purpose**: Advanced policy management with real-time pricing
-**Enhanced Features**:
-- [ ] Flare FTSO real-time price integration
+#### 4. Streamlined InsuranceContract.sol [PRIORITY 3] 🔄
+**Purpose**: Simplified policy management with direct USDC processing
+**Streamlined Features**:
+- [ ] Direct USDC policy management
 - [ ] Multi-proof claim processing
 - [ ] ERC-7824 sponsored claim approvals
-- [ ] Advanced policy management
+- [ ] Simplified payout handling
 
-**Key Integrations**:
-- [ ] Flare FTSO for USD→USDC conversion
+**Key Improvements**:
+- [ ] **Direct USDC Processing**: No price conversion needed
 - [ ] Multi-proof validation (ZK + Web + Mail proofs)
 - [ ] ERC-7824 Gateway routing
-- [ ] **Removed**: Merit token integration (no longer part of architecture)
+- [ ] **Removed**: Flare FTSO integration (simplified architecture)
 
-#### 5. Enhanced ClaimProcessingContract.sol [PRIORITY 3] 🔄
-**Purpose**: Multi-proof claim validation with sponsored transactions
-**Enhanced Features**:
+#### 5. Streamlined ClaimProcessingContract.sol [PRIORITY 3] 🔄
+**Purpose**: Multi-proof claim validation with direct USDC handling
+**Streamlined Features**:
 - [ ] Multiple proof type validation (ZK + WebProof + MailProof)
-- [ ] Real-time Flare FTSO price conversion
+- [ ] Direct USDC amount processing
 - [ ] ERC-7824 sponsored transaction support
 - [ ] Advanced privacy preservation
 
@@ -119,7 +119,7 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 
 ## 🎨 FRONTEND DEVELOPMENT
 
-### Next.js 15 + Advanced Web3 Integration [PARALLEL DEVELOPMENT] 🔄
+### Next.js 15 + Streamlined Web3 Integration [PARALLEL DEVELOPMENT] 🔄
 
 #### Core Technology Stack:
 - [ ] **Next.js 15** with App Router
@@ -127,7 +127,7 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 - [ ] **ERC-7824 Nitrolite Client** for abstract accounts
 - [ ] **vlayer client + verifier SDK** for proof generation
 - [ ] **IPFS / web3.storage** for encrypted EHR storage
-- [ ] **Flare FTSO JS SDK** for price data
+- [ ] **CoinGecko API** for USD/USDC price display (frontend only)
 
 #### Authentication & Account Management:
 - [ ] thirdweb social login integration
@@ -140,6 +140,12 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 - [ ] MailProof generation for organizations
 - [ ] Multi-proof validation status monitoring
 - [ ] Real-time proof status updates
+
+#### Streamlined Price Display:
+- [ ] CoinGecko API integration for USD/USDC conversion
+- [ ] Frontend-only price display (no on-chain dependencies)
+- [ ] Real-time rate updates for user interface
+- [ ] Clear pricing: "Requesting 1200 USDC (≈ $1200 USD)"
 
 ---
 
@@ -166,7 +172,7 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
   - ABI exports and TypeScript interfaces
   - Integration documentation
 
-### Sprint 2: WebProof Integration & Enhanced Modules (Weeks 3-4)
+### Sprint 2: WebProof Integration & Streamlined Modules (Weeks 3-4)
 **Goal**: Implement vlayer WebProof integration and enhance existing modules
 
 #### Week 3: vlayer WebProof Integration
@@ -178,18 +184,18 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
   - PatientModule WebProof functions
   - OrganizationModule multi-proof validation
 
-#### Week 4: Claims Processing Enhancement
-- **Days 1-3**: Enhanced ClaimProcessingContract
+#### Week 4: Streamlined Claims Processing
+- **Days 1-3**: Streamlined ClaimProcessingContract
   - Multi-proof validation system
-  - Flare FTSO integration
+  - Direct USDC amount handling
   - Sponsored transaction support
-- **Days 4-5**: InsuranceContract enhancements
-  - Real-time pricing integration
-  - Advanced policy management
+- **Days 4-5**: InsuranceContract simplification
+  - Direct USDC policy management
+  - Simplified claim processing
   - ERC-7824 compatibility
 
 ### Sprint 3: Frontend & Integration (Weeks 5-6)
-**Goal**: Complete frontend implementation with thirdweb and advanced Web3 features
+**Goal**: Complete frontend implementation with thirdweb and streamlined features
 
 #### Week 5: thirdweb Authentication
 - **Days 1-3**: Authentication system
@@ -200,11 +206,11 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
   - ERC-7824 account setup
   - Account binding workflows
 
-#### Week 6: Advanced Frontend Features
+#### Week 6: Streamlined Frontend Features
 - **Days 1-3**: Proof generation interfaces
   - WebProof generation UI
   - Multi-proof status monitoring
-  - Real-time updates
+  - CoinGecko price display integration
 - **Days 4-5**: Final integration and testing
   - End-to-end testing
   - Performance optimization
@@ -219,21 +225,21 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 - [ ] ERC-7824 Gateway: Unit and integration tests
 - [ ] Enhanced modules: Updated test suites
 - [ ] Multi-proof validation: End-to-end testing
-- [ ] Flare FTSO integration: Price oracle testing
+- [ ] Direct USDC processing: Transaction flow testing
 
 ### Integration Testing [PLANNED] 📋
 - [ ] thirdweb authentication flow
 - [ ] ERC-7824 sponsored transactions
 - [ ] vlayer WebProof generation
 - [ ] Multi-proof claim processing
-- [ ] Real-time price conversion
+- [ ] Frontend price display functionality
 
 ### End-to-End Testing [PLANNED] 📋
 - [ ] Complete user registration flows
 - [ ] Sponsored patient claim submissions
 - [ ] Hospital multi-proof claim processing
 - [ ] Insurer claim approval workflows
-- [ ] Real-time price validation
+- [ ] Direct USDC transaction validation
 
 ---
 
@@ -242,7 +248,7 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 ### Technical Achievements [UPDATED TARGETS]
 - [ ] ERC-7824 meta-transaction routing functional
 - [ ] vlayer WebProof integration working end-to-end
-- [ ] Flare FTSO price conversion accurate within 1%
+- [ ] Direct USDC processing implemented and tested
 - [ ] thirdweb authentication seamless
 - [ ] Multi-proof validation system operational
 - [ ] Sponsored transactions reducing gas barriers
@@ -258,22 +264,22 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 - [ ] Gas-free patient interactions via sponsorship
 - [ ] Social login via thirdweb
 - [ ] Seamless multi-proof generation
-- [ ] Real-time status updates
+- [ ] Clear USD/USDC price display in frontend
 - [ ] Mobile-responsive PWA experience
 
-### Protocol Integration [HACKATHON TARGETS]
+### Protocol Integration [STREAMLINED TARGETS]
 - [ ] vlayer MailProofs + WebProofs working seamlessly
-- [ ] Flare FTSO live price data integration
 - [ ] ERC-7824 sponsored transaction flows
 - [ ] thirdweb authentication integration
-- [ ] Multi-protocol architecture demonstration
+- [ ] Simplified architecture demonstration
+- [ ] **Removed**: Flare FTSO integration (streamlined approach)
 
 ---
 
 ## 🚀 INNOVATION HIGHLIGHTS
 
 **Enhanced from**: Simple registration system  
-**Enhanced to**: Advanced Web3 healthcare platform with:
+**Enhanced to**: Streamlined Web3 healthcare platform with:
 
 ### 🔐 Multi-Proof Security Architecture
 - **MailProofs**: Domain ownership verification
@@ -287,10 +293,11 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 - **Hospital Sponsorship**: Sponsored claim processing workflows
 - **Batch Operations**: Efficient bulk transaction processing
 
-### 🌐 Real-Time Integration
-- **Flare FTSO**: Live USD to USDC price conversion
-- **Dynamic Pricing**: Real-time claim amount calculation
-- **Multi-Currency Support**: Flexible pricing across different tokens
+### 💰 Streamlined USDC Processing
+- **Direct USDC Handling**: No complex oracle integrations
+- **Frontend Price Display**: CoinGecko API for USD/USDC conversion in UI
+- **Reduced Gas Costs**: ~30% savings without price conversion logic
+- **Faster Processing**: Elimination of external oracle dependencies
 
 ### 🎨 Advanced Authentication
 - **thirdweb Integration**: Social login and wallet abstraction
@@ -303,8 +310,8 @@ reviewClaimWithProofs(uint256 claimId, bool approved)
 
 1. **ERC-7824 Gateway MVP** (Week 1) - Meta-transaction routing functional
 2. **vlayer WebProof Integration** (Week 2) - Multi-proof validation working
-3. **Flare FTSO Integration** (Week 3) - Real-time pricing operational
+3. **Streamlined Claims Processing** (Week 3) - Direct USDC handling operational
 4. **thirdweb Authentication** (Week 4) - Social login and account binding
-5. **Complete Platform Demo** (Week 5-6) - End-to-end advanced Web3 healthcare platform
+5. **Complete Platform Demo** (Week 5-6) - End-to-end streamlined Web3 healthcare platform
 
-The registration foundation is solid - now we're building the revolutionary multi-protocol healthcare platform! 🚀 
+The registration foundation is solid - now we're building the revolutionary streamlined healthcare platform! 🚀 

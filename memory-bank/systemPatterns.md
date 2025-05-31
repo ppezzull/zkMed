@@ -32,7 +32,7 @@ flowchart TD
   subgraph Off-Chain Proofs
     IPFS[Encrypted EHR on IPFS]
     ZK[ZK-SNARK of Covered Procedure]
-    FTSO[Flare Oracle (USD → USDC)]
+    CG[CoinGecko API (USD/USDC Display)]
     PRE[Proxy Re-Encryption Key]
     WP[WebProofs from Patient Portal]
     MP[MailProofs from Organization Email]
@@ -59,11 +59,15 @@ flowchart TD
   A2 -->|Encrypted EHR to IPFS| IPFS
   A2 -->|ZK Proof| ZK --> CP
   A2 -->|WebProof| WP --> CP
+  A2 -->|USDC amount (direct)| CP
   CP -->|verifyZKProof| ZKV
   CP -->|verifyWebProof| WP
   CP -->|check Role: Hospital| RC
-  CP -->|fetch USD price| FTSO
-  CP -->|submitClaim(...)| IC
+  CP -->|submitClaim(USDC)| IC
+
+  %% Frontend Price Display
+  A2 -->|Check USD price| CG
+  CG -->|Display conversion| A2
 
   %% Sponsored Transactions
   A1 -->|sponsored claim proposal| GW
@@ -99,8 +103,8 @@ flowchart TD
 | **ERC7824Gateway** | Executes sponsored meta-transactions | Gas-free interactions, batch operations, nonce management | All contracts, thirdweb authentication |
 | **PatientModule** | Patient EHR & WebProof management | Encrypted EHR storage, WebProof operation proposals | vlayer WebProofs, ERC-7824, IPFS |
 | **OrganizationModule** | Hospital/insurer multi-proof operations | WebProof validation, multi-proof claim submissions | vlayer WebProofs, ERC-7824 Gateway |
-| **ClaimProcessingContract** | ZK proof gatekeeper + multi-proof validator | ZK+Web+Mail proof validation, FTSO price conversion | vlayer proofs, Flare FTSO, ERC-7824 |
-| **InsuranceContract** | Policy management, claims approval, escrow | Real-time pricing, sponsored approvals, USDC payouts | Flare FTSO, ERC-7824, USDC token |
+| **ClaimProcessingContract** | ZK proof gatekeeper + multi-proof validator | ZK+Web+Mail proof validation, direct USDC handling | vlayer proofs, ERC-7824 |
+| **InsuranceContract** | Policy management, claims approval, escrow | Direct USDC processing, sponsored approvals, USDC payouts | ERC-7824, USDC token |
 | **ZKVerifier** | Verifies ZK-SNARKs (Circom-based) | Privacy-preserving procedure validation | ClaimProcessingContract, vlayer |
 
 ---
@@ -152,7 +156,7 @@ sequenceDiagram
     I->>G: Sign meta-transaction
     G->>G: Validate signature & nonce
     G->>C: Execute sponsored claim
-    C->>C: Validate proofs & pricing
+    C->>C: Validate proofs & process USDC
     C-->>P: Claim submitted (gas-free)
 ```
 
@@ -162,31 +166,41 @@ sequenceDiagram
 - Sponsored operations reduce barriers
 - Batch transactions optimize costs
 
-### 3. Real-Time Price Integration Pattern
+### 3. Simplified USDC Processing Pattern
 
 ```solidity
-contract FlareIntegration {
-    IFlareFtsoV2 public ftsoV2;
+contract StreamlinedClaimsContract {
+    IERC20 public usdc;
     
-    function getRealtimeUSDCPrice() external view returns (uint256 price, uint256 timestamp) {
-        (price, timestamp) = ftsoV2.getCurrentPrice("USDC/USD");
-        require(block.timestamp - timestamp < 300, "Price too stale"); // 5 min max
-        return (price, timestamp);
-    }
-    
-    function convertUSDToTokens(uint256 usdAmount) external view returns (uint256 tokens) {
-        (uint256 price,) = getRealtimeUSDCPrice();
-        // price is 8 decimals, USDC is 18 decimals
-        return (usdAmount * 1e18 * 1e8) / price;
+    function submitClaim(
+        address patient,
+        bytes32 procedureCodeHash,
+        uint256 requestedUSDCAmount, // Direct USDC amount
+        string memory encryptedEHRCID,
+        bytes memory ehrPREKey,
+        bytes memory zkProof
+    ) external onlyVerifiedHospital {
+        // Validate ZK proof without price conversion
+        require(zkVerifier.verify(zkProof), "Invalid procedure proof");
+        
+        // Process claim with direct USDC amount
+        insuranceContract.submitClaim(
+            patient,
+            msg.sender, // hospital
+            procedureCodeHash,
+            requestedUSDCAmount, // No conversion needed
+            encryptedEHRCID,
+            ehrPREKey
+        );
     }
 }
 ```
 
-**Oracle Benefits:**
-- Decentralized price feeds
-- Real-time accuracy within 5 minutes
-- Protection against stale data
-- Multi-currency support capability
+**Simplification Benefits:**
+- No external oracle dependencies
+- Reduced attack surface
+- Faster transaction processing
+- Frontend handles price display using CoinGecko API
 
 ### 4. Privacy-Preserving Claims Workflow
 
@@ -197,21 +211,23 @@ sequenceDiagram
     participant I as Insurer
     participant ZK as ZK Prover
     participant IPFS as IPFS Storage
-    participant FT as Flare FTSO
+    participant UI as Frontend (CoinGecko)
     
     P->>H: Medical procedure performed
     H->>IPFS: Encrypt & store EHR
     H->>ZK: Generate proof: "EHR contains covered procedure"
     ZK-->>H: ZK proof (no procedure details revealed)
-    H->>FT: Get current USD/USDC rate
-    H->>ClaimContract: Submit claim with proofs
+    H->>UI: Check USD to USDC rate (display only)
+    UI-->>H: Current rate for user display
+    H->>ClaimContract: Submit claim with USDC amount
     ClaimContract->>I: Forward validated claim
     I->>I: Review proof results (not medical data)
-    I->>ClaimContract: Approve based on proof validity
+    I->>ClaimContract: Approve USDC amount
     ClaimContract->>H: Release USDC payment
     
     Note over P,H: Medical details never exposed to insurer
     Note over ZK,IPFS: Privacy preserved via encryption + ZK proofs
+    Note over UI,H: Price conversion in frontend only
 ```
 
 **Privacy Guarantees:**
@@ -219,95 +235,40 @@ sequenceDiagram
 - Insurers approve without seeing procedure details
 - ZK proofs validate coverage without revealing data
 - Post-approval decryption only for authorized parties
+- Price conversion handled off-chain for display
 
-### 5. thirdweb Authentication Integration
-
-```typescript
-// Enhanced authentication with ERC-7824 binding
-class zkMedAuth {
-    async authenticateUser(role: 'patient' | 'hospital' | 'insurer') {
-        // Step 1: thirdweb social login
-        const user = await thirdweb.auth.login({
-            domain: "zkmed.health",
-            type: "eoa" // or "smart-wallet"
-        });
-        
-        // Step 2: Check registration status
-        const isRegistered = await registrationContract.read.verified([user.address]);
-        
-        if (!isRegistered) {
-            // Step 3: Sponsored registration if needed
-            await this.sponsorRegistration(user, role);
-        }
-        
-        // Step 4: Bind to ERC-7824 abstract account
-        const gateway = await this.bindToGateway(user.address);
-        
-        return {
-            user,
-            gateway,
-            role,
-            canSubmitClaims: role === 'hospital',
-            canApproveClaims: role === 'insurer',
-            hasGasSponsorship: true
-        };
-    }
-    
-    async sponsorRegistration(user: any, role: string) {
-        const sponsorTx = await gateway.execute({
-            from: user.address,
-            to: registrationContract.address,
-            data: registrationContract.interface.encodeFunctionData(
-                role === 'patient' ? 'registerPatient' : 'registerOrganization',
-                [/* registration data */]
-            ),
-            nonce: await gateway.nonces(user.address)
-        });
-        
-        return sponsorTx;
-    }
-}
-```
-
-### 6. vlayer WebProof Generation Patterns
+### 5. Frontend Price Display Integration
 
 ```typescript
-// Patient Portal WebProof
-async function generatePatientPortalProof(patientId: string) {
-    const webProof = await vlayer.generateWebProof({
-        url: `https://mychart.mountsinai.org/patient/${patientId}`,
-        selector: "#medical-records .procedure-code",
-        claim: "Patient has legitimate medical procedure requiring coverage",
-        privacy: {
-            hideSelector: true,
-            hashContent: true
-        }
-    });
+// Frontend USD to USDC conversion for display only
+class zkMedPriceDisplay {
+    async getUSDCRate(): Promise<number> {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=usd');
+        const data = await response.json();
+        return data['usd-coin'].usd;
+    }
     
-    return {
-        proof: webProof.proof,
-        claimedProcedure: webProof.outputs.procedureHash,
-        portalVerified: true
-    };
-}
-
-// Hospital System WebProof
-async function generateHospitalSystemProof(hospitalId: string, procedureId: string) {
-    const webProof = await vlayer.generateWebProof({
-        url: `https://epic.mountsinai.org/procedures/${procedureId}`,
-        selector: ".procedure-status",
-        claim: "Procedure completed successfully in hospital system",
-        authentication: {
-            method: "oauth",
-            credentials: process.env.HOSPITAL_API_KEY
-        }
-    });
+    async displayClaimAmount(usdAmount: number): Promise<string> {
+        const rate = await this.getUSDCRate();
+        const usdcAmount = usdAmount / rate;
+        
+        return `Requesting ${usdcAmount.toFixed(2)} USDC (≈ $${usdAmount} USD)`;
+    }
     
-    return {
-        proof: webProof.proof,
-        procedureCompleted: webProof.outputs.status === "completed",
-        hospitalVerified: true
-    };
+    // Submit claim with USDC amount directly
+    async submitClaim(usdAmount: number, proofs: ProofBundle) {
+        const rate = await this.getUSDCRate();
+        const usdcAmount = Math.round((usdAmount / rate) * 1e6); // USDC has 6 decimals
+        
+        return await claimContract.submitClaim(
+            patient,
+            procedureHash,
+            usdcAmount, // Direct USDC, no on-chain conversion
+            encryptedEHRCID,
+            ehrPREKey,
+            proofs.zkProof
+        );
+    }
 }
 ```
 
@@ -317,7 +278,7 @@ async function generateHospitalSystemProof(hospitalId: string, procedureId: stri
 - **Layer 1**: Role-based access control (RegistrationContract)
 - **Layer 2**: Multi-proof validation (ZK + Web + Mail)
 - **Layer 3**: Sponsored transaction verification (ERC-7824)
-- **Layer 4**: Real-time price validation (Flare FTSO)
+- **Layer 4**: Direct USDC validation (no oracle dependencies)
 - **Layer 5**: Encrypted storage with controlled access (IPFS + PRE)
 
 ### 2. Privacy by Design
@@ -328,7 +289,7 @@ async function generateHospitalSystemProof(hospitalId: string, procedureId: stri
 - **Sponsored Privacy**: Gas-free interactions maintain anonymity
 
 ### 3. Economic Security
-- **Real-Time Pricing**: Live oracle data prevents arbitrage
+- **Direct USDC Processing**: No price manipulation risks
 - **Escrow System**: Guaranteed payments for valid claims
 - **Sponsored Incentives**: Insurers cover gas for better UX
 - **Multi-Signature Approvals**: Large claims require multiple signatures
@@ -340,7 +301,7 @@ async function generateHospitalSystemProof(hospitalId: string, procedureId: stri
 contract GasOptimized {
     // Pack structs to minimize storage slots
     struct Claim {
-        uint128 amount;      // Fits with timestamp in one slot
+        uint128 usdcAmount;  // Direct USDC amount
         uint128 timestamp;
         address patient;     // 20 bytes
         bytes12 padding;     // Pad to 32 bytes
@@ -363,11 +324,11 @@ contract GasOptimized {
 - **Batching**: Process multiple proofs in single transaction
 - **Selective Verification**: Skip redundant checks based on trust levels
 
-### 3. Oracle Integration Efficiency
-- **Price Caching**: Cache recent FTSO prices with staleness checks
-- **Fallback Mechanisms**: Multiple oracle sources for reliability
-- **Update Triggers**: Smart price update frequency based on volatility
-- **Gas Estimation**: Predict transaction costs before execution
+### 3. Simplified Processing Benefits
+- **No Oracle Delays**: Eliminate external API call delays
+- **Reduced Gas Costs**: No complex price conversion calculations
+- **Faster Execution**: Direct USDC processing
+- **Better Reliability**: Fewer external dependencies
 
 ## 📊 Monitoring & Analytics Patterns
 
@@ -378,7 +339,7 @@ event ClaimProcessed(
     address indexed hospital,
     address indexed insurer,
     uint256 claimId,
-    uint256 amount,
+    uint256 usdcAmount, // Direct USDC amount
     bytes32 proofHash,
     uint256 timestamp
 );
@@ -405,4 +366,4 @@ event SponsoredTransaction(
 - **Performance Metrics**: Transaction times and gas usage
 - **User Experience**: Sponsored transaction adoption rates
 
-This comprehensive system architecture enables zkMed to provide privacy-preserving healthcare claims processing with advanced Web3 features including sponsored transactions, multi-proof validation, real-time pricing, and seamless authentication. 🚀 
+This streamlined system architecture enables zkMed to provide privacy-preserving healthcare claims processing with simplified USDC handling, sponsored transactions, multi-proof validation, and seamless authentication - without the complexity of on-chain price oracles. 🚀 
