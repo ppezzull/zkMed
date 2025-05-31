@@ -175,7 +175,7 @@ contract GasAnalysisTest is Test {
         gasCosts.viewFunctions = gasUsed; // Last measured
     }
     
-    function testGasOptimizationRecommendations() public {
+    function testGasOptimizationRecommendations() public view {
         console.log("\n=== GAS OPTIMIZATION RECOMMENDATIONS ===");
         
         uint256 totalDeploymentGas = gasCosts.deployment;
