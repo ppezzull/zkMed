@@ -1,11 +1,11 @@
 # Active Context - zkMed Privacy-Preserving Healthcare Platform
 
-## 🎯 EXPANDED SCOPE: Full Healthcare Claims Processing Platform
+## 🎯 EXPANDED SCOPE: Advanced Web3 Healthcare Platform
 
-### Current Status: Registration System COMPLETE → Claims Processing NEXT
+### Current Status: Registration System COMPLETE → Advanced Claims Processing NEXT
 **Registration Phase**: ✅ **PRODUCTION READY** (37/37 tests passing)  
-**Claims Processing Phase**: 🚧 **DESIGN & IMPLEMENTATION PHASE**  
-**Integration Target**: vlayer + Blockscout + Flare for maximum hackathon impact  
+**Advanced Claims Phase**: 🚧 **DESIGN & IMPLEMENTATION PHASE**  
+**Integration Target**: vlayer WebProofs/MailProofs + Flare FTSO + ERC-7824 Abstract Accounts + thirdweb  
 
 ---
 
@@ -18,154 +18,195 @@
 - **User Activation System**: Enable/disable users with batch operations
 - **Status**: Production-ready, 100% test coverage (53/53 tests passing)
 
-### Phase 2: Claims Processing System [CURRENT FOCUS] 🚧
+### Phase 2: Advanced Claims Processing System [CURRENT FOCUS] 🚧
 
-#### ClaimProcessingContract.sol [NEW]
-**Purpose**: Handle encrypted EHR submission with ZK proofs
+#### 🔒 1. RegistrationContract.sol [ENHANCED]
+**Purpose**: Main registry of roles (Patient, Hospital, Insurer) and proof-based onboarding
+
 **Key Features**:
-- Encrypted EHR storage on IPFS
-- Zero-knowledge proof verification (procedure code validation)
-- Flare FTSO integration for USD→token conversion
-- Forward validated claims to InsuranceContract
+- `registerPatient(bytes32 commitment)`: Patient anonymous registration
+- `registerOrganization(Proof proof, OrganizationVerificationData data, Role role)`: Hospital/insurer onboarding with **MailProof** (vlayer email ZK)
+- Role checks: `onlyVerifiedHospital`, `onlyVerifiedInsurer`
+- **Future extension**: Add `registerWithWebProof(...)` for web-based organization verification
 
-**Core Functions**:
-```solidity
-function submitClaim(
-    address patient,
-    bytes32 procedureCodeHash,  // Hash only, never plaintext
-    uint256 requestedAmountUSD,
-    string encryptedEHRCID,     // IPFS CID of encrypted medical record
-    bytes ehrPREKey,            // Proxy re-encryption key for post-approval decryption
-    bytes zkProof               // Proof that encrypted EHR contains valid covered procedure
-) external onlyHospital
-```
+**Integrations**:
+- **MailProofs** via `EmailDomainProver`
+- Stores role → `RegistrationStorage`
+- **ERC-7824 Gateway** compatibility for meta-transactions
 
-#### InsuranceContract.sol [NEW] 
-**Purpose**: Policy management and claims approval
+#### 🧑‍⚕️ 2. PatientModule.sol [NEW]
+**Purpose**: Patient-specific actions with encrypted EHR management
+
 **Key Features**:
-- On-chain policy storage (coverage amounts, usage tracking)
-- Claims approval/rejection by insurers
-- Hospital escrow and payout system
-- Integration with MeritsToken for rewards
+- `uploadEncryptedEHR(string cid, bytes preKey)`: EHR CID + PRE key storage
+- `proposeOperation(...)`: Propose encrypted operation with **WebProof**
+- `verifyPatientCommitment(string secret)`: Verify patient's health data commitment
 
-**Core Data Structures**:
-```solidity
-struct Policy {
-    uint256 totalCoverage;      // e.g. $10,000
-    uint256 usedCoverage;       // e.g. $2,000 already claimed
-    address patientAddress;
-    bytes32 policyIdHash;       // Hash of off-chain policy ID
-    string policyMetadataCID;   // IPFS pointer to encrypted policy details
-    bool isActive;
-}
+**Integrations**:
+- **WebProofs** → prove diagnosis/procedure from real patient portal (HIPAA-compliant ZK)
+- Adds PRE key for **post-approval decryption**
+- Works with ERC-7824 for sponsored patient transactions
 
-struct Claim {
-    uint256 claimId;
-    address patientAddress;
-    address hospitalAddress;
-    bytes32 procedureCodeHash;  // Never stores actual procedure text
-    uint256 requestedAmount;    // In on-chain tokens
-    string encryptedEHRCID;     // IPFS CID
-    bytes ehrPREKey;            // For post-approval decryption
-    ClaimStatus status;         // Submitted, Approved, Rejected
-}
-```
+#### 🏥 3. OrganizationModule.sol [NEW]
+**Purpose**: Hospital/insurer post-verification features
 
-#### MeritsTokenContract.sol [NEW]
-**Purpose**: ERC-20 reward token for successful claims
-**Blockscout Integration**: 
-- Mint merits for patients and hospitals on claim approval
-- Frontend displays merit balances via Blockscout Merits API
-- All transactions link to Blockscout Explorer
+**Key Features**:
+- `approveOperation(patient, opId)`: Hospital agrees to operate
+- `confirmOperation(opId)`: Final confirmation after surgery
+- `getHospitalOperations()`: Hospital views pending operations
+- `submitClaimWithWebProof(...)`: Submit claims with WebProof validation
+
+#### 🛡️ 4. InsuranceContract.sol [ENHANCED]
+**Purpose**: Manages policy and funds with advanced Web3 integrations
+
+**Key Features**:
+- `createPolicy(...)`: Link hashed policy ID with total USDC coverage
+- `approveClaim(...)`: Approves operations post-ZK validation
+- `disburseFunds(...)`: Sends USDC payout to hospital
+- `withdrawPayout()`: Hospital pulls escrowed USDC
+
+**Integrations**:
+- **Flare FTSO**: Real-time USD to USDC conversion for claims
+- **ERC-7824**: Meta-transaction submission by insurer for `approveClaim()` (sponsored)
+- **Removed**: Merit token system (no longer part of architecture)
+
+#### 🌐 5. ERC7824Gateway.sol [NEW] (Nitrolite Abstract Account)
+**Purpose**: Meta-transaction router for sponsored transactions
+
+**Key Features**:
+- `execute(ERC7824ForwardRequest req, bytes signature)`: Sponsored transaction execution
+- **Nonce management** for replay protection
+- **Gas sponsorship** for patient and hospital interactions
+- **Batch operations** support for multiple contract calls
+
+**Integration Points**:
+- All contract interactions can route through this gateway
+- Insurers can sponsor patient claim submissions
+- Hospitals can have sponsored claim processing
+
+#### 📥 6. ClaimProcessingContract.sol [ENHANCED]
+**Purpose**: Advanced ZK proof verification with Web3 integrations
+
+**Key Features**:
+- `submitClaim(...)`: Hospital submits claim with multiple proof types
+- `submitClaimWithWebProof(...)`: Claims with WebProof validation
+- `submitClaimWithSponsoredTx(...)`: Claims via ERC-7824 sponsorship
+
+**Process Flow**:
+- Validates **ZK Proof** (procedure validation)
+- Validates **WebProof** (patient portal verification)
+- Converts USD to token using **Flare FTSO**
+- Calls `InsuranceContract.submitClaim(...)`
+- Supports **ERC-7824** sponsored transactions
 
 ---
 
-## 🔐 PRIVACY-PRESERVING CLAIMS WORKFLOW
+## 🔐 ADVANCED PRIVACY-PRESERVING WORKFLOW
 
-### The Core Innovation: Insurance Without Revealing Procedures
+### Enhanced Claims Processing with Multiple Proof Types
 
-**Problem Solved**: Patients can receive insurance coverage without insurers ever learning the exact medical procedure performed.
+#### 1. Hospital Multi-Proof Generation
+- **WebProof**: Prove procedure validity from hospital system
+- **ZK Proof**: Validate encrypted EHR contains covered procedure
+- **MailProof**: Verify hospital domain ownership (registration)
 
-### Step-by-Step Privacy Flow:
+#### 2. Real-Time Price Integration (Flare FTSO)
+- Dynamic USD→USDC conversion for all claims
+- Live oracle data for accurate payouts
+- Support for multiple currency pairs
 
-#### 1. Hospital Encrypts Medical Data
-- Hospital encrypts patient's EHR (Electronic Health Record) off-chain
-- Uploads encrypted file to IPFS → `encryptedEHRCID`
-- Generates `procedureCodeHash = keccak256("HIP-123")` (hash only)
+#### 3. Sponsored Transaction Flow (ERC-7824)
+- Insurers sponsor patient claim submissions
+- Hospitals get sponsored claim processing
+- Seamless UX without gas fee barriers
 
-#### 2. Zero-Knowledge Proof Generation (vlayer)
-- Hospital creates ZK proof: "This encrypted EHR contains a procedure code that is covered by the patient's policy"
-- **Critical**: Proof validates coverage WITHOUT revealing which procedure
-- Insurer sees only: ✅ "Valid covered procedure" or ❌ "Invalid/uncovered"
-
-#### 3. Real-Time Price Conversion (Flare FTSO)
-- Hospital requests $1,200 for procedure
-- ClaimProcessingContract calls Flare FTSO via `lzRead()`
-- Gets current USD→USDC conversion rate
-- Converts to exact on-chain token amount
-
-#### 4. Claims Submission & Approval
-- Insurer reviews ZK proof result + requested amount
-- Approves based on: "Valid procedure ✅" + "Sufficient coverage ✅"
-- **Never sees**: Actual procedure code, patient diagnosis, medical details
-
-#### 5. Post-Approval Decryption (Proxy Re-Encryption)
-- Only AFTER approval, contract releases `ehrPREKey`
-- Hospital/auditor can decrypt EHR for record-keeping
-- Insurer still cannot decrypt without additional keys
+#### 4. Advanced Authentication (thirdweb)
+- Social login integration
+- Wallet abstraction for users
+- Session management for dApps
 
 ---
 
-## 🎯 HACKATHON PRIZE STRATEGY
+## 🎨 FRONTEND ARCHITECTURE
 
-### Target Integrations & Prize Mapping
+### 🧑‍💻 Tech Stack
+- **Next.js 15** with App Router
+- **thirdweb React SDK** for authentication
+- **ERC-7824 Nitrolite Client** for abstract accounts
+- **vlayer client + verifier SDK** for proof generation
+- **IPFS / web3.storage** for encrypted EHR storage
+- **Flare FTSO JS SDK** for price data
 
-#### vlayer Integration → **Best use of vlayer Email Proofs** + **Most inspiring use of vlayer**
-- **Email Proofs**: Organization domain verification (already completed)
-- **ZK Proofs**: Medical procedure validation without data exposure
-- **Innovation**: First privacy-preserving healthcare claims with vlayer
+### 🔐 Authentication Flow (thirdweb)
+```typescript
+import { useUser, useLogin } from "@thirdweb-dev/react";
 
-#### Flare Integration → **Flare FTSO Track** + **External Data Source Track**
-- **FTSO**: Real-time USD→stablecoin price conversion for claims
-- **FDC (Optional)**: Pull hospital license verification data
-- **Use Case**: Dynamic claim amount calculation with real-world pricing
+const { user } = useUser();
+const login = useLogin();
 
-#### 🕒 FDC Implementation Priority Notice
-**Important**: FDC (Flare Data Connector) implementation is scheduled for last priority due to hackathon time constraints. The core privacy-preserving claims system with vlayer ZK proofs and Flare FTSO price oracles takes precedence to deliver maximum impact within the competition timeframe.
+const handleLogin = async () => {
+  await login(); // Wallet or social login
+};
+```
 
-#### Blockscout Integration → **Best use of Blockscout Merits** + **Explorer Pool**
-- **Merits Token**: Mint rewards for successful claims (patients + hospitals)
-- **Explorer Links**: All transactions point to Blockscout instead of Etherscan
-- **API Integration**: Frontend displays merit balances via Blockscout Merits API
+### 💳 ERC-7824 Account Binding
+```typescript
+import { bindAccount } from "@erc7824/nitrolite";
+
+await bindAccount(provider, {
+  accountAddress: user.address,
+  gatewayAddress: ERC_7824_GATEWAY,
+  chainId: 11155111 // Sepolia
+});
+```
+
+### 🔏 ZK Operation Proposal by Patient
+```typescript
+const webProof = await generateWebProof({
+  url: "https://mychart.mountsinai.org",
+  contentPath: "medicalRecords.recent[0].procedure",
+  claim: "HIP-XYZ123"
+});
+
+const tx = await gateway.execute({
+  req: {
+    from: user.address,
+    to: ClaimProcessing.address,
+    data: ClaimProcessing.interface.encodeFunctionData("submitClaimWithWebProof", [...])
+  },
+  signature
+});
+```
 
 ---
 
 ## 🚧 CURRENT DEVELOPMENT PRIORITIES
 
-### Immediate Next Steps (2-Week Sprint)
+### Immediate Next Steps (3-Week Sprint)
 
-#### 1. ClaimProcessingContract Implementation [HIGH PRIORITY]
-- ZK proof verification integration with vlayer
-- Flare FTSO price oracle integration
-- IPFS CID storage for encrypted EHRs
-- Forward approved claims to InsuranceContract
+#### 1. ERC-7824 Gateway Implementation [HIGH PRIORITY]
+- Abstract account setup and management
+- Meta-transaction routing logic
+- Gas sponsorship mechanisms
+- Integration with existing contracts
 
-#### 2. InsuranceContract Development [HIGH PRIORITY]  
-- Policy creation and management
-- Claims approval workflow
-- Hospital escrow and payout system
-- Integration with MeritsToken minting
+#### 2. WebProof Integration [HIGH PRIORITY]
+- vlayer WebProof SDK integration
+- Patient portal proof generation
+- Hospital system verification proofs
+- Frontend WebProof interfaces
 
-#### 3. MeritsTokenContract [MEDIUM PRIORITY]
-- ERC-20 implementation with mint functionality
-- Role-based minting (only InsuranceContract can mint)
-- Blockscout Merits API compatibility
+#### 3. Enhanced Claims Processing [HIGH PRIORITY]
+- Multi-proof validation system
+- Flare FTSO real-time integration
+- Sponsored transaction support
+- Advanced privacy preservation
 
-#### 4. Frontend Integration [PARALLEL WORK]
-- Claims submission interface for hospitals
-- Policy management dashboard for insurers
-- ZK proof status monitoring
-- Blockscout merit balance display
+#### 4. thirdweb Authentication [MEDIUM PRIORITY]
+- Social login implementation
+- Wallet abstraction layer
+- Session management
+- Account binding workflows
 
 ---
 
@@ -176,7 +217,7 @@ struct Claim {
 contract ClaimProcessingContract {
     IFlareOracle public flareOracle;
     
-    function submitClaim(..., uint256 requestedAmountUSD) external {
+    function submitClaim(..., uint256 requestedAmountUSD) external onlyVerifiedHospital {
         // Get current USD/USDC rate from Flare FTSO
         uint256 rate = flareOracle.lzRead(
             chainId,
@@ -188,6 +229,11 @@ contract ClaimProcessingContract {
         
         // Verify ZK proof
         require(zkVerifier.verifyProof(zkProof), "Invalid procedure proof");
+        
+        // Verify WebProof if provided
+        if (webProof.length > 0) {
+            require(webProofVerifier.verify(webProof), "Invalid web proof");
+        }
         
         // Forward to insurance contract
         insuranceContract.submitClaim(
@@ -202,85 +248,79 @@ contract ClaimProcessingContract {
 }
 ```
 
-### vlayer ZK Proof Integration
-```typescript
-// vlayer proof generation
-async function generateProcedureProof(
-    encryptedEHR: string,
-    allowedProcedureCodes: string[],
-    patientAddress: string
-) {
-    const proof = await vlayer.prove({
-        circuit: "procedure_validation",
-        inputs: {
-            encryptedEHR,
-            allowedCodes: allowedProcedureCodes,
-            patientWallet: patientAddress
-        }
-    });
-    
-    return {
-        proofBlob: proof.proof,
-        procedureCodeHash: proof.outputs.procedureHash,
-        isValid: proof.outputs.isValidProcedure
-    };
-}
-```
-
-### Blockscout Merits Integration
+### ERC-7824 Meta-Transaction Pattern
 ```solidity
-contract MeritsTokenContract is ERC20 {
-    function mintClaimRewards(
-        address patient,
-        address hospital,
-        uint256 claimAmount
-    ) external onlyInsuranceContract {
-        uint256 patientMerits = calculatePatientMerits(claimAmount);
-        uint256 hospitalMerits = calculateHospitalMerits(claimAmount);
+contract ERC7824Gateway {
+    mapping(address => uint256) public nonces;
+    
+    function execute(
+        ERC7824ForwardRequest calldata req,
+        bytes calldata signature
+    ) external {
+        require(nonces[req.from] == req.nonce, "Invalid nonce");
+        require(verify(req, signature), "Invalid signature");
         
-        _mint(patient, patientMerits);
-        _mint(hospital, hospitalMerits);
+        nonces[req.from]++;
         
-        emit MeritsMinted(patient, patientMerits);
-        emit MeritsMinted(hospital, hospitalMerits);
+        (bool success, ) = req.to.call(req.data);
+        require(success, "Execution failed");
     }
 }
 ```
 
+### vlayer WebProof Integration
+```typescript
+// Enhanced proof generation with multiple proof types
+async function generateMultiProof(
+    patientData: PatientData,
+    organizationData: OrganizationData
+) {
+    const [webProof, mailProof] = await Promise.all([
+        vlayer.generateWebProof({
+            url: patientData.portalUrl,
+            contentPath: "procedure.code",
+            claim: patientData.procedureCode
+        }),
+        vlayer.generateMailProof({
+            domain: organizationData.domain,
+            emailAddress: organizationData.adminEmail,
+            targetWallet: organizationData.address
+        })
+    ]);
+    
+    return {
+        webProof: webProof.proof,
+        mailProof: mailProof.proof,
+        combinedHash: keccak256(webProof.proof + mailProof.proof)
+    };
+}
+```
+
 ---
 
-## 📊 SUCCESS METRICS FOR EXPANDED PLATFORM
+## 📦 Storage & Off-Chain Services
 
-### Technical Achievements Target
-- [ ] ZK proof verification working end-to-end
-- [ ] Flare FTSO price conversion accurate within 1%
-- [ ] Encrypted EHR storage/retrieval via IPFS
-- [ ] Merit token minting on claim approval
-- [ ] 100% test coverage for new contracts
-
-### Privacy Guarantees Target
-- [ ] Zero medical data exposed on-chain
-- [ ] Insurer approval without seeing procedure details
-- [ ] Post-approval decryption working correctly
-- [ ] Proxy re-encryption key security validated
-
-### Integration Success Target
-- [ ] vlayer email + ZK proofs working seamlessly
-- [ ] Flare FTSO live price data integration
-- [ ] Blockscout merit balances displaying correctly
-- [ ] All transaction links pointing to Blockscout
+| Asset               | Location                                 |
+| ------------------- | ---------------------------------------- |
+| Encrypted EHR       | IPFS / web3.storage                      |
+| PRE key             | On-chain (for later decryption)          |
+| Domain/email proofs | Verified via vlayer SDK                  |
+| Web proofs          | Generated from patient portals           |
+| ZK proofs           | Generated off-chain, verified on-chain   |
+| USD Price           | Flare FTSO, read live in ClaimProcessing |
+| Session data        | thirdweb session management              |
 
 ---
 
-## 🎉 EXPANDED VISION: zkMed Platform
+## ✅ Integration Summary
 
-**From**: Simple registration system  
-**To**: Complete privacy-preserving healthcare claims platform
+| Component                 | Role                                         | Protocol                   |
+| ------------------------- | -------------------------------------------- | -------------------------- |
+| `RegistrationContract`    | Identity & role registration                 | MailProofs, thirdweb       |
+| `PatientModule`           | EHR uploads, ZK operation proposal           | WebProofs, ERC-7824        |
+| `OrganizationModule`      | Operation approvals, confirmations           | thirdweb login, WebProofs  |
+| `InsuranceContract`       | Coverage logic, payout flow                  | FTSO, ERC-7824 sponsorship |
+| `ClaimProcessingContract` | Multi-proof validation, claim forwarding     | ZK-SNARKs, WebProofs, FTSO |
+| `ERC7824Gateway`          | Executes sponsored txs for abstract accounts | ERC-7824, Nitrolite        |
 
-**Core Innovation**: Patients receive insurance coverage for medical procedures WITHOUT insurers ever learning what procedure was performed - only that it was valid and covered.
-
-**Hackathon Impact**: Targets 6+ prize categories across vlayer, Flare, and Blockscout with substantial, innovative integrations.
-
-**Next Phase**: Full-stack development of claims processing with ZK proofs, real-time oracles, and merit rewards system.
-
-The registration system was just the foundation - now we build the revolutionary privacy-preserving claims platform! 🚀 
+--- 

@@ -1,345 +1,523 @@
-# Technical Context - zkMed Development Environment
+# Technical Context - zkMed Advanced Web3 Platform
 
 ## Technology Stack Overview
 
-### Blockchain & Smart Contracts
-- **Foundry**: Smart contract development framework (latest stable)
-- **Solidity**: `^0.8.21` for smart contract implementation
-- **OpenZeppelin**: `5.0.1` for security patterns and utilities
-- **vlayer SDK**: `1.0.2` for zero-knowledge email and web proofs
-- **Deployment Target**: Ethereum Sepolia (testnet), Ethereum Mainnet (production)
+### Advanced Web3 Healthcare Platform with Multi-Protocol Integration
 
-### Frontend & User Interface
-- **Next.js**: `15+` with App Router for Server Components
-- **React**: `18+` with TypeScript for type safety
-- **Thirdweb**: Latest for wallet connection and SIWE authentication
-- **Viem**: `2.27.0` for Ethereum interactions
-- **TypeScript**: `^5.5.4` for full-stack type safety
+zkMed implements a cutting-edge technology stack combining privacy-preserving proofs, real-time oracles, sponsored transactions, and seamless authentication for a revolutionary healthcare claims platform.
 
-### Integration & Oracle Layer
-- **vlayer Client**: Email and web proof generation
-- **Flare Data Connector**: Off-chain policy rules and data feeds
-- **Flare FTSO**: Real-time pricing oracles for medical procedures
-- **Blockscout API**: Merit system tracking and public analytics
+---
 
-## Current Project Structure
+## 🏗️ Backend Technology Stack
 
-```
-zkMed/
-├── backend/                    # Smart contract development
-│   ├── src/
-│   │   ├── vlayer/            # vlayer integration contracts
-│   │   │   ├── SimpleProver.sol
-│   │   │   ├── SimpleVerifier.sol
-│   │   │   ├── ExampleNFT.sol
-│   │   │   └── ExampleToken.sol
-│   │   └── Counter.sol         # Basic example contract
-│   ├── test/                  # Foundry test suite
-│   ├── script/                # Deployment scripts
-│   ├── vlayer/                # vlayer SDK integration
-│   │   ├── prove.ts           # Proof generation scripts
-│   │   ├── package.json       # vlayer dependencies
-│   │   └── docker-compose.devnet.yaml
-│   ├── foundry.toml           # Foundry configuration
-│   ├── remappings.txt         # Solidity import mappings
-│   └── soldeer.lock           # Dependency lock file
-├── memory-bank/               # Project documentation and context
-└── README.md
-```
+### Core Blockchain Infrastructure
+- **Solidity 0.8.20+**: Smart contract development language
+- **Foundry**: Development framework with comprehensive testing
+- **OpenZeppelin**: Security-audited contract libraries
+- **ERC-7824**: Abstract account and meta-transaction standards
 
-## Smart Contract Dependencies
+### Advanced Web3 Integrations
 
-### Foundry Configuration
-
-```toml
-# foundry.toml
-[profile.default]
-src = "src"
-out = "out"
-libs = ["lib", "dependencies"]
-fs_permissions = [{ access = "read", path = "./testdata"}]
-
-[dependencies]
-"@openzeppelin-contracts" = "5.0.1"
-forge-std = "1.9.4"
-risc0-ethereum = { version = "2.0.0", url = "https://github.com/vlayer-xyz/risc0-ethereum/releases/download/v2.0.0-soldeer/contracts.zip" }
-vlayer = "1.0.2"
-```
-
-### Import Remappings
-
-```
-# remappings.txt
-forge-std-1.9.4/src/=dependencies/forge-std-1.9.4/src/
-forge-std/=dependencies/forge-std-1.9.4/src/
-openzeppelin-contracts/=dependencies/@openzeppelin-contracts-5.0.1/
-risc0-ethereum-2.0.0/=dependencies/risc0-ethereum-2.0.0/
-vlayer-0.1.0/=dependencies/vlayer-1.0.2/src/
-```
-
-## vlayer Integration Setup
-
-### vlayer TypeScript Configuration
-
-```json
+#### 1. vlayer Integration (Multi-Proof System)
+```typescript
+// vlayer SDK Configuration
 {
-  "compilerOptions": {
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "paths": {
-      "types/*": ["../../../packages/sdk/src/api/lib/types/*"]
+  "vlayer": {
+    "version": "latest",
+    "proofs": {
+      "mailProofs": "Organization domain verification via email",
+      "webProofs": "Patient portal and hospital system validation",
+      "zkProofs": "Privacy-preserving medical procedure validation"
+    },
+    "networks": ["anvil", "sepolia", "mainnet"],
+    "environment": "dev"
+  }
+}
+```
+
+**Features Implemented**:
+- **MailProofs**: Organization email domain verification without exposing email addresses
+- **WebProofs**: Patient portal and hospital system verification (planned)
+- **Multi-Proof Architecture**: Combined proof validation for maximum security
+- **Privacy Preservation**: Prove validity without revealing sensitive data
+
+#### 2. ERC-7824 Abstract Accounts (Nitrolite)
+```solidity
+// ERC-7824 Gateway Configuration
+contract ERC7824Gateway {
+    struct ERC7824ForwardRequest {
+        address from;
+        address to;
+        uint256 value;
+        uint256 gas;
+        uint256 nonce;
+        bytes data;
+        uint256 validUntilTime;
     }
+}
+```
+
+**Features Planned**:
+- **Sponsored Transactions**: Gas-free patient and hospital interactions
+- **Meta-Transaction Router**: Seamless UX without gas barriers
+- **Batch Operations**: Efficient bulk transaction processing
+- **Account Abstraction**: Simplified user experience
+
+#### 3. Flare FTSO Oracle Integration
+```solidity
+// Flare FTSO Price Integration
+interface IFlareFtsoV2 {
+    function getCurrentPrice(string memory symbol) 
+        external view returns (uint256 price, uint256 timestamp);
+}
+```
+
+**Features Planned**:
+- **Real-Time Pricing**: Live USD to USDC conversion for claims
+- **Dynamic Calculations**: Accurate claim amounts with live oracle data
+- **Multi-Currency Support**: Flexible pricing across different tokens
+- **Decentralized Oracles**: No reliance on centralized price feeds
+
+#### 4. thirdweb Authentication
+```typescript
+// thirdweb Configuration
+{
+  "thirdweb": {
+    "clientId": "your-client-id",
+    "secretKey": "your-secret-key",
+    "supportedWallets": ["metamask", "walletconnect", "coinbase"],
+    "supportedChains": [31337, 11155111], // anvil, sepolia
+    "authDomain": "zkmed.health"
   }
 }
 ```
 
-### vlayer Dependencies
+**Features Planned**:
+- **Social Login**: Easy onboarding with familiar authentication methods
+- **Wallet Abstraction**: Simplified wallet management for users
+- **Session Management**: Persistent user sessions across devices
+- **Account Binding**: Link social accounts to ERC-7824 abstract accounts
 
+---
+
+## 📦 Smart Contract Architecture
+
+### Core Contract Suite
+
+#### 1. RegistrationContract.sol [PRODUCTION READY] ✅
+```solidity
+contract RegistrationContract {
+    // Privacy-preserving patient registration
+    mapping(address => bytes32) public patientCommitments;
+    mapping(address => bool) public verified;
+    mapping(address => Role) public roles;
+    mapping(string => address) public domainToAddress;
+    
+    // Multi-owner system (up to 10 owners)
+    mapping(address => bool) public owners;
+    address[] public ownersList;
+    
+    // User activation system
+    mapping(address => bool) public activeUsers;
+}
+```
+
+**Features Implemented**:
+- Patient registration with privacy-preserving commitments
+- Organization verification via vlayer MailProofs
+- Multi-owner management system
+- Role-based access control (Patient, Hospital, Insurer, Admin)
+- Batch user activation/deactivation
+- Domain uniqueness enforcement
+
+#### 2. ERC7824Gateway.sol [PLANNED] 🔄
+```solidity
+contract ERC7824Gateway {
+    mapping(address => uint256) public nonces;
+    mapping(address => bool) public approvedSponsors;
+    
+    function execute(
+        ERC7824ForwardRequest calldata req,
+        bytes calldata signature
+    ) external;
+    
+    function batchExecute(
+        ERC7824ForwardRequest[] calldata requests,
+        bytes[] calldata signatures
+    ) external;
+}
+```
+
+**Features Planned**:
+- Meta-transaction execution with signature validation
+- Nonce management for replay protection
+- Gas sponsorship mechanisms
+- Batch operations support
+
+#### 3. Enhanced Claims Processing Suite [PLANNED] 🔄
+```solidity
+// PatientModule.sol - Enhanced patient operations
+contract PatientModule {
+    function uploadEncryptedEHR(string cid, bytes preKey) external;
+    function proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedCost) external;
+    function proposeOperationSponsored(ERC7824ForwardRequest req, bytes signature) external;
+}
+
+// ClaimProcessingContract.sol - Multi-proof validation
+contract ClaimProcessingContract {
+    function submitClaimWithMultiProof(
+        address patient,
+        bytes32 procedureCodeHash,
+        uint256 requestedUSD,
+        string encryptedEHRCID,
+        bytes ehrPREKey,
+        bytes zkProof,
+        bytes webProof,
+        bytes hospitalProof
+    ) external;
+}
+
+// InsuranceContract.sol - Advanced policy management
+contract InsuranceContract {
+    IFlareFtsoV2 public ftsoV2;
+    ERC7824Gateway public gateway;
+    
+    function createPolicy(address patient, string policyId, uint256 totalCoverageUSD) external;
+    function approveClaimSponsored(uint256 claimId, ERC7824ForwardRequest req) external;
+}
+```
+
+---
+
+## 🎨 Frontend Technology Stack
+
+### Next.js 15 Application Architecture
 ```json
 {
-  "name": "simple",
-  "module": "prove.ts",
-  "type": "module",
+  "name": "zkmed-frontend",
+  "version": "1.0.0",
   "dependencies": {
-    "@vlayer/sdk": "1.0.2",
-    "viem": "2.27.0",
-    "@vlayer/react": "1.0.2"
-  },
-  "devDependencies": {
-    "typescript": "^5.5.4",
-    "@types/bun": "^1.1.6",
-    "solhint": "5.0.5"
+    "next": "^15.0.0",
+    "@thirdweb-dev/react": "^4.0.0",
+    "@erc7824/nitrolite-client": "^1.0.0",
+    "vlayer-client": "^1.0.0",
+    "@flare-network/ftso-sdk": "^1.0.0",
+    "viem": "^2.0.0",
+    "wagmi": "^2.0.0"
   }
 }
 ```
 
-## Development Environment Setup
+### Key Frontend Features
 
-### Required Tools
+#### 1. thirdweb Authentication Integration
+```typescript
+// app/providers.tsx
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 
-1. **Node.js**: `18+` (LTS recommended)
-2. **Bun**: Latest for fast package management and TypeScript execution
-3. **Foundry**: Latest for smart contract development
-4. **Docker**: For vlayer devnet setup
-5. **Git**: Version control
-
-### Environment Variables
-
-```bash
-# .env (backend/vlayer/)
-VLAYER_ENV=dev|testnet|mainnet
-EXAMPLES_TEST_PRIVATE_KEY=<private_key_for_testing>
-
-# .env (frontend - future)
-NEXT_PUBLIC_THIRDWEB_CLIENT_ID=<thirdweb_client_id>
-NEXT_PUBLIC_CHAIN_ID=11155111  # Sepolia
-PRIVATE_RPC_URL=<private_rpc_endpoint>
-VLAYER_TOKEN=<vlayer_api_token>
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThirdwebProvider 
+      activeChain="ethereum"
+      clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
+      authConfig={{
+        domain: "zkmed.health",
+        authUrl: "/api/auth"
+      }}
+    >
+      {children}
+    </ThirdwebProvider>
+  );
+}
 ```
 
-### Local Development Commands
+#### 2. ERC-7824 Account Binding
+```typescript
+// lib/erc7824.ts
+import { bindAccount, ERC7824Client } from "@erc7824/nitrolite-client";
 
+export class zkMedERC7824Client {
+  async bindUserAccount(userAddress: string) {
+    return await bindAccount(provider, {
+      accountAddress: userAddress,
+      gatewayAddress: ERC_7824_GATEWAY,
+      chainId: 11155111 // Sepolia
+    });
+  }
+  
+  async submitSponsoredTransaction(tx: TransactionRequest) {
+    return await this.client.execute(tx);
+  }
+}
+```
+
+#### 3. vlayer Proof Generation
+```typescript
+// lib/vlayer.ts
+import { VlayerClient } from "vlayer-client";
+
+export class zkMedProofGenerator {
+  async generateMailProof(email: string, domain: string) {
+    return await this.vlayer.generateMailProof({
+      email,
+      domain,
+      targetWallet: userAddress
+    });
+  }
+  
+  async generateWebProof(portalUrl: string, selector: string) {
+    return await this.vlayer.generateWebProof({
+      url: portalUrl,
+      selector,
+      claim: "Patient has legitimate medical procedure"
+    });
+  }
+}
+```
+
+#### 4. Real-Time Price Integration
+```typescript
+// lib/flare.ts
+import { FtsoV2Client } from "@flare-network/ftso-sdk";
+
+export class zkMedPriceService {
+  async getUSDCPrice(): Promise<{ price: number; timestamp: number }> {
+    const result = await this.ftso.getCurrentPrice("USDC/USD");
+    return {
+      price: result.price,
+      timestamp: result.timestamp
+    };
+  }
+  
+  async convertUSDToUSDC(amountUSD: number): Promise<number> {
+    const { price } = await this.getUSDCPrice();
+    return (amountUSD * 1e18) / price;
+  }
+}
+```
+
+---
+
+## 🛠️ Development Environment
+
+### Local Development Setup
 ```bash
-# Smart Contract Development
+# Backend Setup (Foundry)
+git clone <zkmed-repo>
 cd backend
-forge build                    # Compile contracts
-forge test                     # Run test suite
-forge test --gas-report       # Test with gas reporting
+make install           # Install dependencies
+make build             # Compile contracts
+make test              # Run tests (53/53 passing)
+make deploy-local      # Deploy to anvil
 
-# vlayer Integration
-cd backend/vlayer
-bun install                    # Install dependencies
-bun run devnet:up             # Start local vlayer devnet
-bun run prove:dev             # Generate proofs locally
-bun run devnet:down           # Stop devnet
+# vlayer Setup
+make vlayer-setup      # Configure vlayer environment
+make vlayer-test       # Test email proof generation
 
-# Code Quality
-forge fmt                     # Format Solidity code
-bun run lint:solidity        # Lint contracts
+# Frontend Setup (Next.js)
+cd frontend
+npm install
+npm run dev
 ```
 
-## Current Implementation Status
+### Environment Configuration
+```env
+# Backend (.env)
+PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+JSON_RPC_URL=http://localhost:8545
+ETHERSCAN_API_KEY=your_etherscan_api_key
 
-### ✅ Completed Components
+# vlayer (.env.vlayer)
+VLAYER_ENV=dev
+PROVER_URL=http://localhost:3000
+CHAIN_NAME=anvil
+EXAMPLES_TEST_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
-1. **Basic Foundry Setup**
-   - Project structure with proper dependency management
-   - OpenZeppelin integration for security patterns
-   - forge-std for testing utilities
+# Frontend (.env.local)
+NEXT_PUBLIC_THIRDWEB_CLIENT_ID=your_client_id
+NEXT_PUBLIC_ERC7824_GATEWAY=0x...
+NEXT_PUBLIC_REGISTRATION_CONTRACT=0x5FbDB2315678afecb367f032d93F642f64180aa3
+NEXT_PUBLIC_CHAIN_ID=31337
+```
 
-2. **vlayer Integration Foundation**
-   - SDK integration with TypeScript configuration
-   - Example prover/verifier contracts (SimpleProver.sol, SimpleVerifier.sol)
-   - Docker devnet setup for local development
-   - Example proof generation script (prove.ts)
+### Testing Infrastructure
 
-3. **Smart Contract Examples**
-   - ERC20 token contract (ExampleToken.sol)
-   - ERC721 NFT contract (ExampleNFT.sol)
-   - Basic counter contract for testing
+#### 1. Foundry Test Suite
+```solidity
+// test/Registration.t.sol - 53 tests passing
+contract RegistrationTest is Test {
+    function testPatientRegistrationThroughContract() public { ... }
+    function testOrganizationEmailProofThroughContract() public { ... }
+    function testMultiOwnerSystemThroughContract() public { ... }
+    // ... 50 more tests
+}
+```
 
-### 🚧 In Development
+#### 2. vlayer Integration Tests
+```typescript
+// vlayer/proveEmailDomain.ts
+describe('vlayer Email Proof Integration', () => {
+  it('should generate valid email proofs for organizations', async () => {
+    const proof = await generateEmailProof('mountsinai.org');
+    expect(proof).toBeDefined();
+    expect(proof.domain).toBe('mountsinai.org');
+  });
+});
+```
 
-1. **RegistrationContract**
-   - Patient commitment registration
-   - Organization domain verification
-   - Role-based access control
-   - vlayer email proof integration
+#### 3. Frontend Component Tests
+```typescript
+// __tests__/components/ClaimSubmission.test.tsx
+import { render, screen } from '@testing-library/react';
+import { ClaimSubmission } from '@/components/ClaimSubmission';
 
-2. **Email Proof Workflow**
-   - Domain verification through vlayer
-   - Proof generation and verification
-   - Error handling and retry mechanisms
+describe('ClaimSubmission', () => {
+  it('should handle sponsored transaction submission', async () => {
+    // Test ERC-7824 sponsored transaction flow
+  });
+});
+```
 
-### 📋 Planned Implementation
+---
 
-1. **Core Smart Contracts**
-   - ClaimContract for health insurance claims processing
-   - InsuranceContract for policy management
-   - MeritsContract for reward system
+## 🔐 Security & Privacy Infrastructure
 
-2. **Frontend Application**
-   - Next.js 15+ with App Router
-   - Thirdweb authentication integration
-   - Server Actions for secure blockchain interactions
+### Privacy Preservation Mechanisms
 
-3. **Oracle Integration**
-   - Flare Data Connector for policy rules
-   - FTSO integration for real-time pricing
-   - Blockscout API for merit tracking
+#### 1. Commitment-Reveal Pattern
+```solidity
+// Patient registration without exposing personal data
+bytes32 commitment = keccak256(abi.encodePacked(secret, patientAddress));
+patientCommitments[commitment] = true;
+```
 
-## Development Workflow
+#### 2. Encrypted Storage
+```typescript
+// IPFS + AES encryption for medical records
+const encryptedEHR = await encrypt(medicalRecord, aesKey);
+const cid = await ipfs.add(encryptedEHR);
+const preKey = generatePREKey(aesKey); // Proxy re-encryption key
+```
 
-### Smart Contract Development
+#### 3. Zero-Knowledge Proofs
+```typescript
+// vlayer ZK proof: "EHR contains valid procedure" without revealing details
+const zkProof = await vlayer.generateZKProof({
+  circuit: "procedure_validation",
+  inputs: { encryptedEHR, allowedCodes },
+  outputs: ["isValidProcedure", "procedureHash"]
+});
+```
 
-1. **Development Cycle**
-   ```bash
-   # Write contracts in src/
-   forge build              # Compile
-   forge test               # Test
-   forge test --fork-url $RPC_URL  # Fork testing
-   ```
+### Security Patterns
 
-2. **Testing Strategy**
-   - Unit tests for all contract functions
-   - Integration tests with vlayer proofs
-   - Fuzzing for edge cases
-   - Gas optimization testing
+#### 1. Multi-Signature Governance
+```solidity
+mapping(address => bool) public owners;
+uint256 public constant REQUIRED_CONFIRMATIONS = 3;
+```
 
-3. **Deployment Process**
-   ```bash
-   # Deploy to testnet
-   forge script script/Deploy.s.sol --rpc-url sepolia --broadcast
-   
-   # Verify contracts
-   forge verify-contract <address> <contract> --chain sepolia
-   ```
+#### 2. Role-Based Access Control
+```solidity
+enum Role { Patient, Hospital, Insurer, Admin }
+mapping(address => Role) public roles;
+mapping(address => bool) public verified;
+```
 
-### vlayer Proof Development
+#### 3. Reentrancy Protection
+```solidity
+uint256 private constant _NOT_ENTERED = 1;
+uint256 private constant _ENTERED = 2;
+uint256 private _status;
 
-1. **Local Development**
-   ```bash
-   cd backend/vlayer
-   bun run devnet:up        # Start local infrastructure
-   bun run prove:dev        # Test proof generation
-   ```
+modifier nonReentrant() {
+    require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+    _status = _ENTERED;
+    _;
+    _status = _NOT_ENTERED;
+}
+```
 
-2. **Testing Against vlayer Networks**
-   ```bash
-   bun run prove:testnet    # Test on vlayer testnet
-   bun run prove:mainnet    # Production proofs
-   ```
+---
 
-## Security Considerations
+## 📊 Performance & Monitoring
 
-### Smart Contract Security
+### Gas Optimization Strategies
+- **Packed Structs**: Minimize storage slots usage
+- **Batch Operations**: Process multiple operations in single transaction
+- **Event-Driven Architecture**: Use events for off-chain indexing
+- **Proxy Patterns**: Enable upgradeable contracts
 
-1. **Dependency Management**
-   - Pin exact versions in soldeer.lock
-   - Regular security audits of dependencies
-   - Use OpenZeppelin for battle-tested patterns
+### Monitoring Infrastructure
+```typescript
+// Event monitoring for real-time analytics
+const events = {
+  ClaimProcessed: "Track successful claims",
+  ProofValidated: "Monitor proof validation success rates", 
+  SponsoredTransaction: "Track gas sponsorship usage",
+  OrganizationRegistered: "Monitor organization onboarding"
+};
+```
 
-2. **Testing Requirements**
-   - 100% test coverage for critical functions
-   - Property-based testing with fuzzing
-   - Integration tests with realistic scenarios
+### Performance Metrics
+- **Transaction Confirmation Time**: < 15 seconds on Sepolia
+- **Gas Usage**: Optimized for cost-effective operations
+- **Proof Generation Time**: < 30 seconds for vlayer proofs
+- **Frontend Load Time**: < 2 seconds with Next.js optimization
 
-3. **Access Control**
-   - Role-based permissions with verification requirements
-   - Time-locked admin functions for critical changes
-   - Multi-signature requirements for high-value operations
+---
 
-### Privacy & Data Protection
+## 🚀 Deployment Architecture
 
-1. **On-Chain Data Minimization**
-   - Only store essential verification data
-   - Use events for audit trails without personal data
-   - Hash commitments for patient privacy
+### Multi-Environment Setup
 
-2. **Off-Chain Data Handling**
-   - Encrypted storage for temporary data
-   - Zero-knowledge proof generation
-   - Secure communication with vlayer services
+#### 1. Local Development (Anvil)
+```bash
+# Anvil local testnet
+anvil --host 0.0.0.0 --port 8545 --chain-id 31337
+```
 
-## Performance & Optimization
+#### 2. Testnet Deployment (Sepolia)
+```bash
+# Deploy to Sepolia testnet
+forge script script/DeployRegistration.s.sol --rpc-url sepolia --broadcast
+```
 
-### Gas Optimization Targets
+#### 3. Production Deployment (Mainnet)
+```bash
+# Production deployment with additional security checks
+forge script script/DeployRegistration.s.sol --rpc-url mainnet --broadcast --verify
+```
 
-- Patient registration: < 50k gas
-- Organization verification: < 100k gas
-- Claim processing: < 150k gas
-- Batch operations for efficiency
+### Contract Verification
+```bash
+# Automatic contract verification on Etherscan/Blockscout
+forge verify-contract <contract-address> RegistrationContract --chain sepolia
+```
 
-### Proof Generation Performance
+---
 
-- Email proof generation: < 30 seconds
-- Web proof generation: < 60 seconds
-- Local caching for repeated proofs
-- Progressive enhancement for better UX
+## 🔧 Development Tools & Utilities
 
-## Deployment Architecture
+### Code Quality Tools
+- **Solhint**: Solidity linting and style checking
+- **Prettier**: Code formatting for TypeScript/JavaScript
+- **ESLint**: JavaScript/TypeScript linting
+- **Slither**: Static analysis for smart contracts
 
-### Development Environment
-- **Local Anvil**: For rapid iteration
-- **vlayer Devnet**: For proof testing
-- **Local Next.js**: For frontend development
+### Export & Integration Tools
+```javascript
+// scripts/export-abis.cjs - Frontend integration
+const CONTRACTS = ['RegistrationContract'];
+// Generates: exports/RegistrationContract.json, deployment-local.json, index.ts
+```
 
-### Staging Environment
-- **Ethereum Sepolia**: For integration testing
-- **vlayer Testnet**: For proof validation
-- **Vercel Preview**: For frontend testing
+### vlayer Development Tools
+```typescript
+// vlayer/proveEmailDomain.ts - Email proof testing
+export async function testEmailProof(domain: string): Promise<EmailProofResult> {
+  // Integration with vlayer SDK for proof generation
+}
+```
 
-### Production Environment
-- **Ethereum Mainnet**: For live operations
-- **vlayer Mainnet**: For production proofs
-- **Vercel Production**: For user-facing application
-
-## Monitoring & Analytics
-
-### Smart Contract Monitoring
-- Event indexing with The Graph or similar
-- Gas usage tracking and optimization
-- Error rate monitoring and alerting
-
-### Application Performance
-- Frontend performance monitoring
-- Proof generation success rates
-- User experience analytics
-
-### Security Monitoring
-- Contract interaction analysis
-- Anomaly detection for unusual patterns
-- Automated security scanning
-
-This technical context provides the foundation for consistent development practices and ensures all team members understand the technology choices and constraints of the zkMed platform. 
+This comprehensive technical stack enables zkMed to deliver a privacy-preserving, user-friendly healthcare platform with advanced Web3 features including sponsored transactions, multi-proof validation, real-time pricing, and seamless authentication. 🚀 

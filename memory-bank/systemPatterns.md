@@ -1,862 +1,408 @@
-# System Patterns - zkMed Technical Architecture
+# System Patterns - zkMed Advanced Web3 Architecture
 
 ## Overall Architecture Pattern
 
-### Multi-Layer Privacy-First Design
+### Comprehensive Multi-Layer Privacy-First Design
 
-zkMed implements a **Layered Privacy Architecture** where each layer maintains specific privacy guarantees:
+zkMed implements a **Layered Privacy Architecture** with advanced Web3 integrations where each layer maintains specific privacy guarantees while enabling seamless user experience through sponsored transactions and multi-proof validation.
 
+## 🏗️ Complete System Integration Diagram
+
+```mermaid
+flowchart TD
+
+  %% Onboarding Layer
+  subgraph Onboarding & Identity
+    A1[Patient]
+    A2[Hospital]
+    A3[Insurer]
+    RC[RegistrationContract]
+    ED[EmailDomainProver]
+  end
+
+  %% Claims Layer
+  subgraph Claims & Approvals
+    CP[ClaimProcessingContract]
+    IC[InsuranceContract]
+    GW[ERC7824Gateway]
+    ZKV[ZKVerifier]
+  end
+
+  %% Off-chain Infra
+  subgraph Off-Chain Proofs
+    IPFS[Encrypted EHR on IPFS]
+    ZK[ZK-SNARK of Covered Procedure]
+    FTSO[Flare Oracle (USD → USDC)]
+    PRE[Proxy Re-Encryption Key]
+    WP[WebProofs from Patient Portal]
+    MP[MailProofs from Organization Email]
+  end
+
+  %% Execution Layer
+  subgraph Payment & Escrow
+    USDC[Stablecoin (USDC)]
+    HWallet[Hospital Wallet]
+    TWAuth[thirdweb Authentication]
+  end
+
+  %% Relationships
+
+  %% Identity Setup
+  A1 -->|registerPatient(commitment)| RC
+  A1 -->|thirdweb social login| TWAuth
+  A2 -->|MailProof| ED --> RC
+  A2 -->|WebProof validation| WP --> RC
+  A3 -->|MailProof| ED --> RC
+  A3 -->|Sponsored registration| GW --> RC
+
+  %% Claim Submission
+  A2 -->|Encrypted EHR to IPFS| IPFS
+  A2 -->|ZK Proof| ZK --> CP
+  A2 -->|WebProof| WP --> CP
+  CP -->|verifyZKProof| ZKV
+  CP -->|verifyWebProof| WP
+  CP -->|check Role: Hospital| RC
+  CP -->|fetch USD price| FTSO
+  CP -->|submitClaim(...)| IC
+
+  %% Sponsored Transactions
+  A1 -->|sponsored claim proposal| GW
+  A2 -->|sponsored claim submission| GW
+  GW -->|execute meta-transactions| CP
+  GW -->|execute meta-transactions| IC
+
+  %% Claim Evaluation
+  A3 -->|sponsored approveClaim(tx)| GW
+  GW -->|execute(...)| IC
+
+  IC -->|escrow payout| USDC
+  IC -->|escrow balance| HWallet
+  HWallet -->|withdrawPayout()| USDC
+
+  %% Final Confirmation
+  A2 -->|confirmOperation| IC
+  A1 -->|confirmOperation| IC
+  
+  %% Authentication Layer
+  TWAuth -->|account binding| GW
+  TWAuth -->|session management| A1
+  TWAuth -->|wallet abstraction| A2
+  TWAuth -->|social login| A3
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Application Layer                        │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
-│  │   Next.js UI    │  │  Thirdweb Auth  │  │   Mobile    │ │
-│  │   Components    │  │   (SIWE)        │  │    PWA      │ │
-│  └─────────────────┘  └─────────────────┘  └─────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                   Integration Layer                         │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
-│  │ Server Actions  │  │  vlayer Client  │  │    Flare    │ │
-│  │  (Private RPC)  │  │ (Email Proofs)  │  │  Oracles    │ │
-│  └─────────────────┘  └─────────────────┘  └─────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                   Blockchain Layer                          │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
-│  │ Registration    │  │     Claims      │  │   Merits    │ │
-│  │   Contract      │  │   Contract      │  │  Contract   │ │
-│  └─────────────────┘  └─────────────────┘  └─────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
 
-## Core Smart Contract Patterns
+## 🧠 Complete Contract Roles & Responsibilities
 
-### 1. Role-Based Access Control (RBAC)
+| Contract | Primary Role | Key Features | Integrations |
+|----------|-------------|--------------|--------------|
+| **RegistrationContract** | Identity/role management via multi-proof | Patient commitments, organization MailProofs, ERC-7824 compatibility | vlayer MailProofs, ERC-7824 Gateway, thirdweb |
+| **EmailDomainProver** | Verifies organization domain ownership (ZK) | Email-based domain verification without exposing emails | vlayer SDK, RegistrationContract |
+| **ERC7824Gateway** | Executes sponsored meta-transactions | Gas-free interactions, batch operations, nonce management | All contracts, thirdweb authentication |
+| **PatientModule** | Patient EHR & WebProof management | Encrypted EHR storage, WebProof operation proposals | vlayer WebProofs, ERC-7824, IPFS |
+| **OrganizationModule** | Hospital/insurer multi-proof operations | WebProof validation, multi-proof claim submissions | vlayer WebProofs, ERC-7824 Gateway |
+| **ClaimProcessingContract** | ZK proof gatekeeper + multi-proof validator | ZK+Web+Mail proof validation, FTSO price conversion | vlayer proofs, Flare FTSO, ERC-7824 |
+| **InsuranceContract** | Policy management, claims approval, escrow | Real-time pricing, sponsored approvals, USDC payouts | Flare FTSO, ERC-7824, USDC token |
+| **ZKVerifier** | Verifies ZK-SNARKs (Circom-based) | Privacy-preserving procedure validation | ClaimProcessingContract, vlayer |
+
+---
+
+## Advanced Integration Patterns
+
+### 1. Multi-Proof Validation Architecture
 
 ```solidity
-// Base pattern for all contracts
-contract RoleBasedContract {
-    enum Role { Patient, Hospital, Insurer, Admin }
-    
-    mapping(address => Role) public roles;
-    mapping(address => bool) public verified;
-    
-    modifier onlyRole(Role _role) {
-        require(roles[msg.sender] == _role, "Unauthorized role");
-        require(verified[msg.sender], "Address not verified");
-        _;
-    }
-}
-```
-
-**Key Design Decisions:**
-- Single role per address for clarity
-- Verification requirement separate from role assignment
-- Immutable once set (prevents role hijacking)
-
-### 2. Commitment-Reveal Pattern for Privacy
-
-```solidity
-contract PrivacyCommitment {
-    mapping(address => bytes32) public commitments;
-    
-    function registerPatient(bytes32 _commitment) external {
-        require(commitments[msg.sender] == bytes32(0), "Already registered");
-        commitments[msg.sender] = _commitment;
-        emit PatientRegistered(msg.sender, _commitment);
+contract MultiProofValidator {
+    struct ProofBundle {
+        bytes zkProof;        // Privacy-preserving procedure validation
+        bytes webProof;       // Patient portal verification
+        bytes mailProof;      // Organization domain ownership
+        bytes32 combinedHash; // Hash of all proofs combined
     }
     
-    // Local computation: keccak256(abi.encodePacked(secret, msg.sender))
-    function verifyCommitment(string memory _secret) external view returns (bool) {
-        bytes32 computed = keccak256(abi.encodePacked(_secret, msg.sender));
-        return commitments[msg.sender] == computed;
-    }
-}
-```
-
-**Privacy Guarantees:**
-- No personal data stored on-chain
-- Only patient can reveal their commitment
-- Secret remains local to patient's device
-
-### 3. Event-Driven Audit Trail
-
-```solidity
-contract AuditableContract {
-    event OrganizationRegistered(
-        address indexed organization,
-        string domain,
-        Role role,
-        uint256 timestamp
-    );
-    
-    event ClaimSubmitted(
-        address indexed patient,
-        bytes32 indexed claimHash,
-        uint256 timestamp
-    );
-    
-    event ClaimProcessed(
-        bytes32 indexed claimHash,
-        bool approved,
-        uint256 amount,
-        uint256 timestamp
-    );
-}
-```
-
-**Audit Benefits:**
-- Complete transaction history
-- No personal data in events
-- Blockchain-native immutability
-- Easy indexing for analytics
-
-## vlayer Integration Patterns
-
-### 1. Email Proof Architecture
-
-```typescript
-// vlayer email proof workflow
-class EmailProofService {
-    async generateEmailProof(domain: string): Promise<EmailProofData> {
-        // 1. vlayer sends email token to admin@domain
-        const emailToken = await vlayer.sendEmailToken(`admin@${domain}`);
+    function validateMultiProof(ProofBundle calldata proofs) external returns (bool) {
+        bool zkValid = zkVerifier.verify(proofs.zkProof);
+        bool webValid = webProofVerifier.verify(proofs.webProof);
+        bool mailValid = mailProofVerifier.verify(proofs.mailProof);
         
-        // 2. User pastes token back
-        const userProvidedToken = await this.getUserInput();
-        
-        // 3. Generate proof without exposing email
-        const proof = await vlayer.generateEmailProof({
-            domain,
-            token: userProvidedToken,
-            claimedEmail: `admin@${domain}`
-        });
-        
-        return proof;
+        require(zkValid && webValid && mailValid, "Multi-proof validation failed");
+        return true;
     }
 }
 ```
 
-**Privacy Preservation:**
-- Email address never stored on-chain
-- Only domain ownership proven
-- vlayer handles sensitive email interaction
+**Security Benefits:**
+- Multiple proof types prevent single point of failure
+- Cross-validation ensures claim legitimacy
+- Privacy preservation through ZK components
+- Domain ownership verification prevents impersonation
 
-### 2. Web Proof Pattern (Future)
-
-```solidity
-contract DomainVerifier {
-    mapping(address => string) public verifiedDomains;
-    
-    function verifyDomainWithWebProof(
-        Proof calldata webProof,
-        string calldata domain
-    ) external onlyVerified(VLAYER_WEB_PROVER, WebProver.verifyDomain.selector) {
-        // vlayer web proof confirms domain still hosts expected JSON
-        verifiedDomains[msg.sender] = domain;
-        emit DomainVerified(msg.sender, domain);
-    }
-}
-```
-
-## Data Flow Patterns
-
-### 1. Patient Registration Flow
+### 2. ERC-7824 Sponsored Transaction Flow
 
 ```mermaid
 sequenceDiagram
     participant P as Patient
-    participant W as Wallet
-    participant F as Frontend
-    participant SC as Smart Contract
+    participant I as Insurer (Sponsor)
+    participant G as ERC7824Gateway
+    participant C as ClaimProcessingContract
+    participant T as thirdweb Auth
     
-    P->>W: Connect Wallet (Thirdweb)
-    W->>F: SIWE Authentication
-    F->>P: Request Passphrase
-    P->>F: Enter Secret Passphrase
-    F->>F: Generate Commitment = keccak256(secret + address)
-    F->>SC: registerPatient(commitment)
-    SC->>SC: Store commitment mapping
-    SC-->>F: PatientRegistered event
+    P->>T: Social login
+    T->>P: Session established
+    P->>P: Generate claim request
+    P->>I: Request sponsorship
+    I->>G: Sign meta-transaction
+    G->>G: Validate signature & nonce
+    G->>C: Execute sponsored claim
+    C->>C: Validate proofs & pricing
+    C-->>P: Claim submitted (gas-free)
 ```
 
-**Security Properties:**
-- Secret never leaves patient's device
-- On-chain commitment provides verifiable identity
-- No reversible data stored publicly
+**UX Benefits:**
+- Gas-free patient interactions
+- Seamless onboarding via social login
+- Sponsored operations reduce barriers
+- Batch transactions optimize costs
 
-### 2. Organization Verification Flow
-
-```mermaid
-sequenceDiagram
-    participant O as Organization
-    participant F as Frontend
-    participant V as vlayer
-    participant E as Email System
-    participant SC as Smart Contract
-    
-    O->>F: Enter Organization Details
-    F->>V: Request Email Proof for domain
-    V->>E: Send token to admin@domain
-    E->>O: Email with verification token
-    O->>F: Paste verification token
-    F->>V: Submit token for proof generation
-    V->>F: Return email proof
-    F->>SC: verifyEmailProof(proof, domain)
-    SC->>SC: Verify proof and register organization
-```
-
-## State Management Patterns
-
-### 1. On-Chain State Minimization
-
-```solidity
-contract RegistrationContract {
-    // STORE: Only essential verification data
-    mapping(address => bytes32) public patientCommitments;
-    mapping(address => string) public organizationDomains;
-    mapping(address => Role) public roles;
-    
-    // DON'T STORE: Personal data, email addresses, medical records
-    // EMIT EVENTS: For off-chain indexing and analytics
-}
-```
-
-### 2. Off-Chain Data Coordination
-
-```typescript
-// Server-side coordination without exposing private keys
-class ContractInteraction {
-    async submitTransaction(
-        userAddress: string,
-        contractCall: ContractCall
-    ): Promise<TransactionResult> {
-        // Use server's RPC endpoint (private)
-        const result = await this.ethClient.writeContract({
-            address: contractCall.address,
-            abi: contractCall.abi,
-            functionName: contractCall.functionName,
-            args: contractCall.args,
-            account: userAddress // User signs, server submits
-        });
-        
-        return result;
-    }
-}
-```
-
-## Error Handling Patterns
-
-### 1. Graceful Proof Failures
-
-```solidity
-contract ProofVerifier {
-    function verifyEmailProof(
-        Proof calldata proof,
-        string calldata domain
-    ) external {
-        try this.vlayerVerify(proof) {
-            // Success path: register organization
-            _registerOrganization(msg.sender, domain);
-        } catch Error(string memory reason) {
-            // Graceful failure: emit event for retry
-            emit ProofVerificationFailed(msg.sender, domain, reason);
-            revert(string(abi.encodePacked("Proof failed: ", reason)));
-        }
-    }
-}
-```
-
-### 2. Frontend Error Recovery
-
-```typescript
-class ClaimSubmissionService {
-    async submitClaim(claimData: ClaimData): Promise<ClaimResult> {
-        try {
-            // Attempt primary flow
-            return await this.submitWithProof(claimData);
-        } catch (ProofGenerationError) {
-            // Fallback: queue for manual review
-            return await this.queueForManualReview(claimData);
-        } catch (NetworkError) {
-            // Retry mechanism
-            return await this.retryWithBackoff(claimData);
-        }
-    }
-}
-```
-
-## Gas Optimization Patterns
-
-### 1. Batch Operations
-
-```solidity
-contract GasOptimizedClaims {
-    struct ClaimBatch {
-        bytes32[] claimHashes;
-        uint256[] amounts;
-        bool[] approvals;
-    }
-    
-    function processBatchClaims(ClaimBatch calldata batch) external {
-        require(
-            batch.claimHashes.length == batch.amounts.length &&
-            batch.amounts.length == batch.approvals.length,
-            "Mismatched batch lengths"
-        );
-        
-        for (uint256 i = 0; i < batch.claimHashes.length; i++) {
-            _processSingleClaim(
-                batch.claimHashes[i],
-                batch.amounts[i],
-                batch.approvals[i]
-            );
-        }
-    }
-}
-```
-
-### 2. Storage Optimization
-
-```solidity
-contract StorageOptimized {
-    // Pack multiple values into single storage slot
-    struct PackedRegistration {
-        address user;      // 20 bytes
-        uint32 timestamp;  // 4 bytes
-        Role role;         // 1 byte (enum)
-        bool verified;     // 1 byte
-        // Total: 26 bytes < 32 bytes (1 storage slot)
-    }
-    
-    mapping(bytes32 => PackedRegistration) public registrations;
-}
-```
-
-## Integration Patterns
-
-### 1. Oracle Integration (Flare)
+### 3. Real-Time Price Integration Pattern
 
 ```solidity
 contract FlareIntegration {
-    IFlarePriceOracle public priceOracle;
-    IFlareDataConnector public dataConnector;
+    IFlareFtsoV2 public ftsoV2;
     
-    function getClaimCost(
-        string calldata procedureCode
-    ) external view returns (uint256) {
-        // Get current market price for procedure
-        uint256 baseCost = dataConnector.getDataFeed("MEDICAL_PROCEDURES", procedureCode);
-        
-        // Apply regional cost adjustments
-        uint256 adjustment = priceOracle.getPrice("HEALTHCARE_CPI");
-        
-        return (baseCost * adjustment) / 1e18;
+    function getRealtimeUSDCPrice() external view returns (uint256 price, uint256 timestamp) {
+        (price, timestamp) = ftsoV2.getCurrentPrice("USDC/USD");
+        require(block.timestamp - timestamp < 300, "Price too stale"); // 5 min max
+        return (price, timestamp);
+    }
+    
+    function convertUSDToTokens(uint256 usdAmount) external view returns (uint256 tokens) {
+        (uint256 price,) = getRealtimeUSDCPrice();
+        // price is 8 decimals, USDC is 18 decimals
+        return (usdAmount * 1e18 * 1e8) / price;
     }
 }
 ```
 
-### 2. Merit System Integration (Blockscout)
+**Oracle Benefits:**
+- Decentralized price feeds
+- Real-time accuracy within 5 minutes
+- Protection against stale data
+- Multi-currency support capability
 
-```typescript
-class MeritSystemClient {
-    async creditMerits(userAddress: string, amount: number): Promise<void> {
-        // 1. Mint merit tokens on-chain
-        await this.meritContract.mint(userAddress, amount);
-        
-        // 2. Notify Blockscout for indexing
-        await this.blockscoutApi.notifyMeritUpdate({
-            address: userAddress,
-            amount: amount,
-            reason: 'CLAIM_PROCESSED'
-        });
-    }
-    
-    async getMeritsBalance(userAddress: string): Promise<number> {
-        // Query Blockscout API for formatted display
-        const balance = await this.blockscoutApi.getMeritsBalance(userAddress);
-        return balance.totalMerits;
-    }
-}
-```
-
-## Security Patterns
-
-### 1. Reentrancy Protection
-
-```solidity
-contract ReentrancyGuarded {
-    uint256 private constant _NOT_ENTERED = 1;
-    uint256 private constant _ENTERED = 2;
-    uint256 private _status;
-    
-    modifier nonReentrant() {
-        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
-        _status = _ENTERED;
-        _;
-        _status = _NOT_ENTERED;
-    }
-    
-    function processClaimPayout(bytes32 claimHash) external nonReentrant {
-        // Safe payout logic
-        _transferFunds(claimHash);
-    }
-}
-```
-
-### 2. Access Control Layering
-
-```solidity
-contract LayeredAccessControl {
-    modifier onlyVerifiedInsurer() {
-        require(roles[msg.sender] == Role.Insurer, "Not insurer");
-        require(verified[msg.sender], "Not verified");
-        require(block.timestamp <= verificationExpiry[msg.sender], "Verification expired");
-        _;
-    }
-}
-```
-
-## Testing Patterns
-
-### 1. Proof Testing Strategy
-
-```typescript
-describe('vlayer Email Proof Integration', () => {
-    it('should verify valid domain ownership', async () => {
-        // Mock vlayer response
-        const mockProof = generateMockEmailProof('example.com');
-        
-        // Test contract verification
-        const result = await registrationContract.verifyEmailProof(
-            mockProof,
-            'example.com'
-        );
-        
-        expect(result).to.emit('OrganizationRegistered');
-    });
-});
-```
-
-### 2. Privacy Testing
-
-```typescript
-describe('Privacy Guarantees', () => {
-    it('should never expose personal data on-chain', async () => {
-        const secret = 'patient-secret-123';
-        const commitment = generateCommitment(secret, patientAddress);
-        
-        await registrationContract.registerPatient(commitment);
-        
-        // Verify no personal data in storage
-        const onChainData = await getAllContractStorage(registrationContract);
-        expect(onChainData).to.not.include(secret);
-        expect(onChainData).to.not.include('patient-secret');
-    });
-});
-```
-
-These patterns establish a robust, privacy-preserving architecture that can scale with the platform's growth while maintaining security and user trust. 
-
-## 🏗️ EXPANDED SYSTEM ARCHITECTURE
-
-### Evolution: Registration → Full Claims Platform
-**Phase 1**: Privacy-preserving registration (✅ COMPLETED)  
-**Phase 2**: Claims processing with ZK proofs (🚧 CURRENT)  
-**Phase 3**: Full healthcare ecosystem (📋 PLANNED)
-
----
-
-## 🔧 CORE CONTRACT ARCHITECTURE
-
-### 1. RegistrationContract.sol [PRODUCTION READY] ✅
-**Pattern**: Commitment-Reveal Registration
-**Purpose**: Privacy-preserving identity verification
-**Integration**: vlayer EmailDomainProver for organization verification
-
-```solidity
-// Privacy pattern: Store only commitments, never personal data
-function registerPatient(bytes32 commitment) external {
-    require(!patientCommitments[commitment], "Commitment already used");
-    patientCommitments[commitment] = true;
-    patientAddresses[msg.sender] = commitment;
-    emit PatientRegistered(msg.sender, commitment);
-}
-```
-
-### 2. ClaimProcessingContract.sol [NEW - CORE INNOVATION] 🚧
-**Pattern**: Zero-Knowledge Claims Validation
-**Purpose**: Validate medical claims without exposing procedure details
-**Integration**: vlayer ZK proofs + Flare FTSO pricing
-
-```solidity
-contract ClaimProcessingContract {
-    struct ClaimSubmission {
-        address patient;
-        address hospital;
-        bytes32 procedureCodeHash;     // Only hash, never plaintext
-        uint256 requestedAmountUSD;
-        string encryptedEHRCID;        // IPFS CID of encrypted medical record
-        bytes ehrPREKey;               // Proxy re-encryption for post-approval access
-        bytes zkProof;                 // vlayer proof: "encrypted EHR contains valid procedure"
-    }
-    
-    function submitClaim(ClaimSubmission memory submission) external onlyRegisteredHospital {
-        // 1. Verify ZK proof with vlayer
-        require(vlayerVerifier.verifyProcedureProof(submission.zkProof), "Invalid procedure proof");
-        
-        // 2. Get real-time price from Flare FTSO
-        uint256 usdcRate = flareOracle.getPrice("USD", "USDC");
-        uint256 tokenAmount = (submission.requestedAmountUSD * 1e18) / usdcRate;
-        
-        // 3. Forward to insurance contract
-        insuranceContract.submitClaim(
-            submission.patient,
-            submission.hospital,
-            submission.procedureCodeHash,
-            tokenAmount,
-            submission.encryptedEHRCID,
-            submission.ehrPREKey
-        );
-        
-        emit ClaimProcessed(submission.patient, submission.hospital, tokenAmount);
-    }
-}
-```
-
-### 3. InsuranceContract.sol [NEW - POLICY ENGINE] 🚧
-**Pattern**: On-Chain Policy Management with Privacy
-**Purpose**: Manage coverage, approve claims, handle payouts
-**Integration**: MeritsToken minting for successful claims
-
-```solidity
-contract InsuranceContract {
-    struct Policy {
-        uint256 totalCoverage;         // e.g. $10,000 annual limit
-        uint256 usedCoverage;          // e.g. $3,000 already claimed
-        address patientAddress;
-        bytes32 policyIdHash;          // keccak256(policyNumber) - never store plaintext
-        string policyMetadataCID;      // IPFS CID → encrypted policy details
-        bool isActive;
-        uint256 createdAt;
-    }
-    
-    struct Claim {
-        uint256 claimId;
-        address patientAddress;
-        address hospitalAddress;
-        bytes32 procedureCodeHash;      // Hashed procedure code
-        uint256 requestedAmount;        // In on-chain tokens (USDC)
-        string encryptedEHRCID;         // IPFS CID of encrypted medical record
-        bytes ehrPREKey;                // For decryption after approval
-        ClaimStatus status;             // Submitted, Approved, Rejected, Paid
-        uint256 submissionTimestamp;
-        uint256 reviewTimestamp;
-    }
-    
-    function approveClaim(uint256 claimId) external onlyRegisteredInsurer {
-        Claim storage claim = claims[claimId];
-        Policy storage policy = policies[claim.patientAddress];
-        
-        require(claim.status == ClaimStatus.Submitted, "Invalid claim status");
-        require(policy.isActive, "Policy not active");
-        require(policy.usedCoverage + claim.requestedAmount <= policy.totalCoverage, "Insufficient coverage");
-        
-        // Update policy usage
-        policy.usedCoverage += claim.requestedAmount;
-        
-        // Credit hospital escrow
-        hospitalEscrowBalance[claim.hospitalAddress] += claim.requestedAmount;
-        
-        // Mint merit rewards (Blockscout integration)
-        meritsToken.mintClaimRewards(
-            claim.patientAddress,
-            claim.hospitalAddress,
-            claim.requestedAmount
-        );
-        
-        // Update claim status
-        claim.status = ClaimStatus.Approved;
-        claim.reviewTimestamp = block.timestamp;
-        
-        emit ClaimApproved(claimId, claim.requestedAmount);
-    }
-}
-```
-
-### 4. MeritsTokenContract.sol [NEW - BLOCKSCOUT INTEGRATION] 🚧
-**Pattern**: Merit-Based Rewards System
-**Purpose**: Incentivize successful claims processing
-**Integration**: Blockscout Merits API for frontend display
-
-```solidity
-contract MeritsTokenContract is ERC20 {
-    address public insuranceContract;
-    
-    // Merit calculation constants
-    uint256 public constant PATIENT_MERIT_RATE = 10;  // 10 merits per $100 claimed
-    uint256 public constant HOSPITAL_MERIT_RATE = 5;  // 5 merits per $100 processed
-    
-    function mintClaimRewards(
-        address patient,
-        address hospital,
-        uint256 claimAmountUSD
-    ) external onlyInsuranceContract {
-        uint256 patientMerits = (claimAmountUSD * PATIENT_MERIT_RATE) / 100;
-        uint256 hospitalMerits = (claimAmountUSD * HOSPITAL_MERIT_RATE) / 100;
-        
-        _mint(patient, patientMerits);
-        _mint(hospital, hospitalMerits);
-        
-        emit MeritsMinted(patient, patientMerits, "PATIENT_CLAIM_REWARD");
-        emit MeritsMinted(hospital, hospitalMerits, "HOSPITAL_PROCESSING_REWARD");
-    }
-    
-    // Blockscout Merits API compatibility
-    function getUserMerits(address user) external view returns (uint256) {
-        return balanceOf(user);
-    }
-    
-    function getUserMeritsHistory(address user) external view returns (MeritTransaction[] memory) {
-        // Return transaction history for Blockscout Merits display
-    }
-}
-```
-
----
-
-## 🔐 PRIVACY ARCHITECTURE PATTERNS
-
-### 1. Zero-Knowledge Claims Validation
-**Innovation**: Prove procedure validity without revealing procedure details
-
-```mermaid
-flowchart LR
-    subgraph Hospital
-        EHR[Medical Record] --> ENCRYPT[AES Encryption]
-        ENCRYPT --> IPFS[Upload to IPFS]
-        IPFS --> CID[encryptedEHRCID]
-        
-        EHR --> ZK[vlayer ZK Proof]
-        ZK --> PROOF[Procedure Valid ✓]
-    end
-    
-    subgraph On-Chain
-        PROOF --> VERIFY[Verify Proof]
-        CID --> STORE[Store CID Only]
-        VERIFY --> APPROVE[Insurer Approval]
-    end
-    
-    subgraph Post-Approval
-        APPROVE --> PREKEY[Release PRE Key]
-        PREKEY --> DECRYPT[Authorized Decryption]
-    end
-```
-
-**Key Privacy Properties**:
-- Insurers see only: "✅ Valid covered procedure" + "$X amount"
-- Medical details encrypted with IPFS storage
-- Post-approval decryption via proxy re-encryption
-- Zero medical data on-chain (only hashes and proofs)
-
-### 2. Commitment-Based Patient Registration
-**Pattern**: Never store personal identifiers on-chain
-
-```solidity
-// Off-chain: patient generates commitment
-const secret = generateRandomBytes(32);
-const commitment = keccak256(concat(secret, patientAddress));
-
-// On-chain: store only commitment
-patientCommitments[commitment] = true;
-
-// Later: prove identity without revealing personal data
-function proveIdentity(bytes32 secret) external view returns (bool) {
-    bytes32 commitment = keccak256(abi.encodePacked(secret, msg.sender));
-    return patientCommitments[commitment];
-}
-```
-
-### 3. Domain Verification without Email Exposure
-**Pattern**: vlayer email proofs without storing email addresses
-
-```solidity
-function verifyDomainOwnership(
-    bytes calldata proof,
-    bytes32 emailHash,      // Hash only, never plaintext email
-    address targetWallet,
-    string memory domain
-) external {
-    require(vlayerVerifier.verifyEmailProof(proof), "Invalid email proof");
-    
-    // Store only: domain → address mapping
-    domainToAddress[domain] = targetWallet;
-    emailHashToAddress[emailHash] = targetWallet;
-    
-    // Never store actual email address
-}
-```
-
----
-
-## 🌐 CROSS-PROTOCOL INTEGRATION PATTERNS
-
-### 1. vlayer Integration Architecture
-**Multi-Modal ZK Proofs**: Email verification + Procedure validation
-
-```typescript
-// Email domain verification (registration)
-async function proveEmailDomain(email: string, domain: string) {
-    return await vlayer.prove({
-        circuit: "email_domain_verification",
-        inputs: { email, domain },
-        outputs: ["emailHash", "isValidDomain"]
-    });
-}
-
-// Medical procedure verification (claims)
-async function proveProcedureValidity(
-    encryptedEHR: string,
-    policyAllowedCodes: string[]
-) {
-    return await vlayer.prove({
-        circuit: "procedure_coverage_validation",
-        inputs: { 
-            encryptedEHR, 
-            allowedCodes: policyAllowedCodes 
-        },
-        outputs: ["procedureHash", "isValidProcedure", "claimAmount"]
-    });
-}
-```
-
-### 2. Flare FTSO Integration Pattern
-**Real-Time Price Conversion**: USD claims → on-chain tokens
-
-```solidity
-interface IFlareOracle {
-    function getPrice(string memory base, string memory quote) 
-        external view returns (uint256 price, uint256 timestamp);
-}
-
-contract ClaimProcessingContract {
-    IFlareOracle public flareOracle;
-    
-    function convertUSDToTokens(uint256 amountUSD) internal view returns (uint256) {
-        (uint256 rate, uint256 timestamp) = flareOracle.getPrice("USD", "USDC");
-        require(block.timestamp - timestamp < 300, "Price data too old"); // 5 min freshness
-        
-        return (amountUSD * 1e18) / rate;
-    }
-}
-```
-
-### 3. Blockscout Integration Pattern
-**Merit Visibility + Explorer Links**: All transactions viewable on Blockscout
-
-```typescript
-// Frontend integration with Blockscout Merits API
-class BlockscoutService {
-    async getMeritsBalance(userAddress: string): Promise<number> {
-        const response = await fetch(`https://blockscout.com/api/merits/${userAddress}`);
-        return response.json().balance;
-    }
-    
-    async getMeritsHistory(userAddress: string): Promise<MeritTransaction[]> {
-        const response = await fetch(`https://blockscout.com/api/merits/${userAddress}/history`);
-        return response.json().transactions;
-    }
-    
-    getTransactionLink(txHash: string): string {
-        return `https://blockscout.com/tx/${txHash}`;
-    }
-}
-
-// All transaction links point to Blockscout instead of Etherscan
-function displayTransaction(txHash: string) {
-    return `View on Blockscout: ${getTransactionLink(txHash)}`;
-}
-```
-
----
-
-## 🔄 DATA FLOW PATTERNS
-
-### Complete Claims Processing Flow
+### 4. Privacy-Preserving Claims Workflow
 
 ```mermaid
 sequenceDiagram
     participant P as Patient
     participant H as Hospital
-    participant ZK as vlayer ZK
-    participant IPFS as IPFS
-    participant CC as ClaimContract
-    participant F as Flare FTSO
-    participant IC as InsuranceContract
     participant I as Insurer
-    participant MT as MeritsToken
-    participant BS as Blockscout
-
-    P->>H: Receive medical treatment
-    H->>H: Generate EHR record
-    H->>H: Encrypt EHR with AES
-    H->>IPFS: Upload encrypted EHR
-    IPFS-->>H: Return encryptedEHRCID
+    participant ZK as ZK Prover
+    participant IPFS as IPFS Storage
+    participant FT as Flare FTSO
     
-    H->>ZK: Generate procedure validity proof
-    ZK-->>H: Return ZK proof (procedure valid ✓)
+    P->>H: Medical procedure performed
+    H->>IPFS: Encrypt & store EHR
+    H->>ZK: Generate proof: "EHR contains covered procedure"
+    ZK-->>H: ZK proof (no procedure details revealed)
+    H->>FT: Get current USD/USDC rate
+    H->>ClaimContract: Submit claim with proofs
+    ClaimContract->>I: Forward validated claim
+    I->>I: Review proof results (not medical data)
+    I->>ClaimContract: Approve based on proof validity
+    ClaimContract->>H: Release USDC payment
     
-    H->>CC: submitClaim(proof, CID, amount)
-    CC->>ZK: Verify proof
-    ZK-->>CC: Proof valid ✓
-    
-    CC->>F: Get USD/USDC price
-    F-->>CC: Current rate
-    CC->>CC: Convert USD to tokens
-    
-    CC->>IC: Forward validated claim
-    IC->>IC: Store claim (Submitted status)
-    
-    I->>IC: Review and approveClaim()
-    IC->>IC: Update policy usage
-    IC->>IC: Credit hospital escrow
-    IC->>MT: Mint merits for patient & hospital
-    MT->>BS: Emit merit mint events
-    
-    H->>IC: withdrawPayout()
-    IC->>H: Transfer USDC payment
+    Note over P,H: Medical details never exposed to insurer
+    Note over ZK,IPFS: Privacy preserved via encryption + ZK proofs
 ```
 
-### Privacy Preservation Throughout Flow
-1. **Medical Data**: Always encrypted, stored off-chain
-2. **Procedure Codes**: Only hashes stored on-chain
-3. **Email Addresses**: Only hashes from vlayer proofs
-4. **Personal Identifiers**: Only commitments stored
-5. **Policy Details**: Encrypted metadata on IPFS
+**Privacy Guarantees:**
+- Medical data never exposed on-chain
+- Insurers approve without seeing procedure details
+- ZK proofs validate coverage without revealing data
+- Post-approval decryption only for authorized parties
 
----
+### 5. thirdweb Authentication Integration
 
-## 🎯 ARCHITECTURAL ADVANTAGES
+```typescript
+// Enhanced authentication with ERC-7824 binding
+class zkMedAuth {
+    async authenticateUser(role: 'patient' | 'hospital' | 'insurer') {
+        // Step 1: thirdweb social login
+        const user = await thirdweb.auth.login({
+            domain: "zkmed.health",
+            type: "eoa" // or "smart-wallet"
+        });
+        
+        // Step 2: Check registration status
+        const isRegistered = await registrationContract.read.verified([user.address]);
+        
+        if (!isRegistered) {
+            // Step 3: Sponsored registration if needed
+            await this.sponsorRegistration(user, role);
+        }
+        
+        // Step 4: Bind to ERC-7824 abstract account
+        const gateway = await this.bindToGateway(user.address);
+        
+        return {
+            user,
+            gateway,
+            role,
+            canSubmitClaims: role === 'hospital',
+            canApproveClaims: role === 'insurer',
+            hasGasSponsorship: true
+        };
+    }
+    
+    async sponsorRegistration(user: any, role: string) {
+        const sponsorTx = await gateway.execute({
+            from: user.address,
+            to: registrationContract.address,
+            data: registrationContract.interface.encodeFunctionData(
+                role === 'patient' ? 'registerPatient' : 'registerOrganization',
+                [/* registration data */]
+            ),
+            nonce: await gateway.nonces(user.address)
+        });
+        
+        return sponsorTx;
+    }
+}
+```
 
-### 1. Privacy-First Design
-- **Zero Medical PHI on-chain**: Only hashes, proofs, and encrypted CIDs
-- **Selective Disclosure**: Insurers approve without seeing medical details
-- **Post-Approval Access**: Controlled decryption via proxy re-encryption
+### 6. vlayer WebProof Generation Patterns
 
-### 2. Real-World Integration
-- **Dynamic Pricing**: Live USD conversion via Flare FTSO
-- **Verifiable Claims**: Cryptographic proof of procedure validity
-- **Merit Incentives**: Reward successful claims processing
+```typescript
+// Patient Portal WebProof
+async function generatePatientPortalProof(patientId: string) {
+    const webProof = await vlayer.generateWebProof({
+        url: `https://mychart.mountsinai.org/patient/${patientId}`,
+        selector: "#medical-records .procedure-code",
+        claim: "Patient has legitimate medical procedure requiring coverage",
+        privacy: {
+            hideSelector: true,
+            hashContent: true
+        }
+    });
+    
+    return {
+        proof: webProof.proof,
+        claimedProcedure: webProof.outputs.procedureHash,
+        portalVerified: true
+    };
+}
 
-### 3. Multi-Protocol Synergy
-- **vlayer**: Privacy-preserving verification (email + medical)
-- **Flare**: Real-world data integration (pricing + policy data)
-- **Blockscout**: Transparency and merit visibility
+// Hospital System WebProof
+async function generateHospitalSystemProof(hospitalId: string, procedureId: string) {
+    const webProof = await vlayer.generateWebProof({
+        url: `https://epic.mountsinai.org/procedures/${procedureId}`,
+        selector: ".procedure-status",
+        claim: "Procedure completed successfully in hospital system",
+        authentication: {
+            method: "oauth",
+            credentials: process.env.HOSPITAL_API_KEY
+        }
+    });
+    
+    return {
+        proof: webProof.proof,
+        procedureCompleted: webProof.outputs.status === "completed",
+        hospitalVerified: true
+    };
+}
+```
 
-### 4. Scalable Architecture
-- **Modular Contracts**: Each contract has single responsibility
-- **Upgradeable Patterns**: Proxy patterns for future enhancements
-- **Event-Driven**: Comprehensive audit trail via events
+## 🔐 Security Patterns
 
-This architecture enables the first truly privacy-preserving healthcare claims system where patients receive coverage without exposing medical details to insurers - a revolutionary approach to healthcare data protection! 🚀 
+### 1. Defense in Depth
+- **Layer 1**: Role-based access control (RegistrationContract)
+- **Layer 2**: Multi-proof validation (ZK + Web + Mail)
+- **Layer 3**: Sponsored transaction verification (ERC-7824)
+- **Layer 4**: Real-time price validation (Flare FTSO)
+- **Layer 5**: Encrypted storage with controlled access (IPFS + PRE)
+
+### 2. Privacy by Design
+- **Commitment-Reveal**: Patient data as hashed commitments
+- **Zero-Knowledge Proofs**: Validate without revealing medical details
+- **Proxy Re-Encryption**: Controlled post-approval access
+- **Domain Verification**: Prove ownership without exposing emails
+- **Sponsored Privacy**: Gas-free interactions maintain anonymity
+
+### 3. Economic Security
+- **Real-Time Pricing**: Live oracle data prevents arbitrage
+- **Escrow System**: Guaranteed payments for valid claims
+- **Sponsored Incentives**: Insurers cover gas for better UX
+- **Multi-Signature Approvals**: Large claims require multiple signatures
+
+## 🚀 Performance Optimization Patterns
+
+### 1. Gas Optimization
+```solidity
+contract GasOptimized {
+    // Pack structs to minimize storage slots
+    struct Claim {
+        uint128 amount;      // Fits with timestamp in one slot
+        uint128 timestamp;
+        address patient;     // 20 bytes
+        bytes12 padding;     // Pad to 32 bytes
+        bytes32 proofHash;   // Separate slot
+    }
+    
+    // Batch operations for efficiency
+    function batchProcessClaims(uint256[] calldata claimIds) external {
+        for (uint256 i = 0; i < claimIds.length;) {
+            _processClaim(claimIds[i]);
+            unchecked { ++i; }
+        }
+    }
+}
+```
+
+### 2. Proof Verification Optimization
+- **Parallel Verification**: Validate multiple proof types simultaneously
+- **Caching**: Store verification results to avoid re-computation
+- **Batching**: Process multiple proofs in single transaction
+- **Selective Verification**: Skip redundant checks based on trust levels
+
+### 3. Oracle Integration Efficiency
+- **Price Caching**: Cache recent FTSO prices with staleness checks
+- **Fallback Mechanisms**: Multiple oracle sources for reliability
+- **Update Triggers**: Smart price update frequency based on volatility
+- **Gas Estimation**: Predict transaction costs before execution
+
+## 📊 Monitoring & Analytics Patterns
+
+### 1. Event-Driven Analytics
+```solidity
+event ClaimProcessed(
+    address indexed patient,
+    address indexed hospital,
+    address indexed insurer,
+    uint256 claimId,
+    uint256 amount,
+    bytes32 proofHash,
+    uint256 timestamp
+);
+
+event ProofValidated(
+    bytes32 indexed proofHash,
+    string proofType, // "ZK", "Web", "Mail"
+    bool isValid,
+    uint256 timestamp
+);
+
+event SponsoredTransaction(
+    address indexed sponsor,
+    address indexed user,
+    address indexed targetContract,
+    uint256 gasUsed,
+    uint256 timestamp
+);
+```
+
+### 2. Privacy-Preserving Metrics
+- **Aggregated Statistics**: Claims volume without individual details
+- **Proof Success Rates**: Validation success percentages by type
+- **Performance Metrics**: Transaction times and gas usage
+- **User Experience**: Sponsored transaction adoption rates
+
+This comprehensive system architecture enables zkMed to provide privacy-preserving healthcare claims processing with advanced Web3 features including sponsored transactions, multi-proof validation, real-time pricing, and seamless authentication. 🚀 

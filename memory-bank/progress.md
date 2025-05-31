@@ -1,299 +1,310 @@
 # zkMed Development Progress
 
-## 🎉 CURRENT STATUS: FOUNDATION COMPLETE → CLAIMS PROCESSING PHASE
+## 🎯 PROJECT STATUS: Advanced Web3 Healthcare Platform
 
-**Date**: December 2024  
-**Registration System**: ✅ **PRODUCTION READY** (37/37 tests passing)  
-**Claims Processing System**: 🚧 **DESIGN & IMPLEMENTATION PHASE**  
-**Target**: Privacy-preserving healthcare claims with vlayer + Flare + Blockscout  
-
----
-
-## ✅ COMPLETED MILESTONES
-
-### Phase 1: Foundation Infrastructure [COMPLETED] ✅
-
-#### Smart Contract Foundation
-- ✅ **RegistrationContract.sol**: Complete with role-based access control
-- ✅ **EmailDomainProver.sol**: vlayer integration for email verification
-- ✅ **Privacy-Preserving Design**: Commitment-reveal scheme implemented
-- ✅ **Security Hardening**: Test helpers removed, production-ready
-- ✅ **Gas Optimization**: Performance benchmarked and optimized
-
-#### Development Infrastructure
-- ✅ **vlayer Development Stack**: Docker compose with full vlayer devnet
-- ✅ **L1-Only Architecture**: Chain ID 31337 optimization (no InvalidChainId errors)
-- ✅ **Development Tools**: One-command setup with monitoring dashboard
-- ✅ **Testing Framework**: 100% test coverage with automated gas analysis
-- ✅ **Next.js Integration**: Complete documentation and examples
-
-#### Foundation Performance Metrics ✅
-- **Test Results**: 53/53 tests passing (100% success rate)
-- **Gas Costs**: Optimized within acceptable limits
-- **Security**: Production-hardened, audit-ready
-- **Documentation**: Complete deployment and development guides
-- **New Features**: Multi-owner system and user activation implemented
+**Current Phase**: Advanced Claims Processing with Multi-Protocol Integration  
+**Registration System**: ✅ **PRODUCTION READY** (All tests passing)  
+**New Focus**: ERC-7824 + vlayer WebProofs + Flare FTSO + thirdweb Integration  
 
 ---
 
-## 🚧 CURRENT PHASE: CLAIMS PROCESSING SYSTEM
+## ✅ COMPLETED COMPONENTS
 
-### Phase 2: Privacy-Preserving Claims Architecture [IN PROGRESS]
+### Registration System [COMPLETE] 🎉
 
-#### Core Innovation: Insurance Without Revealing Procedures
-**Revolutionary Concept**: Patients receive insurance coverage without insurers ever learning what medical procedure was performed.
+#### RegistrationContract.sol [PRODUCTION READY] ✅
+**Status**: 100% Complete, All Tests Passing (37/37)
+**Features Implemented**:
+- [x] Patient registration with privacy-preserving commitments
+- [x] Organization verification with vlayer email proofs
+- [x] Multi-owner system (up to 10 owners)
+- [x] Role-based access control (Patient, Hospital, Insurer, Admin)
+- [x] Batch user activation/deactivation
+- [x] Domain uniqueness enforcement
+- [x] Email hash replay protection
+- [x] Emergency admin override functions
 
-#### New Contracts Under Development
+#### EmailDomainProver.sol [COMPLETE] ✅
+**Status**: Integrated with RegistrationContract
+**Features Implemented**:
+- [x] vlayer email proof verification
+- [x] Domain ownership validation
+- [x] Organization verification data structures
+- [x] Multiple verification flows (simple, two-step, single-step)
 
-##### 1. ClaimProcessingContract.sol [CURRENT PRIORITY] 🚧
-**Status**: Architecture designed, implementation starting
-**Purpose**: Handle encrypted medical records with zero-knowledge proofs
-
-**Key Features**:
-- **Encrypted EHR Storage**: Medical records encrypted and stored on IPFS
-- **vlayer ZK Proofs**: Prove procedure validity without revealing procedure details
-- **Flare FTSO Integration**: Real-time USD→token price conversion
-- **Privacy Preservation**: Only hashes and proofs on-chain, never medical data
-
-**Implementation Progress**:
-- [x] Contract architecture designed
-- [x] vlayer ZK proof integration pattern defined
-- [x] Flare FTSO price oracle integration planned
-- [ ] Contract implementation started
-- [ ] ZK proof verification testing
-- [ ] IPFS integration for encrypted EHR storage
-- [ ] Unit test suite development
-
-##### 2. InsuranceContract.sol [NEXT PRIORITY] 🚧
-**Status**: Architecture designed, awaiting ClaimProcessingContract completion
-**Purpose**: Policy management and claims approval system
-
-**Key Features**:
-- **On-Chain Policy Management**: Coverage tracking without exposing personal data
-- **Claims Approval Workflow**: Insurers approve based on ZK proofs only
-- **Hospital Escrow System**: Secure payment handling for approved claims
-- **Merit Token Integration**: Reward successful claims processing
-
-**Implementation Progress**:
-- [x] Policy and Claim data structures designed
-- [x] Claims approval workflow defined
-- [x] Hospital escrow patterns established
-- [ ] Contract implementation (depends on ClaimProcessingContract)
-- [ ] Claims approval testing
-- [ ] Escrow and payout testing
-- [ ] Integration with MeritsToken
-
-##### 3. MeritsTokenContract.sol [PARALLEL DEVELOPMENT] 🚧
-**Status**: Architecture designed, Blockscout integration planned
-**Purpose**: ERC-20 reward token for successful claims processing
-
-**Key Features**:
-- **Merit Rewards**: Incentivize patients and hospitals for successful claims
-- **Blockscout Integration**: Merit balances visible via Blockscout Merits API
-- **Explorer Integration**: All transactions link to Blockscout Explorer
-
-**Implementation Progress**:
-- [x] ERC-20 token architecture designed
-- [x] Merit calculation formulas defined
-- [x] Blockscout Merits API integration planned
-- [ ] Token contract implementation
-- [ ] Merit minting logic
-- [ ] Blockscout API compatibility testing
-- [ ] Frontend merit display integration
+#### Supporting Infrastructure [COMPLETE] ✅
+- [x] RegistrationStorage.sol - Centralized data storage
+- [x] PatientModule.sol - Patient-specific functions
+- [x] OrganizationModule.sol - Organization management
+- [x] AdminModule.sol - Administrative functions
+- [x] Complete test suite (53 tests, 100% coverage)
+- [x] Export system for frontend integration
+- [x] Local deployment workflows
 
 ---
 
-## 🎯 HACKATHON PRIZE TARGETING
+## 🚧 IN DEVELOPMENT: Advanced Web3 Claims System
 
-### Strategic Prize Mapping
-**Target**: 6+ prize categories with substantial, innovative integrations
+### Phase 2: Enhanced Contract Architecture [CURRENT FOCUS] 🚧
 
-#### vlayer Integration → **2 Prize Categories**
-- **Best use of vlayer Email Proofs**: Organization verification (✅ completed)
-- **Most inspiring use of vlayer**: ZK medical procedure validation (🚧 in progress)
+#### 1. ERC7824Gateway.sol [NEW PRIORITY 1] 🔄
+**Purpose**: Meta-transaction router for sponsored transactions
+**Target Timeline**: Week 1-2
 
-#### Flare Integration → **2 Prize Categories**  
-- **Flare FTSO Track**: Real-time USD→stablecoin conversion for claims
-- **Flare External Data Source**: Hospital license verification (optional)
+**Core Features in Development**:
+- [ ] Abstract account setup and management
+- [ ] Meta-transaction execution with signature validation
+- [ ] Nonce management for replay protection
+- [ ] Gas sponsorship mechanisms
+- [ ] Batch operation support
+- [ ] Integration with existing contracts
 
-#### 🕒 FDC Implementation Priority Notice
-**Important**: FDC (Flare Data Connector) implementation is scheduled for last priority due to hackathon time constraints. The core privacy-preserving claims system with vlayer ZK proofs and Flare FTSO price oracles takes precedence to deliver maximum impact within the competition timeframe.
+**Key Functions to Implement**:
+```solidity
+execute(ERC7824ForwardRequest req, bytes signature)
+batchExecute(ERC7824ForwardRequest[] reqs, bytes[] signatures)
+addSponsor(address sponsor, uint256 gasLimit)
+```
 
-#### Blockscout Integration → **2 Prize Categories**
-- **Best use of Blockscout Merits**: Merit rewards for successful claims
-- **Best use of Blockscout Explorer**: All transaction links to Blockscout
+#### 2. Enhanced PatientModule.sol [PRIORITY 2] 🔄
+**Purpose**: Advanced patient operations with WebProofs
+**Enhanced Features**:
+- [ ] WebProof-based operation proposals
+- [ ] Enhanced EHR management with PRE encryption
+- [ ] ERC-7824 sponsored patient transactions
+- [ ] Integration with vlayer WebProof SDK
 
----
+**New Functions to Add**:
+```solidity
+proposeOperation(bytes webProof, bytes32 procedureHash, uint256 estimatedCost)
+proposeOperationSponsored(ERC7824ForwardRequest req, bytes signature)
+```
 
-## 📊 EXPANDED PERFORMANCE TARGETS
+#### 3. Enhanced OrganizationModule.sol [PRIORITY 2] 🔄
+**Purpose**: Multi-proof validation for hospitals/insurers
+**Enhanced Features**:
+- [ ] WebProof validation for hospital systems
+- [ ] Multi-proof claim submissions
+- [ ] Enhanced operation approval workflows
 
-### Current Baseline (Registration System) ✅
-| Function | Gas Cost | Status |
-|----------|----------|---------|
-| Patient Registration | 115,377 gas | ⚠️ Future optimization target |
-| Organization Registration | 43,892 gas | ✅ Optimal |
-| Domain Verification | 43,013 gas | ✅ Optimal |
+**New Functions to Add**:
+```solidity
+submitClaimWithWebProof(bytes webProof, ClaimData data)
+reviewClaimWithProofs(uint256 claimId, bool approved)
+```
 
-### Claims System Targets (New) 🎯
-| Function | Target Gas Cost | Priority |
-|----------|----------------|----------|
-| Submit Claim (with ZK proof) | <200k gas | High |
-| Approve Claim | <100k gas | High |
-| Mint Merit Rewards | <50k gas | Medium |
-| Hospital Payout | <75k gas | Medium |
+#### 4. Enhanced InsuranceContract.sol [PRIORITY 3] 🔄
+**Purpose**: Advanced policy management with real-time pricing
+**Enhanced Features**:
+- [ ] Flare FTSO real-time price integration
+- [ ] Multi-proof claim processing
+- [ ] ERC-7824 sponsored claim approvals
+- [ ] Advanced policy management
 
-### Privacy Guarantees Targets 🔐
-- [ ] Zero medical data stored on-chain
-- [ ] Procedure codes only as hashes
-- [ ] ZK proof verification working end-to-end
-- [ ] Post-approval decryption via proxy re-encryption
-- [ ] Email addresses only as hashes (✅ completed)
+**Key Integrations**:
+- [ ] Flare FTSO for USD→USDC conversion
+- [ ] Multi-proof validation (ZK + Web + Mail proofs)
+- [ ] ERC-7824 Gateway routing
+- [ ] **Removed**: Merit token integration (no longer part of architecture)
 
----
-
-## 🔧 DEVELOPMENT ROADMAP
-
-### Sprint 1: Claims Processing Foundation (2 weeks)
-**Goal**: Working ClaimProcessingContract with vlayer ZK integration
-
-#### Week 1: Core Implementation
-- **Days 1-3**: ClaimProcessingContract implementation
-  - Basic claim submission structure
-  - vlayer ZK proof verification integration
-  - IPFS CID storage for encrypted EHRs
-  
-- **Days 4-5**: Flare FTSO Integration
-  - Price oracle integration
-  - USD→token conversion logic
-  - Price data freshness validation
-
-#### Week 2: Testing & Integration
-- **Days 1-3**: Comprehensive testing
-  - Unit tests for all claim processing functions
-  - ZK proof verification testing
-  - Gas optimization analysis
-  
-- **Days 4-5**: Integration preparation
-  - Interface design for InsuranceContract
-  - Event emission for audit trails
-  - Documentation and deployment scripts
-
-### Sprint 2: Insurance & Merits System (2 weeks)
-**Goal**: Complete claims approval and merit rewards system
-
-#### Week 1: InsuranceContract Development
-- **Days 1-3**: Policy management implementation
-  - Policy creation and storage
-  - Coverage tracking and validation
-  - Claims submission handling
-  
-- **Days 4-5**: Claims approval workflow
-  - Insurer approval mechanisms
-  - Hospital escrow system
-  - Payout processing
-
-#### Week 2: Merit System & Integration
-- **Days 1-3**: MeritsTokenContract implementation
-  - ERC-20 token with merit minting
-  - Merit calculation algorithms
-  - Integration with InsuranceContract
-  
-- **Days 4-5**: Blockscout integration
-  - Merits API compatibility
-  - Frontend merit display
-  - Explorer link integration
-
-### Sprint 3: Frontend & End-to-End Testing (2 weeks)
-**Goal**: Complete user interface and full workflow testing
-
-#### Week 1: Frontend Development
-- Claims submission interface for hospitals
-- Policy management dashboard for insurers
-- Merit balance display via Blockscout API
-- Real-time claim status monitoring
-
-#### Week 2: Integration & Polish
-- End-to-end workflow testing
-- Performance optimization
-- Security review and hardening
-- Documentation completion
+#### 5. Enhanced ClaimProcessingContract.sol [PRIORITY 3] 🔄
+**Purpose**: Multi-proof claim validation with sponsored transactions
+**Enhanced Features**:
+- [ ] Multiple proof type validation (ZK + WebProof + MailProof)
+- [ ] Real-time Flare FTSO price conversion
+- [ ] ERC-7824 sponsored transaction support
+- [ ] Advanced privacy preservation
 
 ---
 
-## 🚀 DEPLOYMENT STRATEGY
+## 🎨 FRONTEND DEVELOPMENT
 
-### Testnet Deployment Plan
-1. **Phase 1 Contracts**: Already ready for mainnet ✅
-2. **Phase 2 Contracts**: Deploy to testnet after Sprint 1
-3. **Full System**: Comprehensive testnet testing after Sprint 2
-4. **Mainnet Deployment**: After successful testnet validation
+### Next.js 15 + Advanced Web3 Integration [PARALLEL DEVELOPMENT] 🔄
 
-### Production Readiness Checklist
-#### Foundation System (Already Complete) ✅
-- [x] 100% test coverage
-- [x] Security hardening
-- [x] Gas optimization
-- [x] Documentation
+#### Core Technology Stack:
+- [ ] **Next.js 15** with App Router
+- [ ] **thirdweb React SDK** for authentication
+- [ ] **ERC-7824 Nitrolite Client** for abstract accounts
+- [ ] **vlayer client + verifier SDK** for proof generation
+- [ ] **IPFS / web3.storage** for encrypted EHR storage
+- [ ] **Flare FTSO JS SDK** for price data
 
-#### Claims System (In Progress) 🚧
-- [ ] ZK proof verification working reliably
-- [ ] Flare price oracle integration tested
-- [ ] IPFS encrypted storage validated
-- [ ] Merit token system functional
-- [ ] Blockscout integration complete
-- [ ] End-to-end privacy validation
-- [ ] Security audit of new contracts
+#### Authentication & Account Management:
+- [ ] thirdweb social login integration
+- [ ] ERC-7824 account binding
+- [ ] Session management
+- [ ] Wallet abstraction layer
 
----
-
-## 🎉 EXPANDED VISION SUCCESS METRICS
-
-### Technical Innovation Achievements
-- [ ] First privacy-preserving healthcare claims system
-- [ ] Zero medical data exposure to insurers
-- [ ] Real-time price conversion for claims
-- [ ] Cryptographic proof of procedure validity
-- [ ] Merit-based incentive system
-
-### Hackathon Competition Metrics
-- [ ] 6+ prize category qualifications
-- [ ] Substantial vlayer ZK proof innovation
-- [ ] Real-world Flare oracle integration
-- [ ] Comprehensive Blockscout visibility
-- [ ] Revolutionary healthcare privacy solution
-
-### Platform Impact Metrics  
-- [ ] Patients receive coverage without data exposure
-- [ ] Hospitals process claims with cryptographic validation
-- [ ] Insurers approve claims without seeing medical details
-- [ ] Real-time price accuracy within 1%
-- [ ] Merit rewards drive positive behavior
+#### Proof Generation Interfaces:
+- [ ] WebProof generation from patient portals
+- [ ] MailProof generation for organizations
+- [ ] Multi-proof validation status monitoring
+- [ ] Real-time proof status updates
 
 ---
 
-## 🏆 PROJECT EVOLUTION SUMMARY
+## 📅 DEVELOPMENT ROADMAP
 
-**From**: Privacy-preserving registration system  
-**To**: Complete privacy-preserving healthcare claims platform
+### Sprint 1: ERC-7824 & Core Infrastructure (Weeks 1-2)
+**Goal**: Implement abstract account infrastructure and meta-transaction routing
 
-### Foundation Phase [COMPLETED] ✅
-- ✅ Registration system production-ready
-- ✅ vlayer email verification working  
-- ✅ Development environment automated
-- ✅ 100% test coverage achieved
+#### Week 1: ERC-7824 Gateway Foundation
+- **Days 1-3**: ERC7824Gateway.sol implementation
+  - Meta-transaction execution logic
+  - Signature validation and nonce management
+  - Basic sponsorship mechanisms
+- **Days 4-5**: Testing and integration
+  - Unit tests for gateway contract
+  - Integration with existing contracts
 
-### Innovation Phase [CURRENT] 🚧
-- 🚧 Zero-knowledge claims processing
-- 🚧 Real-time price oracle integration  
-- 🚧 Merit rewards system
-- 🚧 Comprehensive privacy preservation
+#### Week 2: Advanced Gateway Features
+- **Days 1-3**: Advanced gateway features
+  - Batch operation support
+  - Gas optimization
+  - Sponsor management system
+- **Days 4-5**: Frontend integration preparation
+  - ABI exports and TypeScript interfaces
+  - Integration documentation
 
-### Impact Phase [PLANNED] 🎯
-- 📋 Revolutionary healthcare data protection
-- 📋 Multi-protocol hackathon innovation
-- 📋 Real-world deployment readiness
-- 📋 Industry-changing privacy standards
+### Sprint 2: WebProof Integration & Enhanced Modules (Weeks 3-4)
+**Goal**: Implement vlayer WebProof integration and enhance existing modules
 
-**zkMed is evolving from a foundation system to a complete privacy-preserving healthcare platform that could revolutionize how medical data and insurance claims are handled!** 🚀
+#### Week 3: vlayer WebProof Integration
+- **Days 1-3**: vlayer WebProof SDK integration
+  - Patient portal proof generation
+  - Hospital system verification proofs
+  - WebProof validation logic
+- **Days 4-5**: Module enhancements
+  - PatientModule WebProof functions
+  - OrganizationModule multi-proof validation
 
-The registration system was just the beginning - now we're building the future of healthcare privacy! 💫 
+#### Week 4: Claims Processing Enhancement
+- **Days 1-3**: Enhanced ClaimProcessingContract
+  - Multi-proof validation system
+  - Flare FTSO integration
+  - Sponsored transaction support
+- **Days 4-5**: InsuranceContract enhancements
+  - Real-time pricing integration
+  - Advanced policy management
+  - ERC-7824 compatibility
+
+### Sprint 3: Frontend & Integration (Weeks 5-6)
+**Goal**: Complete frontend implementation with thirdweb and advanced Web3 features
+
+#### Week 5: thirdweb Authentication
+- **Days 1-3**: Authentication system
+  - Social login implementation
+  - Wallet abstraction
+  - Session management
+- **Days 4-5**: Account binding
+  - ERC-7824 account setup
+  - Account binding workflows
+
+#### Week 6: Advanced Frontend Features
+- **Days 1-3**: Proof generation interfaces
+  - WebProof generation UI
+  - Multi-proof status monitoring
+  - Real-time updates
+- **Days 4-5**: Final integration and testing
+  - End-to-end testing
+  - Performance optimization
+  - Documentation completion
+
+---
+
+## 🧪 TESTING STRATEGY
+
+### Contract Testing [IN PROGRESS] 🔄
+- [x] Registration system: 53/53 tests passing ✅
+- [ ] ERC-7824 Gateway: Unit and integration tests
+- [ ] Enhanced modules: Updated test suites
+- [ ] Multi-proof validation: End-to-end testing
+- [ ] Flare FTSO integration: Price oracle testing
+
+### Integration Testing [PLANNED] 📋
+- [ ] thirdweb authentication flow
+- [ ] ERC-7824 sponsored transactions
+- [ ] vlayer WebProof generation
+- [ ] Multi-proof claim processing
+- [ ] Real-time price conversion
+
+### End-to-End Testing [PLANNED] 📋
+- [ ] Complete user registration flows
+- [ ] Sponsored patient claim submissions
+- [ ] Hospital multi-proof claim processing
+- [ ] Insurer claim approval workflows
+- [ ] Real-time price validation
+
+---
+
+## 🎯 SUCCESS METRICS
+
+### Technical Achievements [UPDATED TARGETS]
+- [ ] ERC-7824 meta-transaction routing functional
+- [ ] vlayer WebProof integration working end-to-end
+- [ ] Flare FTSO price conversion accurate within 1%
+- [ ] thirdweb authentication seamless
+- [ ] Multi-proof validation system operational
+- [ ] Sponsored transactions reducing gas barriers
+
+### Privacy & Security [CORE REQUIREMENTS]
+- [ ] Zero medical data exposed on-chain
+- [ ] Multi-proof validation ensures claim legitimacy
+- [ ] Sponsored transactions maintain user privacy
+- [ ] PRE encryption enables controlled post-approval access
+- [ ] Domain verification prevents impersonation
+
+### User Experience [ENHANCED TARGETS]
+- [ ] Gas-free patient interactions via sponsorship
+- [ ] Social login via thirdweb
+- [ ] Seamless multi-proof generation
+- [ ] Real-time status updates
+- [ ] Mobile-responsive PWA experience
+
+### Protocol Integration [HACKATHON TARGETS]
+- [ ] vlayer MailProofs + WebProofs working seamlessly
+- [ ] Flare FTSO live price data integration
+- [ ] ERC-7824 sponsored transaction flows
+- [ ] thirdweb authentication integration
+- [ ] Multi-protocol architecture demonstration
+
+---
+
+## 🚀 INNOVATION HIGHLIGHTS
+
+**Enhanced from**: Simple registration system  
+**Enhanced to**: Advanced Web3 healthcare platform with:
+
+### 🔐 Multi-Proof Security Architecture
+- **MailProofs**: Domain ownership verification
+- **WebProofs**: Patient portal and hospital system validation
+- **ZK Proofs**: Privacy-preserving medical procedure verification
+- **Combined Validation**: Multiple proof types for maximum security
+
+### 💳 Sponsored Transaction UX
+- **ERC-7824 Gateway**: Meta-transaction routing for gas-free interactions
+- **Patient Sponsorship**: Insurers sponsor patient claim submissions
+- **Hospital Sponsorship**: Sponsored claim processing workflows
+- **Batch Operations**: Efficient bulk transaction processing
+
+### 🌐 Real-Time Integration
+- **Flare FTSO**: Live USD to USDC price conversion
+- **Dynamic Pricing**: Real-time claim amount calculation
+- **Multi-Currency Support**: Flexible pricing across different tokens
+
+### 🎨 Advanced Authentication
+- **thirdweb Integration**: Social login and wallet abstraction
+- **Session Management**: Persistent user sessions
+- **Account Binding**: ERC-7824 abstract account setup
+
+---
+
+## 🎉 NEXT MILESTONES
+
+1. **ERC-7824 Gateway MVP** (Week 1) - Meta-transaction routing functional
+2. **vlayer WebProof Integration** (Week 2) - Multi-proof validation working
+3. **Flare FTSO Integration** (Week 3) - Real-time pricing operational
+4. **thirdweb Authentication** (Week 4) - Social login and account binding
+5. **Complete Platform Demo** (Week 5-6) - End-to-end advanced Web3 healthcare platform
+
+The registration foundation is solid - now we're building the revolutionary multi-protocol healthcare platform! 🚀 
