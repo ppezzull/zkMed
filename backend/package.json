@@ -1,0 +1,24 @@
+{
+  "name": "zkmed-backend",
+  "version": "1.0.0",
+  "description": "zkMed Smart Contract Backend with Email Domain Verification",
+  "type": "module",
+  "scripts": {
+    "prove-email": "tsx vlayer/proveEmailDomain.ts",
+    "build": "forge build",
+    "test": "forge test",
+    "deploy-local": "forge script script/DeployLocal.s.sol:DeployLocal --rpc-url http://localhost:8545 --private-key $PRIVATE_KEY --broadcast --force",
+    "export-abis": "node scripts/export-abis.js"
+  },
+  "dependencies": {
+    "@vlayer/sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -6,6 +6,26 @@
         "name": "_emailDomainProver",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "_storageContract",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_patientModule",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_organizationModule",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_adminModule",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "nonpayable"
@@ -15,9 +35,22 @@
     "name": "_setTestVerifier",
     "inputs": [
       {
-        "name": "newVerifier",
+        "name": "",
         "type": "address",
-        "internalType": "contract IProofVerifier"
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "activateUser",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -25,10 +58,42 @@
   },
   {
     "type": "function",
+    "name": "activeUsers",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "addAdmin",
     "inputs": [
       {
         "name": "_newAdmin",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addOwner",
+    "inputs": [
+      {
+        "name": "_newOwner",
         "type": "address",
         "internalType": "address"
       }
@@ -51,10 +116,23 @@
   },
   {
     "type": "function",
+    "name": "adminModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract AdminModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "admins",
     "inputs": [
       {
-        "name": "",
+        "name": "_admin",
         "type": "address",
         "internalType": "address"
       }
@@ -67,6 +145,32 @@
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "batchActivateUsers",
+    "inputs": [
+      {
+        "name": "_users",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "batchDeactivateUsers",
+    "inputs": [
+      {
+        "name": "_users",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -93,10 +197,42 @@
   },
   {
     "type": "function",
+    "name": "deactivateUser",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "deactivationTimestamp",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "domainToAddress",
     "inputs": [
       {
-        "name": "",
+        "name": "_domain",
         "type": "string",
         "internalType": "string"
       }
@@ -128,7 +264,7 @@
     "name": "emailHashToAddress",
     "inputs": [
       {
-        "name": "",
+        "name": "_emailHash",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -233,6 +369,43 @@
   },
   {
     "type": "function",
+    "name": "getOwners",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getUserActivationStatus",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "isActive",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "deactivatedAt",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getUserRegistration",
     "inputs": [
       {
@@ -310,6 +483,44 @@
   },
   {
     "type": "function",
+    "name": "isOwner",
+    "inputs": [
+      {
+        "name": "_address",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isUserActive",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "isUserVerified",
     "inputs": [
       {
@@ -329,10 +540,23 @@
   },
   {
     "type": "function",
+    "name": "organizationModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract OrganizationModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "organizations",
     "inputs": [
       {
-        "name": "",
+        "name": "_org",
         "type": "address",
         "internalType": "address"
       }
@@ -359,7 +583,7 @@
         "internalType": "uint256"
       },
       {
-        "name": "verified",
+        "name": "isVerified",
         "type": "bool",
         "internalType": "bool"
       },
@@ -373,10 +597,42 @@
   },
   {
     "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owners",
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "patientCommitments",
     "inputs": [
       {
-        "name": "",
+        "name": "_patient",
         "type": "address",
         "internalType": "address"
       }
@@ -392,10 +648,23 @@
   },
   {
     "type": "function",
+    "name": "patientModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract PatientModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "registerOrganization",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -524,7 +793,7 @@
     "name": "registrationTimestamps",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -553,6 +822,26 @@
   },
   {
     "type": "function",
+    "name": "removeOwner",
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "renounceOwnership",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "resetEmailHash",
     "inputs": [
       {
@@ -569,7 +858,7 @@
     "name": "roles",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -582,6 +871,32 @@
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "storageContract",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract RegistrationStorage"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -606,7 +921,7 @@
     "name": "usedEmailHashes",
     "inputs": [
       {
-        "name": "",
+        "name": "_emailHash",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -625,7 +940,7 @@
     "name": "verified",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -647,7 +962,7 @@
       {
         "name": "",
         "type": "address",
-        "internalType": "contract IProofVerifier"
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -657,7 +972,7 @@
     "name": "verifyAndStoreURL",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -746,7 +1061,7 @@
     "name": "verifyDomainOwnership",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -981,6 +1296,82 @@
   },
   {
     "type": "event",
+    "name": "OwnerAdded",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "addedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnerRemoved",
+    "inputs": [
+      {
+        "name": "removedOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "removedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferRequested",
+    "inputs": [
+      {
+        "name": "currentOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "PatientRegistered",
     "inputs": [
       {
@@ -1031,6 +1422,44 @@
   },
   {
     "type": "event",
+    "name": "UserActivated",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "activatedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "UserDeactivated",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "deactivatedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "VerificationStatusChanged",
     "inputs": [
       {
@@ -1056,7 +1485,24 @@
   },
   {
     "type": "error",
-    "name": "InvalidChainId",
-    "inputs": []
+    "name": "OwnableInvalidOwner",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OwnableUnauthorizedAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
   }
 ]

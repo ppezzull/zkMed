@@ -209,7 +209,7 @@ bun run devnet:up  # Start local vlayer network
 ```
 
 ## Code Quality Standards
-- **Solidity**: Follow Solidity style guide, use forge fmt
+- **Solidity**: Follow Solidity style guide, use forge fmt and dont use emojis
 - **TypeScript**: Strict mode, no `any` types in production code
 - **Testing**: Property-based testing for complex logic
 - **Documentation**: NatSpec for all public functions
