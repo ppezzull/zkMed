@@ -54,8 +54,7 @@ contract DeployProductionScript is Script {
         
         // Gas cost analysis
         console.log("\n5. Gas cost estimation...");
-        uint256 gasSnapshot = gasleft();
-        
+                
         // Estimate patient registration cost
         bytes32 testCommitment = keccak256(abi.encodePacked("test-secret", vm.addr(deployerPrivateKey)));
         uint256 gasStart = gasleft();
