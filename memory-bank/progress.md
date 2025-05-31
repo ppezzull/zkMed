@@ -116,6 +116,9 @@
 - **Flare FTSO Track**: Real-time USD→stablecoin conversion for claims
 - **Flare External Data Source**: Hospital license verification (optional)
 
+#### 🕒 FDC Implementation Priority Notice
+**Important**: FDC (Flare Data Connector) implementation is scheduled for last priority due to hackathon time constraints. The core privacy-preserving claims system with vlayer ZK proofs and Flare FTSO price oracles takes precedence to deliver maximum impact within the competition timeframe.
+
 #### Blockscout Integration → **2 Prize Categories**
 - **Best use of Blockscout Merits**: Merit rewards for successful claims
 - **Best use of Blockscout Explorer**: All transaction links to Blockscout

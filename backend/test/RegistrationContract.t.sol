@@ -337,7 +337,7 @@ contract RegistrationContractTest is Test {
         vm.stopPrank();
     }
     
-    function testCannotRemoveLastOwner() public {
+    function testCannotRemoveLastOwner() public pure {
         // This test is actually redundant because:
         // 1. The "Cannot remove self" check prevents owners from removing themselves
         // 2. If there's only one owner, they can't remove themselves anyway

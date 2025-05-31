@@ -130,6 +130,9 @@ struct Claim {
 - **FDC (Optional)**: Pull hospital license verification data
 - **Use Case**: Dynamic claim amount calculation with real-world pricing
 
+#### 🕒 FDC Implementation Priority Notice
+**Important**: FDC (Flare Data Connector) implementation is scheduled for last priority due to hackathon time constraints. The core privacy-preserving claims system with vlayer ZK proofs and Flare FTSO price oracles takes precedence to deliver maximum impact within the competition timeframe.
+
 #### Blockscout Integration → **Best use of Blockscout Merits** + **Explorer Pool**
 - **Merits Token**: Mint rewards for successful claims (patients + hospitals)
 - **Explorer Links**: All transactions point to Blockscout instead of Etherscan
