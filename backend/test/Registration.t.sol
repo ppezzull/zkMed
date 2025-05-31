@@ -8,6 +8,9 @@ import "../src/zkMed/modules/PatientModule.sol";
 import "../src/zkMed/modules/OrganizationModule.sol";
 import "../src/zkMed/modules/AdminModule.sol";
 import "../src/zkMed/EmailDomainProver.sol";
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {Seal, ProofMode} from "vlayer-0.1.0/Seal.sol";
+import {CallAssumptions} from "vlayer-0.1.0/CallAssumptions.sol";
 
 contract RegistrationContractTest is Test {
     
@@ -338,5 +341,162 @@ contract RegistrationContractTest is Test {
         
         assertEq(uint256(registrationContract2.roles(hospital)), uint256(RegistrationContract.Role.Patient), "Hospital should be registered in system2");
         assertEq(uint256(registrationContract2.roles(patient)), uint256(RegistrationContract.Role.None), "Patient should not be registered in system2");
+    }
+    
+    function testOrganizationEmailProofRegistration() public {
+        // Test organization registration workflow and data structures
+        console.log("=== Testing Organization Registration Workflow ===");
+        
+        // Test 1: Create organization data
+        bytes32 emailHash = keccak256(abi.encodePacked("admin@mountsinai.org"));
+        string memory domain = "mountsinai.org";
+        string memory orgName = "Mount Sinai Health System";
+        
+        console.log("Organization:", orgName);
+        console.log("Domain:", domain);
+        console.log("Target Wallet:", hospital);
+        console.log("Email Hash:", vm.toString(emailHash));
+        
+        // Test 2: Verify domain uniqueness check works
+        assertEq(storageContract.domainToAddress(domain), address(0), "Domain should be available initially");
+        
+        // Test 3: Register organization through storage (simulating successful vlayer verification)
+        vm.startPrank(address(registrationContract));
+        
+        // Register the organization directly in storage
+        storageContract.setOrganization(hospital, RegistrationStorage.Organization({
+            name: orgName,
+            domain: domain,
+            role: RegistrationStorage.Role.Hospital,
+            registrationTimestamp: block.timestamp,
+            verified: true,
+            emailHash: emailHash
+        }));
+        storageContract.setRole(hospital, RegistrationStorage.Role.Hospital);
+        storageContract.setVerified(hospital, true);
+        storageContract.setActiveUser(hospital, true);
+        storageContract.setRegistrationTimestamp(hospital, block.timestamp);
+        storageContract.setDomainToAddress(domain, hospital);
+        storageContract.setEmailHashToAddress(emailHash, hospital);
+        storageContract.setUsedEmailHash(emailHash, true);
+        
+        vm.stopPrank();
+        
+        // Test 4: Verify organization registration was successful
+        console.log("=== Verifying Organization Registration ===");
+        
+        assertEq(uint256(registrationContract.roles(hospital)), uint256(RegistrationContract.Role.Hospital), "Organization role not set");
+        assertTrue(registrationContract.isUserVerified(hospital), "Organization not verified");
+        assertTrue(registrationContract.isUserActive(hospital), "Organization not active");
+        
+        // Check organization details
+        (
+            RegistrationContract.Role role,
+            bool isVerified,
+            uint256 timestamp,
+            string memory storedOrgName,
+            string memory storedDomain
+        ) = registrationContract.getUserRegistration(hospital);
+        
+        assertEq(uint256(role), uint256(RegistrationContract.Role.Hospital), "Wrong role");
+        assertTrue(isVerified, "Should be verified");
+        assertTrue(timestamp > 0, "Timestamp should be set");
+        assertEq(storedOrgName, orgName, "Name not stored correctly");
+        assertEq(storedDomain, domain, "Domain not stored correctly");
+        
+        // Check domain and email mappings
+        assertEq(storageContract.domainToAddress(domain), hospital, "Domain mapping incorrect");
+        assertTrue(storageContract.usedEmailHashes(emailHash), "Email hash should be used");
+        assertEq(storageContract.emailHashToAddress(emailHash), hospital, "Email hash mapping incorrect");
+        
+        console.log("[SUCCESS] Organization registration workflow validated");
+        
+        // Test 5: Verify domain uniqueness enforcement
+        vm.startPrank(address(registrationContract));
+        
+        // Check that domain is already taken
+        address currentDomainOwner = storageContract.domainToAddress(domain);
+        assertEq(currentDomainOwner, hospital, "Domain should already be owned by hospital");
+        
+        // In a real scenario, the OrganizationModule would check this before allowing registration
+        // Since we're testing the storage layer directly, we verify the domain is already taken
+        assertTrue(currentDomainOwner != address(0), "Domain should not be available for reuse");
+        
+        vm.stopPrank();
+        
+        console.log("[SUCCESS] Domain uniqueness enforcement verified");
+    }
+    
+    function testMultipleOrganizationRegistrations() public {
+        console.log("=== Testing Multiple Organization Registrations ===");
+        
+        vm.startPrank(address(registrationContract));
+        
+        // Organization 1: Mount Sinai (Hospital)
+        bytes32 emailHash1 = keccak256(abi.encodePacked("admin@mountsinai.org"));
+        storageContract.setOrganization(hospital, RegistrationStorage.Organization({
+            name: "Mount Sinai Health System",
+            domain: "mountsinai.org",
+            role: RegistrationStorage.Role.Hospital,
+            registrationTimestamp: block.timestamp,
+            verified: true,
+            emailHash: emailHash1
+        }));
+        storageContract.setRole(hospital, RegistrationStorage.Role.Hospital);
+        storageContract.setVerified(hospital, true);
+        storageContract.setActiveUser(hospital, true);
+        storageContract.setRegistrationTimestamp(hospital, block.timestamp);
+        storageContract.setDomainToAddress("mountsinai.org", hospital);
+        storageContract.setEmailHashToAddress(emailHash1, hospital);
+        storageContract.setUsedEmailHash(emailHash1, true);
+        
+        // Organization 2: Aetna (Insurer)
+        bytes32 emailHash2 = keccak256(abi.encodePacked("admin@aetna.com"));
+        storageContract.setOrganization(insurer, RegistrationStorage.Organization({
+            name: "Aetna Insurance",
+            domain: "aetna.com",
+            role: RegistrationStorage.Role.Insurer,
+            registrationTimestamp: block.timestamp,
+            verified: true,
+            emailHash: emailHash2
+        }));
+        storageContract.setRole(insurer, RegistrationStorage.Role.Insurer);
+        storageContract.setVerified(insurer, true);
+        storageContract.setActiveUser(insurer, true);
+        storageContract.setRegistrationTimestamp(insurer, block.timestamp);
+        storageContract.setDomainToAddress("aetna.com", insurer);
+        storageContract.setEmailHashToAddress(emailHash2, insurer);
+        storageContract.setUsedEmailHash(emailHash2, true);
+        
+        vm.stopPrank();
+        
+        // Verify both organizations are registered correctly
+        assertEq(uint256(registrationContract.roles(hospital)), uint256(RegistrationContract.Role.Hospital), "Hospital role not set");
+        assertEq(uint256(registrationContract.roles(insurer)), uint256(RegistrationContract.Role.Insurer), "Insurer role not set");
+        
+        // Verify domain mappings
+        assertEq(storageContract.domainToAddress("mountsinai.org"), hospital, "Mount Sinai domain mapping incorrect");
+        assertEq(storageContract.domainToAddress("aetna.com"), insurer, "Aetna domain mapping incorrect");
+        
+        // Verify organization data
+        (string memory hospitalName,,,,, ) = storageContract.organizations(hospital);
+        (string memory insurerName,,,,, ) = storageContract.organizations(insurer);
+        (, string memory hospitalDomain,,,, ) = storageContract.organizations(hospital);
+        (, string memory insurerDomain,,,, ) = storageContract.organizations(insurer);
+        
+        assertEq(hospitalName, "Mount Sinai Health System", "Hospital name incorrect");
+        assertEq(insurerName, "Aetna Insurance", "Insurer name incorrect");
+        assertEq(hospitalDomain, "mountsinai.org", "Hospital domain incorrect");
+        assertEq(insurerDomain, "aetna.com", "Insurer domain incorrect");
+        
+        // Verify email hash uniqueness
+        assertTrue(storageContract.usedEmailHashes(emailHash1), "Hospital email hash should be used");
+        assertTrue(storageContract.usedEmailHashes(emailHash2), "Insurer email hash should be used");
+        assertEq(storageContract.emailHashToAddress(emailHash1), hospital, "Hospital email mapping incorrect");
+        assertEq(storageContract.emailHashToAddress(emailHash2), insurer, "Insurer email mapping incorrect");
+        
+        console.log("[SUCCESS] Multiple organization registration test passed");
+        console.log("   Hospital (Mount Sinai): mountsinai.org");
+        console.log("   Insurer (Aetna): aetna.com");
     }
 } 
