@@ -32,7 +32,7 @@ show_header() {
     clear
     echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}${BOLD}║                    zkMed vlayer Dashboard                    ║${NC}"
-    echo -e "${CYAN}${BOLD}║                     $(date '+%Y-%m-%d %H:%M:%S')                     ║${NC}"
+    echo -e "${CYAN}${BOLD}║                     $(date '+%Y-%m-%d %H:%M:%S')             ║${NC}"
     echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo
 }

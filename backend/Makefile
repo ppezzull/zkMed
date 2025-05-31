@@ -56,6 +56,7 @@ help:
 	@echo "  diag           - Quick diagnostics"
 	@echo "  dashboard      - Interactive monitoring dashboard"
 	@echo "  test-prove     - Test email proof workflow in development"
+	@echo "  test-nextjs    - Test Next.js compatibility with vlayer infrastructure"
 
 # Build contracts
 build:
@@ -136,6 +137,11 @@ dashboard:
 # Proof Testing
 test-prove:
 	@./scripts/vlayer-dev-env.sh prove
+
+# Next.js Integration Testing
+test-nextjs: ## Test Next.js compatibility with vlayer infrastructure
+	@echo "🧪 Testing Next.js compatibility with vlayer infrastructure..."
+	@node scripts/test-nextjs-compatibility.js
 
 # === EMAIL PROOF TESTING ===
 

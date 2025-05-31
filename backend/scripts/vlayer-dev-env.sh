@@ -210,13 +210,16 @@ deploy_contracts() {
     echo -e "${BLUE}📄 Deploying Contracts to Local Environment${NC}"
     echo -e "${BLUE}────────────────────────────────────────────${NC}"
     
-    # Deploy to Anvil L1
+    # Deploy to Anvil L1 only (vlayer infrastructure supports chain ID 31337)
     echo -e "${YELLOW}🚀 Deploying to Anvil L1 (Chain ID: 31337)...${NC}"
-    forge script script/DeployLocal.s.sol --rpc-url "http://localhost:$ANVIL_L1_PORT" --broadcast --chain-id 31337 || true
+    forge script script/DeployLocal.s.sol --rpc-url "http://localhost:$ANVIL_L1_PORT" --broadcast --chain-id 31337
     
-    # Deploy to Anvil L2
-    echo -e "${YELLOW}🚀 Deploying to Anvil L2 (Chain ID: 31338)...${NC}"
-    forge script script/DeployLocal.s.sol --rpc-url "http://localhost:$ANVIL_L2_PORT" --broadcast --chain-id 31338 || true
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✅ Contract deployment successful on L1${NC}"
+    else
+        echo -e "${RED}❌ Contract deployment failed on L1${NC}"
+        return 1
+    fi
     
     echo -e "${GREEN}✅ Contract deployment completed${NC}"
     echo
