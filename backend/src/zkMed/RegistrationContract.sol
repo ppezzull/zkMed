@@ -183,12 +183,11 @@ contract RegistrationContract is Verifier {
     // ============ ORGANIZATION REGISTRATION ============
     
     /// @notice Verify domain ownership using vlayer email proof
-    /// @param proof The vlayer proof from EmailDomainProver.verifyDomainOwnership
     /// @param emailHash Hash of the verified email address
     /// @param targetWallet The wallet address from the email subject
     /// @param domain The verified domain
     function verifyDomainOwnership(
-        Proof calldata proof,
+        Proof calldata /* proof */,
         bytes32 emailHash,
         address targetWallet,
         string calldata domain
@@ -252,11 +251,10 @@ contract RegistrationContract is Verifier {
     }
     
     /// @notice Single-step organization registration with complete email proof
-    /// @param proof The vlayer proof from EmailDomainProver.verifyOrganization
     /// @param orgData Complete organization verification data
     /// @param _role The organization role (Hospital or Insurer)
     function registerOrganization(
-        Proof calldata proof,
+        Proof calldata /* proof */,
         OrganizationVerificationData calldata orgData,
         Role _role
     ) external 
@@ -303,11 +301,10 @@ contract RegistrationContract is Verifier {
     }
     
     /// @notice Simple domain verification for backward compatibility
-    /// @param proof The vlayer proof from EmailDomainProver.simpleDomainVerification
     /// @param domain The verified domain
     /// @param emailHash Hash of the verified email
     function verifyAndStoreURL(
-        Proof calldata proof,
+        Proof calldata /* proof */,
         string calldata domain,
         bytes32 emailHash
     ) external 
@@ -366,6 +363,9 @@ contract RegistrationContract is Verifier {
     function resetEmailHash(bytes32 _emailHash) external onlyAdmin {
         usedEmailHashes[_emailHash] = false;
     }
+
+    // Production Note: Test helper function removed for production deployment
+    // setDomainOwnershipForTesting() was removed to ensure production security
     
     // ============ VIEW FUNCTIONS ============
     

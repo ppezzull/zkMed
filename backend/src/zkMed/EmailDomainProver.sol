@@ -106,7 +106,7 @@ contract EmailDomainProver is Prover {
 
     /// @notice Simple domain verification for existing email patterns
     /// This is for backward compatibility and testing
-    function simpleDomainVerification(UnverifiedEmail calldata unverifiedEmail, address targetWallet)
+    function simpleDomainVerification(UnverifiedEmail calldata unverifiedEmail, address /* targetWallet */)
         public
         view
         returns (Proof memory, string memory, bytes32)
