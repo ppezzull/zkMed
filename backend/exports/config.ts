@@ -1,31 +1,9 @@
-// Auto-generated configuration file
+// Auto-generated configuration file for zkMed RegistrationContract
 import { Chain } from 'viem';
 
-export const contracts = {
-  registrationcontract: {
-    abi: require('./RegistrationContract.json'),
-    // Add addresses per network in your app
-  },
-  registrationstorage: {
-    abi: require('./RegistrationStorage.json'),
-    // Add addresses per network in your app
-  },
-  patientmodule: {
-    abi: require('./PatientModule.json'),
-    // Add addresses per network in your app
-  },
-  organizationmodule: {
-    abi: require('./OrganizationModule.json'),
-    // Add addresses per network in your app
-  },
-  adminmodule: {
-    abi: require('./AdminModule.json'),
-    // Add addresses per network in your app
-  },
-  emaildomainprover: {
-    abi: require('./EmailDomainProver.json'),
-    // Add addresses per network in your app
-  }
+export const zkMedContract = {
+  abi: require('./RegistrationContract.json'),
+  // Add addresses per network in your app
 } as const;
 
 export const supportedChains: Chain[] = [
@@ -43,3 +21,13 @@ export const defaultChain = {
     public: { http: ['http://localhost:8545'] },
   },
 } as const;
+
+// Load deployment addresses
+export const loadDeployment = async (network: 'local' | 'testnet' | 'mainnet' = 'local') => {
+  try {
+    const deployment = require(`./deployment-${network}.json`);
+    return deployment;
+  } catch (error) {
+    throw new Error(`Deployment for ${network} not found`);
+  }
+};

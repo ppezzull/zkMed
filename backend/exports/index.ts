@@ -1,30 +1,23 @@
-// zkMed Contract Exports
-// Easy imports for frontend applications
+// zkMed RegistrationContract - Simplified Export
+export { RegistrationContractABI } from './RegistrationContract';
+export type { 
+  RegistrationContractContract, 
+  RegistrationContractEvents, 
+  RegistrationContractAddress 
+} from './RegistrationContract';
+export { zkMedContract, defaultChain, loadDeployment } from './config';
 
-export * from './contracts';
-export * from './deployments';
+// Re-export deployment for convenience
+export { default as localDeployment } from './deployment-local.json';
 
-// Import all ABIs as JSON
-import * as ABIs from './abis.json';
-export { ABIs };
-
-// Individual ABI imports
-import RegistrationContractABI from './RegistrationContract.json';
-export { RegistrationContractABI };
-import RegistrationStorageABI from './RegistrationStorage.json';
-export { RegistrationStorageABI };
-import PatientModuleABI from './PatientModule.json';
-export { PatientModuleABI };
-import OrganizationModuleABI from './OrganizationModule.json';
-export { OrganizationModuleABI };
-import AdminModuleABI from './AdminModule.json';
-export { AdminModuleABI };
-import EmailDomainProverABI from './EmailDomainProver.json';
-export { EmailDomainProverABI };
-
-// Contract addresses from local deployment
-export { LOCAL_DEPLOYMENT, getDeployment } from './deployments';
-
-// Usage example:
-// import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';
-// const contractAddress = LOCAL_DEPLOYMENT.contracts.registrationContract;
+// Quick setup function
+export const getZkMedContract = async (client: any, network: 'local' | 'testnet' | 'mainnet' = 'local') => {
+  const { RegistrationContractABI } = await import('./RegistrationContract');
+  const deployment = await import(`./deployment-${network}.json`);
+  
+  return {
+    address: deployment.registrationContract,
+    abi: RegistrationContractABI,
+    client
+  };
+};

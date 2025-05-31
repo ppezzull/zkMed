@@ -1580,9 +1580,17 @@ export interface RegistrationContractEvents {
 
 export type RegistrationContractAddress = `0x${string}`;
 
-// Usage example:
+// Usage example with viem:
 // const contract = getContract({
-//   address: "registrationcontractAddress",
+//   address: "0x...", // from deployment-local.json
 //   abi: RegistrationContractABI,
 //   client: publicClient,
+// });
+
+// Usage example with thirdweb:
+// const contract = getContract({
+//   client,
+//   chain: defineChain(31337),
+//   address: "0x...", // from deployment-local.json
+//   abi: RegistrationContractABI,
 // });

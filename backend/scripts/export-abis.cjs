@@ -7,14 +7,9 @@ const OUTPUT_DIR = path.join(__dirname, '..', 'exports');
 const OUT_DIR = path.join(__dirname, '..', 'out');
 const DEPLOYMENTS_DIR = path.join(__dirname, '..', 'deployments');
 
-// Contract names to export
+// Only export the main RegistrationContract - it coordinates all modules
 const CONTRACTS = [
-    'RegistrationContract',
-    'RegistrationStorage', 
-    'PatientModule',
-    'OrganizationModule',
-    'AdminModule',
-    'EmailDomainProver'
+    'RegistrationContract'
 ];
 
 // Create output directory
@@ -22,9 +17,9 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-console.log('📤 Exporting contract ABIs and deployment info...');
+console.log('📤 Exporting RegistrationContract ABI and deployment info...');
 
-// Export ABIs
+// Export RegistrationContract ABI
 CONTRACTS.forEach(contractName => {
     try {
         const contractDir = path.join(OUT_DIR, `${contractName}.sol`);
@@ -52,22 +47,40 @@ CONTRACTS.forEach(contractName => {
     }
 });
 
-// Export deployment addresses
+// Export simplified deployment addresses (only RegistrationContract)
 if (fs.existsSync(DEPLOYMENTS_DIR)) {
     const deploymentFiles = fs.readdirSync(DEPLOYMENTS_DIR).filter(f => f.endsWith('.json'));
     deploymentFiles.forEach(file => {
-        const deploymentPath = path.join(DEPLOYMENTS_DIR, file);
-        const outputPath = path.join(OUTPUT_DIR, `deployment-${file}`);
-        fs.copyFileSync(deploymentPath, outputPath);
-        console.log(`✅ Exported deployment: ${file}`);
+        try {
+            const deploymentPath = path.join(DEPLOYMENTS_DIR, file);
+            const deployment = JSON.parse(fs.readFileSync(deploymentPath, 'utf8'));
+            
+            // Create simplified deployment with only RegistrationContract
+            const simplifiedDeployment = {
+                chainId: deployment.chainId,
+                deployer: deployment.deployer,
+                registrationContract: deployment.registrationContract,
+                timestamp: deployment.timestamp
+            };
+            
+            const outputPath = path.join(OUTPUT_DIR, `deployment-${file}`);
+            fs.writeFileSync(outputPath, JSON.stringify(simplifiedDeployment, null, 2));
+            console.log(`✅ Exported simplified deployment: ${file}`);
+        } catch (error) {
+            console.error(`❌ Error processing deployment ${file}:`, error.message);
+        }
     });
 } else {
     console.log('⚠️  No deployments directory found');
 }
 
-// Generate combined TypeScript configuration
+// Generate simplified TypeScript configuration
 const configContent = generateConfigFile();
 fs.writeFileSync(path.join(OUTPUT_DIR, 'config.ts'), configContent);
+
+// Generate simplified index file
+const indexContent = generateIndexFile();
+fs.writeFileSync(path.join(OUTPUT_DIR, 'index.ts'), indexContent);
 
 // Generate README
 const readmeContent = generateReadme();
@@ -76,9 +89,9 @@ fs.writeFileSync(path.join(OUTPUT_DIR, 'README.md'), readmeContent);
 console.log('\n🎉 Export completed successfully!');
 console.log(`📁 Files exported to: ${OUTPUT_DIR}`);
 console.log('\n📋 Next steps:');
-console.log('1. Import contracts in your Next.js app:');
-console.log("   import { RegistrationContract } from './exports/RegistrationContract'");
-console.log('2. Use deployment addresses from exports/deployment-local.json');
+console.log('1. Import RegistrationContract in your Next.js app:');
+console.log("   import { RegistrationContract } from './exports'");
+console.log('2. Use deployment address from exports/deployment-local.json');
 console.log('3. Connect with thirdweb or viem for contract interactions');
 
 function generateTypeScriptInterface(contractName, abi) {
@@ -113,11 +126,19 @@ ${events}
 
 export type ${contractName}Address = \`0x\${string}\`;
 
-// Usage example:
+// Usage example with viem:
 // const contract = getContract({
-//   address: "${contractName.toLowerCase()}Address",
+//   address: "0x...", // from deployment-local.json
 //   abi: ${contractName}ABI,
 //   client: publicClient,
+// });
+
+// Usage example with thirdweb:
+// const contract = getContract({
+//   client,
+//   chain: defineChain(31337),
+//   address: "0x...", // from deployment-local.json
+//   abi: ${contractName}ABI,
 // });
 `;
 }
@@ -153,14 +174,12 @@ function mapSolidityType(solidityType) {
 }
 
 function generateConfigFile() {
-    return `// Auto-generated configuration file
+    return `// Auto-generated configuration file for zkMed RegistrationContract
 import { Chain } from 'viem';
 
-export const contracts = {
-${CONTRACTS.map(name => `  ${name.toLowerCase()}: {
-    abi: require('./${name}.json'),
-    // Add addresses per network in your app
-  }`).join(',\n')}
+export const zkMedContract = {
+  abi: require('./RegistrationContract.json'),
+  // Add addresses per network in your app
 } as const;
 
 export const supportedChains: Chain[] = [
@@ -178,66 +197,152 @@ export const defaultChain = {
     public: { http: ['http://localhost:8545'] },
   },
 } as const;
+
+// Load deployment addresses
+export const loadDeployment = async (network: 'local' | 'testnet' | 'mainnet' = 'local') => {
+  try {
+    const deployment = require(\`./deployment-\${network}.json\`);
+    return deployment;
+  } catch (error) {
+    throw new Error(\`Deployment for \${network} not found\`);
+  }
+};
+`;
+}
+
+function generateIndexFile() {
+    return `// zkMed RegistrationContract - Simplified Export
+export { RegistrationContractABI } from './RegistrationContract';
+export type { 
+  RegistrationContractContract, 
+  RegistrationContractEvents, 
+  RegistrationContractAddress 
+} from './RegistrationContract';
+export { zkMedContract, defaultChain, loadDeployment } from './config';
+
+// Re-export deployment for convenience
+export { default as localDeployment } from './deployment-local.json';
+
+// Quick setup function
+export const getZkMedContract = async (client: any, network: 'local' | 'testnet' | 'mainnet' = 'local') => {
+  const { RegistrationContractABI } = await import('./RegistrationContract');
+  const deployment = await import(\`./deployment-\${network}.json\`);
+  
+  return {
+    address: deployment.registrationContract,
+    abi: RegistrationContractABI,
+    client
+  };
+};
 `;
 }
 
 function generateReadme() {
-    return `# zkMed Contract Exports
+    return `# zkMed RegistrationContract Export
 
-This directory contains auto-generated contract ABIs and TypeScript interfaces for the zkMed system.
+This directory contains the simplified export for the zkMed RegistrationContract - the single entry point for all zkMed functionality.
+
+## Why One Contract?
+
+The RegistrationContract coordinates all zkMed functionality including:
+- Patient registration and commitment management
+- Organization registration with email domain verification
+- Admin and owner management
+- Role-based access control
+
+By using only the RegistrationContract, your frontend integration is much simpler.
 
 ## Files
 
-### Contract ABIs
-${CONTRACTS.map(name => `- \`${name}.json\` - ABI for ${name}`).join('\n')}
-
-### TypeScript Interfaces  
-${CONTRACTS.map(name => `- \`${name}.ts\` - TypeScript interface for ${name}`).join('\n')}
-
-### Deployment Info
-- \`deployment-local.json\` - Local deployment addresses
-
-### Configuration
-- \`config.ts\` - Unified configuration file
+- \`RegistrationContract.json\` - Contract ABI
+- \`RegistrationContract.ts\` - TypeScript interface with usage examples
+- \`deployment-local.json\` - Local deployment address
+- \`config.ts\` - Configuration and utility functions
+- \`index.ts\` - Main export file
 - \`README.md\` - This file
 
-## Usage
+## Quick Start
 
 ### With Viem/Wagmi
 
 \`\`\`typescript
 import { getContract } from 'viem';
-import { RegistrationContractABI } from './RegistrationContract';
-import deploymentInfo from './deployment-local.json';
+import { RegistrationContractABI, localDeployment } from './exports';
 
-const registrationContract = getContract({
-  address: deploymentInfo.registrationContract,
+const contract = getContract({
+  address: localDeployment.registrationContract,
   abi: RegistrationContractABI,
-  publicClient,
+  client: publicClient,
 });
+
+// Register a patient
+await contract.write.registerPatient([commitmentHash]);
+
+// Check user role
+const role = await contract.read.roles([userAddress]);
 \`\`\`
 
 ### With Thirdweb
 
 \`\`\`typescript
 import { getContract } from "thirdweb";
-import { RegistrationContractABI } from './RegistrationContract';
-import deploymentInfo from './deployment-local.json';
+import { RegistrationContractABI, localDeployment } from './exports';
 
 const contract = getContract({
   client,
   chain: defineChain(31337),
-  address: deploymentInfo.registrationContract,
+  address: localDeployment.registrationContract,
   abi: RegistrationContractABI,
 });
+
+// Register a patient
+await contract.call("registerPatient", [commitmentHash]);
+
+// Check user role  
+const role = await contract.read("roles", [userAddress]);
 \`\`\`
 
-## Contract Addresses (Local Deployment)
+### Quick Setup Helper
 
-$(if [ -f "${DEPLOYMENTS_DIR}/local.json" ]; then cat "${DEPLOYMENTS_DIR}/local.json" | jq -r 'to_entries[] | "- **\(.key)**: \(.value)"'; else echo "No local deployment found"; fi)
+\`\`\`typescript
+import { getZkMedContract } from './exports';
+
+const contract = await getZkMedContract(publicClient, 'local');
+// Contract is ready to use!
+\`\`\`
+
+## Contract Address (Local Deployment)
+
+- **RegistrationContract**: ${process.env.NODE_ENV !== 'production' ? 'Check deployment-local.json' : 'TBD'}
+
+## Key Functions
+
+### Patient Registration
+- \`registerPatient(bytes32 commitment)\` - Register as patient with health data commitment
+- \`verifyPatientCommitment(string secret)\` - Verify patient's health data commitment
+
+### Organization Registration  
+- \`registerOrganizationWithProof(...)\` - Register organization with email domain proof
+
+### View Functions
+- \`roles(address)\` - Get user role (None, Patient, Hospital, Insurer, Admin)
+- \`isUserVerified(address)\` - Check if user is verified
+- \`isUserActive(address)\` - Check if user is active
+- \`getUserRegistration(address)\` - Get complete user registration info
+
+### Admin Functions
+- \`activateUser(address)\` / \`deactivateUser(address)\` - Manage user status
+- \`addAdmin(address)\` / \`addOwner(address)\` - Manage permissions
 
 ## Regenerating Exports
 
 Run \`make export-abis\` from the backend directory to regenerate these files.
+
+## Next Steps
+
+1. Copy this exports folder to your Next.js frontend
+2. Install viem or thirdweb for contract interaction
+3. Import and use the RegistrationContract in your components
+4. All zkMed functionality is available through this single contract!
 `;
 } 
