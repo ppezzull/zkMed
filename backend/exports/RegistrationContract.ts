@@ -1,14 +1,30 @@
-/**
- * RegistrationContract ABI
- * Auto-generated from Foundry build artifacts
- */
-
+// Auto-generated TypeScript interface for RegistrationContract
 export const RegistrationContractABI = [
   {
     "type": "constructor",
     "inputs": [
       {
         "name": "_emailDomainProver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_storageContract",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_patientModule",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_organizationModule",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_adminModule",
         "type": "address",
         "internalType": "address"
       }
@@ -20,9 +36,22 @@ export const RegistrationContractABI = [
     "name": "_setTestVerifier",
     "inputs": [
       {
-        "name": "newVerifier",
+        "name": "",
         "type": "address",
-        "internalType": "contract IProofVerifier"
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "activateUser",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -30,10 +59,42 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "activeUsers",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "addAdmin",
     "inputs": [
       {
         "name": "_newAdmin",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addOwner",
+    "inputs": [
+      {
+        "name": "_newOwner",
         "type": "address",
         "internalType": "address"
       }
@@ -56,10 +117,23 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "adminModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract AdminModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "admins",
     "inputs": [
       {
-        "name": "",
+        "name": "_admin",
         "type": "address",
         "internalType": "address"
       }
@@ -72,6 +146,32 @@ export const RegistrationContractABI = [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "batchActivateUsers",
+    "inputs": [
+      {
+        "name": "_users",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "batchDeactivateUsers",
+    "inputs": [
+      {
+        "name": "_users",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -98,10 +198,42 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "deactivateUser",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "deactivationTimestamp",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "domainToAddress",
     "inputs": [
       {
-        "name": "",
+        "name": "_domain",
         "type": "string",
         "internalType": "string"
       }
@@ -133,7 +265,7 @@ export const RegistrationContractABI = [
     "name": "emailHashToAddress",
     "inputs": [
       {
-        "name": "",
+        "name": "_emailHash",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -238,6 +370,43 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "getOwners",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]",
+        "internalType": "address[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getUserActivationStatus",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "isActive",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "deactivatedAt",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getUserRegistration",
     "inputs": [
       {
@@ -315,6 +484,44 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "isOwner",
+    "inputs": [
+      {
+        "name": "_address",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isUserActive",
+    "inputs": [
+      {
+        "name": "_user",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "isUserVerified",
     "inputs": [
       {
@@ -334,10 +541,23 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "organizationModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract OrganizationModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "organizations",
     "inputs": [
       {
-        "name": "",
+        "name": "_org",
         "type": "address",
         "internalType": "address"
       }
@@ -364,7 +584,7 @@ export const RegistrationContractABI = [
         "internalType": "uint256"
       },
       {
-        "name": "verified",
+        "name": "isVerified",
         "type": "bool",
         "internalType": "bool"
       },
@@ -378,10 +598,42 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owners",
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "patientCommitments",
     "inputs": [
       {
-        "name": "",
+        "name": "_patient",
         "type": "address",
         "internalType": "address"
       }
@@ -397,10 +649,23 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "patientModule",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract PatientModule"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "registerOrganization",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -529,7 +794,7 @@ export const RegistrationContractABI = [
     "name": "registrationTimestamps",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -558,6 +823,26 @@ export const RegistrationContractABI = [
   },
   {
     "type": "function",
+    "name": "removeOwner",
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "renounceOwnership",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "resetEmailHash",
     "inputs": [
       {
@@ -574,7 +859,7 @@ export const RegistrationContractABI = [
     "name": "roles",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -587,6 +872,32 @@ export const RegistrationContractABI = [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "storageContract",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract RegistrationStorage"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -611,7 +922,7 @@ export const RegistrationContractABI = [
     "name": "usedEmailHashes",
     "inputs": [
       {
-        "name": "",
+        "name": "_emailHash",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -630,7 +941,7 @@ export const RegistrationContractABI = [
     "name": "verified",
     "inputs": [
       {
-        "name": "",
+        "name": "_user",
         "type": "address",
         "internalType": "address"
       }
@@ -652,7 +963,7 @@ export const RegistrationContractABI = [
       {
         "name": "",
         "type": "address",
-        "internalType": "contract IProofVerifier"
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -662,7 +973,7 @@ export const RegistrationContractABI = [
     "name": "verifyAndStoreURL",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -751,7 +1062,7 @@ export const RegistrationContractABI = [
     "name": "verifyDomainOwnership",
     "inputs": [
       {
-        "name": "",
+        "name": "proof",
         "type": "tuple",
         "internalType": "struct Proof",
         "components": [
@@ -986,6 +1297,82 @@ export const RegistrationContractABI = [
   },
   {
     "type": "event",
+    "name": "OwnerAdded",
+    "inputs": [
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "addedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnerRemoved",
+    "inputs": [
+      {
+        "name": "removedOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "removedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferRequested",
+    "inputs": [
+      {
+        "name": "currentOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "PatientRegistered",
     "inputs": [
       {
@@ -1036,6 +1423,44 @@ export const RegistrationContractABI = [
   },
   {
     "type": "event",
+    "name": "UserActivated",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "activatedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "UserDeactivated",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "deactivatedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "VerificationStatusChanged",
     "inputs": [
       {
@@ -1061,9 +1486,103 @@ export const RegistrationContractABI = [
   },
   {
     "type": "error",
-    "name": "InvalidChainId",
-    "inputs": []
+    "name": "OwnableInvalidOwner",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OwnableUnauthorizedAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
   }
 ] as const;
 
-export default RegistrationContractABI;
+export interface RegistrationContractContract {
+  _setTestVerifier(: string): Promise<void>;
+  activateUser(_user: string): Promise<void>;
+  activeUsers(_user: string): Promise<boolean>;
+  addAdmin(_newAdmin: string): Promise<void>;
+  addOwner(_newOwner: string): Promise<void>;
+  admin(): Promise<string>;
+  adminModule(): Promise<string>;
+  admins(_admin: string): Promise<boolean>;
+  batchActivateUsers(_users: string[]): Promise<void>;
+  batchDeactivateUsers(_users: string[]): Promise<void>;
+  completeOrganizationRegistration(organizationName: string, domain: string, _role: number): Promise<void>;
+  deactivateUser(_user: string): Promise<void>;
+  deactivationTimestamp(_user: string): Promise<bigint>;
+  domainToAddress(_domain: string): Promise<string>;
+  emailDomainProver(): Promise<string>;
+  emailHashToAddress(_emailHash: string): Promise<string>;
+  getDomainOwner(_domain: string): Promise<string>;
+  getEmailHashOwner(_emailHash: string): Promise<string>;
+  getOrganization(_organization: string): Promise<any>;
+  getOwners(): Promise<string[]>;
+  getUserActivationStatus(_user: string): Promise<boolean | bigint>;
+  getUserRegistration(_user: string): Promise<number | boolean | bigint | string | string>;
+  isDomainRegistered(_domain: string): Promise<boolean>;
+  isEmailHashUsed(_emailHash: string): Promise<boolean>;
+  isOwner(_address: string): Promise<boolean>;
+  isUserActive(_user: string): Promise<boolean>;
+  isUserVerified(_user: string): Promise<boolean>;
+  organizationModule(): Promise<string>;
+  organizations(_org: string): Promise<string | string | number | bigint | boolean | string>;
+  owner(): Promise<string>;
+  owners(_owner: string): Promise<boolean>;
+  patientCommitments(_patient: string): Promise<string>;
+  patientModule(): Promise<string>;
+  registerOrganization(proof: any, orgData: any, _role: number): Promise<void>;
+  registerPatient(_commitment: string): Promise<void>;
+  registrationTimestamps(_user: string): Promise<bigint>;
+  removeAdmin(_admin: string): Promise<void>;
+  removeOwner(_owner: string): Promise<void>;
+  renounceOwnership(): Promise<void>;
+  resetEmailHash(_emailHash: string): Promise<void>;
+  roles(_user: string): Promise<number>;
+  storageContract(): Promise<string>;
+  transferOwnership(newOwner: string): Promise<void>;
+  updateVerificationStatus(_user: string, _verified: boolean): Promise<void>;
+  usedEmailHashes(_emailHash: string): Promise<boolean>;
+  verified(_user: string): Promise<boolean>;
+  verifier(): Promise<string>;
+  verifyAndStoreURL(proof: any, domain: string, emailHash: string): Promise<void>;
+  verifyDomainOwnership(proof: any, emailHash: string, targetWallet: string, domain: string): Promise<void>;
+  verifyPatientCommitment(_secret: string): Promise<boolean>;
+}
+
+export interface RegistrationContractEvents {
+  AdminAdded: { admin: string };
+  AdminRemoved: { admin: string };
+  DomainVerified: { user: string, domain: string, emailHash: string, timestamp: bigint };
+  EmailProofVerified: { organization: string, domain: string, emailHash: string, timestamp: bigint };
+  OrganizationRegistered: { organization: string, domain: string, name: string, role: number, timestamp: bigint };
+  OwnerAdded: { newOwner: string, addedBy: string };
+  OwnerRemoved: { removedOwner: string, removedBy: string };
+  OwnershipTransferRequested: { currentOwner: string, newOwner: string };
+  OwnershipTransferred: { previousOwner: string, newOwner: string };
+  PatientRegistered: { patient: string, commitment: string, timestamp: bigint };
+  RoleAssigned: { user: string, role: number, timestamp: bigint };
+  UserActivated: { user: string, activatedBy: string };
+  UserDeactivated: { user: string, deactivatedBy: string };
+  VerificationStatusChanged: { user: string, verified: boolean, timestamp: bigint };
+}
+
+export type RegistrationContractAddress = `0x${string}`;
+
+// Usage example:
+// const contract = getContract({
+//   address: "registrationcontractAddress",
+//   abi: RegistrationContractABI,
+//   client: publicClient,
+// });

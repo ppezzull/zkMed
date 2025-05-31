@@ -5,9 +5,14 @@ import {
 } from "@vlayer/sdk/config";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from 'url';
 
 // Node.js types
 declare var process: any;
+
+// ES Module dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * zkMed Email Proof Integration with Direct Module Deployment
@@ -243,7 +248,7 @@ async function runAllTests() {
 async function main() {
   const command = process.argv[2] || "help";
   
-  console.log("=== zkMed Email Proof Integration with Direct Module Deployment ===");
+  console.log("=== zkMed Email Proof Generation with Direct Module Deployment ===");
   console.log("Command:", command);
   console.log("Chain:", chain.name, "(ID:", chain.id + ")");
   console.log("Account:", deployer?.address);
@@ -278,12 +283,11 @@ async function main() {
   }
 }
 
-if (require.main === module) {
-  main().then(() => {
-    console.log("\n✅ Script completed successfully");
-    process.exit(0);
-  }).catch((error) => {
-    console.error("\n❌ Script failed:", error);
-    process.exit(1);
-  });
-}
+// Execute main function
+main().then(() => {
+  console.log("\n✅ Script completed successfully");
+  process.exit(0);
+}).catch((error) => {
+  console.error("\n❌ Script failed:", error);
+  process.exit(1);
+});

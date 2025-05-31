@@ -1,8 +1,4 @@
-/**
- * EmailDomainProver ABI
- * Auto-generated from Foundry build artifacts
- */
-
+// Auto-generated TypeScript interface for EmailDomainProver
 export const EmailDomainProverABI = [
   {
     "type": "function",
@@ -625,4 +621,25 @@ export const EmailDomainProverABI = [
   }
 ] as const;
 
-export default EmailDomainProverABI;
+export interface EmailDomainProverContract {
+  proof(): Promise<any>;
+  setBlock(blockNo: bigint): Promise<void>;
+  setChain(chainId: bigint, blockNo: bigint): Promise<void>;
+  simpleDomainVerification(unverifiedEmail: any, : string): Promise<any | string | string>;
+  stringToAddress(str: string): Promise<string>;
+  verifyDomainOwnership(unverifiedEmail: any): Promise<any | string | string | string>;
+  verifyOrganization(unverifiedEmail: any): Promise<any | any>;
+}
+
+export interface EmailDomainProverEvents {
+
+}
+
+export type EmailDomainProverAddress = `0x${string}`;
+
+// Usage example:
+// const contract = getContract({
+//   address: "emaildomainproverAddress",
+//   abi: EmailDomainProverABI,
+//   client: publicClient,
+// });

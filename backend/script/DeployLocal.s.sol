@@ -13,7 +13,16 @@ import "../src/zkMed/EmailDomainProver.sol";
 contract DeployLocal is Script {
     
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        // Use the private key passed via command line (default Anvil account #0)
+        // If PRIVATE_KEY env var exists, use it, otherwise use default
+        uint256 deployerPrivateKey;
+        try vm.envUint("PRIVATE_KEY") returns (uint256 envKey) {
+            deployerPrivateKey = envKey;
+        } catch {
+            // Default to Anvil account #0 private key
+            deployerPrivateKey = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
+        }
+        
         address deployer = vm.addr(deployerPrivateKey);
         
         console.log("=== zkMed Local Deployment (Direct Module Deployment) ===");

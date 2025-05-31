@@ -125,13 +125,9 @@ deploy-production: ## Deploy to production network (requires MAINNET_RPC_URL and
 
 # ============ ABI EXPORT & FRONTEND INTEGRATION ============
 
-export-abis: build ## Export ABIs and create TypeScript interfaces for frontend
+export-abis: build ## Export contract ABIs for frontend integration
 	@echo "📤 Exporting ABIs and creating TypeScript interfaces..."
-	@mkdir -p exports
-	node scripts/export-abis.js
-	@echo "✅ ABIs exported to exports/ directory"
-	@echo "📋 Available exports:"
-	@ls -la exports/
+	@node scripts/export-abis.cjs
 
 # ============ EMAIL PROOF TESTING ============
 

@@ -1,71 +1,67 @@
 # zkMed Contract Exports
 
-This directory contains all the necessary files for frontend integration with zkMed smart contracts.
+This directory contains auto-generated contract ABIs and TypeScript interfaces for the zkMed system.
 
 ## Files
 
-- `abis.json` - Combined ABIs for all contracts
-- `contracts.ts` - TypeScript interfaces for all contracts  
-- `deployments.ts` - Deployment configuration and addresses
-- `index.ts` - Main export file for easy imports
-- Individual ABI files for each contract
+### Contract ABIs
+- `RegistrationContract.json` - ABI for RegistrationContract
+- `RegistrationStorage.json` - ABI for RegistrationStorage
+- `PatientModule.json` - ABI for PatientModule
+- `OrganizationModule.json` - ABI for OrganizationModule
+- `AdminModule.json` - ABI for AdminModule
+- `EmailDomainProver.json` - ABI for EmailDomainProver
+
+### TypeScript Interfaces  
+- `RegistrationContract.ts` - TypeScript interface for RegistrationContract
+- `RegistrationStorage.ts` - TypeScript interface for RegistrationStorage
+- `PatientModule.ts` - TypeScript interface for PatientModule
+- `OrganizationModule.ts` - TypeScript interface for OrganizationModule
+- `AdminModule.ts` - TypeScript interface for AdminModule
+- `EmailDomainProver.ts` - TypeScript interface for EmailDomainProver
+
+### Deployment Info
+- `deployment-local.json` - Local deployment addresses
+
+### Configuration
+- `config.ts` - Unified configuration file
+- `README.md` - This file
 
 ## Usage
 
-### Basic Import
+### With Viem/Wagmi
+
 ```typescript
-import { 
-  RegistrationContractABI, 
-  LOCAL_DEPLOYMENT, 
-  RegistrationContractContract 
-} from './exports';
+import { getContract } from 'viem';
+import { RegistrationContractABI } from './RegistrationContract';
+import deploymentInfo from './deployment-local.json';
 
-const contractAddress = LOCAL_DEPLOYMENT.contracts.registrationContract;
-```
-
-### With ethers.js
-```typescript
-import { ethers } from 'ethers';
-import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';
-
-const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
-const contract = new ethers.Contract(
-  LOCAL_DEPLOYMENT.contracts.registrationContract,
-  RegistrationContractABI,
-  provider
-);
-```
-
-### With wagmi/viem
-```typescript
-import { useContractRead } from 'wagmi';
-import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';
-
-const { data } = useContractRead({
-  address: LOCAL_DEPLOYMENT.contracts.registrationContract,
+const registrationContract = getContract({
+  address: deploymentInfo.registrationContract,
   abi: RegistrationContractABI,
-  functionName: 'isUserVerified',
-  args: [address]
+  publicClient,
 });
 ```
 
-## Contracts
+### With Thirdweb
 
-### Core System
-- **RegistrationContract**: Main proxy contract
-- **RegistrationStorage**: Centralized storage with access control
+```typescript
+import { getContract } from "thirdweb";
+import { RegistrationContractABI } from './RegistrationContract';
+import deploymentInfo from './deployment-local.json';
 
-### Modules  
-- **PatientModule**: Patient registration and commitments
-- **OrganizationModule**: Organization registration with email verification
-- **AdminModule**: Admin functions and batch operations
-
-### Utilities
-- **EmailDomainProver**: vlayer-based email domain verification
-
-## Development
-
-Regenerate exports after contract changes:
-```bash
-make export-abis
+const contract = getContract({
+  client,
+  chain: defineChain(31337),
+  address: deploymentInfo.registrationContract,
+  abi: RegistrationContractABI,
+});
 ```
+
+## Contract Addresses (Local Deployment)
+
+$(if [ -f "/home/ppezz/Desktop/ETH/ETHPrague/zkMed/backend/deployments/local.json" ]; then cat "/home/ppezz/Desktop/ETH/ETHPrague/zkMed/backend/deployments/local.json" | jq -r 'to_entries[] | "- **(.key)**: (.value)"'; else echo "No local deployment found"; fi)
+
+## Regenerating Exports
+
+Run `make export-abis` from the backend directory to regenerate these files.

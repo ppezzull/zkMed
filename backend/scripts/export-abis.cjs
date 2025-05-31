@@ -1,28 +1,13 @@
 #!/usr/bin/env node
 
-/**
- * zkMed Contract ABI Export Script for Factory Pattern
- * 
- * This script exports contract ABIs and generates TypeScript interfaces
- * for seamless Next.js frontend integration with the factory-deployed contracts.
- * 
- * Features:
- * - Exports all contract ABIs as TypeScript interfaces
- * - Generates deployment configuration from local.json
- * - Creates type-safe contract interaction helpers
- * - Supports both local and production deployments
- * - Generates thirdweb-compatible hooks and configurations
- */
-
 const fs = require('fs');
 const path = require('path');
 
-// Configuration
-const FORGE_OUT_DIR = './out';
-const EXPORTS_DIR = './exports';
-const DEPLOYMENTS_DIR = './deployments';
+const OUTPUT_DIR = path.join(__dirname, '..', 'exports');
+const OUT_DIR = path.join(__dirname, '..', 'out');
+const DEPLOYMENTS_DIR = path.join(__dirname, '..', 'deployments');
 
-// Contract names to export (without RegistrationFactory)
+// Contract names to export
 const CONTRACTS = [
     'RegistrationContract',
     'RegistrationStorage', 
@@ -32,312 +17,227 @@ const CONTRACTS = [
     'EmailDomainProver'
 ];
 
-function ensureDirectoryExists(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
+// Create output directory
+if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-function readJsonFile(filePath) {
+console.log('📤 Exporting contract ABIs and deployment info...');
+
+// Export ABIs
+CONTRACTS.forEach(contractName => {
     try {
-        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (error) {
-        console.warn(`Warning: Could not read ${filePath}:`, error.message);
-        return null;
-    }
-}
-
-function extractABI(contractPath) {
-    const artifactPath = path.join(FORGE_OUT_DIR, contractPath);
-    const artifact = readJsonFile(artifactPath);
-    return artifact ? artifact.abi : null;
-}
-
-function generateTypeScriptInterface(contractName, abi) {
-    if (!abi) return '';
-    
-    let tsInterface = `// Generated TypeScript interface for ${contractName}\n\n`;
-    
-    // Extract function signatures
-    const functions = abi.filter(item => item.type === 'function');
-    const events = abi.filter(item => item.type === 'event');
-    
-    // Generate function interface
-    if (functions.length > 0) {
-        tsInterface += `export interface ${contractName}Functions {\n`;
-        functions.forEach(func => {
-            const inputs = func.inputs.map(input => `${input.name}: ${mapSolidityToTS(input.type)}`).join(', ');
-            const outputs = func.outputs && func.outputs.length > 0 
-                ? `: Promise<${func.outputs.length === 1 ? mapSolidityToTS(func.outputs[0].type) : 'any[]'}>`
-                : ': Promise<void>';
-            tsInterface += `  ${func.name}(${inputs})${outputs};\n`;
-        });
-        tsInterface += `}\n\n`;
-    }
-    
-    // Generate events interface
-    if (events.length > 0) {
-        tsInterface += `export interface ${contractName}Events {\n`;
-        events.forEach(event => {
-            const inputs = event.inputs.map(input => `${input.name}: ${mapSolidityToTS(input.type)}`).join(', ');
-            tsInterface += `  ${event.name}: { ${inputs} };\n`;
-        });
-        tsInterface += `}\n\n`;
-    }
-    
-    // Generate main contract interface
-    tsInterface += `export interface ${contractName}Contract {\n`;
-    tsInterface += `  address: string;\n`;
-    tsInterface += `  abi: any[];\n`;
-    if (functions.length > 0) {
-        tsInterface += `  functions: ${contractName}Functions;\n`;
-    }
-    if (events.length > 0) {
-        tsInterface += `  events: ${contractName}Events;\n`;
-    }
-    tsInterface += `}\n`;
-    
-    return tsInterface;
-}
-
-function mapSolidityToTS(solidityType) {
-    if (solidityType.includes('uint') || solidityType.includes('int')) {
-        return 'number | string';
-    }
-    if (solidityType === 'bool') {
-        return 'boolean';
-    }
-    if (solidityType === 'string') {
-        return 'string';
-    }
-    if (solidityType === 'address') {
-        return 'string';
-    }
-    if (solidityType.includes('bytes')) {
-        return 'string';
-    }
-    if (solidityType.includes('[]')) {
-        return `${mapSolidityToTS(solidityType.replace('[]', ''))}[]`;
-    }
-    return 'any';
-}
-
-function generateDeploymentConfig() {
-    const localDeployment = readJsonFile(path.join(DEPLOYMENTS_DIR, 'local.json'));
-    
-    let config = `// Generated deployment configuration\n\n`;
-    config += `export interface DeploymentConfig {\n`;
-    config += `  chainId: number;\n`;
-    config += `  deployer: string;\n`;
-    config += `  contracts: {\n`;
-    
-    CONTRACTS.forEach(contract => {
-        const key = contract.charAt(0).toLowerCase() + contract.slice(1);
-        config += `    ${key}: string;\n`;
-    });
-    
-    config += `  };\n`;
-    config += `  timestamp: number;\n`;
-    config += `}\n\n`;
-    
-    if (localDeployment) {
-        config += `export const LOCAL_DEPLOYMENT: DeploymentConfig = {\n`;
-        config += `  chainId: ${localDeployment.chainId || 31337},\n`;
-        config += `  deployer: "${localDeployment.deployer || ''}",\n`;
-        config += `  contracts: {\n`;
-        config += `    emailDomainProver: "${localDeployment.emailDomainProver || ''}",\n`;
-        config += `    registrationContract: "${localDeployment.registrationContract || ''}",\n`;
-        config += `    registrationStorage: "${localDeployment.registrationStorage || ''}",\n`;
-        config += `    patientModule: "${localDeployment.patientModule || ''}",\n`;
-        config += `    organizationModule: "${localDeployment.organizationModule || ''}",\n`;
-        config += `    adminModule: "${localDeployment.adminModule || ''}",\n`;
-        config += `  },\n`;
-        config += `  timestamp: ${localDeployment.timestamp || Date.now()}\n`;
-        config += `};\n\n`;
-    }
-    
-    config += `// Helper function to get deployment by chain ID\n`;
-    config += `export function getDeployment(chainId: number): DeploymentConfig | null {\n`;
-    config += `  switch (chainId) {\n`;
-    config += `    case 31337:\n`;
-    config += `      return LOCAL_DEPLOYMENT;\n`;
-    config += `    default:\n`;
-    config += `      return null;\n`;
-    config += `  }\n`;
-    config += `}\n`;
-    
-    return config;
-}
-
-function main() {
-    console.log('🚀 Starting ABI export process...');
-    
-    // Ensure directories exist
-    ensureDirectoryExists(EXPORTS_DIR);
-    
-    // Contract file mappings (updated for actual build output structure)
-    const contractPaths = {
-        'RegistrationContract': 'RegistrationContract.sol/RegistrationContract.json',
-        'RegistrationStorage': 'RegistrationStorage.sol/RegistrationStorage.json',
-        'PatientModule': 'PatientModule.sol/PatientModule.json',
-        'OrganizationModule': 'OrganizationModule.sol/OrganizationModule.json',
-        'AdminModule': 'AdminModule.sol/AdminModule.json',
-        'EmailDomainProver': 'EmailDomainProver.sol/EmailDomainProver.json'
-    };
-    
-    let allABIs = {};
-    let allInterfaces = '';
-    
-    // Process each contract
-    for (const [contractName, contractPath] of Object.entries(contractPaths)) {
-        console.log(`📄 Processing ${contractName}...`);
+        const contractDir = path.join(OUT_DIR, `${contractName}.sol`);
+        const contractFile = path.join(contractDir, `${contractName}.json`);
         
-        const abi = extractABI(contractPath);
-        if (abi) {
-            allABIs[contractName] = abi;
+        if (fs.existsSync(contractFile)) {
+            const contractData = JSON.parse(fs.readFileSync(contractFile, 'utf8'));
+            const abi = contractData.abi;
             
-            // Generate individual ABI file
-            fs.writeFileSync(
-                path.join(EXPORTS_DIR, `${contractName}.json`), 
-                JSON.stringify(abi, null, 2)
-            );
+            // Write ABI file
+            const abiFile = path.join(OUTPUT_DIR, `${contractName}.json`);
+            fs.writeFileSync(abiFile, JSON.stringify(abi, null, 2));
             
             // Generate TypeScript interface
             const tsInterface = generateTypeScriptInterface(contractName, abi);
-            allInterfaces += tsInterface + '\n\n';
+            const tsFile = path.join(OUTPUT_DIR, `${contractName}.ts`);
+            fs.writeFileSync(tsFile, tsInterface);
             
-            console.log(`✅ ${contractName} exported successfully`);
+            console.log(`✅ Exported ${contractName}`);
         } else {
-            console.warn(`⚠️  Could not extract ABI for ${contractName}`);
+            console.log(`⚠️  ${contractName} not found in out/ directory`);
         }
+    } catch (error) {
+        console.error(`❌ Error exporting ${contractName}:`, error.message);
+    }
+});
+
+// Export deployment addresses
+if (fs.existsSync(DEPLOYMENTS_DIR)) {
+    const deploymentFiles = fs.readdirSync(DEPLOYMENTS_DIR).filter(f => f.endsWith('.json'));
+    deploymentFiles.forEach(file => {
+        const deploymentPath = path.join(DEPLOYMENTS_DIR, file);
+        const outputPath = path.join(OUTPUT_DIR, `deployment-${file}`);
+        fs.copyFileSync(deploymentPath, outputPath);
+        console.log(`✅ Exported deployment: ${file}`);
+    });
+} else {
+    console.log('⚠️  No deployments directory found');
+}
+
+// Generate combined TypeScript configuration
+const configContent = generateConfigFile();
+fs.writeFileSync(path.join(OUTPUT_DIR, 'config.ts'), configContent);
+
+// Generate README
+const readmeContent = generateReadme();
+fs.writeFileSync(path.join(OUTPUT_DIR, 'README.md'), readmeContent);
+
+console.log('\n🎉 Export completed successfully!');
+console.log(`📁 Files exported to: ${OUTPUT_DIR}`);
+console.log('\n📋 Next steps:');
+console.log('1. Import contracts in your Next.js app:');
+console.log("   import { RegistrationContract } from './exports/RegistrationContract'");
+console.log('2. Use deployment addresses from exports/deployment-local.json');
+console.log('3. Connect with thirdweb or viem for contract interactions');
+
+function generateTypeScriptInterface(contractName, abi) {
+    const functionSignatures = abi
+        .filter(item => item.type === 'function')
+        .map(func => {
+            const inputs = func.inputs.map(input => `${input.name}: ${mapSolidityType(input.type)}`).join(', ');
+            const outputs = func.outputs.map(output => mapSolidityType(output.type)).join(' | ');
+            const returnType = outputs || 'void';
+            return `  ${func.name}(${inputs}): Promise<${returnType}>;`;
+        })
+        .join('\n');
+    
+    const events = abi
+        .filter(item => item.type === 'event')
+        .map(event => {
+            const inputs = event.inputs.map(input => `${input.name}: ${mapSolidityType(input.type)}`).join(', ');
+            return `  ${event.name}: { ${inputs} };`;
+        })
+        .join('\n');
+
+    return `// Auto-generated TypeScript interface for ${contractName}
+export const ${contractName}ABI = ${JSON.stringify(abi, null, 2)} as const;
+
+export interface ${contractName}Contract {
+${functionSignatures}
+}
+
+export interface ${contractName}Events {
+${events}
+}
+
+export type ${contractName}Address = \`0x\${string}\`;
+
+// Usage example:
+// const contract = getContract({
+//   address: "${contractName.toLowerCase()}Address",
+//   abi: ${contractName}ABI,
+//   client: publicClient,
+// });
+`;
+}
+
+function mapSolidityType(solidityType) {
+    const typeMap = {
+        'uint256': 'bigint',
+        'uint8': 'number',
+        'uint16': 'number', 
+        'uint32': 'number',
+        'int256': 'bigint',
+        'address': 'string',
+        'bool': 'boolean',
+        'bytes': 'string',
+        'bytes32': 'string',
+        'string': 'string'
+    };
+    
+    // Handle arrays
+    if (solidityType.includes('[]')) {
+        const baseType = solidityType.replace('[]', '');
+        return `${mapSolidityType(baseType)}[]`;
     }
     
-    // Write combined ABIs file
-    fs.writeFileSync(
-        path.join(EXPORTS_DIR, 'abis.json'), 
-        JSON.stringify(allABIs, null, 2)
-    );
+    // Handle fixed-size arrays
+    const arrayMatch = solidityType.match(/^(.+)\[(\d+)\]$/);
+    if (arrayMatch) {
+        const baseType = arrayMatch[1];
+        return `${mapSolidityType(baseType)}[]`;
+    }
     
-    // Write TypeScript interfaces
-    const tsContent = `// Generated TypeScript interfaces for zkMed contracts\n// Generated at: ${new Date().toISOString()}\n\n${allInterfaces}`;
-    fs.writeFileSync(path.join(EXPORTS_DIR, 'contracts.ts'), tsContent);
-    
-    // Generate deployment configuration
-    const deploymentConfig = generateDeploymentConfig();
-    fs.writeFileSync(path.join(EXPORTS_DIR, 'deployments.ts'), deploymentConfig);
-    
-    // Generate index file for easy imports
-    const indexContent = `// zkMed Contract Exports\n// Easy imports for frontend applications\n\n` +
-        `export * from './contracts';\n` +
-        `export * from './deployments';\n\n` +
-        `// Import all ABIs as JSON\n` +
-        `import * as ABIs from './abis.json';\nexport { ABIs };\n\n` +
-        `// Individual ABI imports\n` +
-        CONTRACTS.map(contract => 
-            `import ${contract}ABI from './${contract}.json';\nexport { ${contract}ABI };`
-        ).join('\n') + '\n\n' +
-        `// Contract addresses from local deployment\n` +
-        `export { LOCAL_DEPLOYMENT, getDeployment } from './deployments';\n\n` +
-        `// Usage example:\n` +
-        `// import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';\n` +
-        `// const contractAddress = LOCAL_DEPLOYMENT.contracts.registrationContract;\n`;
-    
-    fs.writeFileSync(path.join(EXPORTS_DIR, 'index.ts'), indexContent);
-    
-    // Generate README
-    const readmeContent = `# zkMed Contract Exports
+    return typeMap[solidityType] || 'any';
+}
 
-This directory contains all the necessary files for frontend integration with zkMed smart contracts.
+function generateConfigFile() {
+    return `// Auto-generated configuration file
+import { Chain } from 'viem';
+
+export const contracts = {
+${CONTRACTS.map(name => `  ${name.toLowerCase()}: {
+    abi: require('./${name}.json'),
+    // Add addresses per network in your app
+  }`).join(',\n')}
+} as const;
+
+export const supportedChains: Chain[] = [
+  // Add your supported chains here
+  // e.g., mainnet, sepolia, polygon, etc.
+];
+
+export const defaultChain = {
+  id: 31337,
+  name: 'Anvil Local',
+  network: 'anvil',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['http://localhost:8545'] },
+    public: { http: ['http://localhost:8545'] },
+  },
+} as const;
+`;
+}
+
+function generateReadme() {
+    return `# zkMed Contract Exports
+
+This directory contains auto-generated contract ABIs and TypeScript interfaces for the zkMed system.
 
 ## Files
 
-- \`abis.json\` - Combined ABIs for all contracts
-- \`contracts.ts\` - TypeScript interfaces for all contracts  
-- \`deployments.ts\` - Deployment configuration and addresses
-- \`index.ts\` - Main export file for easy imports
-- Individual ABI files for each contract
+### Contract ABIs
+${CONTRACTS.map(name => `- \`${name}.json\` - ABI for ${name}`).join('\n')}
+
+### TypeScript Interfaces  
+${CONTRACTS.map(name => `- \`${name}.ts\` - TypeScript interface for ${name}`).join('\n')}
+
+### Deployment Info
+- \`deployment-local.json\` - Local deployment addresses
+
+### Configuration
+- \`config.ts\` - Unified configuration file
+- \`README.md\` - This file
 
 ## Usage
 
-### Basic Import
+### With Viem/Wagmi
+
 \`\`\`typescript
-import { 
-  RegistrationContractABI, 
-  LOCAL_DEPLOYMENT, 
-  RegistrationContractContract 
-} from './exports';
+import { getContract } from 'viem';
+import { RegistrationContractABI } from './RegistrationContract';
+import deploymentInfo from './deployment-local.json';
 
-const contractAddress = LOCAL_DEPLOYMENT.contracts.registrationContract;
-\`\`\`
-
-### With ethers.js
-\`\`\`typescript
-import { ethers } from 'ethers';
-import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';
-
-const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
-const contract = new ethers.Contract(
-  LOCAL_DEPLOYMENT.contracts.registrationContract,
-  RegistrationContractABI,
-  provider
-);
-\`\`\`
-
-### With wagmi/viem
-\`\`\`typescript
-import { useContractRead } from 'wagmi';
-import { RegistrationContractABI, LOCAL_DEPLOYMENT } from './exports';
-
-const { data } = useContractRead({
-  address: LOCAL_DEPLOYMENT.contracts.registrationContract,
+const registrationContract = getContract({
+  address: deploymentInfo.registrationContract,
   abi: RegistrationContractABI,
-  functionName: 'isUserVerified',
-  args: [address]
+  publicClient,
 });
 \`\`\`
 
-## Contracts
+### With Thirdweb
 
-### Core System
-- **RegistrationContract**: Main proxy contract
-- **RegistrationStorage**: Centralized storage with access control
+\`\`\`typescript
+import { getContract } from "thirdweb";
+import { RegistrationContractABI } from './RegistrationContract';
+import deploymentInfo from './deployment-local.json';
 
-### Modules  
-- **PatientModule**: Patient registration and commitments
-- **OrganizationModule**: Organization registration with email verification
-- **AdminModule**: Admin functions and batch operations
-
-### Utilities
-- **EmailDomainProver**: vlayer-based email domain verification
-
-## Development
-
-Regenerate exports after contract changes:
-\`\`\`bash
-make export-abis
+const contract = getContract({
+  client,
+  chain: defineChain(31337),
+  address: deploymentInfo.registrationContract,
+  abi: RegistrationContractABI,
+});
 \`\`\`
+
+## Contract Addresses (Local Deployment)
+
+$(if [ -f "${DEPLOYMENTS_DIR}/local.json" ]; then cat "${DEPLOYMENTS_DIR}/local.json" | jq -r 'to_entries[] | "- **\(.key)**: \(.value)"'; else echo "No local deployment found"; fi)
+
+## Regenerating Exports
+
+Run \`make export-abis\` from the backend directory to regenerate these files.
 `;
-    
-    fs.writeFileSync(path.join(EXPORTS_DIR, 'README.md'), readmeContent);
-    
-    console.log('\n🎉 ABI export completed successfully!');
-    console.log('\n📁 Generated files:');
-    console.log('├── abis.json (combined ABIs)');
-    console.log('├── contracts.ts (TypeScript interfaces)');
-    console.log('├── deployments.ts (deployment config)');
-    console.log('├── index.ts (main exports)');
-    console.log('├── README.md (documentation)');
-    
-    CONTRACTS.forEach(contract => {
-        console.log(`├── ${contract}.json`);
-    });
-    
-    console.log('\n🚀 Ready for frontend integration!');
-    console.log('Import from: ./exports/');
-}
-
-if (require.main === module) {
-    main();
-}
-
-module.exports = { main };
+} 
