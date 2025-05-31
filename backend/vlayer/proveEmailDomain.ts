@@ -11,8 +11,8 @@ declare var process: any;
 
 // Note: After building with forge, these should import from the out/ directory
 // For now, we'll use type assertions to handle the import structure
-const emailDomainProverSpec = require("../out/EmailDomainProver.sol/EmailDomainProver.json");
-const registrationContractSpec = require("../out/RegistrationContract.sol/RegistrationContract.json");
+import emailDomainProverSpec from "../out/EmailDomainProver.sol/EmailDomainProver.json"
+import registrationContractSpec from "../out/RegistrationContract.sol/RegistrationContract.json"
 
 /**
  * zkMed Email Proof Integration

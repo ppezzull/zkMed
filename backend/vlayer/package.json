@@ -10,6 +10,9 @@
     "prove:mainnet": "VLAYER_ENV=mainnet bun run prove.ts",
     "prove:testnet": "VLAYER_ENV=testnet bun run prove.ts",
     "prove:dev": "VLAYER_ENV=dev bun run prove.ts",
+    "prove-email:dev": "VLAYER_ENV=dev bun run proveEmailDomain.ts",
+    "prove-email:testnet": "VLAYER_ENV=testnet bun run proveEmailDomain.ts",
+    "prove-email:mainnet": "VLAYER_ENV=mainnet bun run proveEmailDomain.ts",
     "test-web:dev": "echo \"No tests specified yet\"",
     "test-web:testnet": "echo \"No tests specified yet\""
   },
