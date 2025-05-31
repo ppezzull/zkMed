@@ -12,9 +12,11 @@
 ## 🏗️ EXPANDED CONTRACT ARCHITECTURE
 
 ### Phase 1: Registration System [COMPLETED] ✅
-- **RegistrationContract.sol**: Privacy-preserving patient/organization registration
+- **RegistrationContract.sol**: Privacy-preserving patient/organization registration with multi-owner system
 - **EmailDomainProver.sol**: vlayer email domain verification
-- **Status**: Production-ready, 100% test coverage
+- **Multi-Owner Management**: Up to 10 owners with granular access controls
+- **User Activation System**: Enable/disable users with batch operations
+- **Status**: Production-ready, 100% test coverage (53/53 tests passing)
 
 ### Phase 2: Claims Processing System [CURRENT FOCUS] 🚧
 

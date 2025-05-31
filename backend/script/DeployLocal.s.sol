@@ -44,13 +44,13 @@ contract DeployLocalScript is Script {
         // Local development setup
         console.log("\n3. Setting up local development environment...");
         
-        // Add additional admins for testing
-        console.log("Adding test admin accounts...");
-        registrationContract.addAdmin(ANVIL_ACCOUNT_1);
-        registrationContract.addAdmin(ANVIL_ACCOUNT_2);
+        // Add additional owners for testing
+        console.log("Adding test owner accounts...");
+        registrationContract.addOwner(ANVIL_ACCOUNT_1);
+        registrationContract.addOwner(ANVIL_ACCOUNT_2);
         
-        console.log("Test admin 1:", ANVIL_ACCOUNT_1);
-        console.log("Test admin 2:", ANVIL_ACCOUNT_2);
+        console.log("Test owner 1:", ANVIL_ACCOUNT_1);
+        console.log("Test owner 2:", ANVIL_ACCOUNT_2);
         
         // Verify deployment
         console.log("\n4. Verifying local deployment...");
@@ -61,14 +61,14 @@ contract DeployLocalScript is Script {
         
         // Check RegistrationContract deployment
         require(address(registrationContract).code.length > 0, "RegistrationContract deployment failed");
-        require(registrationContract.admin() == vm.addr(deployerPrivateKey), "Admin not set correctly");
+        require(registrationContract.owner() == vm.addr(deployerPrivateKey), "Owner not set correctly");
         require(registrationContract.emailDomainProver() == address(emailDomainProver), "Prover not set correctly");
         console.log("RegistrationContract deployed successfully");
         
-        // Verify admin setup
-        require(registrationContract.admins(ANVIL_ACCOUNT_1), "Test admin 1 not added");
-        require(registrationContract.admins(ANVIL_ACCOUNT_2), "Test admin 2 not added");
-        console.log("Test admins configured successfully");
+        // Verify owner setup
+        require(registrationContract.isOwner(ANVIL_ACCOUNT_1), "Test owner 1 not added");
+        require(registrationContract.isOwner(ANVIL_ACCOUNT_2), "Test owner 2 not added");
+        console.log("Test owners configured successfully");
         
         // Display connection info for local development
         console.log("\n5. Local development setup complete!");
@@ -77,9 +77,9 @@ contract DeployLocalScript is Script {
         console.log("RegistrationContract:", address(registrationContract));
         
         console.log("\n=== Test Accounts ===");
-        console.log("Deployer/Admin:", vm.addr(deployerPrivateKey));
-        console.log("Test Admin 1:", ANVIL_ACCOUNT_1);
-        console.log("Test Admin 2:", ANVIL_ACCOUNT_2);
+        console.log("Deployer/Owner:", vm.addr(deployerPrivateKey));
+        console.log("Test Owner 1:", ANVIL_ACCOUNT_1);
+        console.log("Test Owner 2:", ANVIL_ACCOUNT_2);
         
         console.log("\n=== vlayer Integration ===");
         console.log("vlayer Call Server: http://localhost:3000");

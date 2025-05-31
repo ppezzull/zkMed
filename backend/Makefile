@@ -29,11 +29,6 @@ help:
 	@echo "  status         - Check service status"
 	@echo "  health         - Health check all services"
 	@echo ""
-	@echo "TypeScript Testing:"
-	@echo "  test-ts        - Run TypeScript registration tests"
-	@echo "  export-abis    - Export ABIs for Next.js integration"
-	@echo "  install-deps   - Install TypeScript dependencies"
-	@echo ""
 	@echo "Email Proof Testing:"
 	@echo "  test-email-proof - Test email proof workflow"
 	@echo ""
@@ -195,26 +190,3 @@ setup:
 	@echo "  clean   - Clean forge artifacts"
 	@echo "  install - Install dependencies"
 	@echo "  help    - Show this help message"
-
-# TypeScript Testing Commands
-install-deps:
-	@echo "📦 Installing TypeScript dependencies..."
-	npm install
-	@echo "✅ Dependencies installed"
-
-test-ts: install-deps
-	@echo "🧪 Running TypeScript registration tests..."
-	npm run test:ts
-
-export-abis: build
-	@echo "📄 Exporting ABIs for thirdweb integration..."
-	node scripts/export-abis.js
-	@echo "✅ ABIs exported to exports/ directory"
-
-# Comprehensive test suite
-test-all: test test-ts
-	@echo "🎯 All tests completed!"
-
-# Development workflow
-dev-full: setup export-abis test-all
-	@echo "🚀 Full development setup with TypeScript testing complete!"

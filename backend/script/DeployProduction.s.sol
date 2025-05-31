@@ -41,14 +41,13 @@ contract DeployProductionScript is Script {
         
         // Check RegistrationContract deployment
         require(address(registrationContract).code.length > 0, "RegistrationContract deployment failed");
-        require(registrationContract.admin() == vm.addr(deployerPrivateKey), "Admin not set correctly");
+        require(registrationContract.owner() == vm.addr(deployerPrivateKey), "Owner not set correctly");
         require(registrationContract.emailDomainProver() == address(emailDomainProver), "Prover not set correctly");
         console.log("RegistrationContract deployed successfully");
-        console.log("Initial admin set to:", registrationContract.admin());
+        console.log("Initial owner set to:", registrationContract.owner());
         
         // Security checks
         console.log("\n4. Security validation...");
-        
         // Verify production contract is secure (no test functions)
         console.log("No test helper functions found (production secure)");
         
@@ -72,20 +71,21 @@ contract DeployProductionScript is Script {
         console.log("Network:", _getNetworkName(block.chainid));
         console.log("EmailDomainProver:", address(emailDomainProver));
         console.log("RegistrationContract:", address(registrationContract));
-        console.log("Initial Admin:", vm.addr(deployerPrivateKey));
+        console.log("Initial Owner:", vm.addr(deployerPrivateKey));
         console.log("\n=== NEXT STEPS ===");
         console.log("1. Verify contracts on block explorer");
         console.log("2. Test with real vlayer email proofs");
         console.log("3. Set up frontend integration");
         console.log("4. Configure monitoring and alerts");
-        console.log("5. Update admin address if needed");
+        console.log("5. Add additional owners if needed");
         
         // Production readiness checklist
         console.log("\n=== PRODUCTION READINESS CHECKLIST ===");
         console.log("Smart contracts deployed");
         console.log("vlayer integration patterns verified");
         console.log("No test helper functions in production");
-        console.log("Role-based access control active");
+        console.log("Multi-owner access control active");
+        console.log("User activation system functional");
         console.log("Email hash uniqueness enforced");
         console.log("Privacy-preserving patient commitments");
         console.log("Real vlayer email proof testing required");

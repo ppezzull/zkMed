@@ -3,9 +3,10 @@ pragma solidity ^0.8.21;
 
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {EmailDomainProver, OrganizationVerificationData} from "./EmailDomainProver.sol";
 
-contract RegistrationContract is Verifier {
+contract RegistrationContract is Verifier, Ownable {
     
     // ============ TYPES ============
     
@@ -31,7 +32,15 @@ contract RegistrationContract is Verifier {
     // ============ STATE VARIABLES ============
     
     address public emailDomainProver;
-    address public admin;
+    
+    // Multiple owners system
+    mapping(address => bool) public owners;
+    address[] public ownersList;
+    uint256 public constant MAX_OWNERS = 10;
+    
+    // User activation system
+    mapping(address => bool) public activeUsers;
+    mapping(address => uint256) public deactivationTimestamp;
     
     // Patient commitments mapping (address => commitment hash)
     mapping(address => bytes32) public patientCommitments;
@@ -57,7 +66,7 @@ contract RegistrationContract is Verifier {
     // Registration timestamps
     mapping(address => uint256) public registrationTimestamps;
     
-    // Admin control for emergency functions
+    // Legacy admin mapping for backward compatibility
     mapping(address => bool) public admins;
     
     // ============ EVENTS ============
@@ -105,16 +114,34 @@ contract RegistrationContract is Verifier {
     event AdminAdded(address indexed admin);
     event AdminRemoved(address indexed admin);
     
+    // New events for multiple owners and user activation
+    event OwnerAdded(address indexed newOwner, address indexed addedBy);
+    event OwnerRemoved(address indexed removedOwner, address indexed removedBy);
+    event UserActivated(address indexed user, address indexed activatedBy);
+    event UserDeactivated(address indexed user, address indexed deactivatedBy);
+    event OwnershipTransferRequested(address indexed currentOwner, address indexed newOwner);
+    
     // ============ MODIFIERS ============
     
     modifier onlyRole(Role _role) {
         require(roles[msg.sender] == _role, "Unauthorized role");
         require(verified[msg.sender], "Address not verified");
+        require(activeUsers[msg.sender], "User deactivated");
         _;
     }
     
-    modifier onlyAdmin() {
-        require(admins[msg.sender] || msg.sender == admin, "Not admin");
+    modifier onlyOwners() {
+        require(owners[msg.sender], "Not an owner");
+        _;
+    }
+    
+    modifier onlyAdminOrOwner() {
+        require(admins[msg.sender] || owners[msg.sender], "Not admin or owner");
+        _;
+    }
+    
+    modifier onlyActiveUser() {
+        require(activeUsers[msg.sender], "User deactivated");
         _;
     }
     
@@ -136,17 +163,24 @@ contract RegistrationContract is Verifier {
     
     // ============ CONSTRUCTOR ============
     
-    constructor(address _emailDomainProver) {
+    constructor(address _emailDomainProver) Ownable(msg.sender) {
         emailDomainProver = _emailDomainProver;
-        admin = msg.sender;
+        
+        // Set up initial owner
+        owners[msg.sender] = true;
+        ownersList.push(msg.sender);
+        activeUsers[msg.sender] = true;
+        
+        // Backward compatibility - also set as admin
         admins[msg.sender] = true;
         
-        // Register admin
+        // Register as admin role
         roles[msg.sender] = Role.Admin;
         verified[msg.sender] = true;
         registrationTimestamps[msg.sender] = block.timestamp;
         
         emit RoleAssigned(msg.sender, Role.Admin, block.timestamp);
+        emit OwnerAdded(msg.sender, msg.sender);
     }
     
     // ============ PATIENT REGISTRATION ============
@@ -164,6 +198,7 @@ contract RegistrationContract is Verifier {
         patientCommitments[msg.sender] = _commitment;
         roles[msg.sender] = Role.Patient;
         verified[msg.sender] = true; // Patients are auto-verified upon registration
+        activeUsers[msg.sender] = true; // Patients are auto-activated upon registration
         registrationTimestamps[msg.sender] = block.timestamp;
         
         emit PatientRegistered(msg.sender, _commitment, block.timestamp);
@@ -175,6 +210,7 @@ contract RegistrationContract is Verifier {
     /// @return bool True if the commitment is valid
     function verifyPatientCommitment(string memory _secret) external view returns (bool) {
         require(roles[msg.sender] == Role.Patient, "Not a registered patient");
+        require(activeUsers[msg.sender], "User deactivated");
         
         bytes32 computedCommitment = keccak256(abi.encodePacked(_secret, msg.sender));
         return patientCommitments[msg.sender] == computedCommitment;
@@ -238,6 +274,7 @@ contract RegistrationContract is Verifier {
         // Assign role and verification
         roles[msg.sender] = _role;
         verified[msg.sender] = true;
+        activeUsers[msg.sender] = true; // Auto-activate organizations upon registration
         registrationTimestamps[msg.sender] = block.timestamp;
         
         emit OrganizationRegistered(
@@ -283,6 +320,7 @@ contract RegistrationContract is Verifier {
         // Assign role and verification status
         roles[msg.sender] = _role;
         verified[msg.sender] = true;
+        activeUsers[msg.sender] = true; // Auto-activate organizations upon registration
         registrationTimestamps[msg.sender] = block.timestamp;
         
         // Reserve the domain and email
@@ -322,14 +360,123 @@ contract RegistrationContract is Verifier {
         emit DomainVerified(msg.sender, domain, emailHash, block.timestamp);
     }
     
-    // ============ ADMIN FUNCTIONS ============
+    // ============ OWNER MANAGEMENT FUNCTIONS ============
     
-    /// @notice Add a new admin (only existing admins)
-    function addAdmin(address _newAdmin) external onlyAdmin {
+    /// @notice Add a new owner (only existing owners)
+    function addOwner(address _newOwner) external onlyOwners {
+        require(_newOwner != address(0), "Invalid owner address");
+        require(!owners[_newOwner], "Already an owner");
+        require(ownersList.length < MAX_OWNERS, "Maximum owners reached");
+        
+        owners[_newOwner] = true;
+        ownersList.push(_newOwner);
+        activeUsers[_newOwner] = true;
+        
+        // If not already registered, register as admin
+        if (roles[_newOwner] == Role.None) {
+            roles[_newOwner] = Role.Admin;
+            verified[_newOwner] = true;
+            registrationTimestamps[_newOwner] = block.timestamp;
+            emit RoleAssigned(_newOwner, Role.Admin, block.timestamp);
+        }
+        
+        // Also add to legacy admin mapping for compatibility
+        admins[_newOwner] = true;
+        
+        emit OwnerAdded(_newOwner, msg.sender);
+        emit AdminAdded(_newOwner);
+    }
+    
+    /// @notice Remove an owner (only existing owners, cannot remove self)
+    function removeOwner(address _owner) external onlyOwners {
+        require(_owner != msg.sender, "Cannot remove self");
+        require(owners[_owner], "Not an owner");
+        require(ownersList.length > 1, "Cannot remove last owner");
+        
+        owners[_owner] = false;
+        
+        // Remove from owners list
+        for (uint256 i = 0; i < ownersList.length; i++) {
+            if (ownersList[i] == _owner) {
+                ownersList[i] = ownersList[ownersList.length - 1];
+                ownersList.pop();
+                break;
+            }
+        }
+        
+        // Remove from legacy admin mapping
+        admins[_owner] = false;
+        
+        emit OwnerRemoved(_owner, msg.sender);
+        emit AdminRemoved(_owner);
+    }
+    
+    /// @notice Get all current owners
+    function getOwners() external view returns (address[] memory) {
+        return ownersList;
+    }
+    
+    /// @notice Check if address is an owner
+    function isOwner(address _address) external view returns (bool) {
+        return owners[_address];
+    }
+    
+    // ============ USER ACTIVATION FUNCTIONS ============
+    
+    /// @notice Activate a user (only owners)
+    function activateUser(address _user) external onlyOwners {
+        require(roles[_user] != Role.None, "User not registered");
+        require(!activeUsers[_user], "User already active");
+        
+        activeUsers[_user] = true;
+        deactivationTimestamp[_user] = 0; // Reset deactivation timestamp
+        
+        emit UserActivated(_user, msg.sender);
+    }
+    
+    /// @notice Deactivate a user (only owners)
+    function deactivateUser(address _user) external onlyOwners {
+        require(roles[_user] != Role.None, "User not registered");
+        require(activeUsers[_user], "User already inactive");
+        require(!owners[_user], "Cannot deactivate an owner");
+        
+        activeUsers[_user] = false;
+        deactivationTimestamp[_user] = block.timestamp;
+        
+        emit UserDeactivated(_user, msg.sender);
+    }
+    
+    /// @notice Batch activate users (only owners)
+    function batchActivateUsers(address[] calldata _users) external onlyOwners {
+        for (uint256 i = 0; i < _users.length; i++) {
+            if (roles[_users[i]] != Role.None && !activeUsers[_users[i]]) {
+                activeUsers[_users[i]] = true;
+                deactivationTimestamp[_users[i]] = 0;
+                emit UserActivated(_users[i], msg.sender);
+            }
+        }
+    }
+    
+    /// @notice Batch deactivate users (only owners)
+    function batchDeactivateUsers(address[] calldata _users) external onlyOwners {
+        for (uint256 i = 0; i < _users.length; i++) {
+            if (roles[_users[i]] != Role.None && activeUsers[_users[i]] && !owners[_users[i]]) {
+                activeUsers[_users[i]] = false;
+                deactivationTimestamp[_users[i]] = block.timestamp;
+                emit UserDeactivated(_users[i], msg.sender);
+            }
+        }
+    }
+    
+    // ============ LEGACY ADMIN FUNCTIONS (Backward Compatibility) ============
+    
+    /// @notice Add a new admin (legacy function for backward compatibility)
+    function addAdmin(address _newAdmin) external onlyAdminOrOwner {
         require(_newAdmin != address(0), "Invalid admin address");
         require(!admins[_newAdmin], "Already an admin");
         
         admins[_newAdmin] = true;
+        activeUsers[_newAdmin] = true;
         
         // If not already registered, register as admin
         if (roles[_newAdmin] == Role.None) {
@@ -342,25 +489,26 @@ contract RegistrationContract is Verifier {
         emit AdminAdded(_newAdmin);
     }
     
-    /// @notice Remove an admin (only existing admins, cannot remove self)
-    function removeAdmin(address _admin) external onlyAdmin {
+    /// @notice Remove an admin (legacy function for backward compatibility)
+    function removeAdmin(address _admin) external onlyAdminOrOwner {
         require(_admin != msg.sender, "Cannot remove self");
         require(admins[_admin], "Not an admin");
+        require(!owners[_admin], "Cannot remove owner via admin function");
         
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }
     
     /// @notice Emergency function to update verification status
-    function updateVerificationStatus(address _user, bool _verified) external onlyAdmin {
+    function updateVerificationStatus(address _user, bool _verified) external onlyAdminOrOwner {
         require(roles[_user] != Role.None, "User not registered");
         
         verified[_user] = _verified;
         emit VerificationStatusChanged(_user, _verified, block.timestamp);
     }
     
-    /// @notice Emergency function to reset email hash usage (admin only)
-    function resetEmailHash(bytes32 _emailHash) external onlyAdmin {
+    /// @notice Emergency function to reset email hash usage (admin/owner only)
+    function resetEmailHash(bytes32 _emailHash) external onlyAdminOrOwner {
         usedEmailHashes[_emailHash] = false;
     }
 
@@ -390,6 +538,20 @@ contract RegistrationContract is Verifier {
     /// @notice Check if an address is registered and verified
     function isUserVerified(address _user) external view returns (bool) {
         return roles[_user] != Role.None && verified[_user];
+    }
+    
+    /// @notice Check if an address is active (registered, verified, and not deactivated)
+    function isUserActive(address _user) external view returns (bool) {
+        return roles[_user] != Role.None && verified[_user] && activeUsers[_user];
+    }
+    
+    /// @notice Get user activation status and deactivation timestamp
+    function getUserActivationStatus(address _user) external view returns (
+        bool isActive,
+        uint256 deactivatedAt
+    ) {
+        isActive = activeUsers[_user];
+        deactivatedAt = deactivationTimestamp[_user];
     }
     
     /// @notice Get organization details

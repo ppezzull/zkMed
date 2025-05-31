@@ -28,7 +28,7 @@ contract DeployRegistration is Script {
         console.log("\n=== Deployment Summary ===");
         console.log("EmailDomainProver:", address(emailDomainProver));
         console.log("RegistrationContract:", address(registrationContract));
-        console.log("Admin:", msg.sender);
+        console.log("Owner:", msg.sender);
         
         // Log deployment info for frontend integration
         console.log("\n=== Frontend Integration ===");

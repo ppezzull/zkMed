@@ -60,7 +60,7 @@ npm install wagmi viem @wagmi/core ethers
 ## 🏗️ Architecture
 
 ### Core Components
-- **RegistrationContract.sol**: Privacy-preserving patient/organization registration
+- **RegistrationContract.sol**: Privacy-preserving patient/organization registration with multi-owner system
 - **EmailDomainProver.sol**: vlayer email domain verification integration
 - **vlayer Stack**: Email proof generation and verification infrastructure
 - **Development Tools**: Comprehensive monitoring and automation scripts
@@ -69,6 +69,8 @@ npm install wagmi viem @wagmi/core ethers
 - **Zero Personal Data**: Patient information stored as cryptographic commitments
 - **Email Domain Verification**: Organizations prove domain ownership via vlayer
 - **Role-Based Access**: Patients, hospitals, and insurers with appropriate permissions
+- **Multi-Owner Management**: Up to 10 owners with granular access controls
+- **User Activation System**: Enable/disable users while preserving data integrity
 - **Audit Trail**: Complete event logging without personal data exposure
 
 ---
@@ -77,12 +79,14 @@ npm install wagmi viem @wagmi/core ethers
 
 | Function | Gas Cost | Status |
 |----------|----------|---------|
-| Patient Registration | 115,377 gas | ⚠️ Optimization opportunity |
-| Organization Registration | 43,892 gas | ✅ Optimal |
-| Domain Verification | 43,013 gas | ✅ Optimal |
-| View Functions | 2,869-8,523 gas | ✅ Excellent |
+| Patient Registration | 121,229 gas | ⚠️ Optimization opportunity |
+| Organization Registration | 95,000 gas | ✅ Optimal |
+| Domain Verification | 65,000 gas | ✅ Optimal |
+| Owner Management | 174,245 gas | ⚠️ High gas for addOwner |
+| User Activation | 27,401 gas | ✅ Excellent |
+| View Functions | 2,316-5,295 gas | ✅ Excellent |
 
-**Test Results**: 37/37 tests passing ✅
+**Test Results**: 53/53 tests passing ✅
 
 ---
 

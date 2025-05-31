@@ -29,6 +29,8 @@ contract GasAnalysisTest is Test {
         uint256 domainVerification;
         uint256 roleAssignment;
         uint256 viewFunctions;
+        uint256 ownerManagement;
+        uint256 userActivation;
     }
     
     GasCosts public gasCosts;
@@ -173,6 +175,113 @@ contract GasAnalysisTest is Test {
         console.log("isEmailHashUsed Gas:", gasUsed);
         
         gasCosts.viewFunctions = gasUsed; // Last measured
+    }
+    
+    function testGasAnalysisOwnerManagement() public {
+        console.log("\n=== OWNER MANAGEMENT GAS ANALYSIS ===");
+        
+        address newOwner1 = makeAddr("newOwner1");
+        address newOwner2 = makeAddr("newOwner2");
+        
+        vm.startPrank(admin);
+        
+        // Test addOwner gas cost
+        uint256 gasStart = gasleft();
+        registrationContract.addOwner(newOwner1);
+        uint256 addOwnerGas = gasStart - gasleft();
+        console.log("Add Owner Gas:", addOwnerGas);
+        
+        // Test removeOwner gas cost
+        registrationContract.addOwner(newOwner2);
+        gasStart = gasleft();
+        registrationContract.removeOwner(newOwner2);
+        uint256 removeOwnerGas = gasStart - gasleft();
+        console.log("Remove Owner Gas:", removeOwnerGas);
+        
+        // Test getOwners gas cost (view function)
+        gasStart = gasleft();
+        address[] memory owners = registrationContract.getOwners();
+        uint256 getOwnersGas = gasStart - gasleft();
+        console.log("Get Owners Gas:", getOwnersGas);
+        console.log("Owners count:", owners.length);
+        
+        vm.stopPrank();
+        
+        // Performance recommendations
+        console.log("\n=== OWNER MANAGEMENT RECOMMENDATIONS ===");
+        if (addOwnerGas > 100000) {
+            console.log("WARNING: Add owner gas cost is high");
+        }
+        if (removeOwnerGas > 80000) {
+            console.log("WARNING: Remove owner gas cost is high");
+        }
+        console.log("Target: Owner operations <100k gas each");
+    }
+    
+    function testGasAnalysisUserActivation() public {
+        console.log("\n=== USER ACTIVATION GAS ANALYSIS ===");
+        
+        // Register a patient first
+        vm.startPrank(patient1);
+        bytes32 commitment = keccak256(abi.encodePacked("test-secret", patient1));
+        registrationContract.registerPatient(commitment);
+        vm.stopPrank();
+        
+        vm.startPrank(admin);
+        
+        // Test deactivateUser gas cost
+        uint256 gasStart = gasleft();
+        registrationContract.deactivateUser(patient1);
+        uint256 deactivateGas = gasStart - gasleft();
+        console.log("Deactivate User Gas:", deactivateGas);
+        
+        // Test activateUser gas cost
+        gasStart = gasleft();
+        registrationContract.activateUser(patient1);
+        uint256 activateGas = gasStart - gasleft();
+        console.log("Activate User Gas:", activateGas);
+        
+        // Test batch operations
+        address[] memory users = new address[](3);
+        for (uint256 i = 0; i < 3; i++) {
+            users[i] = makeAddr(string.concat("testUser", vm.toString(i)));
+            vm.stopPrank();
+            vm.startPrank(users[i]);
+            bytes32 testCommitment = keccak256(abi.encodePacked("secret", users[i]));
+            registrationContract.registerPatient(testCommitment);
+            vm.stopPrank();
+            vm.startPrank(admin);
+            registrationContract.deactivateUser(users[i]);
+        }
+        
+        gasStart = gasleft();
+        registrationContract.batchActivateUsers(users);
+        uint256 batchActivateGas = gasStart - gasleft();
+        console.log("Batch Activate Users Gas (3 users):", batchActivateGas);
+        console.log("Average per user:", batchActivateGas / 3);
+        
+        gasStart = gasleft();
+        registrationContract.batchDeactivateUsers(users);
+        uint256 batchDeactivateGas = gasStart - gasleft();
+        console.log("Batch Deactivate Users Gas (3 users):", batchDeactivateGas);
+        console.log("Average per user:", batchDeactivateGas / 3);
+        
+        vm.stopPrank();
+        
+        // Store gas costs for the struct
+        gasCosts.userActivation = (activateGas + deactivateGas) / 2; // Average of activate/deactivate
+        
+        console.log("\n=== USER ACTIVATION RECOMMENDATIONS ===");
+        console.log("Target: Individual operations <50k gas");
+        console.log("Target: Batch operations <30k gas per user");
+        
+        // Performance analysis
+        if (activateGas > 50000 || deactivateGas > 50000) {
+            console.log("WARNING: Individual activation operations exceed target");
+        }
+        if (batchActivateGas / 3 > 30000 || batchDeactivateGas / 3 > 30000) {
+            console.log("WARNING: Batch operations exceed target per user");
+        }
     }
     
     function testGasOptimizationRecommendations() public view {
