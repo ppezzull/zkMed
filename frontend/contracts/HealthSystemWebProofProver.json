@@ -1,0 +1,334 @@
+[
+  {
+    "type": "function",
+    "name": "SALUTE_LAZIO_PROFILE_URL",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "generateCommitment",
+    "inputs": [
+      {
+        "name": "taxCode",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "patientAddress",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "commitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "proof",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Proof",
+        "components": [
+          {
+            "name": "seal",
+            "type": "tuple",
+            "internalType": "struct Seal",
+            "components": [
+              {
+                "name": "verifierSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "seal",
+                "type": "bytes32[8]",
+                "internalType": "bytes32[8]"
+              },
+              {
+                "name": "mode",
+                "type": "uint8",
+                "internalType": "enum ProofMode"
+              }
+            ]
+          },
+          {
+            "name": "callGuestId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "length",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "callAssumptions",
+            "type": "tuple",
+            "internalType": "struct CallAssumptions",
+            "components": [
+              {
+                "name": "proverContractAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "functionSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "settleChainId",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockNumber",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockHash",
+                "type": "bytes32",
+                "internalType": "bytes32"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "proveItalianPatient",
+    "inputs": [
+      {
+        "name": "webProof",
+        "type": "tuple",
+        "internalType": "struct WebProof",
+        "components": [
+          {
+            "name": "webProofJson",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
+      },
+      {
+        "name": "patientAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "commitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Proof",
+        "components": [
+          {
+            "name": "seal",
+            "type": "tuple",
+            "internalType": "struct Seal",
+            "components": [
+              {
+                "name": "verifierSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "seal",
+                "type": "bytes32[8]",
+                "internalType": "bytes32[8]"
+              },
+              {
+                "name": "mode",
+                "type": "uint8",
+                "internalType": "enum ProofMode"
+              }
+            ]
+          },
+          {
+            "name": "callGuestId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "length",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "callAssumptions",
+            "type": "tuple",
+            "internalType": "struct CallAssumptions",
+            "components": [
+              {
+                "name": "proverContractAddress",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "functionSelector",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "settleChainId",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockNumber",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "settleBlockHash",
+                "type": "bytes32",
+                "internalType": "bytes32"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct HealthSystemWebProofProver.VerifiedPatientData",
+        "components": [
+          {
+            "name": "patientId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "taxCodeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "regionalCode",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "homeAsl",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "mmgTaxCodeHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "setBlock",
+    "inputs": [
+      {
+        "name": "blockNo",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setChain",
+    "inputs": [
+      {
+        "name": "chainId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "blockNo",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "verifyHealthSystemRegistration",
+    "inputs": [
+      {
+        "name": "webProof",
+        "type": "tuple",
+        "internalType": "struct WebProof",
+        "components": [
+          {
+            "name": "webProofJson",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "isValid",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "patientId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "homeAsl",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "error",
+    "name": "FailedInnerCall",
+    "inputs": []
+  }
+]

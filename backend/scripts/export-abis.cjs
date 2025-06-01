@@ -3,7 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const OUTPUT_DIR = path.join(__dirname, '..', 'exports');
+// Change OUTPUT_DIR to point to frontend/contracts
+const OUTPUT_DIR = path.join(__dirname, '..', '..', 'frontend', 'contracts');
 const OUT_DIR = path.join(__dirname, '..', 'out');
 const DEPLOYMENTS_DIR = path.join(__dirname, '..', 'deployments');
 
@@ -22,6 +23,31 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 console.log('📤 Exporting zkMed contracts for frontend integration...');
+console.log(`📁 Output directory: ${OUTPUT_DIR}`);
+
+// Read actual deployment addresses
+function getDeploymentAddresses() {
+    try {
+        const localDeploymentFile = path.join(DEPLOYMENTS_DIR, 'local.json');
+        if (fs.existsSync(localDeploymentFile)) {
+            const deploymentData = JSON.parse(fs.readFileSync(localDeploymentFile, 'utf8'));
+            console.log('✅ Found local deployment file with actual addresses');
+            return deploymentData;
+        }
+    } catch (error) {
+        console.warn('⚠️ Could not read deployment file, using fallback addresses');
+    }
+    
+    // Fallback addresses if deployment file not found
+    return {
+        chainId: 31337,
+        deployer: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        registrationContract: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+        patientModule: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+        emailDomainProver: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+        timestamp: Math.floor(Date.now() / 1000)
+    };
+}
 
 // Export contract ABIs
 CONTRACTS.forEach(contractName => {
@@ -51,19 +77,27 @@ CONTRACTS.forEach(contractName => {
     }
 });
 
-// Create comprehensive deployment addresses with Italian Health contracts
+// Get actual deployment addresses
+const actualDeployment = getDeploymentAddresses();
+
+// Create comprehensive deployment addresses with actual deployed contracts
 const deploymentInfo = {
-    chainId: 31337,
-    deployer: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    chainId: actualDeployment.chainId || 31337,
+    deployer: actualDeployment.deployer || "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     contracts: {
-        // Main system contracts
-        registrationContract: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
-        patientModule: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
-        emailDomainProver: "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
+        // Use actual deployed addresses
+        registrationContract: actualDeployment.registrationContract || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+        patientModule: actualDeployment.patientModule || "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
+        emailDomainProver: actualDeployment.emailDomainProver || "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f",
         
-        // Italian Health System WebProof contracts
-        healthSystemWebProofProver: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-        healthSystemWebProofVerifier: "0x9d4454B023096f34B160D6B654540c56A1F81688"
+        // Additional modules if they exist
+        registrationStorage: actualDeployment.registrationStorage,
+        organizationModule: actualDeployment.organizationModule,
+        adminModule: actualDeployment.adminModule,
+        
+        // Italian Health System WebProof contracts (may not be deployed yet)
+        healthSystemWebProofProver: actualDeployment.healthSystemWebProofProver || "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+        healthSystemWebProofVerifier: actualDeployment.healthSystemWebProofVerifier || "0x9d4454B023096f34B160D6B654540c56A1F81688"
     },
     flows: {
         patients: {
@@ -77,13 +111,52 @@ const deploymentInfo = {
             endpoint: "registerOrganization"
         }
     },
-    timestamp: Math.floor(Date.now() / 1000)
+    deployedAt: actualDeployment.timestamp,
+    exportedAt: Math.floor(Date.now() / 1000)
 };
 
 // Write comprehensive deployment file
 const deploymentPath = path.join(OUTPUT_DIR, 'deployment.json');
 fs.writeFileSync(deploymentPath, JSON.stringify(deploymentInfo, null, 2));
-console.log('✅ Exported comprehensive deployment info');
+console.log('✅ Exported deployment info with actual contract addresses');
+
+// Also create a simple addresses file for easy import
+const addressesOnly = {
+    REGISTRATION_CONTRACT: deploymentInfo.contracts.registrationContract,
+    PATIENT_MODULE: deploymentInfo.contracts.patientModule,
+    EMAIL_DOMAIN_PROVER: deploymentInfo.contracts.emailDomainProver,
+    REGISTRATION_STORAGE: deploymentInfo.contracts.registrationStorage,
+    ORGANIZATION_MODULE: deploymentInfo.contracts.organizationModule,
+    ADMIN_MODULE: deploymentInfo.contracts.adminModule,
+    HEALTH_SYSTEM_WEBPROOF_PROVER: deploymentInfo.contracts.healthSystemWebProofProver,
+    HEALTH_SYSTEM_WEBPROOF_VERIFIER: deploymentInfo.contracts.healthSystemWebProofVerifier,
+};
+
+const addressesPath = path.join(OUTPUT_DIR, 'addresses.ts');
+const addressesContent = `// Auto-generated contract addresses from backend deployment
+export const CONTRACT_ADDRESSES = ${JSON.stringify(addressesOnly, null, 2)} as const;
+
+export const CHAIN_CONFIG = {
+  chainId: ${deploymentInfo.chainId},
+  name: 'Anvil Local',
+  rpcUrl: 'http://127.0.0.1:8545',
+} as const;
+
+// Export individual addresses for convenience
+export const {
+  REGISTRATION_CONTRACT,
+  PATIENT_MODULE,
+  EMAIL_DOMAIN_PROVER,
+  REGISTRATION_STORAGE,
+  ORGANIZATION_MODULE,
+  ADMIN_MODULE,
+  HEALTH_SYSTEM_WEBPROOF_PROVER,
+  HEALTH_SYSTEM_WEBPROOF_VERIFIER,
+} = CONTRACT_ADDRESSES;
+`;
+
+fs.writeFileSync(addressesPath, addressesContent);
+console.log('✅ Exported simplified addresses.ts file');
 
 // Generate simplified TypeScript configuration
 const configContent = generateConfigFile(deploymentInfo);
@@ -99,10 +172,17 @@ fs.writeFileSync(path.join(OUTPUT_DIR, 'README.md'), readmeContent);
 
 console.log('\n🎉 Export completed successfully!');
 console.log(`📁 Files exported to: ${OUTPUT_DIR}`);
+console.log('\n📋 Contract Addresses Exported:');
+Object.entries(deploymentInfo.contracts).forEach(([name, address]) => {
+    if (address) {
+        console.log(`   • ${name}: ${address}`);
+    }
+});
 console.log('\n📋 Next steps:');
 console.log('1. Import contracts in your Next.js app:');
-console.log("   import { zkMedContracts } from './exports'");
-console.log('2. Use deployment addresses from exports/deployment.json');
+console.log("   import { RegistrationContractABI } from '@/contracts/RegistrationContract'");
+console.log("   import { CONTRACT_ADDRESSES } from '@/contracts/addresses'");
+console.log('2. Use deployment addresses from contracts/deployment.json');
 console.log('3. Connect with thirdweb or viem for contract interactions');
 console.log('\n🏥 Available flows:');
 console.log('   • Patients: WebProof registration via Italian health system');
@@ -189,8 +269,9 @@ function mapSolidityType(solidityType) {
 
 function generateConfigFile(deploymentInfo) {
     return `// Auto-generated configuration file for zkMed
-import { Chain } from 'viem';
+import type { Chain } from 'viem';
 import deployment from './deployment.json';
+import { CONTRACT_ADDRESSES } from './addresses';
 
 // Import all contract ABIs
 import { RegistrationContractABI } from './RegistrationContract';
@@ -201,24 +282,38 @@ import { EmailDomainProverABI } from './EmailDomainProver';
 
 export const zkMedContracts = {
   registrationContract: {
-    address: deployment.contracts.registrationContract as \`0x\${string}\`,
+    address: CONTRACT_ADDRESSES.REGISTRATION_CONTRACT,
     abi: RegistrationContractABI,
   },
-  healthSystemWebProofProver: {
-    address: deployment.contracts.healthSystemWebProofProver as \`0x\${string}\`,
-    abi: HealthSystemWebProofProverABI,
-  },
-  healthSystemWebProofVerifier: {
-    address: deployment.contracts.healthSystemWebProofVerifier as \`0x\${string}\`,
-    abi: HealthSystemWebProofVerifierABI,
-  },
   patientModule: {
-    address: deployment.contracts.patientModule as \`0x\${string}\`,
+    address: CONTRACT_ADDRESSES.PATIENT_MODULE,
     abi: PatientModuleABI,
   },
   emailDomainProver: {
-    address: deployment.contracts.emailDomainProver as \`0x\${string}\`,
+    address: CONTRACT_ADDRESSES.EMAIL_DOMAIN_PROVER,
     abi: EmailDomainProverABI,
+  },
+  // Additional modules
+  registrationStorage: {
+    address: CONTRACT_ADDRESSES.REGISTRATION_STORAGE,
+    abi: null, // ABI not exported yet
+  },
+  organizationModule: {
+    address: CONTRACT_ADDRESSES.ORGANIZATION_MODULE,
+    abi: null, // ABI not exported yet
+  },
+  adminModule: {
+    address: CONTRACT_ADDRESSES.ADMIN_MODULE,
+    abi: null, // ABI not exported yet
+  },
+  // WebProof contracts (may not be deployed)
+  healthSystemWebProofProver: {
+    address: CONTRACT_ADDRESSES.HEALTH_SYSTEM_WEBPROOF_PROVER,
+    abi: HealthSystemWebProofProverABI,
+  },
+  healthSystemWebProofVerifier: {
+    address: CONTRACT_ADDRESSES.HEALTH_SYSTEM_WEBPROOF_VERIFIER,
+    abi: HealthSystemWebProofVerifierABI,
   },
 } as const;
 
@@ -263,7 +358,7 @@ export const anvilChain = {
   },
 } as const;
 
-export { deployment };
+export { deployment, CONTRACT_ADDRESSES };
 `;
 }
 
@@ -299,10 +394,32 @@ export type {
     EmailDomainProverAddress 
 } from './EmailDomainProver';
 
+// Export contract addresses (recommended)
+export { 
+    CONTRACT_ADDRESSES, 
+    CHAIN_CONFIG,
+    REGISTRATION_CONTRACT,
+    PATIENT_MODULE,
+    EMAIL_DOMAIN_PROVER,
+    REGISTRATION_STORAGE,
+    ORGANIZATION_MODULE,
+    ADMIN_MODULE,
+    HEALTH_SYSTEM_WEBPROOF_PROVER,
+    HEALTH_SYSTEM_WEBPROOF_VERIFIER,
+} from './addresses';
+
+// Export contract configurations
 export { zkMedContracts, flows, anvilChain } from './config';
 
 // Re-export deployment for convenience
 export { default as deployment } from './deployment.json';
+
+// Re-export ABIs for convenience
+export { RegistrationContractABI } from './RegistrationContract';
+export { HealthSystemWebProofProverABI } from './HealthSystemWebProofProver';
+export { HealthSystemWebProofVerifierABI } from './HealthSystemWebProofVerifier';
+export { PatientModuleABI } from './PatientModule';
+export { EmailDomainProverABI } from './EmailDomainProver';
 
 // Quick setup functions
 export const getRegistrationContract = (client: any) => ({
@@ -361,130 +478,68 @@ This directory contains exported ABIs and TypeScript interfaces for zkMed smart 
 - \`PatientModule.ts\` - TypeScript interface for patient operations
 - \`EmailDomainProver.json\` - Email domain prover ABI
 - \`EmailDomainProver.ts\` - TypeScript interface for email verification
-- \`deployment.json\` - Comprehensive deployment addresses
+- \`deployment.json\` - Comprehensive deployment info with all addresses
+- \`addresses.ts\` - Simple contract addresses export (recommended)
 - \`config.ts\` - Configuration and utility functions
 - \`index.ts\` - Main export file
 
-## Usage
+## Quick Start
 
-### With viem
+### Import Contract Addresses (Recommended)
 
 \`\`\`typescript
-import { getContract } from 'viem';
-import { zkMedContracts, deployment } from './exports';
+import { CONTRACT_ADDRESSES, REGISTRATION_CONTRACT } from '@/contracts/addresses';
 
-// Main registration contract
-const registrationContract = getContract({
-  address: zkMedContracts.registrationContract.address,
-  abi: zkMedContracts.registrationContract.abi,
-  client: publicClient,
-});
+// Use specific address
+const regAddress = REGISTRATION_CONTRACT;
 
-// Italian health WebProof contracts for patient registration
-const healthProver = getContract({
-  address: zkMedContracts.healthSystemWebProofProver.address,
-  abi: zkMedContracts.healthSystemWebProofProver.abi,
-  client: publicClient,
-});
-
-const healthVerifier = getContract({
-  address: zkMedContracts.healthSystemWebProofVerifier.address,
-  abi: zkMedContracts.healthSystemWebProofVerifier.abi,
-  client: publicClient,
-});
+// Or use the full object
+const allAddresses = CONTRACT_ADDRESSES;
 \`\`\`
 
-### With thirdweb
+### Import Full Contract with ABI
 
 \`\`\`typescript
 import { getContract } from "thirdweb";
-import { zkMedContracts, anvilChain } from './exports';
+import { RegistrationContractABI } from '@/contracts/RegistrationContract';
+import { CONTRACT_ADDRESSES } from '@/contracts/addresses';
+import { client } from '@/lib/client';
+import { localChain } from '@/lib/contracts';
 
 // Main registration contract
 const registrationContract = getContract({
   client,
-  chain: anvilChain,
-  address: zkMedContracts.registrationContract.address,
-  abi: zkMedContracts.registrationContract.abi,
+  chain: localChain,
+  address: CONTRACT_ADDRESSES.REGISTRATION_CONTRACT,
+  abi: RegistrationContractABI,
 });
-
-// Quick setup using helper functions
-import { getPatientWebProofContracts } from './exports';
-const patientContracts = getPatientWebProofContracts(client);
 \`\`\`
 
-## Contract Addresses (Local Deployment)
+## Contract Addresses (Auto-Generated from Backend)
 
-- **RegistrationContract**: \`${deploymentInfo.contracts.registrationContract}\`
-- **HealthSystemWebProofProver**: \`${deploymentInfo.contracts.healthSystemWebProofProver}\`
-- **HealthSystemWebProofVerifier**: \`${deploymentInfo.contracts.healthSystemWebProofVerifier}\`
-- **PatientModule**: \`${deploymentInfo.contracts.patientModule}\`
-- **EmailDomainProver**: \`${deploymentInfo.contracts.emailDomainProver}\`
+${Object.entries(deploymentInfo.contracts)
+  .filter(([name, address]) => address)
+  .map(([name, address]) => `- **${name}**: \`${address}\``)
+  .join('\n')}
 
 ## Available Flows
 
 ### ${deploymentInfo.flows.patients.description}
 - **Contracts**: ${deploymentInfo.flows.patients.contracts.join(', ')}
 - **Endpoint**: \`${deploymentInfo.flows.patients.endpoint}\`
-- **Process**: 
-  1. Patient authenticates with SPID/CIE on Salute Lazio portal
-  2. vlayer generates WebProof from health portal response
-  3. HealthSystemWebProofProver creates verification proof
-  4. HealthSystemWebProofVerifier validates and registers patient
-  5. Patient gains access to zkMed system with verified Italian health identity
 
 ### ${deploymentInfo.flows.organizations.description}
 - **Contracts**: ${deploymentInfo.flows.organizations.contracts.join(', ')}
 - **Endpoint**: \`${deploymentInfo.flows.organizations.endpoint}\`
-- **Process**:
-  1. Organization proves domain ownership via email verification
-  2. EmailDomainProver creates MailProof for domain ownership
-  3. RegistrationContract validates proof and registers organization
-  4. Organization gains access to zkMed system as verified hospital/insurer
 
-## Key Functions
+## Integration
 
-### Patient Registration (WebProof)
-\`\`\`typescript
-// Register patient with Italian health system WebProof
-await registrationContract.write.registerPatientWithWebProof([
-  patientAddress,
-  commitment,
-  patientId,
-  taxCodeHash,
-  regionalCode,
-  homeAsl
-]);
-\`\`\`
+This directory is automatically generated by the backend export script and should be imported directly in your Next.js frontend.
 
-### Organization Registration (MailProof)
-\`\`\`typescript
-// Register organization with email domain verification
-await registrationContract.write.registerOrganization([
-  proof,
-  organizationData,
-  role
-]);
-\`\`\`
-
-## Integration Steps
-
-1. Copy this \`exports\` folder to your Next.js project
-2. Install required dependencies (\`viem\` or \`thirdweb\`)
-3. Import and use the contracts in your components
-4. All zkMed functionality is available through these contracts!
-
-## Privacy-Preserving Features
-
-- **WebProofs**: Prove Italian health system registration without exposing sensitive data
-- **MailProofs**: Verify organization domain ownership through email verification
-- **Zero-Knowledge**: Patient commitments provide privacy-preserving authentication
-- **Selective Disclosure**: Only necessary verification data is stored on-chain
-
-## Development
-
-Generated from zkMed smart contracts deployed at timestamp: ${deploymentInfo.timestamp}
-Chain ID: ${deploymentInfo.chainId}
-Deployer: ${deploymentInfo.deployer}
+**Deployment Info:**
+- Deployed at: ${new Date(deploymentInfo.deployedAt * 1000).toISOString()}
+- Exported at: ${new Date(deploymentInfo.exportedAt * 1000).toISOString()}
+- Chain ID: ${deploymentInfo.chainId}
+- Deployer: ${deploymentInfo.deployer}
 `;
 } 
