@@ -10,24 +10,20 @@
     "prove:mainnet": "VLAYER_ENV=mainnet bun run prove.ts",
     "prove:testnet": "VLAYER_ENV=testnet bun run prove.ts",
     "prove:dev": "VLAYER_ENV=dev bun run prove.ts",
-    "prove-email:dev": "VLAYER_ENV=dev bun run proveEmailDomain.ts",
-    "prove-email:testnet": "VLAYER_ENV=testnet bun run proveEmailDomain.ts",
-    "prove-email:mainnet": "VLAYER_ENV=mainnet bun run proveEmailDomain.ts",
     "test-web:dev": "echo \"No tests specified yet\"",
     "test-web:testnet": "echo \"No tests specified yet\""
   },
   "dependencies": {
-    "@vlayer/react": "1.0.2",
     "@vlayer/sdk": "1.0.2",
-    "viem": "2.27.0"
+    "viem": "2.27.0",
+    "@vlayer/react": "1.0.2"
   },
   "devDependencies": {
+    "typescript": "^5.5.4",
     "@types/bun": "^1.1.6",
     "@types/eslint__js": "^8.42.3",
-    "@types/node": "^22.15.29",
     "@types/react-dom": "^18.3.1",
-    "solhint": "5.0.5",
-    "typescript": "^5.5.4"
+    "solhint": "5.0.5"
   },
   "overrides": {
     "viem": "2.27.0"
