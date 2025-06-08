@@ -1,12 +1,38 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { ConnectButton, useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
+import { client, mantleFork } from './providers/thirdweb-providers';
+import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
+
+// Configure wallets with smart wallet for gas abstraction
+const smartWalletOptions = smartWallet({
+  chain: mantleFork,
+  factoryAddress: process.env.NEXT_PUBLIC_SMART_WALLET_FACTORY_ADDRESS, // Default smart wallet factory
+  gasless: true, // Enable gasless transactions
+});
+
+const wallets = [
+  smartWalletOptions,
+  inAppWallet({
+    auth: {
+      options: ["email", "google", "apple", "facebook"],
+    },
+  }),
+  createWallet("io.metamask"),
+  createWallet("com.coinbase.wallet"),
+  createWallet("me.rainbow"),
+];
 
 export default function WalletConnect() {
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const account = useActiveAccount();
+  const wallet = useActiveWallet();
+  const { disconnect } = useDisconnect();
 
-  // Disable login when Privy is not ready or the user is already authenticated
-  const disableLogin = !ready || authenticated;
+  const handleDisconnect = async () => {
+    if (wallet) {
+      await disconnect(wallet);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-4 p-6 border rounded-lg bg-white shadow-sm">
@@ -14,38 +40,61 @@ export default function WalletConnect() {
         Connect Your Wallet
       </h2>
       
-      {!authenticated ? (
+      {!account ? (
         <div className="text-center">
           <p className="text-gray-600 mb-4">
-            Connect your wallet to access zkMed
+            Connect your wallet to access zkMed with gasless transactions
           </p>
-          <button
-            disabled={disableLogin}
-            onClick={login}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {ready ? 'Connect Wallet' : 'Loading...'}
-          </button>
+          <ConnectButton
+            client={client}
+            wallets={wallets}
+            chain={mantleFork}
+            connectButton={{
+              label: "Connect Wallet",
+              style: {
+                backgroundColor: "#3b82f6",
+                color: "white",
+                padding: "12px 24px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "500",
+              },
+            }}
+            connectModal={{
+              title: "Connect to zkMed",
+              titleIcon: "🏥",
+            }}
+          />
         </div>
       ) : (
         <div className="text-center">
           <p className="text-green-600 mb-2">✅ Connected</p>
-          {user?.wallet?.address && (
-            <p className="text-sm text-gray-600 mb-4">
-              Address: {user.wallet.address.slice(0, 6)}...{user.wallet.address.slice(-4)}
-            </p>
-          )}
-          {user?.email?.address && (
-            <p className="text-sm text-gray-600 mb-4">
-              Email: {user.email.address}
-            </p>
-          )}
+          <p className="text-sm text-gray-600 mb-2">
+            Address: {account.address.slice(0, 6)}...{account.address.slice(-4)}
+          </p>
+          <p className="text-xs text-blue-600 mb-4">
+            🚀 Gas abstraction enabled - Enjoy gasless transactions!
+          </p>
           <button
-            onClick={logout}
+            onClick={handleDisconnect}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Disconnect
           </button>
+        </div>
+      )}
+      
+      {account && (
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+          <p className="font-medium">Smart Wallet Features:</p>
+          <ul className="list-disc list-inside mt-1 space-y-1">
+            <li>Gasless transactions</li>
+            <li>Account abstraction</li>
+            <li>Enhanced security</li>
+            <li>Session management</li>
+          </ul>
         </div>
       )}
     </div>

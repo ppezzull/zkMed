@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^2.14.0",
     "@tanstack/react-query": "^5.80.6",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "thirdweb": "^5.102.6",
     "tw-animate-css": "^1.3.4",
     "viem": "^2.31.0"
   },
