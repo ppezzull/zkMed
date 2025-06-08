@@ -1,7 +1,0 @@
-{
-  "name": "my-dapp",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ]
-}
