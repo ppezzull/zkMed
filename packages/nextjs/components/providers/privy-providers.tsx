@@ -4,7 +4,7 @@ import { PrivyProvider } from '@privy-io/react-auth';
 import { WagmiProvider } from '@privy-io/wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
-import { mainnet, sepolia } from 'viem/chains';
+import { anvil, mainnet, sepolia } from 'viem/chains';
 import { createConfig } from '@privy-io/wagmi';
 
 // Configure wagmi
@@ -23,6 +23,7 @@ export default function PrivyProviders({ children }: { children: React.ReactNode
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || "your-privy-app-id"}
+      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID || "your-privy-client-id"}
       config={{
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {
@@ -38,7 +39,7 @@ export default function PrivyProviders({ children }: { children: React.ReactNode
           logo: '/logo.png',
         },
         // Configure supported wallets
-        supportedChains: [mainnet, sepolia],
+        supportedChains: [mainnet, sepolia, anvil],
       }}
     >
       <QueryClientProvider client={queryClient}>
