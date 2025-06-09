@@ -44,7 +44,7 @@ export default function HeroSection() {
           {/* Left Content */}
           <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
             <Badge className="bg-indigo-100 text-indigo-700 mb-6 px-4 py-2 text-sm backdrop-blur-sm border border-indigo-200">
-              🛡️ Zero-Knowledge Privacy Technology
+              🇮🇹 Now Available in Regione Lazio, Italy
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8 bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">
@@ -55,18 +55,31 @@ export default function HeroSection() {
             </h1>
             
             <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
-              Submit, verify, and process health procedures with 
+              Submit, verify, and process health procedures in Regione Lazio with 
               <span className="font-semibold text-indigo-600"> complete privacy</span>. 
               No medical data exposed, 
               <span className="font-semibold text-emerald-600"> earn yield while protected</span>.
             </p>
+
+            {/* Regional Notice */}
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8">
+              <div className="flex items-center space-x-3">
+                <span className="text-blue-500 text-lg">🌍</span>
+                <div>
+                  <p className="text-sm font-medium text-blue-800">Currently serving Regione Lazio, Italy</p>
+                  <p className="text-xs text-blue-600">
+                    From another region? <button className="underline hover:text-blue-800">Contact our dev team</button> to add WebProof support.
+                  </p>
+                </div>
+              </div>
+            </div>
             
             <div className="flex flex-wrap gap-4 mb-12">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
               >
-                🏥 Submit Procedure
+                🏥 Submit Procedure (Lazio)
               </Button>
               <Button 
                 variant="outline" 
@@ -106,12 +119,12 @@ export default function HeroSection() {
                       🛡️
                     </div>
                     <div>
-                      <div className="font-semibold text-slate-800">Privacy Dashboard</div>
-                      <div className="text-xs text-slate-500">Secure & Encrypted</div>
+                      <div className="font-semibold text-slate-800">Lazio Privacy Dashboard</div>
+                      <div className="text-xs text-slate-500">Regione Lazio • Secure & Encrypted</div>
                     </div>
                   </div>
                   <Badge className="bg-emerald-100 text-emerald-700 border border-emerald-200">
-                    🟢 Protected
+                    🟢 Lazio Active
                   </Badge>
                 </div>
                 
@@ -125,7 +138,7 @@ export default function HeroSection() {
                     <div className="w-full bg-slate-200 rounded-full h-2">
                       <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full w-full"></div>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">Zero-knowledge proof verified</p>
+                    <p className="text-xs text-slate-500 mt-1">Zero-knowledge proof verified in Lazio</p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 text-center">
@@ -141,7 +154,7 @@ export default function HeroSection() {
                 </div>
                 
                 <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl">
-                  🔐 Access Secure Portal
+                  🔐 Access Lazio Portal
                 </Button>
               </div>
             </div>
