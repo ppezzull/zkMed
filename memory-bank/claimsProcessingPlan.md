@@ -1,625 +1,581 @@
-# Claims Processing Implementation Plan
+# Claims Processing Implementation Plan - Pool-Enabled Healthcare Platform
 
-## 🎯 MISSION: Privacy-Preserving Healthcare Claims
+## 🎯 MISSION: Privacy-Preserving Healthcare Claims with Yield-Generating Pools
 
-**Revolutionary Goal**: Enable patients to receive insurance coverage for medical procedures WITHOUT insurers ever learning what procedure was performed.
+**Revolutionary Goal**: Enable patients to receive insurance coverage for medical procedures while their premiums earn yield in Aave V3 pools WITHOUT insurers ever learning what procedure was performed.
 
-**Core Innovation**: Cryptographic proof of procedure validity without data exposure.
+**Core Innovation**: Cryptographic proof of procedure validity combined with intelligent fund pooling for capital efficiency.
 
 ---
 
 ## 🏗️ CONTRACT IMPLEMENTATION ROADMAP
 
-### Contract 1: ClaimProcessingContract.sol [PRIORITY 1]
+### Contract 1: PoolingContract.sol [PRIORITY 1]
 
 #### Purpose & Innovation
-- **Core Function**: Validate medical claims through zero-knowledge proofs
-- **Privacy Breakthrough**: Prove "procedure is covered" without revealing procedure
-- **Real-World Integration**: Live USD→token price conversion via Flare FTSO
+- **Core Function**: Manage healthcare funds in Aave V3 pools earning yield until claims
+- **Capital Efficiency**: Patient premiums and insurer funds earn 3-5% APY while awaiting authorization
+- **Instant Liquidity**: Leverage Aave's proven mechanisms for immediate claim payouts
+- **Native mUSD Integration**: Direct Mantle USD handling without oracle dependencies
 
 #### Implementation Plan
 
-##### Phase 1.1: Basic Structure (Days 1-2)
+##### Phase 1.1: Aave V3 Pool Foundation (Days 1-2)
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./interfaces/IVlayerVerifier.sol";
-import "./interfaces/IFlareOracle.sol";
-import "./interfaces/IInsuranceContract.sol";
+import "@aave/core-v3/contracts/interfaces/IPool.sol";
+import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ClaimProcessingContract {
-    struct ClaimSubmission {
+contract PoolingContract {
+    struct PatientPool {
+        address patient;
+        address insurer;
+        uint256 monthlyPremium;
+        uint256 totalDeposited;
+        uint256 yieldEarned;
+        uint256 lastDepositTime;
+        bool isActive;
+    }
+    
+    struct InsurerPool {
+        address insurer;
+        uint256 operationalFunds;
+        uint256 totalClaims;
+        uint256 yieldGenerated;
+        uint256 availableLiquidity;
+    }
+    
+    struct ClaimAuthorization {
+        uint256 claimId;
         address patient;
         address hospital;
-        bytes32 procedureCodeHash;     // keccak256(procedure_code) only
-        uint256 requestedAmountUSD;    // Amount in USD cents (e.g. 120000 = $1,200)
-        string encryptedEHRCID;        // IPFS CID of encrypted medical record
-        bytes ehrPREKey;               // Proxy re-encryption key for post-approval access
-        bytes zkProof;                 // vlayer proof: "EHR contains valid covered procedure"
-        uint256 timestamp;
+        uint256 authorizedAmount;
+        bool isPaid;
+        uint256 authorizationTime;
     }
     
-    struct ProcessedClaim {
-        uint256 claimId;
-        ClaimSubmission submission;
-        uint256 convertedTokenAmount;   // USD amount converted to tokens
-        uint256 usdcRate;              // Exchange rate used
-        ClaimStatus status;            // Processing, Forwarded, Failed
-        string processingNotes;
-    }
+    // Aave V3 Integration
+    IPool public aavePool;
+    IPoolAddressesProvider public aaveAddressProvider;
+    IERC20 public mUSD; // Native Mantle USD
     
-    enum ClaimStatus { 
-        Processing,    // ZK proof being verified
-        Forwarded,     // Successfully sent to insurance contract
-        Failed         // Verification failed
-    }
-    
-    // State variables
-    IVlayerVerifier public vlayerVerifier;
-    IFlareOracle public flareOracle;
-    IInsuranceContract public insuranceContract;
-    
-    mapping(uint256 => ProcessedClaim) public processedClaims;
-    mapping(address => bool) public registeredHospitals;
-    mapping(address => bool) public registeredPatients;
+    // Pool Management
+    mapping(address => PatientPool) public patientPools;
+    mapping(address => InsurerPool) public insurerPools;
+    mapping(uint256 => ClaimAuthorization) public claimAuthorizations;
+    mapping(address => uint256[]) public patientClaims;
     
     uint256 public nextClaimId = 1;
-    uint256 public constant PRICE_FRESHNESS_THRESHOLD = 300; // 5 minutes
+    uint256 public constant YIELD_DISTRIBUTION_RATE = 8000; // 80% to stakeholders, 20% to protocol
     
-    // Events
-    event ClaimSubmitted(uint256 indexed claimId, address indexed patient, address indexed hospital);
-    event ClaimProcessed(uint256 indexed claimId, uint256 tokenAmount, uint256 exchangeRate);
-    event ClaimForwarded(uint256 indexed claimId, address insuranceContract);
-    event ClaimFailed(uint256 indexed claimId, string reason);
+    // Events for pool monitoring
+    event PatientPoolCreated(address indexed patient, address indexed insurer, uint256 monthlyPremium);
+    event PremiumDeposited(address indexed patient, uint256 amount, uint256 yieldEarned);
+    event ClaimAuthorized(uint256 indexed claimId, address indexed hospital, uint256 amount);
+    event YieldDistributed(address indexed recipient, uint256 amount, string category);
+    event PoolRebalanced(uint256 totalLiquidity, uint256 utilizationRate);
 }
 ```
 
-##### Phase 1.2: vlayer ZK Proof Integration (Days 3-4)
+##### Phase 1.2: Patient Pool Management (Days 3-4)
 ```solidity
-function submitClaim(ClaimSubmission memory submission) external {
-    require(registeredHospitals[msg.sender], "Only registered hospitals");
-    require(registeredPatients[submission.patient], "Patient not registered");
-    require(submission.requestedAmountUSD > 0, "Invalid amount");
-    require(bytes(submission.encryptedEHRCID).length > 0, "Missing EHR CID");
+function createPatientPool(
+    address patient,
+    address insurer,
+    uint256 monthlyPremium
+) external onlyRegistrationContract {
+    require(patientPools[patient].patient == address(0), "Pool already exists");
+    require(monthlyPremium > 0, "Invalid premium amount");
     
-    uint256 claimId = nextClaimId++;
-    
-    // Step 1: Verify zero-knowledge proof with vlayer
-    bool proofValid = vlayerVerifier.verifyProcedureProof(
-        submission.zkProof,
-        submission.procedureCodeHash,
-        submission.patient,
-        submission.encryptedEHRCID
-    );
-    
-    if (!proofValid) {
-        processedClaims[claimId] = ProcessedClaim({
-            claimId: claimId,
-            submission: submission,
-            convertedTokenAmount: 0,
-            usdcRate: 0,
-            status: ClaimStatus.Failed,
-            processingNotes: "ZK proof verification failed"
-        });
-        
-        emit ClaimFailed(claimId, "Invalid procedure proof");
-        return;
-    }
-    
-    // Continue to price conversion...
-    _processValidClaim(claimId, submission);
-    
-    emit ClaimSubmitted(claimId, submission.patient, submission.hospital);
-}
-
-function _processValidClaim(uint256 claimId, ClaimSubmission memory submission) internal {
-    // Step 2: Get real-time USD/USDC rate from Flare FTSO
-    (uint256 usdcRate, uint256 priceTimestamp) = flareOracle.getPrice("USD", "USDC");
-    
-    require(
-        block.timestamp - priceTimestamp <= PRICE_FRESHNESS_THRESHOLD,
-        "Price data too stale"
-    );
-    
-    // Step 3: Convert USD to tokens (assuming 6 decimals for USDC)
-    uint256 tokenAmount = (submission.requestedAmountUSD * 1e6) / usdcRate;
-    
-    // Step 4: Store processed claim
-    processedClaims[claimId] = ProcessedClaim({
-        claimId: claimId,
-        submission: submission,
-        convertedTokenAmount: tokenAmount,
-        usdcRate: usdcRate,
-        status: ClaimStatus.Processing,
-        processingNotes: "Price converted, forwarding to insurance"
+    patientPools[patient] = PatientPool({
+        patient: patient,
+        insurer: insurer,
+        monthlyPremium: monthlyPremium,
+        totalDeposited: 0,
+        yieldEarned: 0,
+        lastDepositTime: block.timestamp,
+        isActive: true
     });
     
-    emit ClaimProcessed(claimId, tokenAmount, usdcRate);
+    emit PatientPoolCreated(patient, insurer, monthlyPremium);
+}
+
+function depositMonthlyPremium(address patient) external {
+    PatientPool storage pool = patientPools[patient];
+    require(pool.isActive, "Pool not active");
+    require(block.timestamp >= pool.lastDepositTime + 30 days, "Too early for next payment");
     
-    // Step 5: Forward to insurance contract
-    _forwardToInsurance(claimId, tokenAmount);
+    uint256 premiumAmount = pool.monthlyPremium;
+    
+    // Transfer mUSD from patient
+    mUSD.transferFrom(patient, address(this), premiumAmount);
+    
+    // Supply to Aave V3 pool to earn yield
+    mUSD.approve(address(aavePool), premiumAmount);
+    aavePool.supply(address(mUSD), premiumAmount, address(this), 0);
+    
+    // Update pool state
+    pool.totalDeposited += premiumAmount;
+    pool.lastDepositTime = block.timestamp;
+    
+    // Calculate and record yield earned
+    uint256 currentYield = calculateAccruedYield(patient);
+    pool.yieldEarned += currentYield;
+    
+    emit PremiumDeposited(patient, premiumAmount, currentYield);
+}
+
+function calculateAccruedYield(address patient) public view returns (uint256) {
+    PatientPool memory pool = patientPools[patient];
+    if (pool.totalDeposited == 0) return 0;
+    
+    // Get current aToken balance (includes earned yield)
+    IERC20 aToken = IERC20(aavePool.getReserveData(address(mUSD)).aTokenAddress);
+    uint256 currentBalance = aToken.balanceOf(address(this));
+    
+    // Calculate proportion belonging to this patient
+    uint256 totalDeposits = getTotalPoolDeposits();
+    if (totalDeposits == 0) return 0;
+    
+    uint256 patientShare = (currentBalance * pool.totalDeposited) / totalDeposits;
+    return patientShare > pool.totalDeposited ? patientShare - pool.totalDeposited : 0;
 }
 ```
 
-##### Phase 1.3: Flare FTSO Price Oracle Integration (Day 5)
+##### Phase 1.3: Claim Authorization & Pool Withdrawal (Day 5)
 ```solidity
-interface IFlareOracle {
-    function getPrice(string memory base, string memory quote) 
-        external view returns (uint256 price, uint256 timestamp);
+function authorizeClaimPayout(
+    uint256 claimId,
+    address patient,
+    address hospital,
+    uint256 requestedAmount
+) external onlyClaimProcessingContract {
+    require(validatePoolLiquidity(patient, requestedAmount), "Insufficient pool liquidity");
     
-    function getPriceWithProof(string memory base, string memory quote)
-        external view returns (uint256 price, uint256 timestamp, bytes memory proof);
+    // Create authorization record
+    claimAuthorizations[claimId] = ClaimAuthorization({
+        claimId: claimId,
+        patient: patient,
+        hospital: hospital,
+        authorizedAmount: requestedAmount,
+        isPaid: false,
+        authorizationTime: block.timestamp
+    });
+    
+    // Withdraw from Aave pool and transfer to hospital
+    aavePool.withdraw(address(mUSD), requestedAmount, hospital);
+    
+    // Update patient pool balance
+    PatientPool storage pool = patientPools[patient];
+    pool.totalDeposited = pool.totalDeposited > requestedAmount ? 
+                          pool.totalDeposited - requestedAmount : 0;
+    
+    // Mark as paid
+    claimAuthorizations[claimId].isPaid = true;
+    patientClaims[patient].push(claimId);
+    
+    emit ClaimAuthorized(claimId, hospital, requestedAmount);
 }
 
-function _forwardToInsurance(uint256 claimId, uint256 tokenAmount) internal {
-    ProcessedClaim storage claim = processedClaims[claimId];
+function validatePoolLiquidity(address patient, uint256 requestedAmount) public view returns (bool) {
+    PatientPool memory pool = patientPools[patient];
+    InsurerPool memory insurerPool = insurerPools[pool.insurer];
     
-    try insuranceContract.submitClaim(
-        claim.submission.patient,
-        claim.submission.hospital,
-        claim.submission.procedureCodeHash,
-        tokenAmount,
-        claim.submission.encryptedEHRCID,
-        claim.submission.ehrPREKey
-    ) {
-        claim.status = ClaimStatus.Forwarded;
-        claim.processingNotes = "Successfully forwarded to insurance";
-        
-        emit ClaimForwarded(claimId, address(insuranceContract));
-    } catch Error(string memory reason) {
-        claim.status = ClaimStatus.Failed;
-        claim.processingNotes = string(abi.encodePacked("Insurance forwarding failed: ", reason));
-        
-        emit ClaimFailed(claimId, reason);
-    }
+    // Check combined patient + insurer pool liquidity
+    uint256 totalAvailable = pool.totalDeposited + pool.yieldEarned + insurerPool.availableLiquidity;
+    return totalAvailable >= requestedAmount;
 }
 
-// Price freshness validation
-function isPriceDataFresh() external view returns (bool) {
-    (, uint256 timestamp) = flareOracle.getPrice("USD", "USDC");
-    return block.timestamp - timestamp <= PRICE_FRESHNESS_THRESHOLD;
-}
-
-// Emergency price override (admin only)
-function forceProcessClaimWithCustomRate(
-    uint256 claimId, 
-    uint256 customRate
-) external onlyAdmin {
-    ProcessedClaim storage claim = processedClaims[claimId];
-    require(claim.status == ClaimStatus.Failed, "Claim not in failed state");
+function distributeYield() external {
+    uint256 totalYield = getTotalAccruedYield();
+    uint256 distributionAmount = (totalYield * YIELD_DISTRIBUTION_RATE) / 10000;
     
-    uint256 tokenAmount = (claim.submission.requestedAmountUSD * 1e6) / customRate;
-    claim.convertedTokenAmount = tokenAmount;
-    claim.usdcRate = customRate;
-    claim.processingNotes = "Processed with admin override rate";
+    // Distribute to patients (60%), insurers (20%), protocol (20%)
+    uint256 patientShare = (distributionAmount * 6000) / 10000;
+    uint256 insurerShare = (distributionAmount * 2000) / 10000;
+    uint256 protocolShare = distributionAmount - patientShare - insurerShare;
     
-    _forwardToInsurance(claimId, tokenAmount);
+    // Implementation of proportional distribution logic
+    _distributeToPatients(patientShare);
+    _distributeToInsurers(insurerShare);
+    _distributeToProtocol(protocolShare);
+    
+    emit YieldDistributed(address(this), distributionAmount, "GLOBAL_DISTRIBUTION");
 }
 ```
 
 ---
 
-### Contract 2: InsuranceContract.sol [PRIORITY 2]
+### Contract 2: Enhanced ClaimProcessingContract.sol [PRIORITY 2]
 
 #### Purpose & Innovation
-- **Policy Management**: Track coverage without exposing personal data
-- **Claims Approval**: Insurers approve based only on ZK proof results
-- **Escrow System**: Secure hospital payments with merit rewards
+- **Pool-Aware Validation**: Verify claims and check pool liquidity before processing
+- **Multi-Proof Integration**: Combine ZK + Web + Mail proofs for maximum security
+- **Automated Authorization**: Trigger pool withdrawals upon claim approval
+- **Direct mUSD Processing**: No oracle dependencies, simplified architecture
 
 #### Implementation Plan
 
-##### Phase 2.1: Policy Management (Days 1-2)
+##### Phase 2.1: Pool-Integrated Claim Validation (Days 1-2)
 ```solidity
-contract InsuranceContract {
-    struct Policy {
-        uint256 totalCoverage;         // Annual coverage limit in USD cents
-        uint256 usedCoverage;          // Amount already claimed this period
-        address patientAddress;        // Patient's wallet address
-        bytes32 policyIdHash;          // keccak256(policy_number) - never store plaintext
-        string policyMetadataCID;      // IPFS CID → encrypted policy details
-        address insurerAddress;        // Which insurer issued this policy
-        bool isActive;
-        uint256 policyPeriodStart;     // Policy period start timestamp
-        uint256 policyPeriodEnd;       // Policy period end timestamp
-        uint256 createdAt;
-    }
-    
-    struct Claim {
+contract ClaimProcessingContract {
+    struct PoolEnabledClaim {
         uint256 claimId;
-        address patientAddress;
-        address hospitalAddress;
-        bytes32 procedureCodeHash;      // Only hash of procedure, never plaintext
-        uint256 requestedAmount;        // In USDC (6 decimals)
-        string encryptedEHRCID;         // IPFS CID of encrypted medical record
-        bytes ehrPREKey;                // Proxy re-encryption key for post-approval
+        address patient;
+        address hospital;
+        address insurer;
+        bytes32 procedureCodeHash;
+        uint256 requestedAmount; // Direct mUSD amount
+        string encryptedEHRCID;
+        bytes ehrPREKey;
+        bytes zkProof;
+        bytes webProof;
+        bytes mailProof;
         ClaimStatus status;
         uint256 submissionTimestamp;
-        uint256 reviewTimestamp;
-        address reviewerInsurer;        // Which insurer reviewed this claim
-        string reviewNotes;             // Encrypted notes from insurer
+        uint256 poolLiquidityCheck;
     }
     
     enum ClaimStatus { 
-        Submitted,     // Awaiting insurer review
-        Approved,      // Insurer approved, payment authorized
-        Rejected,      // Insurer rejected claim
-        Paid           // Hospital has withdrawn payment
+        Submitted,           // Initial submission
+        PoolValidated,       // Pool liquidity confirmed
+        ProofValidated,      // All proofs verified
+        Authorized,          // Approved for payout
+        Paid                 // Pool withdrawal completed
     }
     
-    // State mappings
-    mapping(address => Policy) public policies;
-    mapping(uint256 => Claim) public claims;
-    mapping(address => uint256) public hospitalEscrowBalance;
-    mapping(address => bool) public registeredInsurers;
-    mapping(address => uint256[]) public patientClaims;
+    // State variables
+    IPoolingContract public poolingContract;
+    IRegistrationContract public registrationContract;
+    IVlayerVerifier public vlayerVerifier;
+    
+    mapping(uint256 => PoolEnabledClaim) public claims;
     mapping(address => uint256[]) public hospitalClaims;
+    mapping(address => uint256[]) public patientClaims;
     
     uint256 public nextClaimId = 1;
-    IMeritsToken public meritsToken;
     
-    // Events
-    event PolicyCreated(address indexed patient, address indexed insurer, uint256 totalCoverage);
-    event ClaimSubmitted(uint256 indexed claimId, address indexed patient, address indexed hospital);
-    event ClaimApproved(uint256 indexed claimId, uint256 amount, address indexed insurer);
-    event ClaimRejected(uint256 indexed claimId, string reason, address indexed insurer);
-    event PayoutWithdrawn(address indexed hospital, uint256 amount);
-    event MeritsAwarded(address indexed recipient, uint256 amount, string reason);
+    event ClaimSubmittedWithPool(uint256 indexed claimId, address indexed patient, uint256 amount);
+    event PoolLiquidityValidated(uint256 indexed claimId, uint256 availableLiquidity);
+    event MultiProofValidated(uint256 indexed claimId, bool zkValid, bool webValid, bool mailValid);
+    event ClaimAuthorizedFromPool(uint256 indexed claimId, address indexed hospital);
 }
 ```
 
-##### Phase 2.2: Claims Processing & Approval (Days 3-4)
+##### Phase 2.2: Multi-Proof Validation with Pool Integration (Days 3-4)
 ```solidity
-function createPolicy(
-    address patientAddress,
-    string memory policyNumber,    // Will be hashed, never stored
-    uint256 totalCoverageUSD,     // In USD cents
-    string memory policyMetadataCID,
-    uint256 policyDurationMonths
-) external onlyRegisteredInsurer {
-    require(policies[patientAddress].patientAddress == address(0), "Policy already exists");
-    require(totalCoverageUSD > 0, "Invalid coverage amount");
-    
-    bytes32 policyIdHash = keccak256(abi.encodePacked(policyNumber, block.timestamp));
-    
-    policies[patientAddress] = Policy({
-        totalCoverage: totalCoverageUSD,
-        usedCoverage: 0,
-        patientAddress: patientAddress,
-        policyIdHash: policyIdHash,
-        policyMetadataCID: policyMetadataCID,
-        insurerAddress: msg.sender,
-        isActive: true,
-        policyPeriodStart: block.timestamp,
-        policyPeriodEnd: block.timestamp + (policyDurationMonths * 30 days),
-        createdAt: block.timestamp
-    });
-    
-    emit PolicyCreated(patientAddress, msg.sender, totalCoverageUSD);
-}
-
-function submitClaim(
+function submitClaimWithPool(
     address patient,
-    address hospital,
     bytes32 procedureCodeHash,
-    uint256 requestedAmount,      // In USDC tokens (6 decimals)
+    uint256 requestedAmount, // Direct mUSD amount
     string memory encryptedEHRCID,
-    bytes memory ehrPREKey
-) external onlyClaimProcessingContract {
-    Policy storage policy = policies[patient];
-    require(policy.isActive, "Policy not active");
-    require(block.timestamp <= policy.policyPeriodEnd, "Policy expired");
-    require(policy.usedCoverage + requestedAmount <= policy.totalCoverage, "Insufficient coverage");
+    bytes memory ehrPREKey,
+    bytes memory zkProof,
+    bytes memory webProof,
+    bytes memory mailProof
+) external onlyVerifiedHospital {
+    require(requestedAmount > 0, "Invalid claim amount");
     
     uint256 claimId = nextClaimId++;
     
-    claims[claimId] = Claim({
+    // Step 1: Validate pool liquidity first
+    require(poolingContract.validatePoolLiquidity(patient, requestedAmount), 
+            "Insufficient pool liquidity");
+    
+    // Step 2: Store claim data
+    claims[claimId] = PoolEnabledClaim({
         claimId: claimId,
-        patientAddress: patient,
-        hospitalAddress: hospital,
+        patient: patient,
+        hospital: msg.sender,
+        insurer: poolingContract.getPatientInsurer(patient),
         procedureCodeHash: procedureCodeHash,
         requestedAmount: requestedAmount,
         encryptedEHRCID: encryptedEHRCID,
         ehrPREKey: ehrPREKey,
+        zkProof: zkProof,
+        webProof: webProof,
+        mailProof: mailProof,
         status: ClaimStatus.Submitted,
         submissionTimestamp: block.timestamp,
-        reviewTimestamp: 0,
-        reviewerInsurer: address(0),
-        reviewNotes: ""
+        poolLiquidityCheck: block.timestamp
     });
     
-    // Track claims by patient and hospital
-    patientClaims[patient].push(claimId);
-    hospitalClaims[hospital].push(claimId);
+    emit ClaimSubmittedWithPool(claimId, patient, requestedAmount);
     
-    emit ClaimSubmitted(claimId, patient, hospital);
+    // Step 3: Validate all proofs
+    _validateMultiProof(claimId);
+    
+    // Step 4: If all validations pass, forward for authorization
+    if (claims[claimId].status == ClaimStatus.ProofValidated) {
+        _forwardForAuthorization(claimId);
+    }
 }
 
-function approveClaim(uint256 claimId, string memory reviewNotes) external onlyRegisteredInsurer {
-    Claim storage claim = claims[claimId];
-    Policy storage policy = policies[claim.patientAddress];
+function _validateMultiProof(uint256 claimId) internal {
+    PoolEnabledClaim storage claim = claims[claimId];
     
-    require(claim.status == ClaimStatus.Submitted, "Claim not in submitted state");
-    require(policy.insurerAddress == msg.sender, "Not the policy insurer");
-    require(policy.usedCoverage + claim.requestedAmount <= policy.totalCoverage, "Would exceed coverage");
+    // Validate ZK proof (privacy-preserving procedure validation)
+    bool zkValid = _validateZKProof(claim.zkProof, claim.procedureCodeHash, claim.encryptedEHRCID);
     
-    // Update policy usage
-    policy.usedCoverage += claim.requestedAmount;
+    // Validate WebProof (patient portal verification)
+    bool webValid = _validateWebProof(claim.webProof, claim.patient);
     
-    // Credit hospital escrow
-    hospitalEscrowBalance[claim.hospitalAddress] += claim.requestedAmount;
+    // Validate MailProof (hospital domain verification)
+    bool mailValid = _validateMailProof(claim.mailProof, claim.hospital);
     
-    // Update claim status
-    claim.status = ClaimStatus.Approved;
-    claim.reviewTimestamp = block.timestamp;
-    claim.reviewerInsurer = msg.sender;
-    claim.reviewNotes = reviewNotes;
-    
-    // Award merit points (Blockscout integration)
-    _awardMerits(claim.patientAddress, claim.hospitalAddress, claim.requestedAmount);
-    
-    emit ClaimApproved(claimId, claim.requestedAmount, msg.sender);
+    if (zkValid && webValid && mailValid) {
+        claim.status = ClaimStatus.ProofValidated;
+        emit MultiProofValidated(claimId, zkValid, webValid, mailValid);
+    } else {
+        claim.status = ClaimStatus.Submitted; // Keep in submitted state for retry
+        emit MultiProofValidated(claimId, zkValid, webValid, mailValid);
+    }
 }
 
-function _awardMerits(address patient, address hospital, uint256 claimAmount) internal {
-    // Convert USDC amount to merit points
-    // Example: 10 merits per $100 claimed for patients, 5 for hospitals
-    uint256 patientMerits = (claimAmount * 10) / (100 * 1e6);  // Divide by 100 USD in 6 decimals
-    uint256 hospitalMerits = (claimAmount * 5) / (100 * 1e6);
+function _forwardForAuthorization(uint256 claimId) internal {
+    PoolEnabledClaim storage claim = claims[claimId];
     
-    meritsToken.mintClaimRewards(patient, hospital, patientMerits, hospitalMerits);
+    // Forward to pooling contract for automatic authorization
+    poolingContract.authorizeClaimPayout(
+        claimId,
+        claim.patient,
+        claim.hospital,
+        claim.requestedAmount
+    );
     
-    emit MeritsAwarded(patient, patientMerits, "SUCCESSFUL_CLAIM_PATIENT");
-    emit MeritsAwarded(hospital, hospitalMerits, "SUCCESSFUL_CLAIM_HOSPITAL");
+    claim.status = ClaimStatus.Authorized;
+    
+    // Update tracking arrays
+    hospitalClaims[claim.hospital].push(claimId);
+    patientClaims[claim.patient].push(claimId);
+    
+    emit ClaimAuthorizedFromPool(claimId, claim.hospital);
 }
 ```
 
 ---
 
-### Contract 3: MeritsTokenContract.sol [PRIORITY 3]
+### Contract 3: Enhanced PatientModule.sol [PRIORITY 3]
 
 #### Purpose & Innovation
-- **Incentive System**: Reward successful claims processing
-- **Blockscout Integration**: Merit balances visible via Blockscout Merits API
-- **Gamification**: Encourage proper use of the healthcare system
+- **Insurance Selection**: Browse and select insurers based on pool performance
+- **Automated Payments**: Setup monthly mUSD deposits to chosen pools
+- **Yield Tracking**: Monitor premium contributions and earned returns
+- **Pool Performance**: Real-time visibility into fund growth
 
 #### Implementation Plan
 
-##### Phase 3.1: ERC-20 Merit Token (Days 1-2)
+##### Phase 3.1: Insurance Selection Interface (Days 1-2)
 ```solidity
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
-
-contract MeritsTokenContract is ERC20, AccessControl {
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    
-    struct MeritTransaction {
-        address recipient;
-        uint256 amount;
-        string reason;
-        uint256 timestamp;
-        uint256 associatedClaimId;  // Links back to the claim that generated merits
+contract PatientModule {
+    struct InsurerProfile {
+        address insurerAddress;
+        string organizationName;
+        string domain;
+        uint256 poolBalance;
+        uint256 averageYield; // Annual percentage yield
+        uint256 claimsProcessed;
+        uint256 averagePayoutTime;
+        bool isActive;
+        uint256 monthlyPremiumRange; // Suggested premium range
     }
     
-    // Tracking for Blockscout integration
-    mapping(address => MeritTransaction[]) public userMeritHistory;
-    mapping(address => uint256) public lifetimeMeritsEarned;
-    mapping(string => uint256) public meritsByCategory;  // Track different types of merit earnings
-    
-    uint256 public totalMeritsAwarded;
-    uint256 public totalUniqueMeritRecipients;
-    
-    // Merit rate constants (can be updated by admin)
-    uint256 public patientClaimMeritRate = 10;    // 10 merits per $100 claimed
-    uint256 public hospitalProcessingMeritRate = 5; // 5 merits per $100 processed
-    uint256 public insurerApprovalMeritRate = 2;  // 2 merits per $100 approved
-    
-    // Events for Blockscout tracking
-    event MeritsMinted(address indexed recipient, uint256 amount, string reason, uint256 claimId);
-    event MeritRatesUpdated(uint256 patientRate, uint256 hospitalRate, uint256 insurerRate);
-    
-    constructor() ERC20("zkMed Merits", "ZKMERITS") {
-        _grantRole(ADMIN_ROLE, msg.sender);
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    struct PatientInsuranceSelection {
+        address patient;
+        address selectedInsurer;
+        uint256 monthlyPremium;
+        uint256 selectionTimestamp;
+        bool automaticPaymentsEnabled;
+        uint256 totalPaid;
+        uint256 yieldEarned;
     }
     
-    function mintClaimRewards(
-        address patient,
-        address hospital, 
-        uint256 patientMerits,
-        uint256 hospitalMerits
-    ) external onlyRole(MINTER_ROLE) {
-        require(patient != address(0) && hospital != address(0), "Invalid addresses");
-        require(patientMerits > 0 && hospitalMerits > 0, "Invalid merit amounts");
-        
-        // Mint merits
-        _mint(patient, patientMerits);
-        _mint(hospital, hospitalMerits);
-        
-        // Track for first-time recipients
-        if (lifetimeMeritsEarned[patient] == 0) {
-            totalUniqueMeritRecipients++;
-        }
-        if (lifetimeMeritsEarned[hospital] == 0) {
-            totalUniqueMeritRecipients++;
-        }
-        
-        // Update lifetime totals
-        lifetimeMeritsEarned[patient] += patientMerits;
-        lifetimeMeritsEarned[hospital] += hospitalMerits;
-        totalMeritsAwarded += patientMerits + hospitalMerits;
-        
-        // Update category tracking
-        meritsByCategory["PATIENT_CLAIMS"] += patientMerits;
-        meritsByCategory["HOSPITAL_PROCESSING"] += hospitalMerits;
-        
-        // Record transactions for history
-        _recordMeritTransaction(patient, patientMerits, "SUCCESSFUL_CLAIM_PATIENT", 0);
-        _recordMeritTransaction(hospital, hospitalMerits, "SUCCESSFUL_CLAIM_HOSPITAL", 0);
-        
-        emit MeritsMinted(patient, patientMerits, "PATIENT_CLAIM_REWARD", 0);
-        emit MeritsMinted(hospital, hospitalMerits, "HOSPITAL_PROCESSING_REWARD", 0);
-    }
+    // State mappings
+    mapping(address => InsurerProfile) public insurerProfiles;
+    mapping(address => PatientInsuranceSelection) public patientSelections;
+    mapping(address => address[]) public patientInsurerHistory;
+    address[] public availableInsurers;
     
-    function _recordMeritTransaction(
-        address recipient, 
-        uint256 amount, 
-        string memory reason,
-        uint256 claimId
-    ) internal {
-        userMeritHistory[recipient].push(MeritTransaction({
-            recipient: recipient,
-            amount: amount,
-            reason: reason,
-            timestamp: block.timestamp,
-            associatedClaimId: claimId
-        }));
-    }
+    IPoolingContract public poolingContract;
+    IRegistrationContract public registrationContract;
+    
+    // Events
+    event InsurerProfileUpdated(address indexed insurer, uint256 poolBalance, uint256 yield);
+    event PatientSelectedInsurer(address indexed patient, address indexed insurer, uint256 premium);
+    event AutomaticPaymentSetup(address indexed patient, address indexed insurer, uint256 amount);
+    event MonthlyPremiumPaid(address indexed patient, uint256 amount, uint256 yieldEarned);
 }
 ```
 
-##### Phase 3.2: Blockscout Merits API Integration (Days 3-4)
+##### Phase 3.2: Pool Performance Tracking (Days 3-4)
 ```solidity
-// Blockscout Merits API compatibility functions
-function getUserMerits(address user) external view returns (uint256) {
-    return balanceOf(user);
+function browseAvailableInsurers() external view returns (InsurerProfile[] memory) {
+    InsurerProfile[] memory profiles = new InsurerProfile[](availableInsurers.length);
+    
+    for (uint256 i = 0; i < availableInsurers.length; i++) {
+        address insurerAddr = availableInsurers[i];
+        profiles[i] = insurerProfiles[insurerAddr];
+        
+        // Update real-time pool performance
+        profiles[i].poolBalance = poolingContract.getInsurerPoolBalance(insurerAddr);
+        profiles[i].averageYield = poolingContract.getInsurerAverageYield(insurerAddr);
+    }
+    
+    return profiles;
 }
 
-function getUserMeritsHistory(address user) external view returns (MeritTransaction[] memory) {
-    return userMeritHistory[user];
+function selectInsurerAndSetupPayments(
+    address selectedInsurer,
+    uint256 monthlyPremium
+) external onlyRegisteredPatient {
+    require(insurerProfiles[selectedInsurer].isActive, "Insurer not active");
+    require(monthlyPremium >= insurerProfiles[selectedInsurer].monthlyPremiumRange, 
+            "Premium below minimum");
+    
+    // Record patient selection
+    patientSelections[msg.sender] = PatientInsuranceSelection({
+        patient: msg.sender,
+        selectedInsurer: selectedInsurer,
+        monthlyPremium: monthlyPremium,
+        selectionTimestamp: block.timestamp,
+        automaticPaymentsEnabled: true,
+        totalPaid: 0,
+        yieldEarned: 0
+    });
+    
+    // Create pool in PoolingContract
+    poolingContract.createPatientPool(msg.sender, selectedInsurer, monthlyPremium);
+    
+    // Track selection history
+    patientInsurerHistory[msg.sender].push(selectedInsurer);
+    
+    emit PatientSelectedInsurer(msg.sender, selectedInsurer, monthlyPremium);
+    emit AutomaticPaymentSetup(msg.sender, selectedInsurer, monthlyPremium);
 }
 
-function getUserLifetimeMerits(address user) external view returns (uint256) {
-    return lifetimeMeritsEarned[user];
+function payMonthlyPremium() external onlyRegisteredPatient {
+    PatientInsuranceSelection storage selection = patientSelections[msg.sender];
+    require(selection.automaticPaymentsEnabled, "Automatic payments not enabled");
+    
+    uint256 premiumAmount = selection.monthlyPremium;
+    
+    // Process payment through pooling contract
+    poolingContract.depositMonthlyPremium(msg.sender);
+    
+    // Update patient records
+    selection.totalPaid += premiumAmount;
+    uint256 yieldEarned = poolingContract.getPatientYieldEarned(msg.sender);
+    selection.yieldEarned = yieldEarned;
+    
+    emit MonthlyPremiumPaid(msg.sender, premiumAmount, yieldEarned);
 }
 
-// Additional analytics for Blockscout dashboard
-function getGlobalMeritStats() external view returns (
-    uint256 totalAwarded,
-    uint256 uniqueRecipients,
-    uint256 patientMerits,
-    uint256 hospitalMerits,
-    uint256 insurerMerits
+function getPatientPoolDashboard(address patient) external view returns (
+    uint256 totalDeposited,
+    uint256 yieldEarned,
+    uint256 poolBalance,
+    uint256 nextPaymentDue,
+    address currentInsurer
 ) {
+    PatientInsuranceSelection memory selection = patientSelections[patient];
+    
     return (
-        totalMeritsAwarded,
-        totalUniqueMeritRecipients,
-        meritsByCategory["PATIENT_CLAIMS"],
-        meritsByCategory["HOSPITAL_PROCESSING"],
-        meritsByCategory["INSURER_APPROVALS"]
+        selection.totalPaid,
+        selection.yieldEarned,
+        poolingContract.getPatientPoolBalance(patient),
+        poolingContract.getNextPaymentTime(patient),
+        selection.selectedInsurer
     );
 }
-
-function getTopMeritHolders(uint256 limit) external view returns (
-    address[] memory holders,
-    uint256[] memory balances
-) {
-    // Implementation for leaderboard functionality
-    // Note: This would require additional tracking for efficiency
-}
-
-// Admin functions for merit rate adjustments
-function updateMeritRates(
-    uint256 newPatientRate,
-    uint256 newHospitalRate,
-    uint256 newInsurerRate
-) external onlyRole(ADMIN_ROLE) {
-    patientClaimMeritRate = newPatientRate;
-    hospitalProcessingMeritRate = newHospitalRate;
-    insurerApprovalMeritRate = newInsurerRate;
-    
-    emit MeritRatesUpdated(newPatientRate, newHospitalRate, newInsurerRate);
-}
-
-// Special merit awards for exceptional behavior
-function awardSpecialMerits(
-    address recipient,
-    uint256 amount,
-    string memory reason
-) external onlyRole(ADMIN_ROLE) {
-    _mint(recipient, amount);
-    lifetimeMeritsEarned[recipient] += amount;
-    totalMeritsAwarded += amount;
-    
-    _recordMeritTransaction(recipient, amount, reason, 0);
-    emit MeritsMinted(recipient, amount, reason, 0);
-}
 ```
 
 ---
 
-## 🎯 HACKATHON INTEGRATION CHECKLIST
+## 🎯 STREAMLINED INTEGRATION BENEFITS
 
-### vlayer Integration ✅ + 🚧
-- [x] **Email Proofs**: Domain verification for organizations (completed)
-- [ ] **ZK Medical Proofs**: Procedure validity without data exposure (in progress)
-- [ ] **Proof Verification**: On-chain validation of medical claims
-- [ ] **Circuit Design**: "Encrypted EHR contains covered procedure" circuit
+### Pool-Enabled Advantages vs Traditional Claims
 
-### Flare Integration 🚧
-- [ ] **FTSO Price Oracle**: Real-time USD→USDC conversion
-- [ ] **Price Freshness**: Validation of price data timeliness
-- [ ] **Fallback Mechanisms**: Admin override for stale price data
-- [ ] **Multi-Currency Support**: Support for different stablecoins
+#### Capital Efficiency
+- **Traditional**: Premiums sit idle until claims
+- **Pool-Enabled**: Funds earn 3-5% APY via Aave V3 protocols
+- **Patient Benefit**: Lower effective premiums due to yield generation
+- **Insurer Benefit**: Operational funds generate returns
 
-### Blockscout Integration 🚧
-- [ ] **Merit Token**: ERC-20 implementation with minting
-- [ ] **Merits API**: Compatible with Blockscout Merits API
-- [ ] **Explorer Links**: All transactions link to Blockscout
-- [ ] **Analytics Dashboard**: Merit statistics and leaderboards
+#### Instant Liquidity
+- **Traditional**: Insurers must maintain large cash reserves
+- **Pool-Enabled**: Aave's proven liquidity mechanisms ensure instant payouts
+- **Hospital Benefit**: Immediate payment upon claim approval
+- **System Benefit**: Reduced capital requirements
 
----
+#### Simplified Architecture  
+- **Traditional**: Complex oracle integrations for price conversion
+- **Pool-Enabled**: Direct mUSD handling eliminates oracle dependencies
+- **Development Benefit**: Faster implementation, fewer dependencies
+- **Security Benefit**: Reduced attack surface, no price manipulation risks
 
-## 🚀 DEPLOYMENT & TESTING STRATEGY
+### Mantle Ecosystem Optimization
 
-### Testing Phases
+#### Native mUSD Benefits
+- **Stability**: Official Mantle stablecoin eliminates volatility
+- **Integration**: Seamless compatibility with Mantle DeFi ecosystem
+- **Costs**: Lower transaction fees compared to bridged stablecoins
+- **Reliability**: No bridge risk or external dependencies
 
-#### Phase 1: Unit Testing (Parallel with implementation)
-- ClaimProcessingContract function testing
-- vlayer ZK proof mock integration
-- Flare price oracle mock testing
-- Merit token minting and tracking
-
-#### Phase 2: Integration Testing
-- End-to-end claims flow testing
-- Real vlayer proof generation and verification
-- Live Flare FTSO price data integration
-- Blockscout API compatibility validation
-
-#### Phase 3: End-to-End Validation
-- Complete claims workflow with real medical data (test data)
-- Privacy validation: ensure no medical PHI exposure
-- Performance testing: gas optimization
-- Security testing: edge cases and attack vectors
-
-### Deployment Sequence
-1. **MeritsTokenContract**: Deploy first (no dependencies)
-2. **InsuranceContract**: Deploy second (depends on MeritsToken)
-3. **ClaimProcessingContract**: Deploy third (depends on InsuranceContract)
-4. **System Integration**: Wire all contracts together
-5. **Testing & Validation**: Comprehensive system testing
+#### Local Fork Testing
+- **Development**: Comprehensive testing on Mantle fork (Chain ID: 31339)
+- **Safety**: Zero-cost testing of complex pool interactions
+- **Accuracy**: Real mainnet state for realistic testing
+- **Speed**: Instant feedback during development
 
 ---
 
-## 📈 SUCCESS METRICS
+## 📅 IMPLEMENTATION TIMELINE
 
-### Technical Metrics
-- [ ] ZK proof verification: >95% success rate
-- [ ] Price oracle calls: <5 second latency
-- [ ] Gas costs: Within target ranges
-- [ ] Zero medical data leakage: 100% validation
+### Week 1: Pool Foundation
+- **Days 1-2**: PoolingContract.sol core implementation
+- **Days 3-4**: Aave V3 integration and yield mechanisms
+- **Day 5**: Claim authorization and withdrawal logic
 
-### Privacy Metrics
-- [ ] Insurers approve claims without seeing procedure details
-- [ ] Medical records remain encrypted until post-approval
-- [ ] Only hashes and proofs stored on-chain
-- [ ] Patient identity preserved through commitments
+### Week 2: Enhanced Modules
+- **Days 1-2**: PatientModule insurance selection features
+- **Days 3-4**: ClaimProcessingContract pool integration
+- **Day 5**: Multi-proof validation with pool checks
+
+### Week 3: Frontend Integration
+- **Days 1-2**: Pool dashboard development
+- **Days 3-4**: Insurance selection interface
+- **Day 5**: Yield tracking and monitoring
+
+### Week 4: Testing & Deployment
+- **Days 1-2**: Comprehensive pool testing on Mantle fork
+- **Days 3-4**: Integration testing and optimization
+- **Day 5**: Mainnet deployment preparation
+
+---
+
+## 🚀 SUCCESS METRICS
+
+### Pool Performance Metrics
+- [ ] Patient pools earning 3-5% APY via Aave V3
+- [ ] Instant claim payouts upon authorization
+- [ ] 100% pool liquidity availability for approved claims
+- [ ] Automated yield distribution to stakeholders
+- [ ] Real-time pool performance monitoring
+
+### Privacy & Security Metrics
+- [ ] Zero medical data exposed during pool operations
+- [ ] Multi-proof validation (ZK + Web + Mail) working seamlessly
+- [ ] Pool authorization triggered only by validated claims
+- [ ] Yield tracking without compromising patient privacy
 
 ### Integration Metrics
-- [ ] vlayer proofs working seamlessly
-- [ ] Flare price data accurate and timely
-- [ ] Blockscout merit balances displaying correctly
-- [ ] All transactions visible on Blockscout Explorer
+- [ ] Seamless Mantle mUSD integration for all operations
+- [ ] Aave V3 pools deployed and operational on Mantle fork
+- [ ] Dual patient registration paths working smoothly
+- [ ] Automated monthly premium payments functioning
+- [ ] Pool rebalancing based on claim volume
 
-**This implementation plan will deliver the world's first privacy-preserving healthcare claims system with multi-protocol integration!** 🚀 
+**This pool-enabled implementation delivers the world's first yield-generating, privacy-preserving healthcare platform!** 🚀 

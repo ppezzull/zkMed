@@ -7,9 +7,9 @@ services:
     ports:
       - "127.0.0.1:8545:8545"
 
-  anvil-l1-mantle:
+  anvil-l2-mantle:
     image: ghcr.io/foundry-rs/foundry:latest
-    container_name: anvil-l1-mantle
+    container_name: anvil-l2-mantle
     platform: linux/amd64
     command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
     ports:

@@ -61,7 +61,8 @@ backend/src/
 
 ### Frontend Architecture (Planned)
 - **Next.js 15+**: Use App Router and Server Components
-- **Thirdweb**: SIWE authentication for wallet connections
+- **thirdweb**: Smart accounts and gas sponsorship for seamless UX
+- **thirdweb Authentication**: Social login and wallet abstraction
 - **Server Actions**: Handle on-chain transactions securely
 - **Progressive enhancement**: Work without JavaScript for core functions
 
@@ -167,6 +168,23 @@ try {
 }
 ```
 
+### thirdweb Smart Account Integration
+```typescript
+import { SmartWallet } from "@thirdweb-dev/wallets";
+import { useSmartWallet } from "@thirdweb-dev/react";
+
+// Configure smart wallet with gas sponsorship
+const smartWallet = new SmartWallet({
+  chain: "ethereum",
+  factoryAddress: "your-factory-address",
+  gasless: true,
+  clientId: "your-thirdweb-client-id"
+});
+
+// Use in components for sponsored transactions
+const { connect, address } = useSmartWallet();
+```
+
 ### Foundry Development
 ```bash
 # Standard workflow
@@ -184,7 +202,7 @@ forge fmt                  # Format code consistently
 
 ### Gas Optimization
 - **Issue**: Complex operations can exceed block gas limit
-- **Solution**: Break into multiple transactions or use batch processing
+- **Solution**: Break into multiple transactions or use thirdweb gas sponsorship
 
 ### Privacy Compliance
 - **Issue**: Easy to accidentally expose data in events
@@ -193,6 +211,10 @@ forge fmt                  # Format code consistently
 ### Role Management
 - **Issue**: Complex role hierarchies can create security vulnerabilities
 - **Solution**: Keep roles simple and separate verification from assignment
+
+### thirdweb Integration
+- **Issue**: Smart account deployment and configuration complexity
+- **Solution**: Use thirdweb's pre-built factories and paymaster configurations
 
 ## Development Environment Setup
 ```bash

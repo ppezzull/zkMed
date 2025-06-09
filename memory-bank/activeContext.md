@@ -1,106 +1,80 @@
-# Active Context - zkMed Privacy-Preserving Healthcare Platform
+# Active Context - zkMed Privacy-Preserving Healthcare Platform with Yield-Generating Pools
 
-## 🎯 STREAMLINED SCOPE: Advanced Web3 Healthcare Platform
+## 🎯 ADVANCED WEB3 HEALTHCARE PLATFORM: Aave V3 Pool Integration + Mantle mUSD
 
-### Current Status: Italian Health System Integration COMPLETE → Frontend Integration READY
+### Current Status: Registration System COMPLETE → Pool Integration READY → Mantle Fork Testing
 **Registration Phase**: ✅ **PRODUCTION READY** (37/37 tests passing)  
-**Italian Health WebProof Phase**: ✅ **COMPLETE & TESTED** (12/12 tests passing)
-**Frontend Integration**: ✅ **ABIS & ADDRESSES EXPORTED** 
-**Integration Target**: vlayer WebProofs/MailProofs + ERC-7824 Abstract Accounts + thirdweb
+**Pool Integration Phase**: ✅ **ARCHITECTURE COMPLETE** 
+**Mantle Fork Testing**: ✅ **ENVIRONMENT READY** (Chain ID: 31339)
+**Integration Target**: Aave V3 Pools + Mantle USD (mUSD) + thirdweb Smart Accounts + vlayer WebProofs/MailProofs
 
-### 🎉 COMPLETED: Italian Health System WebProof Integration
+### 🎉 COMPLETED: Healthcare Pool Architecture Design
 
-#### ✅ Smart Contracts Deployed & Tested
-- **HealthSystemWebProofProver**: `0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf`
-- **HealthSystemWebProofVerifier**: `0x9d4454B023096f34B160D6B654540c56A1F81688`
-- **Enhanced PatientModule**: Italian health data integration with privacy-preserving verification
-- **Updated RegistrationContract**: WebProof-based patient registration with proper access control
+#### ✅ Revolutionary Pool-Enabled Healthcare Platform
+- **PoolingContract.sol**: Aave V3 healthcare pool management with yield distribution
+- **Patient Pool Deposits**: Monthly premiums earn yield while awaiting claims
+- **Insurer Pool Contributions**: Operational funds earning interest until claims
+- **Authorization-Based Withdrawals**: Funds released only after claim authorization
+- **Real-time Liquidity Management**: Dynamic pool rebalancing based on volume
 
-#### ✅ Verification Flows CONFIRMED WORKING
-- **Patient Flow**: WebProofs from Italian health system (Salute Lazio portal)
-  - SPID/CIE authentication → vlayer WebProof → zkSNARK verification → Patient registration
-  - Tax code (codice fiscale) privacy-preserving verification
-  - Regional healthcare code and ASL verification
-  - All 12/12 tests passing including access control
+#### ✅ Dual Patient Registration Paths DESIGNED
+- **Option A**: Existing patients get mailproof from verified insurer
+- **Option B**: New patients browse and select insurers, set up monthly mUSD payments
+- **Enhanced PatientModule**: Insurance selection flow and automated payment setup
+- **Updated RegistrationContract**: Dual-path registration with pool integration
 
-- **Organization Flow**: MailProofs for domain verification  
-  - Email domain verification → vlayer MailProof → Organization registration
-  - Hospital/Insurer role assignment with domain ownership proof
-  - All existing tests passing
+#### ✅ Mantle USD (mUSD) Integration Strategy
+- **Native Stablecoin**: Replaces Beraborrow HONEY/NECT with Mantle's official mUSD
+- **Pool Compatibility**: Seamless integration with Aave V3 pools on Mantle
+- **Simplified Processing**: No oracle dependencies, direct mUSD handling
+- **Yield Optimization**: Healthcare funds earn 3-5% APY via Aave protocols
 
-#### ✅ vlayer Integration Complete
-- **proveItalianHealthSystem.ts**: Working WebProof generation script
-  - CLI interface with help system
-  - Mock proof generation for development
-  - Integration with Salute Lazio portal workflow
-  - Proper vlayer SDK v1.0.2 integration
+#### ✅ Local Mantle Fork Development Environment
+- **Chain ID**: 31339 (Mantle fork for comprehensive testing)
+- **Fork Source**: https://rpc.mantle.xyz (Mantle mainnet state)
+- **Aave V3 Deployment**: Full protocol testing environment
+- **Zero-Cost Testing**: Safe environment for complex pool interactions
 
-#### ✅ Comprehensive Testing Infrastructure
-- **12/12 Italian Health Tests Passing**:
-  - Access control (fixed: onlyOwners modifier)
-  - WebProof verification and patient registration
-  - Duplicate prevention (patient ID and tax code)
-  - Enhanced patient features (EHR upload, operation proposals)
-  - Multi-patient registration
-  - Full integration flow testing
-
-- **Makefile Commands Added**:
-  - `make quick-test-italian` - Fast test run
-  - `make quick-test-access-control` - Access control only
-  - `make quick-test-webproof-registration` - WebProof registration only
-  - `make test-italian-health-full` - Comprehensive verbose tests
-  - `make test-italian-webproof` - vlayer script testing
-  - `make test-italian-webproof-help` - Script help
-  - `make test-all-italian` - All Italian health tests
-  - `make integration-test-italian` - Full integration test
-  - `make help-italian` - Comprehensive help system
-
-#### ✅ Frontend Integration Ready
-- **ABIs Exported**: All contract interfaces available in `backend/exports/`
-- **Addresses Available**: Deployment info in `backend/exports/deployment.json`
-- **TypeScript Config**: Ready-to-use config in `backend/exports/config.ts`
-- **Contract Instances**: Pre-configured for Next.js integration
-
-### 🚀 NEXT PHASE: Frontend Integration
+### 🚀 NEXT PHASE: Pool Contract Implementation + Frontend Integration
 
 #### Ready for Implementation
-1. **Import Contract ABIs**: Use exported TypeScript interfaces
-2. **Connect to Deployed Contracts**: Use addresses from deployment.json
-3. **Implement Patient Flow**: WebProof generation → Registration → EHR management
-4. **Implement Organization Flow**: Email verification → Domain registration → Role assignment
+1. **PoolingContract.sol**: Aave V3 healthcare pool management
+2. **Enhanced PatientModule**: Insurance selection and monthly payment setup
+3. **Pool Authorization System**: Smart contract triggers for claim payments
+4. **Yield Distribution Logic**: Automated reward mechanisms for stakeholders
 
 #### Integration Points
-- **Patient Registration**: `registerPatientWithWebProof()` via HealthSystemWebProofVerifier
-- **Organization Registration**: `registerOrganization()` via RegistrationContract
-- **EHR Management**: `uploadEncryptedEHR()`, `proposeOperation()` via PatientModule
-- **Access Control**: Role-based permissions via RegistrationStorage
+- **Patient Registration**: `registerPatientWithInsurer()` via enhanced RegistrationContract
+- **Pool Deposits**: `depositToPatientPool()`, `depositToInsurerPool()` via PoolingContract
+- **Claim Authorization**: `authorizeClaimPayout()` triggers pool withdrawal
+- **Yield Tracking**: Real-time monitoring of pool performance and distributions
 
-### 🔧 Development Workflow
+### 🔧 Development Workflow - Mantle Fork Focus
 ```bash
-# Quick development cycle
-make run-anvil && make deploy-local && make deploy-italian-health
-make quick-test-italian
+# Start Mantle fork environment
+make start-mantle-fork && make deploy-mantle
 
-# Test specific functionality  
-make quick-test-access-control
-make test-italian-webproof
+# Deploy Aave V3 pools
+make deploy-aave-pools && make setup-musd
 
-# Full integration test
-make integration-test-italian
+# Test pool functionality
+make test-patient-pools && make test-yield-dist
+
+# Monitor pools in real-time
+make pool-dashboard
 ```
 
-### 📊 System Status
-- **Smart Contracts**: ✅ Production ready
-- **Access Control**: ✅ Properly implemented and tested
-- **WebProof Integration**: ✅ Working with vlayer
-- **MailProof Integration**: ✅ Working with vlayer  
-- **Testing Coverage**: ✅ Comprehensive (49/49 total tests passing)
-- **Frontend Exports**: ✅ Ready for integration
-- **Documentation**: ✅ Complete with help systems
+### 📊 Pool Integration Status
+- **Aave V3 Architecture**: ✅ Complete pool management design
+- **mUSD Integration**: ✅ Native Mantle stablecoin strategy
+- **Dual Registration**: ✅ Patient choice architecture designed
+- **Yield Distribution**: ✅ Automated reward mechanisms planned
+- **Mantle Fork Testing**: ✅ Environment ready for implementation
+- **Pool Authorization**: ✅ Claim-triggered withdrawal system designed
 
 ---
 
-## 🏗️ STREAMLINED CONTRACT ARCHITECTURE
+## 🏗️ ENHANCED CONTRACT ARCHITECTURE WITH POOLS
 
 ### Phase 1: Registration System [COMPLETED] ✅
 - **RegistrationContract.sol**: Privacy-preserving patient/organization registration with multi-owner system
@@ -109,381 +83,334 @@ make integration-test-italian
 - **User Activation System**: Enable/disable users with batch operations
 - **Status**: Production-ready, 100% test coverage (53/53 tests passing)
 
-### Phase 2: Advanced Claims Processing System [CURRENT FOCUS] 🚧
+### Phase 2: Pool-Enabled Healthcare Platform [CURRENT FOCUS] 🚧
 
-#### 🔒 1. RegistrationContract.sol [ENHANCED]
-**Purpose**: Main registry of roles (Patient, Hospital, Insurer) and proof-based onboarding
+#### 🔒 1. RegistrationContract.sol [ENHANCED FOR POOLS]
+**Purpose**: Main registry with dual patient registration paths and pool integration
 
-**Key Features**:
-- `registerPatient(bytes32 commitment)`: Patient anonymous registration
-- `registerOrganization(Proof proof, OrganizationVerificationData data, Role role)`: Hospital/insurer onboarding with **MailProof** (vlayer email ZK)
-- Role checks: `onlyVerifiedHospital`, `onlyVerifiedInsurer`
-- **Future extension**: Add `registerWithWebProof(...)` for web-based organization verification
-
-**Integrations**:
-- **MailProofs** via `EmailDomainProver`
-- Stores role → `RegistrationStorage`
-- **ERC-7824 Gateway** compatibility for meta-transactions
-
-#### 🧑‍⚕️ 2. PatientModule.sol [NEW]
-**Purpose**: Patient-specific actions with encrypted EHR management
-
-**Key Features**:
-- `uploadEncryptedEHR(string cid, bytes preKey)`: EHR CID + PRE key storage
-- `proposeOperation(...)`: Propose encrypted operation with **WebProof**
-- `verifyPatientCommitment(string secret)`: Verify patient's health data commitment
+**Enhanced Features**:
+- `registerPatientWithInsurer(bytes32 commitment, address insurer)`: Existing coverage path
+- `registerPatientWithSelection(bytes32 commitment, address selectedInsurer)`: New coverage path
+- `setupMonthlyPayments(address insurer, uint256 monthlyAmount)`: Automated mUSD payments
+- **Pool Integration**: Links patient registration to appropriate Aave pools
 
 **Integrations**:
-- **WebProofs** → prove diagnosis/procedure from real patient portal (HIPAA-compliant ZK)
-- Adds PRE key for **post-approval decryption**
-- Works with ERC-7824 for sponsored patient transactions
+- **Aave V3 Pools** for patient premium deposits
+- **Mantle USD (mUSD)** for stable value processing
+- **thirdweb Smart Accounts** for sponsored registration transactions
 
-#### 🏥 3. OrganizationModule.sol [NEW]
-**Purpose**: Hospital/insurer post-verification features
-
-**Key Features**:
-- `approveOperation(patient, opId)`: Hospital agrees to operate
-- `confirmOperation(opId)`: Final confirmation after surgery
-- `getHospitalOperations()`: Hospital views pending operations
-- `submitClaimWithWebProof(...)`: Submit claims with WebProof validation
-
-#### 🛡️ 4. InsuranceContract.sol [SIMPLIFIED]
-**Purpose**: Manages policy and funds with streamlined USDC flow
+#### 💰 2. PoolingContract.sol [NEW - CORE INNOVATION]
+**Purpose**: Aave V3 healthcare pool management with yield generation and distribution
 
 **Key Features**:
-- `createPolicy(...)`: Link hashed policy ID with total USDC coverage
-- `approveClaim(...)`: Approves operations post-ZK validation (direct USDC amounts)
-- `disburseFunds(...)`: Sends USDC payout to hospital
-- `withdrawPayout()`: Hospital pulls escrowed USDC
+- `createPatientPool(address insurer, uint256 initialDeposit)`: Setup patient premium pools
+- `createInsurerPool(address insurer, uint256 operationalFunds)`: Setup insurer operational pools
+- `depositMonthlyPremium(address patient, uint256 amount)`: Automated patient deposits
+- `authorizeClaimPayout(uint256 claimId, uint256 amount)`: Trigger fund release to hospitals
+- `distributeYield()`: Automated yield distribution to stakeholders
+- `rebalancePools()`: Dynamic liquidity management based on claim volume
 
-**Integrations**:
-- **ERC-7824**: Meta-transaction submission by insurer for `approveClaim()` (sponsored)
-- **Direct USDC**: Claims submitted in USDC amounts (no price conversion needed)
-- **Frontend Price Display**: USD to USDC conversion handled in UI using CoinGecko API
+**Aave V3 Integration**:
+- **Supply to Pools**: Healthcare funds earn yield via Aave lending protocols
+- **Instant Liquidity**: Proven mechanisms ensure funds available for claims
+- **Risk Management**: Battle-tested parameters protect deposited funds
+- **Multi-Asset Support**: Support for mUSD and other Mantle ecosystem assets
 
-#### 🌐 5. ERC7824Gateway.sol [NEW] (Nitrolite Abstract Account)
-**Purpose**: Meta-transaction router for sponsored transactions
+#### 🧑‍⚕️ 3. PatientModule.sol [ENHANCED FOR INSURANCE SELECTION]
+**Purpose**: Patient insurance selection and pool interaction management
 
-**Key Features**:
-- `execute(ERC7824ForwardRequest req, bytes signature)`: Sponsored transaction execution
-- **Nonce management** for replay protection
-- **Gas sponsorship** for patient and hospital interactions
-- **Batch operations** support for multiple contract calls
+**Enhanced Features**:
+- `browseInsurers()`: View verified insurers and their pool performance
+- `selectInsurer(address insurer, uint256 monthlyPremium)`: Choose coverage provider
+- `setupAutomaticPayments(address insurer, uint256 amount)`: Automated mUSD deposits
+- `proposeOperationWithPool(bytes webProof, uint256 estimatedCost)`: WebProof with pool validation
+- `checkPoolBalance()`: View patient's pool contributions and yield earned
 
-**Integration Points**:
-- All contract interactions can route through this gateway
-- Insurers can sponsor patient claim submissions
-- Hospitals can have sponsored claim processing
+**Pool Benefits**:
+- **Yield Earning**: Patient premiums generate returns while awaiting claims
+- **Transparent Tracking**: Real-time visibility into pool performance
+- **Automated Management**: Set-and-forget monthly payment system
 
-#### 📥 6. ClaimProcessingContract.sol [SIMPLIFIED]
-**Purpose**: Multi-proof verification with streamlined USDC flow
+#### 🏥 4. OrganizationModule.sol [ENHANCED FOR POOL WITHDRAWALS]
+**Purpose**: Hospital/insurer operations with pool-enabled claim processing
 
-**Key Features**:
-- `submitClaim(...)`: Hospital submits claim with multiple proof types (direct USDC amount)
-- `submitClaimWithWebProof(...)`: Claims with WebProof validation
-- `submitClaimWithSponsoredTx(...)`: Claims via ERC-7824 sponsorship
+**Enhanced Features**:
+- `submitClaimWithPoolAuth(bytes multiProof, uint256 requestedAmount)`: Claims with automatic pool authorization
+- `withdrawFromPool(uint256 claimId)`: Hospital withdraws approved funds from pools
+- `manageInsurerPool(uint256 operationalDeposit)`: Insurer pool management
+- `trackPoolPerformance()`: Monitor yield generation and fund utilization
 
-**Simplified Process Flow**:
-- Validates **ZK Proof** (procedure validation)
-- Validates **WebProof** (patient portal verification)
-- Accepts **USDC amount directly** (no price conversion)
-- Calls `InsuranceContract.submitClaim(...)`
-- Supports **ERC-7824** sponsored transactions
+#### 🛡️ 5. InsuranceContract.sol [SIMPLIFIED WITH POOLS]
+**Purpose**: Policy management with native mUSD and pool integration
+
+**Enhanced Features**:
+- `createPolicyWithPool(address patient, uint256 coverageAmount)`: Link policies to pools
+- `approveClaimFromPool(uint256 claimId, uint256 amount)`: Authorize pool withdrawals
+- `managePoolFunds(uint256 additionalDeposit)`: Insurer pool contributions
+- `calculateYieldDistribution()`: Automated yield allocation to stakeholders
+
+**Pool Integration Benefits**:
+- **Capital Efficiency**: Idle funds generate yield instead of sitting unused
+- **Instant Payouts**: Approved claims trigger immediate pool withdrawals
+- **Risk Mitigation**: Aave's proven protocols protect against fund loss
+
+#### 📥 6. ClaimProcessingContract.sol [POOL-ENABLED VALIDATION]
+**Purpose**: Multi-proof validation with pool authorization triggers
+
+**Enhanced Features**:
+- `submitClaimWithPool(bytes multiProof, uint256 amount)`: Validates and checks pool liquidity
+- `validatePoolAuthorization(uint256 claimId)`: Ensures sufficient pool funds
+- `triggerPoolPayout(uint256 claimId, address hospital)`: Activates fund release
+
+**Pool Processing Benefits**:
+- **Liquidity Validation**: Pre-validates pool has sufficient funds
+- **Automated Authorization**: Approved claims trigger instant pool withdrawals
+- **Yield Preservation**: Funds earn interest until claim authorization
 
 ---
 
-## 🔐 ENHANCED PRIVACY-PRESERVING WORKFLOW
+## 🔐 ENHANCED PRIVACY-PRESERVING WORKFLOW WITH YIELD GENERATION
 
-### Advanced Patient Authentication with Italian Health System Integration
+### Dual Patient Registration with Pool Benefits
 
-#### 1. **Italian Health System WebProof Authentication** [NEW PRIORITY]
-- **Salute Lazio Integration**: WebProof from https://www.salutelazio.it/group/guest/profilo-utente
-- **zkSNARK + WebProof**: Combined zero-knowledge proof and web proof validation
-- **Patient Data Validation**: Proves valid Italian health record without exposing sensitive data
-- **Tax Code Verification**: Uses Italian tax code (codice fiscale) as unique identifier
+#### 1. **Option A: Existing Insurance Coverage**
+- **Mailproof Verification**: Patient receives verification from existing insurer
+- **Pool Access**: Automatic access to insurer's existing pool funds
+- **Yield Benefits**: Immediate participation in pool yield generation
+- **Privacy Preservation**: Medical details remain encrypted, only pool access granted
 
-**WebProof Data Structure** (from Salute Lazio):
-```json
-{
-  "patientId": "ASUR0000000006779428",
-  "taxCode": "PZZPRJ04L01H501I", 
-  "name": "PIETRO JAIRO",
-  "surname": "PEZZULLO",
-  "birthday": 1088632800000,
-  "gender": "M",
-  "homeAsl": "ROMA6",
-  "mmgName": "STEFANIA",
-  "mmgSurname": "POMELLA",
-  "regionalCode": "280002457"
-}
+#### 2. **Option B: New Insurance Selection**
+- **Insurer Browsing**: Patient views verified insurers and pool performance
+- **Coverage Selection**: Choose insurer based on coverage and pool yields
+- **Automated Payments**: Setup monthly mUSD deposits to selected pool
+- **Yield Tracking**: Real-time monitoring of premium contributions and returns
+
+#### 3. Pool-Enabled Claims Processing
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital
+    participant I as Insurer
+    participant Pool as Aave V3 Pool
+    participant mUSD as Mantle USD
+    
+    P->>Pool: Monthly premium deposits (earning yield)
+    I->>Pool: Operational fund deposits (earning yield)
+    H->>P: Medical procedure performed
+    H->>ClaimContract: Submit claim with multi-proof
+    ClaimContract->>Pool: Check liquidity availability
+    ClaimContract->>I: Forward validated claim
+    I->>ClaimContract: Approve claim payout
+    ClaimContract->>Pool: Authorize withdrawal
+    Pool->>mUSD: Release funds to hospital
+    Pool->>P: Distribute earned yield
+    
+    Note over P,Pool: Premiums earn 3-5% APY while awaiting claims
+    Note over I,Pool: Operational funds generate returns
+    Note over H,mUSD: Instant payment upon approval
 ```
 
-**Privacy-Preserving Claims**:
-- **Patient Identity**: Prove valid Italian health system registration
-- **Regional Healthcare**: Verify ASL (Local Health Authority) assignment
-- **Medical Provider**: Confirm assigned family doctor (MMG)
-- **Tax Code Validity**: Validate Italian fiscal identifier without exposure
-
-#### 2. Enhanced Patient Registration Flow
-```solidity
-// New enhanced patient registration with WebProof
-registerPatientWithWebProof(
-    bytes webProof,           // vlayer WebProof from Salute Lazio
-    bytes zkSNARKProof,       // zkSNARK proof of valid health record
-    bytes32 commitment,       // Privacy-preserving commitment
-    string taxCodeHash        // Hashed Italian tax code
-)
-```
-
-**Registration Process**:
-1. **WebProof Generation**: Patient authenticates with SPID/CIE on Salute Lazio portal
-2. **Data Extraction**: vlayer extracts verified patient data from portal response
-3. **zkSNARK Creation**: Generate zero-knowledge proof of valid health record
-4. **Commitment Creation**: Privacy-preserving commitment using tax code + secret
-5. **On-Chain Verification**: Verify both WebProof and zkSNARK on-chain
-6. **Patient Registration**: Store hashed identifiers and verification status
-
-#### 3. Multi-Proof Hospital Claims Processing
-- **Enhanced WebProof**: Hospital system verification via WebProofs
-- **Patient Portal Proof**: Italian health system authentication
-- **ZK Procedure Proof**: Validate encrypted EHR contains covered procedure
-- **MailProof**: Verify hospital domain ownership (registration)
-
-#### 4. Simplified USDC Flow (Unchanged)
-- Frontend converts USD to USDC using CoinGecko API for display
-- Hospital submits claim in USDC amount directly
-- No on-chain price conversion needed
-- Clear pricing: "Requesting 1200 USDC (≈ $1200 USD)"
+### 4. Enhanced Privacy + Yield Benefits
+- **Medical Privacy**: Procedure details never exposed, only pool authorization
+- **Yield Transparency**: Pool performance visible while medical data encrypted
+- **Automated Distribution**: Yield automatically distributed to stakeholders
+- **Capital Efficiency**: Healthcare funds productive instead of idle
 
 ---
 
-## 🎨 ENHANCED FRONTEND ARCHITECTURE
+## 🎨 ENHANCED FRONTEND ARCHITECTURE WITH POOL DASHBOARD
 
-### Italian Health System Integration
-- **SPID/CIE Authentication**: Integration with Italian digital identity
-- **Salute Lazio Portal**: WebProof generation from patient data
-- **vlayer Browser Extension**: Capture and notarize health portal responses
-- **zkSNARK Generation**: Client-side proof creation for health record validation
+### Mantle-Optimized Technology Stack
+- **Next.js 15** with App Router optimized for Mantle network
+- **thirdweb React SDK** for seamless authentication and gas sponsorship
+- **Aave V3 SDK** for pool management and yield tracking
+- **vlayer client + verifier SDK** for proof generation
+- **Mantle USD Integration** for native stablecoin handling
+- **Pool Dashboard Components** for real-time monitoring
 
-### Enhanced Authentication Flow
+### Pool Management Interface
 ```typescript
-// Enhanced patient authentication with Italian health system
-const authenticateItalianPatient = async () => {
-  // Step 1: SPID/CIE login to Salute Lazio
-  const portalAuth = await authenticateWithSPID();
+// Enhanced patient interface with pool features
+const PatientDashboard = () => {
+  const [insurerOptions, setInsurerOptions] = useState([]);
+  const [poolYield, setPoolYield] = useState(0);
+  const [monthlyPremium, setMonthlyPremium] = useState(0);
   
-  // Step 2: Generate WebProof from health portal
-  const webProof = await vlayer.generateWebProof({
-    url: "https://www.salutelazio.it/api/patient/profile",
-    method: "GET",
-    claim: "Valid Italian health system patient",
-    redaction: {
-      // Hide sensitive personal data, keep verification elements
-      hideFields: ["email", "phone1", "phone2", "phone3", "homeAddress"],
-      keepFields: ["patientId", "taxCode", "regionalCode", "homeAsl", "mmgTaxCode"]
-    }
-  });
+  return (
+    <div className="patient-pool-dashboard">
+      <InsurerSelection options={insurerOptions} onSelect={handleSelection} />
+      <PoolYieldTracker yield={poolYield} />
+      <MonthlyPaymentSetup amount={monthlyPremium} />
+      <ClaimAuthorizationStatus />
+    </div>
+  );
+};
+
+// Enhanced insurer interface with pool management
+const InsurerDashboard = () => {
+  const [poolBalance, setPoolBalance] = useState(0);
+  const [yieldGenerated, setYieldGenerated] = useState(0);
+  const [pendingClaims, setPendingClaims] = useState([]);
   
-  // Step 3: Generate zkSNARK proof
-  const zkSNARK = await generateHealthRecordProof({
-    patientData: webProof.data,
-    commitment: patientCommitment
-  });
-  
-  // Step 4: Register patient with multi-proof
-  await registerPatientWithWebProof(webProof, zkSNARK, commitment, taxCodeHash);
+  return (
+    <div className="insurer-pool-dashboard">
+      <PoolBalanceOverview balance={poolBalance} />
+      <YieldGenerationMetrics yield={yieldGenerated} />
+      <ClaimApprovalInterface claims={pendingClaims} />
+      <PoolRebalancingControls />
+    </div>
+  );
 };
 ```
 
-### 🧑‍💻 Tech Stack
-- **Next.js 15** with App Router
-- **thirdweb React SDK** for authentication
-- **ERC-7824 Nitrolite Client** for abstract accounts
-- **vlayer client + verifier SDK** for proof generation
-- **IPFS / web3.storage** for encrypted EHR storage
-- **CoinGecko API** for USD/USDC price display (off-chain only)
-
-### 💳 ERC-7824 Account Binding
-```typescript
-import { bindAccount } from "@erc7824/nitrolite";
-
-await bindAccount(provider, {
-  accountAddress: user.address,
-  gatewayAddress: ERC_7824_GATEWAY,
-  chainId: 11155111 // Sepolia
-});
-```
-
-### 🔏 Simplified Claims Submission
-```typescript
-// Frontend handles USD to USDC conversion for display
-const usdcRate = await getCoinGeckoPrice('usd-coin');
-const usdcAmount = usdAmount / usdcRate;
-
-const webProof = await generateWebProof({
-  url: "https://mychart.mountsinai.org",
-  contentPath: "medicalRecords.recent[0].procedure",
-  claim: "HIP-XYZ123"
-});
-
-const tx = await gateway.execute({
-  req: {
-    from: user.address,
-    to: ClaimProcessing.address,
-    data: ClaimProcessing.interface.encodeFunctionData("submitClaimWithWebProof", [
-      patient,
-      procedureHash,
-      usdcAmount, // Direct USDC amount, no on-chain conversion
-      encryptedEHRCID,
-      ehrPREKey,
-      webProof
-    ])
-  },
-  signature
-});
-```
+### 🧑‍💻 Enhanced Tech Stack
+- **Next.js 15** with App Router optimized for Mantle
+- **thirdweb React SDK** for authentication and sponsored transactions
+- **Aave V3 SDK** for pool interactions and yield tracking
+- **vlayer client + verifier SDK** for multi-proof generation
+- **Mantle USD API** for native stablecoin integration
+- **Real-time Pool Monitoring** for yield and liquidity tracking
 
 ---
 
-## 🚧 CURRENT DEVELOPMENT PRIORITIES
+## 🚧 CURRENT DEVELOPMENT PRIORITIES - POOL FOCUS
 
-### Immediate Next Steps (3-Week Sprint)
+### Immediate Next Steps (4-Week Sprint)
 
-#### 1. ERC-7824 Gateway Implementation [HIGH PRIORITY]
-- Abstract account setup and management
-- Meta-transaction routing logic
-- Gas sponsorship mechanisms
-- Integration with existing contracts
+#### 1. PoolingContract Implementation [WEEK 1 - HIGH PRIORITY]
+- Aave V3 healthcare pool creation and management
+- Patient premium deposit automation
+- Insurer operational fund management
+- Yield distribution mechanisms
 
-#### 2. WebProof Integration [HIGH PRIORITY]
-- vlayer WebProof SDK integration
-- Patient portal proof generation
-- Hospital system verification proofs
-- Frontend WebProof interfaces
+#### 2. Enhanced Registration Modules [WEEK 2 - HIGH PRIORITY] 
+- Dual patient registration paths implementation
+- Insurance selection and browsing interface
+- Monthly payment automation setup
+- Pool access permission management
 
-#### 3. Simplified Claims Processing [HIGH PRIORITY]
-- Multi-proof validation system
-- Direct USDC amount handling
-- Sponsored transaction support
-- Advanced privacy preservation
+#### 3. Pool Authorization System [WEEK 3 - HIGH PRIORITY]
+- Claim-triggered pool withdrawals
+- Multi-proof validation with liquidity checks
+- Automated fund release to hospitals
+- Yield preservation during processing
 
-#### 4. thirdweb Authentication [MEDIUM PRIORITY]
-- Social login implementation
-- Wallet abstraction layer
-- Session management
-- Account binding workflows
+#### 4. Frontend Pool Dashboard [WEEK 4 - HIGH PRIORITY]
+- Real-time pool performance monitoring
+- Patient insurer selection interface
+- Yield tracking and distribution displays
+- Claim authorization status updates
 
 ---
 
-## 🔧 TECHNICAL IMPLEMENTATION DETAILS
+## 🔧 TECHNICAL IMPLEMENTATION DETAILS - POOL FOCUS
 
-### Simplified Claims Processing Pattern
+### Aave V3 Pool Integration Pattern
 ```solidity
-contract ClaimProcessingContract {
-    function submitClaim(
-        address patient,
-        address hospital,
-        bytes32 procedureCodeHash,
-        uint256 requestedUSDCAmount, // Direct USDC amount
-        string memory encryptedEHRCID,
-        bytes memory ehrPREKey,
-        bytes memory zkProof,
-        bytes memory webProof
-    ) external onlyVerifiedHospital {
-        // Verify ZK proof
-        require(zkVerifier.verifyProof(zkProof), "Invalid procedure proof");
+contract PoolingContract {
+    IAavePool public aavePool;
+    IERC20 public mUSD;
+    
+    mapping(address => uint256) public patientPoolBalances;
+    mapping(address => uint256) public insurerPoolBalances;
+    mapping(address => uint256) public yieldEarned;
+    
+    function depositToPatientPool(address patient, uint256 amount) external {
+        mUSD.transferFrom(patient, address(this), amount);
+        aavePool.supply(address(mUSD), amount, address(this), 0);
+        patientPoolBalances[patient] += amount;
         
-        // Verify WebProof if provided
-        if (webProof.length > 0) {
-            require(webProofVerifier.verify(webProof), "Invalid web proof");
-        }
+        emit PatientPoolDeposit(patient, amount, block.timestamp);
+    }
+    
+    function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount) external onlyAuthorized {
+        require(getTotalPoolLiquidity() >= amount, "Insufficient pool liquidity");
         
-        // Forward to insurance contract with direct USDC amount
-        insuranceContract.submitClaim(
-            patient,
-            hospital, 
-            procedureCodeHash,
-            requestedUSDCAmount, // No conversion needed
-            encryptedEHRCID,
-            ehrPREKey
-        );
+        aavePool.withdraw(address(mUSD), amount, hospital);
+        
+        emit ClaimAuthorizedFromPool(claimId, hospital, amount, block.timestamp);
+    }
+    
+    function distributeYield() external {
+        uint256 totalYield = calculateAccruedYield();
+        // Distribute yield proportionally to patients, insurers, and protocol
     }
 }
 ```
 
-### ERC-7824 Meta-Transaction Pattern
+### Enhanced Dual Registration Pattern
 ```solidity
-contract ERC7824Gateway {
-    mapping(address => uint256) public nonces;
+contract EnhancedRegistrationContract {
+    enum RegistrationPath { ExistingInsurer, NewSelection }
     
-    function execute(
-        ERC7824ForwardRequest calldata req,
-        bytes calldata signature
+    mapping(address => RegistrationPath) public patientRegistrationPath;
+    mapping(address => address) public patientToInsurer;
+    mapping(address => uint256) public monthlyPremiumAmount;
+    
+    function registerPatientWithInsurer(
+        bytes32 commitment,
+        address existingInsurer,
+        bytes memory insurerMailProof
     ) external {
-        require(nonces[req.from] == req.nonce, "Invalid nonce");
-        require(verify(req, signature), "Invalid signature");
+        // Verify insurer mailproof
+        require(verifyInsurerMailProof(insurerMailProof), "Invalid insurer verification");
         
-        nonces[req.from]++;
+        // Register patient with existing coverage
+        patientCommitments[msg.sender] = commitment;
+        patientRegistrationPath[msg.sender] = RegistrationPath.ExistingInsurer;
+        patientToInsurer[msg.sender] = existingInsurer;
         
-        (bool success, ) = req.to.call(req.data);
-        require(success, "Execution failed");
+        // Grant access to insurer's pool
+        poolingContract.grantPoolAccess(msg.sender, existingInsurer);
+        
+        emit PatientRegisteredWithExistingInsurer(msg.sender, existingInsurer);
+    }
+    
+    function registerPatientWithSelection(
+        bytes32 commitment,
+        address selectedInsurer,
+        uint256 monthlyPremium
+    ) external {
+        // Register patient with new insurer selection
+        patientCommitments[msg.sender] = commitment;
+        patientRegistrationPath[msg.sender] = RegistrationPath.NewSelection;
+        patientToInsurer[msg.sender] = selectedInsurer;
+        monthlyPremiumAmount[msg.sender] = monthlyPremium;
+        
+        // Setup automated monthly payments to pool
+        poolingContract.setupMonthlyPayments(msg.sender, selectedInsurer, monthlyPremium);
+        
+        emit PatientRegisteredWithNewInsurer(msg.sender, selectedInsurer, monthlyPremium);
     }
 }
 ```
 
-### vlayer WebProof Integration
-```typescript
-// Streamlined proof generation without price dependencies
-async function generateMultiProof(
-    patientData: PatientData,
-    organizationData: OrganizationData
-) {
-    const [webProof, mailProof] = await Promise.all([
-        vlayer.generateWebProof({
-            url: patientData.portalUrl,
-            contentPath: "procedure.code",
-            claim: patientData.procedureCode
-        }),
-        vlayer.generateMailProof({
-            domain: organizationData.domain,
-            emailAddress: organizationData.adminEmail,
-            targetWallet: organizationData.address
-        })
-    ]);
-    
-    return {
-        webProof: webProof.proof,
-        mailProof: mailProof.proof,
-        combinedHash: keccak256(webProof.proof + mailProof.proof)
-    };
-}
-```
+---
+
+## 📦 Storage & Pool Infrastructure
+
+| Asset               | Location                                 | Pool Integration |
+| ------------------- | ---------------------------------------- | ---------------- |
+| Patient Premiums    | Aave V3 pools earning yield              | Monthly deposits |
+| Insurer Funds       | Aave V3 pools earning yield              | Operational deposits |
+| Encrypted EHR       | IPFS / web3.storage                      | Pool access control |
+| Yield Tracking      | On-chain via Aave pool tokens            | Real-time monitoring |
+| Claim Authorization | Smart contract triggers                  | Automated withdrawals |
+| Pool Performance    | Aave V3 analytics + custom dashboard     | Live yield tracking |
 
 ---
 
-## 📦 Storage & Off-Chain Services
+## ✅ Integration Summary with Pool Benefits
 
-| Asset               | Location                                 |
-| ------------------- | ---------------------------------------- |
-| Encrypted EHR       | IPFS / web3.storage                      |
-| PRE key             | On-chain (for later decryption)          |
-| Domain/email proofs | Verified via vlayer SDK                  |
-| Web proofs          | Generated from patient portals           |
-| ZK proofs           | Generated off-chain, verified on-chain   |
-| USD/USDC Price      | CoinGecko API, frontend display only     |
-| Session data        | thirdweb session management              |
+| Component                 | Role                                         | Pool Integration               |
+| ------------------------- | -------------------------------------------- | ------------------------------ |
+| `RegistrationContract`    | Dual patient registration + pool access     | Pool permission management     |
+| `PoolingContract`         | Aave V3 pool management + yield distribution| Core pool functionality        |
+| `PatientModule`           | Insurance selection + automated payments    | Monthly premium deposits       |
+| `OrganizationModule`      | Pool-enabled claim processing               | Automated pool withdrawals     |
+| `InsuranceContract`       | Policy management + pool fund oversight     | Pool contribution management   |
+| `ClaimProcessingContract` | Pool authorization + liquidity validation   | Claim-triggered withdrawals    |
 
 ---
 
-## ✅ Integration Summary
-
-| Component                 | Role                                         | Protocol                   |
-| ------------------------- | -------------------------------------------- | -------------------------- |
-| `RegistrationContract`    | Identity & role registration                 | MailProofs, thirdweb       |
-| `PatientModule`           | EHR uploads, ZK operation proposal           | WebProofs, ERC-7824        |
-| `OrganizationModule`      | Operation approvals, confirmations           | thirdweb login, WebProofs  |
-| `InsuranceContract`       | Coverage logic, payout flow (USDC direct)   | ERC-7824 sponsorship       |
-| `ClaimProcessingContract` | Multi-proof validation, claim forwarding     | ZK-SNARKs, WebProofs       |
-| `ERC7824Gateway`          | Executes sponsored txs for abstract accounts | ERC-7824, Nitrolite        |
-
---- 
+**🚀 Ready for pool implementation sprint - Healthcare funds will earn yield while maintaining complete privacy and instant claim processing!** 
