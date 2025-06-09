@@ -3,6 +3,7 @@
 import { ConnectButton, useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
 import { client, mantleFork } from './providers/thirdweb-providers';
 import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
+import { Button } from '@/components/ui/button';
 
 // Configure wallets with smart wallet for gas abstraction
 const smartWalletOptions = smartWallet({
@@ -23,7 +24,11 @@ const wallets = [
   createWallet("me.rainbow"),
 ];
 
-export default function WalletConnect() {
+interface WalletConnectProps {
+  variant?: 'header' | 'full';
+}
+
+export default function WalletConnect({ variant = 'full' }: WalletConnectProps) {
   const account = useActiveAccount();
   const wallet = useActiveWallet();
   const { disconnect } = useDisconnect();
@@ -34,6 +39,47 @@ export default function WalletConnect() {
     }
   };
 
+  // Header variant - compact for navigation
+  if (variant === 'header') {
+    if (!account) {
+      return (
+        <ConnectButton
+          client={client}
+          wallets={wallets}
+          chain={mantleFork}
+          connectButton={{
+            label: "Connect Wallet",
+            style: {
+              backgroundColor: "#0066CC",
+              color: "white",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "14px",
+              fontWeight: "500",
+            },
+          }}
+          connectModal={{
+            title: "Connect to zkMed",
+            titleIcon: "🏥",
+          }}
+        />
+      );
+    }
+
+    return (
+      <Button
+        onClick={handleDisconnect}
+        variant="outline"
+        className="border-gray-300 text-gray-700 hover:bg-gray-50"
+      >
+        {account.address.slice(0, 6)}...{account.address.slice(-4)}
+      </Button>
+    );
+  }
+
+  // Full variant - detailed for pages
   return (
     <div className="flex flex-col items-center gap-4 p-6 border rounded-lg bg-white shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800">
@@ -52,7 +98,7 @@ export default function WalletConnect() {
             connectButton={{
               label: "Connect Wallet",
               style: {
-                backgroundColor: "#3b82f6",
+                backgroundColor: "#0066CC",
                 color: "white",
                 padding: "12px 24px",
                 borderRadius: "8px",
@@ -72,17 +118,18 @@ export default function WalletConnect() {
         <div className="text-center">
           <p className="text-green-600 mb-2">✅ Connected</p>
           <p className="text-sm text-gray-600 mb-2">
-            Address: {account.address.slice(0, 6)}...{account.address.slice(-4)}
+            Address: {account.address.slice(0, 8)}...{account.address.slice(-6)}
           </p>
           <p className="text-xs text-blue-600 mb-4">
             🚀 Gas abstraction enabled - Enjoy gasless transactions!
           </p>
-          <button
+          <Button
             onClick={handleDisconnect}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            variant="destructive"
+            className="bg-red-600 hover:bg-red-700"
           >
             Disconnect
-          </button>
+          </Button>
         </div>
       )}
       
