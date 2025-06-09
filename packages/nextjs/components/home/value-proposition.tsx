@@ -1,124 +1,161 @@
-import { Card } from '@/components/ui/card';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function ValueProposition() {
-  const valueProps = [
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const element = document.getElementById('value-proposition');
+    if (element) observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const features = [
     {
-      icon: "📈",
-      title: "Premiums Earn 3-5% APY",
-      description: "Patient and insurer funds generate yield via Aave V3 pools while awaiting claims",
-      bgColor: "bg-gradient-to-br from-[#ECFDF5] to-white",
-      borderColor: "border-l-4 border-[#10B981]",
-      iconBg: "bg-[#10B981]/10",
-      iconColor: "text-[#10B981]"
+      icon: '🛡️',
+      title: 'Zero-Knowledge Privacy',
+      subtitle: 'Medical Data Protection',
+      description: 'Submit procedures without exposing any medical information. Zero-knowledge proofs verify eligibility while keeping your health data completely private.',
+      stats: '100% Privacy',
+      color: 'from-indigo-500 to-purple-600',
+      bgColor: 'bg-indigo-50',
+      delay: 'delay-100'
     },
     {
-      icon: "⚡",
-      title: "Instant Claim Payouts",
-      description: "Approved claims trigger immediate mUSD withdrawals from pool to hospitals",
-      bgColor: "bg-gradient-to-br from-[#F0F9FF] to-white",
-      borderColor: "border-l-4 border-[#0066CC]",
-      iconBg: "bg-[#0066CC]/10",
-      iconColor: "text-[#0066CC]"
+      icon: '⚡',
+      title: 'Instant Processing',
+      subtitle: 'Fast Verification',
+      description: 'Automated verification through smart contracts processes your procedures in under 5 minutes. No paperwork, no waiting rooms.',
+      stats: '< 5 minutes',
+      color: 'from-emerald-500 to-teal-600',
+      bgColor: 'bg-emerald-50',
+      delay: 'delay-300'
     },
     {
-      icon: "🛡️",
-      title: "Complete Medical Privacy",
-      description: "Zero-knowledge proofs ensure no medical data exposed during claim processing",
-      bgColor: "bg-gradient-to-br from-[#F3E8FF] to-white",
-      borderColor: "border-l-4 border-[#8B5CF6]",
-      iconBg: "bg-[#8B5CF6]/10",
-      iconColor: "text-[#8B5CF6]"
+      icon: '💰',
+      title: 'Earn While Protected',
+      subtitle: 'Yield Generation',
+      description: 'Your deposited funds automatically earn yield in Aave V3 pools on Mantle while providing procedure coverage.',
+      stats: '3-5% APY',
+      color: 'from-violet-500 to-purple-600',
+      bgColor: 'bg-violet-50',
+      delay: 'delay-500'
     }
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#0066CC] mb-4">
-            Why Choose zkMed?
+    <section id="value-proposition" className="py-24 bg-white relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 to-white"></div>
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <div className={`text-center mb-16 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <Badge className="bg-indigo-100 text-indigo-700 mb-6 px-4 py-2 text-sm">
+            🏥 Healthcare Revolution
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
+            Privacy-First Healthcare
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            The first healthcare platform that makes your money work for you while ensuring 
-            complete privacy and instant claim processing.
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            The first platform combining zero-knowledge privacy, instant procedure processing, 
+            and yield generation for your healthcare funds.
           </p>
         </div>
 
+        {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {valueProps.map((prop, index) => (
-            <Card 
-              key={index} 
-              className={`${prop.bgColor} ${prop.borderColor} p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'} ${feature.delay}`}
             >
-              <div className="flex flex-col items-start h-full">
-                <div className={`w-16 h-16 ${prop.iconBg} rounded-full flex items-center justify-center mb-6`}>
-                  <span className="text-2xl">{prop.icon}</span>
+              <Card className="h-full group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <span className="text-3xl">{feature.icon}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <CardTitle className="text-xl font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
+                      {feature.title}
+                    </CardTitle>
+                    <p className="text-sm font-medium text-slate-500">{feature.subtitle}</p>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-slate-600 mb-6 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  
+                  {/* Stats Pill */}
+                  <div className={`${feature.bgColor} rounded-full px-4 py-2 inline-flex items-center group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${feature.color} mr-2 animate-pulse`}></div>
+                    <span className="text-sm font-semibold text-slate-700">{feature.stats}</span>
+                  </div>
+                  
+                  {/* Hover Effect */}
+                  <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full bg-gradient-to-r ${feature.color} transform -translate-x-full group-hover:translate-x-0 transition-transform duration-1000 ease-out`}></div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA Section */}
+        <div className={`text-center mt-20 transform transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl p-8 md:p-12 border border-indigo-100">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                Ready to Experience Private Healthcare?
+              </h3>
+              <p className="text-slate-600 mb-6">
+                Join thousands of users who trust zkMed for their healthcare procedure processing.
+              </p>
+              
+              {/* Demo Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-indigo-600">2,847</div>
+                  <div className="text-sm text-slate-500">Procedures Processed</div>
                 </div>
-                
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  {prop.title}
-                </h3>
-                
-                <p className="text-gray-600 mb-6 flex-grow">
-                  {prop.description}
-                </p>
-                
-                {/* Visual Element */}
-                <div className="w-full">
-                  {index === 0 && (
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>Your Yield Today</span>
-                        <span className="font-semibold text-[#10B981]">+$8.75</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-[#10B981] h-2 rounded-full transition-all duration-1000" 
-                          style={{ width: '75%' }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">75% of daily target reached</p>
-                    </div>
-                  )}
-                  
-                  {index === 1 && (
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">Processing Time</p>
-                          <p className="text-xs text-gray-500">Traditional vs zkMed</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-[#0066CC]">&lt; 5 min</p>
-                          <p className="text-xs text-gray-400 line-through">30-90 days</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {index === 2 && (
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Privacy Level</span>
-                        <span className="text-sm font-semibold text-[#8B5CF6]">100%</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <div 
-                              key={i} 
-                              className="w-2 h-2 bg-[#8B5CF6] rounded-full"
-                            ></div>
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500">Zero-Knowledge</span>
-                      </div>
-                    </div>
-                  )}
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-emerald-600">$2.3M</div>
+                  <div className="text-sm text-slate-500">Protected in Pools</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">100%</div>
+                  <div className="text-sm text-slate-500">Privacy Maintained</div>
                 </div>
               </div>
-            </Card>
-          ))}
+              
+              <div className="flex flex-wrap justify-center gap-4">
+                <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-medium hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                  🏥 Start Your First Procedure
+                </button>
+                <button className="border-2 border-slate-300 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 px-8 py-3 rounded-xl font-medium hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                  📖 Learn More
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

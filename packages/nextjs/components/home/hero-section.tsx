@@ -8,8 +8,12 @@ export default function HeroSection() {
   const [currentAPY, setCurrentAPY] = useState(4.2);
   const [tvl, setTvl] = useState(2.3);
   const [claims, setClaims] = useState(1247);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Animate on mount
+    setIsVisible(true);
+    
     // Simulate live data updates
     const interval = setInterval(() => {
       setCurrentAPY(prev => +(prev + (Math.random() * 0.1 - 0.05)).toFixed(2));
@@ -21,130 +25,129 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-[#0066CC] to-[#4A90E2] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <Badge className="bg-white/20 text-white mb-6 px-3 py-1 text-sm backdrop-blur-sm border-white/30">
-              ⚡ Gas-Free Transactions
+    <section className="relative pt-4 pb-24 overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50">
+      {/* Simplified Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-20 w-64 h-64 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+      </div>
+
+      {/* Single Floating Medical Icon */}
+      <div className="absolute top-32 right-32 animate-float">
+        <div className="w-16 h-16 bg-white/80 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
+          <span className="text-2xl">🛡️</span>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[70vh] py-6">
+          {/* Left Content */}
+          <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
+            <Badge className="bg-indigo-100 text-indigo-700 mb-6 px-4 py-2 text-sm backdrop-blur-sm border border-indigo-200">
+              🛡️ Zero-Knowledge Privacy Technology
             </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Healthcare Funds That Work While You Wait
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8 bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">
+              Private Healthcare
+              <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Procedures
+              </span>
             </h1>
-            <p className="text-xl text-white/90 mb-8 max-w-lg">
-              First platform where premiums earn 3-5% yield in Aave pools until claims, 
-              with instant payouts and complete medical privacy.
+            
+            <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
+              Submit, verify, and process health procedures with 
+              <span className="font-semibold text-indigo-600"> complete privacy</span>. 
+              No medical data exposed, 
+              <span className="font-semibold text-emerald-600"> earn yield while protected</span>.
             </p>
+            
             <div className="flex flex-wrap gap-4 mb-12">
-              <Button className="bg-white text-[#0066CC] hover:bg-white/90 px-6 py-6 text-lg rounded-lg">
-                Start Earning on Premiums
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+              >
+                🏥 Submit Procedure
               </Button>
               <Button 
                 variant="outline" 
-                className="border-white text-white hover:bg-white/10 px-6 py-6 text-lg rounded-lg"
+                size="lg"
+                onClick={() => document.getElementById('insurer-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="border-2 border-slate-300 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 px-8 py-6 text-lg rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200"
               >
-                🎥 Watch Demo
+                🏢 For Insurers
               </Button>
             </div>
             
-            {/* Live Stats */}
-            <div className="grid grid-cols-3 gap-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="text-3xl font-bold">{currentAPY}%</div>
-                <div className="text-sm text-white/80">Current APY</div>
+            {/* Simplified Key Features */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl mb-2">🔒</div>
+                <div className="text-sm font-semibold text-slate-700">100% Private</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="text-3xl font-bold">${tvl}M</div>
-                <div className="text-sm text-white/80">Total Value Locked</div>
+              <div className="text-center">
+                <div className="text-2xl mb-2">⚡</div>
+                <div className="text-sm font-semibold text-slate-700">5 min processing</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="text-3xl font-bold">{claims}</div>
-                <div className="text-sm text-white/80">Claims Processed</div>
+              <div className="text-center">
+                <div className="text-2xl mb-2">💰</div>
+                <div className="text-sm font-semibold text-slate-700">{currentAPY}% APY</div>
               </div>
             </div>
           </div>
           
-          {/* Demo Dashboard Card */}
-          <div className="relative">
-            <div className="absolute -inset-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/20 transform rotate-3"></div>
-            <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 transform -rotate-2 shadow-xl">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-[#0066CC] flex items-center justify-center">
-                    🛡️
+          {/* Right Content - Simplified Dashboard */}
+          <div className={`transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
+            <div className="relative">
+              {/* Main Dashboard Card */}
+              <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                      🛡️
+                    </div>
+                    <div>
+                      <div className="font-semibold text-slate-800">Privacy Dashboard</div>
+                      <div className="text-xs text-slate-500">Secure & Encrypted</div>
+                    </div>
                   </div>
-                  <div className="ml-3 text-white">
-                    <div className="font-medium">Patient Dashboard</div>
-                    <div className="text-xs text-white/70">Secure & Private</div>
+                  <Badge className="bg-emerald-100 text-emerald-700 border border-emerald-200">
+                    🟢 Protected
+                  </Badge>
+                </div>
+                
+                {/* Privacy Stats */}
+                <div className="space-y-4 mb-6">
+                  <div className="bg-slate-50 rounded-xl p-4">
+                    <div className="flex justify-between text-slate-700 mb-2">
+                      <span>Medical Privacy Level</span>
+                      <span className="font-semibold text-indigo-600">100%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full w-full"></div>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">Zero-knowledge proof verified</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <div className="text-lg font-bold text-slate-800">2,500 mUSD</div>
+                      <div className="text-xs text-slate-500">Protected Balance</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-emerald-600">+{(2500 * currentAPY / 100 / 12).toFixed(2)}</div>
+                      <div className="text-xs text-slate-500">Monthly Yield</div>
+                    </div>
                   </div>
                 </div>
-                <Badge className="bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30">
-                  Live Demo
-                </Badge>
+                
+                <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl">
+                  🔐 Access Secure Portal
+                </Button>
               </div>
-              
-              <div className="bg-white/20 rounded-lg p-4 mb-4 backdrop-blur-sm">
-                <div className="flex justify-between text-white mb-2">
-                  <span>Premium Balance</span>
-                  <span className="font-medium">2,500 mUSD</span>
-                </div>
-                <div className="flex justify-between text-white mb-2">
-                  <span>Yield Generated</span>
-                  <span className="font-medium text-[#10B981]">+105 mUSD</span>
-                </div>
-                <div className="flex justify-between text-white">
-                  <span>Effective Cost</span>
-                  <span className="font-medium">
-                    2,395 mUSD <span className="text-[#10B981]">(-4.2%)</span>
-                  </span>
-                </div>
-              </div>
-              
-              <div className="bg-white/20 rounded-lg p-4 mb-6 backdrop-blur-sm">
-                <div className="flex justify-between text-white mb-2">
-                  <span className="font-medium">Recent Activity</span>
-                  <span className="text-xs text-white/70">Today</span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center text-white">
-                    <div className="w-8 h-8 rounded-full bg-[#0066CC]/30 flex items-center justify-center mr-3">
-                      🏥
-                    </div>
-                    <div className="flex-grow">
-                      <div className="text-sm">Hospital Visit</div>
-                      <div className="text-xs text-white/70">Memorial Health</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm">-350 mUSD</div>
-                      <div className="text-xs text-white/70">Instant</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-white">
-                    <div className="w-8 h-8 rounded-full bg-[#10B981]/30 flex items-center justify-center mr-3">
-                      📈
-                    </div>
-                    <div className="flex-grow">
-                      <div className="text-sm">Yield Earned</div>
-                      <div className="text-xs text-white/70">Aave V3 Pool</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-[#10B981]">+8.75 mUSD</div>
-                      <div className="text-xs text-white/70">Today</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <Button className="w-full bg-white text-[#0066CC] hover:bg-white/90 rounded-lg">
-                Access Dashboard
-              </Button>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
     </section>
   );
 } 
