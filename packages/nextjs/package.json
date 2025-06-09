@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typechain": "typechain --target ethers-v6 --out-dir ./utils/types/contracts '../foundry/out/Greeting.sol/Greeting.json'"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.80.6",
@@ -23,6 +24,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typechain": "^8.3.2",
+    "@typechain/ethers-v6": "^0.5.1"
   }
 }
