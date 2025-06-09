@@ -113,7 +113,7 @@ npm install wagmi viem @wagmi/core ethers @aave/core-v3 thirdweb
 | Yield Distribution | 65,000 gas | Stakeholder rewards | ✅ Optimal |
 | Pool Rebalancing | 120,000 gas | Optimized liquidity | ⚠️ Batch optimization planned |
 
-**Test Results**: 53/53 tests passing ✅  
+**Test Results**: 53/53 tests passing ✅
 **Pool Integration**: Aave V3 contracts deployed and tested ✅  
 **Yield Generation**: Healthcare fund pools earning 3-5% APY ✅
 

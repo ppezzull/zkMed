@@ -1,416 +1,342 @@
 # Active Context - zkMed Privacy-Preserving Healthcare Platform with Yield-Generating Pools
 
-## 🎯 ADVANCED WEB3 HEALTHCARE PLATFORM: Aave V3 Pool Integration + Mantle mUSD
+## 🎯 ADVANCED WEB3 HEALTHCARE PLATFORM: Dockploy Containerized Deployment
 
-### Current Status: Registration System COMPLETE → Pool Integration READY → Mantle Fork Testing
+### Current Status: Registration System COMPLETE → Dockploy Production Deployment READY
 **Registration Phase**: ✅ **PRODUCTION READY** (37/37 tests passing)  
 **Pool Integration Phase**: ✅ **ARCHITECTURE COMPLETE** 
-**Mantle Fork Testing**: ✅ **ENVIRONMENT READY** (Chain ID: 31339)
-**Integration Target**: Aave V3 Pools + Mantle USD (mUSD) + thirdweb Smart Accounts + vlayer WebProofs/MailProofs
+**Dockploy Deployment**: 🚧 **IN PROGRESS** - Containerized deployment with demo accounts
+**Integration Target**: Docker Containers + Mantle Fork + Pre-configured Demo Data + Live Next.js Client
 
-### 🎉 COMPLETED: Healthcare Pool Architecture Design
+### 🎉 NEW DEPLOYMENT STRATEGY: Dockploy Containerized Production
 
-#### ✅ Revolutionary Pool-Enabled Healthcare Platform
-- **PoolingContract.sol**: Aave V3 healthcare pool management with yield distribution
-- **Patient Pool Deposits**: Monthly premiums earn yield while awaiting claims
-- **Insurer Pool Contributions**: Operational funds earning interest until claims
-- **Authorization-Based Withdrawals**: Funds released only after claim authorization
-- **Real-time Liquidity Management**: Dynamic pool rebalancing based on volume
+#### ✅ Dockploy Production Deployment Architecture
+- **Container Orchestration**: Docker-based deployment via Dockploy platform
+- **Mantle Fork Container**: Persistent Anvil container with Chain ID 31339
+- **Smart Contract Container**: Automated deployment with pre-configured demo accounts
+- **Next.js Frontend Container**: Live client application with demo interactions
+- **Demo Data Setup**: Pre-configured insurer, hospital, and patient accounts for POC
 
-#### ✅ Dual Patient Registration Paths DESIGNED
-- **Option A**: Existing patients get mailproof from verified insurer
-- **Option B**: New patients browse and select insurers, set up monthly mUSD payments
-- **Enhanced PatientModule**: Insurance selection flow and automated payment setup
-- **Updated RegistrationContract**: Dual-path registration with pool integration
+#### ✅ Pre-Configured Demo Environment Design
+- **Demo Insurer**: "Regione Lazio Health Insurance" with verified domain (@laziosalute.it)
+- **Demo Hospital**: "Ospedale San Giovanni" with verified domain (@sangiovanni.lazio.it)
+- **Demo Patient**: Pre-registered patient with existing coverage and pool access
+- **Live Interactions**: Real contract interactions with sponsored transactions
+- **Pool Operations**: Functional Aave V3 pools with mUSD on Mantle fork
 
-#### ✅ Mantle USD (mUSD) Integration Strategy
-- **Native Stablecoin**: Replaces Beraborrow HONEY/NECT with Mantle's official mUSD
-- **Pool Compatibility**: Seamless integration with Aave V3 pools on Mantle
-- **Simplified Processing**: No oracle dependencies, direct mUSD handling
-- **Yield Optimization**: Healthcare funds earn 3-5% APY via Aave protocols
+#### ✅ Container Architecture for Production
+- **mantle-fork**: Persistent Anvil container with real Mantle state
+- **contract-deployer**: Automated deployment with demo data initialization
+- **zkmed-frontend**: Next.js client with live demo capabilities
+- **nginx-proxy**: Reverse proxy for clean domain access
+- **All containers configured for Dockploy orchestration**
 
-#### ✅ Local Mantle Fork Development Environment
-- **Chain ID**: 31339 (Mantle fork for comprehensive testing)
-- **Fork Source**: https://rpc.mantle.xyz (Mantle mainnet state)
-- **Aave V3 Deployment**: Full protocol testing environment
-- **Zero-Cost Testing**: Safe environment for complex pool interactions
-
-### 🚀 NEXT PHASE: Pool Contract Implementation + Frontend Integration
+### 🚀 CURRENT PHASE: Dockploy Container Implementation + Demo Setup
 
 #### Ready for Implementation
-1. **PoolingContract.sol**: Aave V3 healthcare pool management
-2. **Enhanced PatientModule**: Insurance selection and monthly payment setup
-3. **Pool Authorization System**: Smart contract triggers for claim payments
-4. **Yield Distribution Logic**: Automated reward mechanisms for stakeholders
+1. **Docker Containers**: Multi-container setup for persistent deployment
+2. **Demo Account Setup**: Pre-configured accounts with real interactions
+3. **Live Frontend**: Functional Next.js client with demo workflows
+4. **Automated Deployment**: One-command setup via Dockploy
 
-#### Integration Points
-- **Patient Registration**: `registerPatientWithInsurer()` via enhanced RegistrationContract
-- **Pool Deposits**: `depositToPatientPool()`, `depositToInsurerPool()` via PoolingContract
-- **Claim Authorization**: `authorizeClaimPayout()` triggers pool withdrawal
-- **Yield Tracking**: Real-time monitoring of pool performance and distributions
+#### Container Integration Points
+- **Persistent Mantle Fork**: Long-running container maintaining blockchain state
+- **Automated Demo Setup**: Script-based initialization of demo accounts and data
+- **Live Contract Interactions**: Real transaction capabilities with demo scenarios
+- **Frontend Integration**: Live client connecting to containerized blockchain
 
-### 🔧 Development Workflow - Mantle Fork Focus
+### 🔧 Development Workflow - Dockploy Containerized Focus
 ```bash
-# Start Mantle fork environment
-make start-mantle-fork && make deploy-mantle
+# Deploy to Dockploy
+dockploy deploy zkmed-stack
 
-# Deploy Aave V3 pools
-make deploy-aave-pools && make setup-musd
+# Monitor containers
+dockploy logs zkmed-mantle-fork
+dockploy logs zkmed-frontend
 
-# Test pool functionality
-make test-patient-pools && make test-yield-dist
+# Demo account interactions
+curl https://zkmed.yourdomain.com/api/demo/patient
+curl https://zkmed.yourdomain.com/api/demo/hospital
 
-# Monitor pools in real-time
-make pool-dashboard
+# Scale services
+dockploy scale zkmed-frontend --replicas 3
 ```
 
-### 📊 Pool Integration Status
-- **Aave V3 Architecture**: ✅ Complete pool management design
-- **mUSD Integration**: ✅ Native Mantle stablecoin strategy
-- **Dual Registration**: ✅ Patient choice architecture designed
-- **Yield Distribution**: ✅ Automated reward mechanisms planned
-- **Mantle Fork Testing**: ✅ Environment ready for implementation
-- **Pool Authorization**: ✅ Claim-triggered withdrawal system designed
+### 📊 Dockploy Deployment Status
+- **Container Architecture**: ✅ Multi-service Docker setup designed
+- **Mantle Fork Persistence**: ✅ Long-running blockchain container
+- **Demo Data Setup**: ✅ Pre-configured accounts and interactions
+- **Frontend Integration**: ✅ Live Next.js client with demo capabilities
+- **Automated Deployment**: 🚧 Dockploy configuration in progress
+- **Domain Setup**: 🚧 Custom domain configuration for live access
 
 ---
 
-## 🏗️ ENHANCED CONTRACT ARCHITECTURE WITH POOLS
+## 🏗️ ENHANCED CONTAINER ARCHITECTURE FOR DOCKPLOY
 
 ### Phase 1: Registration System [COMPLETED] ✅
 - **RegistrationContract.sol**: Privacy-preserving patient/organization registration with multi-owner system
 - **EmailDomainProver.sol**: vlayer email domain verification
 - **Multi-Owner Management**: Up to 10 owners with granular access controls
 - **User Activation System**: Enable/disable users with batch operations
-- **Status**: Production-ready, 100% test coverage (53/53 tests passing)
+- **Status**: Production-ready, containerized deployment ready
 
-### Phase 2: Pool-Enabled Healthcare Platform [CURRENT FOCUS] 🚧
+### Phase 2: Dockploy Container Deployment [CURRENT FOCUS] 🚧
 
-#### 🔒 1. RegistrationContract.sol [ENHANCED FOR POOLS]
-**Purpose**: Main registry with dual patient registration paths and pool integration
+#### 🔒 1. Mantle Fork Container (Persistent Blockchain)
+**Purpose**: Long-running Anvil container maintaining Mantle fork state
 
-**Enhanced Features**:
-- `registerPatientWithInsurer(bytes32 commitment, address insurer)`: Existing coverage path
-- `registerPatientWithSelection(bytes32 commitment, address selectedInsurer)`: New coverage path
-- `setupMonthlyPayments(address insurer, uint256 monthlyAmount)`: Automated mUSD payments
-- **Pool Integration**: Links patient registration to appropriate Aave pools
+**Container Features**:
+- `mantleFork.dockerfile`: Persistent Anvil setup with Mantle state
+- `persistent-data/`: Volume-mounted blockchain data
+- `demo-setup.sh`: Automated demo account creation and funding
+- **Dockploy Integration**: Configured for auto-restart and health monitoring
 
-**Integrations**:
-- **Aave V3 Pools** for patient premium deposits
-- **Mantle USD (mUSD)** for stable value processing
-- **thirdweb Smart Accounts** for sponsored registration transactions
-
-#### 💰 2. PoolingContract.sol [NEW - CORE INNOVATION]
-**Purpose**: Aave V3 healthcare pool management with yield generation and distribution
-
-**Key Features**:
-- `createPatientPool(address insurer, uint256 initialDeposit)`: Setup patient premium pools
-- `createInsurerPool(address insurer, uint256 operationalFunds)`: Setup insurer operational pools
-- `depositMonthlyPremium(address patient, uint256 amount)`: Automated patient deposits
-- `authorizeClaimPayout(uint256 claimId, uint256 amount)`: Trigger fund release to hospitals
-- `distributeYield()`: Automated yield distribution to stakeholders
-- `rebalancePools()`: Dynamic liquidity management based on claim volume
-
-**Aave V3 Integration**:
-- **Supply to Pools**: Healthcare funds earn yield via Aave lending protocols
-- **Instant Liquidity**: Proven mechanisms ensure funds available for claims
-- **Risk Management**: Battle-tested parameters protect deposited funds
-- **Multi-Asset Support**: Support for mUSD and other Mantle ecosystem assets
-
-#### 🧑‍⚕️ 3. PatientModule.sol [ENHANCED FOR INSURANCE SELECTION]
-**Purpose**: Patient insurance selection and pool interaction management
-
-**Enhanced Features**:
-- `browseInsurers()`: View verified insurers and their pool performance
-- `selectInsurer(address insurer, uint256 monthlyPremium)`: Choose coverage provider
-- `setupAutomaticPayments(address insurer, uint256 amount)`: Automated mUSD deposits
-- `proposeOperationWithPool(bytes webProof, uint256 estimatedCost)`: WebProof with pool validation
-- `checkPoolBalance()`: View patient's pool contributions and yield earned
-
-**Pool Benefits**:
-- **Yield Earning**: Patient premiums generate returns while awaiting claims
-- **Transparent Tracking**: Real-time visibility into pool performance
-- **Automated Management**: Set-and-forget monthly payment system
-
-#### 🏥 4. OrganizationModule.sol [ENHANCED FOR POOL WITHDRAWALS]
-**Purpose**: Hospital/insurer operations with pool-enabled claim processing
-
-**Enhanced Features**:
-- `submitClaimWithPoolAuth(bytes multiProof, uint256 requestedAmount)`: Claims with automatic pool authorization
-- `withdrawFromPool(uint256 claimId)`: Hospital withdraws approved funds from pools
-- `manageInsurerPool(uint256 operationalDeposit)`: Insurer pool management
-- `trackPoolPerformance()`: Monitor yield generation and fund utilization
-
-#### 🛡️ 5. InsuranceContract.sol [SIMPLIFIED WITH POOLS]
-**Purpose**: Policy management with native mUSD and pool integration
-
-**Enhanced Features**:
-- `createPolicyWithPool(address patient, uint256 coverageAmount)`: Link policies to pools
-- `approveClaimFromPool(uint256 claimId, uint256 amount)`: Authorize pool withdrawals
-- `managePoolFunds(uint256 additionalDeposit)`: Insurer pool contributions
-- `calculateYieldDistribution()`: Automated yield allocation to stakeholders
-
-**Pool Integration Benefits**:
-- **Capital Efficiency**: Idle funds generate yield instead of sitting unused
-- **Instant Payouts**: Approved claims trigger immediate pool withdrawals
-- **Risk Mitigation**: Aave's proven protocols protect against fund loss
-
-#### 📥 6. ClaimProcessingContract.sol [POOL-ENABLED VALIDATION]
-**Purpose**: Multi-proof validation with pool authorization triggers
-
-**Enhanced Features**:
-- `submitClaimWithPool(bytes multiProof, uint256 amount)`: Validates and checks pool liquidity
-- `validatePoolAuthorization(uint256 claimId)`: Ensures sufficient pool funds
-- `triggerPoolPayout(uint256 claimId, address hospital)`: Activates fund release
-
-**Pool Processing Benefits**:
-- **Liquidity Validation**: Pre-validates pool has sufficient funds
-- **Automated Authorization**: Approved claims trigger instant pool withdrawals
-- **Yield Preservation**: Funds earn interest until claim authorization
-
----
-
-## 🔐 ENHANCED PRIVACY-PRESERVING WORKFLOW WITH YIELD GENERATION
-
-### Dual Patient Registration with Pool Benefits
-
-#### 1. **Option A: Existing Insurance Coverage**
-- **Mailproof Verification**: Patient receives verification from existing insurer
-- **Pool Access**: Automatic access to insurer's existing pool funds
-- **Yield Benefits**: Immediate participation in pool yield generation
-- **Privacy Preservation**: Medical details remain encrypted, only pool access granted
-
-#### 2. **Option B: New Insurance Selection**
-- **Insurer Browsing**: Patient views verified insurers and pool performance
-- **Coverage Selection**: Choose insurer based on coverage and pool yields
-- **Automated Payments**: Setup monthly mUSD deposits to selected pool
-- **Yield Tracking**: Real-time monitoring of premium contributions and returns
-
-#### 3. Pool-Enabled Claims Processing
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant H as Hospital
-    participant I as Insurer
-    participant Pool as Aave V3 Pool
-    participant mUSD as Mantle USD
-    
-    P->>Pool: Monthly premium deposits (earning yield)
-    I->>Pool: Operational fund deposits (earning yield)
-    H->>P: Medical procedure performed
-    H->>ClaimContract: Submit claim with multi-proof
-    ClaimContract->>Pool: Check liquidity availability
-    ClaimContract->>I: Forward validated claim
-    I->>ClaimContract: Approve claim payout
-    ClaimContract->>Pool: Authorize withdrawal
-    Pool->>mUSD: Release funds to hospital
-    Pool->>P: Distribute earned yield
-    
-    Note over P,Pool: Premiums earn 3-5% APY while awaiting claims
-    Note over I,Pool: Operational funds generate returns
-    Note over H,mUSD: Instant payment upon approval
+**Container Configuration**:
+```yaml
+# dockploy.yml
+services:
+  mantle-fork:
+    build: ./containers/mantle-fork
+    ports:
+      - "8545:8545"
+    volumes:
+      - mantle-data:/anvil-data
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
 ```
 
-### 4. Enhanced Privacy + Yield Benefits
-- **Medical Privacy**: Procedure details never exposed, only pool authorization
-- **Yield Transparency**: Pool performance visible while medical data encrypted
-- **Automated Distribution**: Yield automatically distributed to stakeholders
-- **Capital Efficiency**: Healthcare funds productive instead of idle
+#### 💰 2. Contract Deployer Container (Automated Setup)
+**Purpose**: Deploy contracts and initialize demo data on container startup
 
----
+**Container Features**:
+- `deploy-demo.dockerfile`: Foundry-based deployment container
+- `demo-accounts.json`: Pre-configured insurer, hospital, patient data
+- `initialization-scripts/`: Automated demo data setup
+- **One-time Execution**: Runs once to setup demo environment
 
-## 🎨 ENHANCED FRONTEND ARCHITECTURE WITH POOL DASHBOARD
+**Demo Account Setup**:
+```json
+{
+  "demoInsurer": {
+    "name": "Regione Lazio Health Insurance",
+    "domain": "laziosalute.it",
+    "email": "admin@laziosalute.it",
+    "walletAddress": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4"
+  },
+  "demoHospital": {
+    "name": "Ospedale San Giovanni",
+    "domain": "sangiovanni.lazio.it", 
+    "email": "admin@sangiovanni.lazio.it",
+    "walletAddress": "0x8ba1f109551bD432803012645Hac136c7Aad5a6"
+  },
+  "demoPatient": {
+    "commitment": "0x...",
+    "walletAddress": "0x123456789abcdef123456789abcdef1234567890"
+  }
+}
+```
 
-### Mantle-Optimized Technology Stack
-- **Next.js 15** with App Router optimized for Mantle network
-- **thirdweb React SDK** for seamless authentication and gas sponsorship
-- **Aave V3 SDK** for pool management and yield tracking
-- **vlayer client + verifier SDK** for proof generation
-- **Mantle USD Integration** for native stablecoin handling
-- **Pool Dashboard Components** for real-time monitoring
+#### 🎨 3. Next.js Frontend Container (Live Demo Client)
+**Purpose**: Live frontend application with demo interaction capabilities
 
-### Pool Management Interface
+**Container Features**:
+- `frontend.dockerfile`: Next.js production build
+- `demo-workflows/`: Pre-built demo interaction flows
+- `environment-config/`: Container-specific environment variables
+- **Live Demo**: Real interactions with containerized blockchain
+
+**Demo Interaction Features**:
 ```typescript
-// Enhanced patient interface with pool features
-const PatientDashboard = () => {
-  const [insurerOptions, setInsurerOptions] = useState([]);
-  const [poolYield, setPoolYield] = useState(0);
-  const [monthlyPremium, setMonthlyPremium] = useState(0);
+// Demo workflows available in live frontend
+const demoWorkflows = {
+  patientRegistration: async () => {
+    // Use pre-configured patient account
+    await registerPatientWithInsurer(demoAccounts.patient.commitment);
+  },
   
-  return (
-    <div className="patient-pool-dashboard">
-      <InsurerSelection options={insurerOptions} onSelect={handleSelection} />
-      <PoolYieldTracker yield={poolYield} />
-      <MonthlyPaymentSetup amount={monthlyPremium} />
-      <ClaimAuthorizationStatus />
-    </div>
-  );
-};
-
-// Enhanced insurer interface with pool management
-const InsurerDashboard = () => {
-  const [poolBalance, setPoolBalance] = useState(0);
-  const [yieldGenerated, setYieldGenerated] = useState(0);
-  const [pendingClaims, setPendingClaims] = useState([]);
+  hospitalClaim: async () => {
+    // Submit demo claim with multi-proof
+    await submitClaimWithPool(demoProofs.multiProof, claimAmount);
+  },
   
-  return (
-    <div className="insurer-pool-dashboard">
-      <PoolBalanceOverview balance={poolBalance} />
-      <YieldGenerationMetrics yield={yieldGenerated} />
-      <ClaimApprovalInterface claims={pendingClaims} />
-      <PoolRebalancingControls />
-    </div>
-  );
+  insurerApproval: async () => {
+    // Approve demo claim from insurer account
+    await approveClaimFromPool(demoClaimId, authorizedAmount);
+  }
 };
 ```
 
-### 🧑‍💻 Enhanced Tech Stack
-- **Next.js 15** with App Router optimized for Mantle
-- **thirdweb React SDK** for authentication and sponsored transactions
-- **Aave V3 SDK** for pool interactions and yield tracking
-- **vlayer client + verifier SDK** for multi-proof generation
-- **Mantle USD API** for native stablecoin integration
-- **Real-time Pool Monitoring** for yield and liquidity tracking
+#### 🔧 4. Nginx Proxy Container (Domain Access)
+**Purpose**: Reverse proxy for clean domain access and SSL termination
 
----
-
-## 🚧 CURRENT DEVELOPMENT PRIORITIES - POOL FOCUS
-
-### Immediate Next Steps (4-Week Sprint)
-
-#### 1. PoolingContract Implementation [WEEK 1 - HIGH PRIORITY]
-- Aave V3 healthcare pool creation and management
-- Patient premium deposit automation
-- Insurer operational fund management
-- Yield distribution mechanisms
-
-#### 2. Enhanced Registration Modules [WEEK 2 - HIGH PRIORITY] 
-- Dual patient registration paths implementation
-- Insurance selection and browsing interface
-- Monthly payment automation setup
-- Pool access permission management
-
-#### 3. Pool Authorization System [WEEK 3 - HIGH PRIORITY]
-- Claim-triggered pool withdrawals
-- Multi-proof validation with liquidity checks
-- Automated fund release to hospitals
-- Yield preservation during processing
-
-#### 4. Frontend Pool Dashboard [WEEK 4 - HIGH PRIORITY]
-- Real-time pool performance monitoring
-- Patient insurer selection interface
-- Yield tracking and distribution displays
-- Claim authorization status updates
-
----
-
-## 🔧 TECHNICAL IMPLEMENTATION DETAILS - POOL FOCUS
-
-### Aave V3 Pool Integration Pattern
-```solidity
-contract PoolingContract {
-    IAavePool public aavePool;
-    IERC20 public mUSD;
-    
-    mapping(address => uint256) public patientPoolBalances;
-    mapping(address => uint256) public insurerPoolBalances;
-    mapping(address => uint256) public yieldEarned;
-    
-    function depositToPatientPool(address patient, uint256 amount) external {
-        mUSD.transferFrom(patient, address(this), amount);
-        aavePool.supply(address(mUSD), amount, address(this), 0);
-        patientPoolBalances[patient] += amount;
-        
-        emit PatientPoolDeposit(patient, amount, block.timestamp);
-    }
-    
-    function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount) external onlyAuthorized {
-        require(getTotalPoolLiquidity() >= amount, "Insufficient pool liquidity");
-        
-        aavePool.withdraw(address(mUSD), amount, hospital);
-        
-        emit ClaimAuthorizedFromPool(claimId, hospital, amount, block.timestamp);
-    }
-    
-    function distributeYield() external {
-        uint256 totalYield = calculateAccruedYield();
-        // Distribute yield proportionally to patients, insurers, and protocol
-    }
+**Container Configuration**:
+```nginx
+# nginx.conf
+upstream zkmed-frontend {
+    server zkmed-frontend:3000;
 }
-```
 
-### Enhanced Dual Registration Pattern
-```solidity
-contract EnhancedRegistrationContract {
-    enum RegistrationPath { ExistingInsurer, NewSelection }
+upstream mantle-rpc {
+    server mantle-fork:8545;
+}
+
+server {
+    listen 80;
+    server_name zkmed.yourdomain.com;
     
-    mapping(address => RegistrationPath) public patientRegistrationPath;
-    mapping(address => address) public patientToInsurer;
-    mapping(address => uint256) public monthlyPremiumAmount;
-    
-    function registerPatientWithInsurer(
-        bytes32 commitment,
-        address existingInsurer,
-        bytes memory insurerMailProof
-    ) external {
-        // Verify insurer mailproof
-        require(verifyInsurerMailProof(insurerMailProof), "Invalid insurer verification");
-        
-        // Register patient with existing coverage
-        patientCommitments[msg.sender] = commitment;
-        patientRegistrationPath[msg.sender] = RegistrationPath.ExistingInsurer;
-        patientToInsurer[msg.sender] = existingInsurer;
-        
-        // Grant access to insurer's pool
-        poolingContract.grantPoolAccess(msg.sender, existingInsurer);
-        
-        emit PatientRegisteredWithExistingInsurer(msg.sender, existingInsurer);
+    location / {
+        proxy_pass http://zkmed-frontend;
     }
     
-    function registerPatientWithSelection(
-        bytes32 commitment,
-        address selectedInsurer,
-        uint256 monthlyPremium
-    ) external {
-        // Register patient with new insurer selection
-        patientCommitments[msg.sender] = commitment;
-        patientRegistrationPath[msg.sender] = RegistrationPath.NewSelection;
-        patientToInsurer[msg.sender] = selectedInsurer;
-        monthlyPremiumAmount[msg.sender] = monthlyPremium;
-        
-        // Setup automated monthly payments to pool
-        poolingContract.setupMonthlyPayments(msg.sender, selectedInsurer, monthlyPremium);
-        
-        emit PatientRegisteredWithNewInsurer(msg.sender, selectedInsurer, monthlyPremium);
+    location /rpc {
+        proxy_pass http://mantle-rpc;
     }
 }
 ```
 
 ---
 
-## 📦 Storage & Pool Infrastructure
+## 🚧 CURRENT DEVELOPMENT PRIORITIES - Dockploy Deployment Focus
 
-| Asset               | Location                                 | Pool Integration |
-| ------------------- | ---------------------------------------- | ---------------- |
-| Patient Premiums    | Aave V3 pools earning yield              | Monthly deposits |
-| Insurer Funds       | Aave V3 pools earning yield              | Operational deposits |
-| Encrypted EHR       | IPFS / web3.storage                      | Pool access control |
-| Yield Tracking      | On-chain via Aave pool tokens            | Real-time monitoring |
-| Claim Authorization | Smart contract triggers                  | Automated withdrawals |
-| Pool Performance    | Aave V3 analytics + custom dashboard     | Live yield tracking |
+### Immediate Next Steps (2-Week Sprint)
+
+#### 1. Container Architecture Implementation [WEEK 1 - HIGH PRIORITY]
+- Multi-service Docker setup for Dockploy deployment
+- Persistent Mantle fork container configuration
+- Automated demo data initialization scripts
+- Container health monitoring and auto-restart
+
+#### 2. Demo Account Setup [WEEK 1 - HIGH PRIORITY] 
+- Pre-configured insurer, hospital, patient accounts
+- Automated registration and verification workflows
+- Demo interaction scripts and workflows
+- Live transaction capabilities with demo scenarios
+
+#### 3. Frontend Container Integration [WEEK 2 - HIGH PRIORITY]
+- Next.js production build container
+- Demo workflow integration in frontend
+- Live contract interaction capabilities
+- Clean domain access via reverse proxy
+
+#### 4. Dockploy Deployment Configuration [WEEK 2 - HIGH PRIORITY]
+- Dockploy service configuration files
+- Container orchestration setup
+- Domain and SSL configuration
+- Monitoring and logging setup
 
 ---
 
-## ✅ Integration Summary with Pool Benefits
+## 🔧 TECHNICAL IMPLEMENTATION DETAILS - Dockploy Focus
 
-| Component                 | Role                                         | Pool Integration               |
-| ------------------------- | -------------------------------------------- | ------------------------------ |
-| `RegistrationContract`    | Dual patient registration + pool access     | Pool permission management     |
-| `PoolingContract`         | Aave V3 pool management + yield distribution| Core pool functionality        |
-| `PatientModule`           | Insurance selection + automated payments    | Monthly premium deposits       |
-| `OrganizationModule`      | Pool-enabled claim processing               | Automated pool withdrawals     |
-| `InsuranceContract`       | Policy management + pool fund oversight     | Pool contribution management   |
-| `ClaimProcessingContract` | Pool authorization + liquidity validation   | Claim-triggered withdrawals    |
+### Container Communication Pattern
+```mermaid
+graph TB
+    subgraph "Dockploy Infrastructure"
+        A[Nginx Proxy] --> B[Next.js Frontend]
+        B --> C[Mantle Fork Container]
+        D[Contract Deployer] --> C
+    end
+    
+    subgraph "External Access"
+        E[zkmed.yourdomain.com] --> A
+        F[Demo Users] --> E
+    end
+    
+    subgraph "Demo Data Flow"
+        G[Demo Accounts] --> H[Automated Setup]
+        H --> I[Live Interactions]
+        I --> J[Real Transactions]
+    end
+```
+
+### Dockploy Deployment Pattern
+```yaml
+# dockploy.yml - Main deployment configuration
+version: '3.8'
+
+services:
+  mantle-fork:
+    build: ./containers/mantle-fork
+    container_name: zkmed-mantle-fork
+    ports:
+      - "8545:8545"
+    volumes:
+      - mantle-data:/anvil-data
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  contract-deployer:
+    build: ./containers/contract-deployer
+    container_name: zkmed-deployer
+    depends_on:
+      - mantle-fork
+    volumes:
+      - ./demo-data:/app/demo-data
+    environment:
+      - RPC_URL=http://mantle-fork:8545
+      - CHAIN_ID=31339
+    restart: "no"
+
+  frontend:
+    build: ./packages/nextjs
+    container_name: zkmed-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mantle-fork
+    environment:
+      - NEXT_PUBLIC_RPC_URL=http://localhost:8545
+      - NEXT_PUBLIC_CHAIN_ID=31339
+    restart: always
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: zkmed-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+    restart: always
+
+volumes:
+  mantle-data:
+```
 
 ---
 
-**🚀 Ready for pool implementation sprint - Healthcare funds will earn yield while maintaining complete privacy and instant claim processing!** 
+## 📦 Storage & Container Infrastructure
+
+| Component               | Container                    | Purpose                          |
+| ----------------------- | ---------------------------- | -------------------------------- |
+| Blockchain State        | mantle-fork (persistent)     | Maintain fork state across restarts |
+| Smart Contracts         | contract-deployer (one-time) | Deploy and setup demo accounts      |
+| Frontend Application    | zkmed-frontend (persistent)   | Live demo client interface          |
+| Reverse Proxy          | nginx-proxy (persistent)     | Domain access and SSL termination  |
+| Demo Data              | Volume-mounted directories    | Pre-configured accounts and workflows |
+| Container Logs         | Dockploy logging system      | Monitoring and debugging            |
+
+---
+
+## ✅ Dockploy Integration Summary
+
+| Component                 | Role                                         | Container Integration               |
+| ------------------------- | -------------------------------------------- | ----------------------------------- |
+| `Mantle Fork Container`   | Persistent blockchain with demo data         | Long-running Anvil with Mantle state |
+| `Contract Deployer`       | Automated setup with demo accounts          | One-time deployment and initialization |
+| `Next.js Frontend`        | Live demo client with real interactions     | Production build with demo workflows |
+| `Nginx Proxy`            | Domain access and SSL termination           | Reverse proxy for clean URLs       |
+| `Dockploy Orchestration`  | Container management and monitoring          | Auto-restart, scaling, logging      |
+| `Demo Account System`     | Pre-configured accounts for POC             | Real interactions with demo data   |
+
+---
+
+**🚀 Ready for Dockploy containerized deployment - Live zkMed demo with persistent Mantle fork and pre-configured accounts for real healthcare interaction workflows!** 

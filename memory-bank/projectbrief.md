@@ -2,7 +2,7 @@
 
 ## 🎯 Project Vision
 
-**zkMed** is a streamlined Web3 healthcare platform that enables privacy-preserving medical claims processing using cutting-edge technologies including vlayer WebProofs/MailProofs, thirdweb authentication, Aave V3 pooling infrastructure, and native Mantle USD (mUSD) integration for simplified, reliable operations. Built for deployment on Mantle blockchain as part of [The Cookathon](https://www.cookathon.dev/) hackathon.
+**zkMed** is a streamlined Web3 healthcare platform that enables privacy-preserving medical claims processing using cutting-edge technologies including vlayer WebProofs/MailProofs, thirdweb authentication, Aave V3 pooling infrastructure, and native Mantle USD (mUSD) integration for simplified, reliable operations. Built for deployment on Mantle blockchain as part of [The Cookathon](https://www.cookathon.dev/) hackathon with **containerized Dockploy deployment and live demo environment**.
 
 ---
 
@@ -19,7 +19,68 @@ zkMed enables **complete privacy-preserving healthcare claims with intelligent p
 - **Claims** are validated through multiple proof types (ZK + Web + Mail proofs)
 - **Payments** use native Mantle USD (mUSD) for stable, reliable processing
 - **Transactions** are sponsored via thirdweb's gas sponsorship for seamless UX
-- **Deployment** targets Mantle blockchain for optimal performance and ecosystem benefits
+- **Deployment** targets **containerized Dockploy infrastructure** with persistent Mantle fork and pre-configured demo accounts
+
+---
+
+## 🐳 Revolutionary Dockploy Deployment Architecture
+
+### Container-First Production Strategy
+
+#### Live Demo Environment Features
+- **Persistent Mantle Fork**: Long-running blockchain container (Chain ID: 31339)
+- **Pre-Configured Demo Accounts**: Ready-to-use insurer, hospital, and patient accounts
+- **Live Frontend Client**: Functional Next.js application with real interactions
+- **Automated Setup**: One-command deployment with demo data initialization
+- **Clean Domain Access**: Custom domain with SSL via reverse proxy
+
+#### Demo Account Configuration
+```json
+{
+  "demoInsurer": {
+    "name": "Regione Lazio Health Insurance",
+    "domain": "laziosalute.it",
+    "walletAddress": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4",
+    "poolBalance": "100000000000000000000000" // 100k mUSD
+  },
+  "demoHospital": {
+    "name": "Ospedale San Giovanni", 
+    "domain": "sangiovanni.lazio.it",
+    "walletAddress": "0x8ba1f109551bD432803012645Hac136c7Aad5a6"
+  },
+  "demoPatient": {
+    "walletAddress": "0x123456789abcdef123456789abcdef1234567890",
+    "insurer": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4",
+    "monthlyPremium": "500000000000000000000", // 500 mUSD
+    "poolBalance": "6000000000000000000000" // 6k mUSD (12 months)
+  }
+}
+```
+
+#### Container Services Architecture
+```yaml
+# Dockploy Container Stack
+services:
+  mantle-fork:          # Persistent blockchain (Chain ID: 31339)
+    image: zkmed/mantle-fork
+    ports: ["8545:8545"]
+    restart: always
+    
+  contract-deployer:    # Demo setup (one-time)
+    image: zkmed/deployer
+    depends_on: [mantle-fork]
+    restart: "no"
+    
+  zkmed-frontend:       # Live Next.js client
+    image: zkmed/frontend
+    ports: ["3000:3000"]
+    restart: always
+    
+  nginx-proxy:          # Domain access + SSL
+    image: nginx:alpine
+    ports: ["80:80", "443:443"]
+    restart: always
+```
 
 ---
 
@@ -82,277 +143,292 @@ zkMed enables **complete privacy-preserving healthcare claims with intelligent p
 - **Risk Management**: Aave's battle-tested risk parameters protect deposited funds
 - **Capital Efficiency**: Idle healthcare funds productive until claim authorization
 - **Multi-Asset Support**: Support for mUSD and other Mantle ecosystem assets
+- **Container Integration**: Fully functional in containerized environment with demo data
 
 ### vlayer Integration (MailProofs + WebProofs)
 - **MailProofs**: Organization domain verification via email AND patient insurer verification
 - **WebProofs**: Patient portal and hospital system validation  
 - **Multi-Proof Architecture**: Combined proof validation for maximum security
 - **Privacy Preservation**: Prove validity without exposing sensitive data
+- **Demo Integration**: Pre-configured proofs for live demonstration
 
-### thirdweb Gas Sponsorship
+### thirdweb Gas Sponsorship & Authentication
 - **Sponsored Transactions**: Gas-free patient and hospital interactions via thirdweb's paymaster
-- **Seamless Integration**: Direct integration with thirdweb SDK
-- **Account Abstraction**: Simplified user experience with smart accounts
-- **Flexible Sponsorship**: Configurable gas sponsorship rules
-
-### thirdweb Authentication
 - **Social Login**: Easy onboarding with familiar authentication methods
-- **Wallet Abstraction**: Simplified wallet management for users
-- **Session Management**: Persistent user sessions across devices
-- **Account Binding**: Link social accounts to abstract accounts
+- **Smart Account Integration**: Direct integration with thirdweb SDK
+- **Container Compatibility**: Fully functional in Dockploy deployment
+- **Demo Workflows**: Pre-configured sponsored transactions for demo accounts
 
 ### Native Mantle USD (mUSD) Integration
 - **Stable Value Processing**: Native mUSD eliminates volatility in healthcare payments
 - **Mantle Ecosystem**: Optimized for Mantle blockchain with official stablecoin
 - **Pool Compatibility**: Seamless integration with Aave V3 pools on Mantle
 - **Lower Fees**: Reduced transaction costs compared to bridged stablecoins
-- **Better Reliability**: Native asset with no bridge risk or external dependencies
+- **Container Support**: Native mUSD fully operational in fork environment
 
 ---
 
-## 🔄 Enhanced Claims Workflow with Pooling
+## 🔄 Enhanced Claims Workflow with Containerized Demo
 
-### 1. **Multi-Path Patient Registration**
-**Option A: Existing Insurance Coverage**
-- Patient receives mailproof from their verified insurer confirming coverage
-- Privacy-preserving commitment creation with insurer verification
-- Automatic access to existing insurer pool funds
+### 1. **Live Demo Patient Registration**
+**Live Demo Access**: `https://zkmed.yourdomain.com/demo/patient`
 
-**Option B: New Insurance Selection**
-- Patient browses verified insurers on platform
-- Selects preferred insurer and coverage plan
-- Sets up automated monthly mUSD payments to Aave pool
-- thirdweb sponsored registration for gas-free onboarding
+**Option A: Existing Insurance Coverage (Demo)**
+- Demo patient connects with pre-configured wallet
+- Automatic mailproof verification from demo insurer
+- Instant access to existing demo pool funds
+- Real yield generation demonstration
 
-### 2. **Organization Verification with MailProofs**
-- Hospital/insurer proves domain ownership via vlayer MailProof
-- Additional WebProof validation from organization systems
-- thirdweb sponsored organization registration
+**Option B: New Insurance Selection (Demo)**
+- Browse verified demo insurers on live platform
+- Select demo insurer and coverage plan
+- Live setup of automated monthly mUSD payments
+- Real pool creation and fund management
 
-### 3. **Pool-Enabled Claim Submission**
-- Hospital generates multiple proofs:
-  - **ZK Proof**: Encrypted EHR contains covered procedure
-  - **WebProof**: Procedure validated in hospital system
-  - **MailProof**: Organization domain ownership verified
-- Claims processed with mUSD amounts sourced from Aave pools
-- Pool liquidity check ensures sufficient funds for claim
-- thirdweb sponsored claim submission for improved UX
+### 2. **Live Demo Organization Verification**
+**Live Demo Access**: `https://zkmed.yourdomain.com/demo/hospital`
 
-### 4. **Privacy-Preserving Approval with Pool Authorization**
-- Insurer reviews proof validation results (not raw data)
-- Multi-proof validation ensures claim legitimacy
-- **Pool Authorization**: Approved claims trigger smart contract to release funds from Aave pool
-- thirdweb sponsored approval transactions
-- Native mUSD payment processing with yield distribution
+- Demo hospital proves domain ownership via pre-configured MailProof
+- Live WebProof validation from demo hospital systems
+- Real-time registration confirmation
+- Automated verification workflows
 
-### 5. **Secure Payout from Pool Infrastructure**
-- Automated mUSD payout from Aave pool to hospital wallet
-- **Yield Distribution**: Interest earned during fund holding distributed to stakeholders
-- PRE encryption enables controlled post-approval access
-- thirdweb sponsored withdrawal transactions for hospitals
-- Complete audit trail without exposing sensitive data
+### 3. **Live Demo Claim Processing**
+**Live Demo Access**: `https://zkmed.yourdomain.com/demo/claims`
+
+- Demo hospital submits live multi-proof claims:
+  - **ZK Proof**: Demo encrypted EHR with covered procedure
+  - **WebProof**: Live procedure validation in demo hospital system
+  - **MailProof**: Pre-verified demo hospital domain
+- Real mUSD amounts processed from live Aave pools
+- Live pool liquidity validation
+- Real-time sponsored transaction processing
+
+### 4. **Live Demo Approval Workflow**
+**Live Demo Access**: `https://zkmed.yourdomain.com/demo/insurer`
+
+- Demo insurer reviews live proof validation results
+- Real multi-proof validation demonstration
+- Live pool authorization with actual fund movement
+- Real mUSD transfers to demo hospital wallet
+
+### 5. **Live Demo Payout System**
+**Live Demo Access**: `https://zkmed.yourdomain.com/demo/payout`
+
+- Automated live mUSD payout from Aave pool
+- Real yield distribution to demo stakeholders
+- Live audit trail demonstration
+- Complete workflow transparency
 
 ---
 
-## 🎨 Frontend Architecture
+## 🎨 Containerized Frontend Architecture
 
-### Technology Stack
-- **Next.js 15** with App Router for modern React patterns
+### Technology Stack (Container-Optimized)
+- **Next.js 15** with App Router optimized for container deployment
 - **thirdweb React SDK** for seamless authentication and gas sponsorship
 - **thirdweb Smart Accounts** for abstract account management
 - **vlayer client + verifier SDK** for proof generation
 - **Aave V3 SDK** for pool management and yield tracking
 - **IPFS / web3.storage** for encrypted EHR storage
 - **Mantle USD Integration** for native stablecoin handling
-- **Mantle Network** for optimized blockchain deployment
+- **Container Environment**: Optimized for Dockploy deployment
 
-### Key Features
-- **Social Login** via thirdweb for familiar user experience
-- **Insurer Selection Interface** for new patient onboarding
-- **Pool Dashboard** showing yield generation and fund status
-- **Gas-Free Interactions** through thirdweb gas sponsorship
-- **Multi-Proof Generation** with real-time status monitoring
-- **Native mUSD Integration** for seamless payments
-- **Yield Tracking** for pool performance monitoring
-- **Mantle Network Optimization** for fast, cost-effective transactions
-- **Mobile-Responsive PWA** for accessibility across devices
+### Live Demo Features (Container-Deployed)
+- **Demo Account Switcher**: Switch between pre-configured demo accounts
+- **Live Transaction Monitoring**: Real-time transaction status with demo data
+- **Pool Dashboard Demo**: Live yield tracking with actual demo pool data
+- **Gas-Free Demo Interactions**: All demo workflows sponsored via thirdweb
+- **Multi-Proof Demo**: Live proof generation and validation workflows
+- **Native mUSD Demo**: Real stablecoin transactions in demo environment
+- **Mobile-Responsive Demo**: Full demo functionality on mobile devices
+
+### Container Environment Configuration
+```typescript
+// Container-specific configuration
+export const containerConfig = {
+  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || 'http://mantle-fork:8545',
+  chainId: 31339,
+  demoMode: true,
+  demoAccounts: {
+    insurer: process.env.NEXT_PUBLIC_DEMO_INSURER,
+    hospital: process.env.NEXT_PUBLIC_DEMO_HOSPITAL,
+    patient: process.env.NEXT_PUBLIC_DEMO_PATIENT
+  },
+  contractAddresses: {
+    registration: process.env.NEXT_PUBLIC_REGISTRATION_CONTRACT,
+    pooling: process.env.NEXT_PUBLIC_POOLING_CONTRACT
+  }
+};
+```
 
 ---
 
 ## 🚀 Innovation Highlights
 
-### 🔐 **Privacy-First Architecture**
-- Medical data never exposed on-chain
+### 🔐 **Privacy-First Architecture with Live Demo**
+- Medical data never exposed on-chain (demonstrated with real interactions)
 - Multiple proof types ensure validity without revealing details
-- Sponsored transactions maintain user privacy
-- PRE encryption enables controlled access
+- Live demo preserves all privacy guarantees
+- Real-time proof generation and validation
 
-### 💳 **Seamless User Experience**
-- **Dual Registration**: Existing insurer mailproof OR new insurer selection
-- Gas-free interactions via thirdweb gas sponsorship
+### 💳 **Seamless User Experience in Container Environment**
+- **Dual Registration Demo**: Live demonstration of both registration paths
+- Gas-free interactions via thirdweb (functional in demo)
 - Social login through thirdweb integration
 - Real-time proof generation and validation
-- Mobile-responsive design for all users
+- Mobile-responsive demo accessible anywhere
 
-### 💰 **Intelligent Pool Management**
-- **Aave V3 Integration**: Healthcare funds earn yield while awaiting claims
-- Native mUSD handling eliminates volatility risks
-- Automated liquidity management ensures claim payments
-- Yield distribution rewards long-term pool participants
-- Capital efficiency maximizes fund utilization
+### 💰 **Live Pool Management Demonstration**
+- **Aave V3 Integration Demo**: Real healthcare funds earning yield in demo pools
+- Live mUSD handling eliminates volatility risks
+- Automated liquidity management demonstration
+- Real yield distribution to demo stakeholders
+- Live capital efficiency demonstration
 
-### 🔧 **Streamlined Technical Architecture**
-- Multi-proof validation architecture
+### 🔧 **Production-Ready Container Architecture**
+- Multi-proof validation architecture (live demonstration)
 - Proven Aave V3 pooling infrastructure
 - thirdweb gas sponsorship for seamless UX
 - Native Mantle USD for stable value transfer
-- Reduced external dependencies for better reliability
+- Containerized deployment for scalability and reliability
 
 ---
 
-## 🎯 Success Metrics
+## 🎯 Success Metrics (Container Deployment)
 
-### Technical Achievements
-- [ ] **Local Fork Environment**: Mantle fork (chain ID 31339) fully operational with real mainnet state
-- [ ] Aave V3 pool integration functional and tested on local Mantle fork
-- [ ] thirdweb gas sponsorship integration tested on forked environment
-- [ ] vlayer WebProof + MailProof integration working end-to-end on local setup
-- [ ] Native mUSD processing implemented and thoroughly tested on fork
-- [ ] Dual patient registration paths (mailproof + selection) working on local environment
-- [ ] thirdweb authentication seamless and secure on fork
-- [ ] Multi-proof validation system operational and tested locally
-- [ ] Pool yield distribution mechanisms functional on fork with mock scenarios
-- [ ] **Mainnet Migration**: Successful deployment from tested fork to live Mantle network
-- [ ] Cookathon submission with live demonstration capabilities
+### Live Demo Achievements
+- [ ] **Container Stack Deployed**: Complete multi-service architecture on Dockploy
+- [ ] **Persistent Mantle Fork**: Long-running blockchain with demo data
+- [ ] **Live Demo Accounts**: Functional insurer, hospital, and patient accounts
+- [ ] **Real Pool Operations**: Aave V3 pools operational with demo mUSD
+- [ ] **Live Frontend**: Accessible demo at custom domain
+- [ ] **Demo Workflows**: All major workflows functional with real transactions
+- [ ] **SSL and Domain**: Secure access via custom domain
+- [ ] **Monitoring**: Container health monitoring and alerting active
 
-### Privacy & Security
-- [ ] Zero medical data exposed on-chain
-- [ ] Multi-proof validation ensures claim legitimacy
+### Privacy & Security (Demonstrated Live)
+- [ ] Zero medical data exposed on-chain (verified in live demo)
+- [ ] Multi-proof validation ensures claim legitimacy (live demonstration)
 - [ ] thirdweb sponsored transactions maintain user privacy
 - [ ] PRE encryption enables controlled post-approval access
 - [ ] Domain verification prevents impersonation
 - [ ] Pool fund security via Aave's battle-tested protocols
 
-### User Experience
-- [ ] Gas-free patient interactions via thirdweb sponsorship on Mantle
-- [ ] Intuitive insurer selection for new patients
-- [ ] Seamless mailproof verification for existing coverage
-- [ ] Pool yield tracking and transparency
-- [ ] Social login via thirdweb working smoothly
-- [ ] Seamless multi-proof generation
-- [ ] Native mUSD integration for intuitive payments
-- [ ] Mobile-responsive PWA experience optimized for Mantle
+### User Experience (Live Demo)
+- [ ] Gas-free demo interactions via thirdweb sponsorship on Mantle
+- [ ] Intuitive demo insurer selection for new patients
+- [ ] Seamless demo mailproof verification for existing coverage
+- [ ] Live pool yield tracking and transparency
+- [ ] Demo social login via thirdweb working smoothly
+- [ ] Seamless demo multi-proof generation
+- [ ] Native mUSD demo integration for intuitive payments
+- [ ] Mobile-responsive demo experience
 
 ---
 
-## 🎉 Platform Impact
+## 🎉 Platform Impact (Live Demonstration)
 
-### For Patients
-- **Dual Registration Options**: Use existing insurer mailproof OR select new coverage
-- **Earning Idle Funds**: Monthly premium payments earn yield in Aave pools
-- **Privacy Protection**: Medical data never exposed during claims
-- **Gas-Free Experience**: thirdweb sponsored transactions eliminate barriers
-- **Social Login**: Easy onboarding with familiar authentication
-- **Native mUSD Payments**: Stable value for healthcare transactions
+### For Patients (Demo Experience)
+- **Live Dual Registration**: Experience both registration options with demo accounts
+- **Real Earning Demonstration**: See actual yield generation on demo premium payments
+- **Privacy Protection Demo**: Medical data protection demonstrated with real interactions
+- **Gas-Free Experience**: All demo interactions sponsored via thirdweb
+- **Social Login Demo**: Easy onboarding demonstration with familiar authentication
+- **Native mUSD Demo**: Stable value healthcare transactions
 
-### For Healthcare Organizations
-- **Instant Payments**: Funds available immediately after claim authorization
-- **Proof-Based Verification**: Multiple validation methods for security
-- **Sponsored Operations**: Reduced operational costs via thirdweb sponsorship
-- **Pool Liquidity**: Always sufficient funds via Aave's proven mechanisms
-- **Mantle Optimization**: Fast, cost-effective transactions on optimized blockchain
-- **Simplified Workflows**: Automated proof generation and validation
+### For Healthcare Organizations (Demo Workflows)
+- **Live Payment Demo**: See instant payments after claim authorization
+- **Proof-Based Demo**: Experience multiple validation methods for security
+- **Sponsored Demo Operations**: Reduced operational costs demonstrated via thirdweb
+- **Pool Liquidity Demo**: Always sufficient funds via Aave's proven mechanisms
+- **Mantle Optimization Demo**: Fast, cost-effective transactions demonstrated
+- **Simplified Demo Workflows**: Automated proof generation and validation
 
-### For Insurers
-- **Yield Generation**: Pool funds earn interest while awaiting claims
-- **Privacy-Preserving Approval**: Validate claims without seeing medical details
-- **Native mUSD Processing**: Stable value claims eliminate volatility risk
-- **thirdweb Sponsored Transactions**: Improve customer experience by covering gas costs
-- **Aave Integration**: Leverage battle-tested DeFi infrastructure for reliability
-- **Advanced Security**: Multi-proof validation prevents fraud
-
----
-
-## 🛠️ Development Environment Strategy
-
-### Local-First Development Approach
-zkMed employs a **local-first development strategy** using a comprehensive Mantle fork environment to ensure robust testing before mainnet deployment.
-
-#### Local Mantle Fork Configuration
-- **Chain ID**: 31339 (local development)
-- **Fork Source**: https://rpc.mantle.xyz (Mantle mainnet state)
-- **Container**: Docker-based Anvil setup for consistent development environment
-- **Benefits**: 
-  - Instant transaction confirmation for rapid development
-  - Access to real Mantle mainnet state and contracts
-  - Zero cost testing of complex DeFi interactions
-  - Safe environment for Aave V3 pool integration testing
-
-#### Testing Strategy
-- **Unit Testing**: Foundry-based smart contract testing on local fork
-- **Integration Testing**: Full end-to-end workflows with vlayer proofs and Aave pools
-- **UI Testing**: Frontend testing against local fork with mock but realistic data
-- **Performance Testing**: Gas optimization and transaction batching validation
-- **Security Testing**: Multi-proof validation and privacy preservation verification
-
-#### Development Advantages
-- **Risk-Free Iteration**: Test complex Aave pool interactions without mainnet costs
-- **Realistic Environment**: Fork maintains real mainnet state for accurate testing
-- **Rapid Development**: Instant feedback loop for smart contract changes
-- **Comprehensive Testing**: Validate all integrations before live deployment
+### For Insurers (Demo Experience)
+- **Live Yield Generation Demo**: See pool funds earning interest while awaiting claims
+- **Privacy-Preserving Demo**: Validate claims without seeing medical details
+- **Native mUSD Demo**: Stable value claims eliminate volatility risk
+- **Sponsored Transaction Demo**: Improve customer experience by covering gas costs
+- **Aave Integration Demo**: Leverage battle-tested DeFi infrastructure
+- **Advanced Security Demo**: Multi-proof validation prevents fraud
 
 ---
 
-## 🚀 Development Roadmap
+## 🛠️ Dockploy Deployment Strategy
 
-### Phase 1: Local Mantle Fork Setup & mUSD Integration (Weeks 1-2)
-- **Local Development Environment**: Full testing on Mantle local fork (chain ID 31339)
-- Anvil-based Mantle fork for rapid development and testing
-- Native Mantle USD (mUSD) integration and testing on local fork
-- thirdweb gas sponsorship setup and testing on forked environment
-- Complete local testing of all core functionalities before mainnet deployment
+### Production Container Deployment
+zkMed employs a **container-first production strategy** using Dockploy for scalable, reliable deployment with live demo capabilities.
 
-### Phase 2: Aave V3 Pool Integration (Weeks 3-4)
-- Aave V3 pool contracts deployment and testing on Mantle fork
-- Healthcare-specific pool configuration with mUSD on local environment
-- Yield generation and distribution mechanisms testing
-- Pool authorization for claim payments validation
-- Comprehensive pool testing with mock data before live deployment
+#### Dockploy Container Configuration
+- **Service Orchestration**: Multi-container setup with health monitoring
+- **Persistent Data**: Blockchain state and demo data preserved across restarts
+- **Auto-scaling**: Frontend containers scale based on demand
+- **SSL Termination**: Automatic certificate management for custom domains
+- **Monitoring**: Real-time container health and performance tracking
 
-### Phase 3: vlayer WebProof & Dual Registration (Weeks 5-6)
-- WebProof SDK integration for patient portals and hospital systems
-- Dual patient registration: mailproof verification + insurer selection
-- Enhanced PatientModule and OrganizationModule with multi-proof support
-- Real-time proof validation and status monitoring
+#### Demo Environment Benefits
+- **Live Interactions**: Real contract interactions with demo accounts
+- **Persistent State**: Demo data preserved across container restarts
+- **Scalable Access**: Multiple users can access demo simultaneously
+- **Production Environment**: Real production-like deployment for validation
+- **Instant Deployment**: One-command setup for complete demo environment
 
-### Phase 4: Cookathon Frontend & Mainnet Deployment (Weeks 7-8)
-- Next.js 15 frontend optimized for both local fork and Mantle mainnet
-- Insurer selection interface for new patients
-- Pool dashboard with yield tracking and fund status
-- thirdweb Smart Accounts integration with Mantle
-- Native mUSD UI/UX for seamless payments
-- **Mainnet Migration**: Deploy thoroughly tested contracts from fork to Mantle mainnet
-- Cookathon submission preparation with live demonstration capabilities
+#### Development to Production Pipeline
+- **Local Testing**: Docker-compose for local container testing
+- **Container Validation**: Test all containers before Dockploy deployment
+- **Demo Setup**: Automated demo account creation and funding
+- **Live Deployment**: One-command deployment to Dockploy infrastructure
+- **Monitoring**: Comprehensive logging and alerting for production demo
 
 ---
 
-**zkMed represents the future of healthcare privacy and efficiency, combining advanced Web3 technologies with proven DeFi infrastructure to create a secure, yield-generating, and privacy-preserving healthcare claims platform. Built for [The Cookathon](https://www.cookathon.dev/) on Mantle blockchain with native mUSD integration and Aave V3 pooling for optimal reliability and capital efficiency.** 🚀
+## 🚀 Development Roadmap (Container-Focused)
+
+### Phase 1: Container Architecture Setup (Weeks 1-2)
+- **Multi-Container Design**: Complete Docker setup for all services
+- **Dockploy Configuration**: Service orchestration and networking
+- **Demo Account Setup**: Pre-configured accounts with real interactions
+- **Persistent Blockchain**: Long-running Mantle fork with demo data
+
+### Phase 2: Live Demo Implementation (Weeks 3-4)
+- **Frontend Container**: Next.js production build with demo workflows
+- **Demo Interactions**: Real transaction capabilities with pre-configured accounts
+- **Pool Operations**: Functional Aave V3 pools with demo mUSD
+- **Multi-Proof Demo**: Live proof generation and validation workflows
+
+### Phase 3: Production Deployment (Weeks 5-6)
+- **Dockploy Deployment**: Complete stack deployment with monitoring
+- **Domain Configuration**: Custom domain with SSL termination
+- **Performance Optimization**: Container resource optimization and scaling
+- **Security Hardening**: Production security measures and access controls
+
+### Phase 4: Demo Validation & Cookathon Preparation (Weeks 7-8)
+- **Live Demo Testing**: Comprehensive testing of all demo workflows
+- **Performance Monitoring**: Container performance and user experience validation
+- **Documentation**: Complete deployment and demo interaction guides
+- **Cookathon Submission**: Live demo preparation with presentation materials
 
 ---
 
-## 🏆 Cookathon Integration
+**zkMed represents the future of healthcare privacy and efficiency, combining advanced Web3 technologies with proven DeFi infrastructure to create a secure, yield-generating, and privacy-preserving healthcare claims platform. Deployed via containerized Dockploy infrastructure with live demo capabilities for [The Cookathon](https://www.cookathon.dev/) on Mantle blockchain with native mUSD integration and Aave V3 pooling for optimal reliability and capital efficiency.** 🚀
+
+---
+
+## 🏆 Cookathon Integration (Container Deployment)
 
 ### Competition Context
 - **Event**: [The Cookathon](https://www.cookathon.dev/) - Mantle's flagship hackathon
 - **Timeline**: Monthly hackathon (May-Oct 2025) with $15K monthly prizes
 - **Target**: 1st place ($5K) with potential for grants and accelerator opportunities
 - **Partners**: Leveraging thirdweb (official Cookathon partner) for optimal integration
+- **Demo Strategy**: Live containerized deployment for real-time judge interaction
 
-### Competitive Advantages
-- **Privacy-First Healthcare**: Unique application of zero-knowledge proofs in healthcare
-- **Aave V3 Pool Integration**: First healthcare platform with yield-generating fund pools
-- **Multi-Proof Architecture**: Advanced validation system using vlayer WebProofs/MailProofs
-- **Dual Registration Paths**: Flexible onboarding for existing and new insurance customers
-- **Native mUSD Integration**: Seamless stable value payments on Mantle
-- **Mantle Optimization**: Built specifically for Mantle's performance characteristics
-- **thirdweb Integration**: Leveraging official Cookathon partner technology 
+### Competitive Advantages (Live Demo)
+- **Privacy-First Healthcare**: Unique application of zero-knowledge proofs demonstrated live
+- **Aave V3 Pool Integration**: First healthcare platform with yield-generating pools (functional demo)
+- **Multi-Proof Architecture**: Advanced validation system using vlayer (live demonstration)
+- **Dual Registration Paths**: Flexible onboarding demonstrated with real accounts
+- **Native mUSD Integration**: Seamless stable value payments on Mantle (live transactions)
+- **Container Deployment**: Production-ready scalable infrastructure
+- **Live Demo Access**: Judges can interact with real platform functionality 

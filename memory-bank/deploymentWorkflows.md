@@ -1,39 +1,448 @@
 # Deployment & Development Workflows
 
-## 🚀 Production Deployment
+## 🚀 Dockploy Production Deployment
 
-### Status: ✅ PRODUCTION READY
+### Status: ✅ PRODUCTION READY FOR CONTAINERIZATION
 - **Smart Contracts**: Fully implemented and tested (37/37 tests passing)
 - **vlayer Integration**: Complete email proof workflow
 - **Security**: Production hardened, test helpers removed
-- **Documentation**: Complete deployment guides
+- **Container Architecture**: Multi-service Docker setup for Dockploy
+- **Demo Environment**: Pre-configured accounts for live POC
 
-### Quick Deployment Commands
+### Dockploy Deployment Commands
 
-#### Testnet Deployment
+#### Container Stack Deployment
 ```bash
-forge script script/DeployProduction.s.sol --rpc-url $SEPOLIA_RPC_URL --broadcast --verify
+# Deploy complete zkMed stack to Dockploy
+dockploy deploy zkmed-stack --config ./dockploy.yml
+
+# Monitor deployment status
+dockploy status zkmed-stack
+
+# View container logs
+dockploy logs zkmed-mantle-fork
+dockploy logs zkmed-frontend
+dockploy logs zkmed-deployer
 ```
 
-#### Mainnet Deployment
+#### Demo Environment Access
 ```bash
-forge script script/DeployProduction.s.sol --rpc-url $MAINNET_RPC_URL --broadcast --verify
+# Access live demo at your domain
+https://zkmed.yourdomain.com
+
+# Check demo account status
+curl https://zkmed.yourdomain.com/api/demo/accounts
+
+# Monitor blockchain RPC
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+  https://zkmed.yourdomain.com/rpc
 ```
 
-#### Email Proof Workflow
-```bash
-cd vlayer && npx tsx proveEmailDomain.ts
-```
-
-### Production Requirements Checklist
-- [ ] Environment variables configured (RPC_URL, PRIVATE_KEY)
-- [ ] vlayer production token obtained
-- [ ] Gas price strategy defined
-- [ ] Security audit completed (recommended)
-- [ ] Multi-sig setup for admin functions (recommended)
+### Dockploy Requirements Checklist
+- [ ] Dockploy account and CLI configured
+- [ ] Custom domain configured (e.g., zkmed.yourdomain.com)
+- [ ] SSL certificate setup (automatic via Dockploy)
+- [ ] Container resource limits defined
 - [ ] Monitoring and alerting configured
+- [ ] Demo account private keys secured
 
-## 🛠️ Local Development Environment
+## 🐳 Container Architecture
+
+### Multi-Service Docker Setup
+**Key Innovation**: Persistent Mantle fork with automated demo data initialization
+- ✅ Long-running blockchain state preservation
+- ✅ Pre-configured demo accounts for immediate POC
+- ✅ Live frontend with real transaction capabilities
+- ✅ Clean domain access via reverse proxy
+
+### Container Services Stack
+```
+✅ mantle-fork (Chain ID: 31339) - Port 8545 (Persistent)
+✅ contract-deployer (One-time setup) - Demo initialization
+✅ zkmed-frontend (Next.js) - Port 3000 (Live demo)
+✅ nginx-proxy (Reverse proxy) - Ports 80/443 (Domain access)
+```
+
+### One-Command Dockploy Setup
+```bash
+# Complete stack deployment
+dockploy deploy zkmed-stack
+
+# Automated demo account setup
+dockploy exec zkmed-deployer setup-demo-accounts
+
+# Health check all services
+dockploy health zkmed-stack
+
+# Access live demo
+open https://zkmed.yourdomain.com
+```
+
+## 🏥 Pre-Configured Demo Environment
+
+### Demo Account Setup
+Create pre-configured accounts for immediate POC testing:
+
+#### Demo Insurer Account
+```json
+{
+  "name": "Regione Lazio Health Insurance",
+  "domain": "laziosalute.it",
+  "email": "admin@laziosalute.it",
+  "walletAddress": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4",
+  "privateKey": "0x...",
+  "role": "Insurer",
+  "verified": true,
+  "poolBalance": "100000000000000000000000" // 100k mUSD
+}
+```
+
+#### Demo Hospital Account
+```json
+{
+  "name": "Ospedale San Giovanni",
+  "domain": "sangiovanni.lazio.it",
+  "email": "admin@sangiovanni.lazio.it", 
+  "walletAddress": "0x8ba1f109551bD432803012645Hac136c7Aad5a6",
+  "privateKey": "0x...",
+  "role": "Hospital",
+  "verified": true
+}
+```
+
+#### Demo Patient Account
+```json
+{
+  "commitment": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "walletAddress": "0x123456789abcdef123456789abcdef1234567890",
+  "privateKey": "0x...",
+  "role": "Patient",
+  "insurer": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4",
+  "monthlyPremium": "500000000000000000000", // 500 mUSD
+  "poolBalance": "6000000000000000000000" // 6k mUSD (12 months)
+}
+```
+
+### Automated Demo Workflows
+```bash
+# Initialize all demo accounts
+docker exec zkmed-deployer npm run setup-demo-accounts
+
+# Fund demo accounts with mUSD
+docker exec zkmed-deployer npm run fund-demo-accounts
+
+# Register demo organizations
+docker exec zkmed-deployer npm run register-demo-orgs
+
+# Create demo patient pools
+docker exec zkmed-deployer npm run create-demo-pools
+```
+
+## 🖥️ Next.js Container Integration
+
+### Container Environment Setup
+Create `packages/nextjs/Dockerfile`:
+```dockerfile
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+### Container Environment Variables
+```bash
+# packages/nextjs/.env.container
+NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
+NEXT_PUBLIC_CHAIN_ID=31339
+NEXT_PUBLIC_REGISTRATION_CONTRACT=0x...
+NEXT_PUBLIC_POOLING_CONTRACT=0x...
+
+# Demo account access
+NEXT_PUBLIC_DEMO_MODE=true
+NEXT_PUBLIC_DEMO_INSURER=0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4
+NEXT_PUBLIC_DEMO_HOSPITAL=0x8ba1f109551bD432803012645Hac136c7Aad5a6
+NEXT_PUBLIC_DEMO_PATIENT=0x123456789abcdef123456789abcdef1234567890
+```
+
+### wagmi Container Configuration
+```typescript
+import { createConfig, http } from 'wagmi'
+
+export const containerMantle = {
+  id: 31339,
+  name: 'Mantle Fork (Container)',
+  rpcUrls: {
+    default: { http: [process.env.NEXT_PUBLIC_RPC_URL || 'http://localhost:8545'] }
+  },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Mantle',
+    symbol: 'MNT',
+  },
+} as const
+
+export const config = createConfig({
+  chains: [containerMantle],
+  transports: {
+    [containerMantle.id]: http(),
+  },
+})
+```
+
+### Live Demo Integration
+```typescript
+// packages/nextjs/src/services/demo.ts
+export class DemoService {
+  async connectDemoAccount(accountType: 'insurer' | 'hospital' | 'patient') {
+    const demoAccounts = {
+      insurer: process.env.NEXT_PUBLIC_DEMO_INSURER,
+      hospital: process.env.NEXT_PUBLIC_DEMO_HOSPITAL,
+      patient: process.env.NEXT_PUBLIC_DEMO_PATIENT
+    };
+    
+    // Connect to pre-configured demo account
+    return await connectWallet(demoAccounts[accountType]);
+  }
+  
+  async runDemoWorkflow(workflow: string) {
+    switch(workflow) {
+      case 'patient-registration':
+        return await this.demoPatientRegistration();
+      case 'hospital-claim':
+        return await this.demoHospitalClaim();
+      case 'insurer-approval':
+        return await this.demoInsurerApproval();
+    }
+  }
+}
+```
+
+## 🔧 Container Development Tools
+
+### Dockploy Management Commands
+```bash
+# Container lifecycle
+dockploy start zkmed-stack
+dockploy stop zkmed-stack  
+dockploy restart zkmed-stack
+dockploy scale zkmed-frontend --replicas 3
+
+# Monitoring and debugging
+dockploy logs zkmed-mantle-fork --follow
+dockploy exec zkmed-frontend /bin/sh
+dockploy stats zkmed-stack
+
+# Domain and SSL management
+dockploy domain add zkmed.yourdomain.com
+dockploy ssl enable zkmed.yourdomain.com
+```
+
+### Container Health Monitoring
+```bash
+# Check container health
+curl https://zkmed.yourdomain.com/health
+
+# Check blockchain connectivity
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+  https://zkmed.yourdomain.com/rpc
+
+# Check demo account status
+curl https://zkmed.yourdomain.com/api/demo/status
+```
+
+### Demo Interaction Testing
+```bash
+# Test demo patient registration
+curl -X POST https://zkmed.yourdomain.com/api/demo/register-patient
+
+# Test demo claim submission
+curl -X POST https://zkmed.yourdomain.com/api/demo/submit-claim
+
+# Test demo approval workflow
+curl -X POST https://zkmed.yourdomain.com/api/demo/approve-claim
+```
+
+## 📊 Container Performance Metrics
+
+### Resource Requirements
+| Container | CPU | Memory | Storage | Restart Policy |
+|-----------|-----|--------|---------|----------------|
+| mantle-fork | 1 core | 2GB | 20GB | always |
+| contract-deployer | 0.5 core | 1GB | 1GB | no |
+| zkmed-frontend | 0.5 core | 1GB | 5GB | always |
+| nginx-proxy | 0.2 core | 256MB | 1GB | always |
+
+### Container Health Checks
+```yaml
+# Health check configurations
+healthcheck:
+  mantle-fork:
+    test: ["CMD", "curl", "-f", "http://localhost:8545"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    
+  frontend:
+    test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+```
+
+## 🛡️ Container Security & Privacy
+
+### Container Security Measures
+- ✅ **Isolated Networks**: Containers communicate via internal networks only
+- ✅ **Minimal Images**: Alpine-based images with only required dependencies
+- ✅ **Non-root Users**: All containers run with non-privileged users
+- ✅ **Resource Limits**: CPU and memory limits prevent resource exhaustion
+- ✅ **Health Monitoring**: Automated restart on failure detection
+
+### Demo Data Security
+- ✅ **Encrypted Secrets**: Demo private keys stored in Dockploy secrets
+- ✅ **Environment Isolation**: Demo accounts isolated from production
+- ✅ **Access Logging**: All demo interactions logged for monitoring
+- ✅ **Privacy Preservation**: Real privacy features maintained in demo
+
+## 🚧 Known Container Limitations & Best Practices
+
+### Current Container Limitations
+1. **Demo Data Reset**: Container restart resets demo account states
+2. **Single Node**: No horizontal scaling for blockchain container
+3. **Volume Management**: Persistent data requires proper volume configuration
+4. **SSL Dependencies**: Custom domains require proper SSL setup
+
+### Container Best Practices
+1. **Volume Persistence**: Always mount blockchain data to persistent volumes
+2. **Health Monitoring**: Configure proper health checks for all services
+3. **Resource Limits**: Set appropriate CPU and memory limits
+4. **Log Management**: Configure log rotation and retention policies
+5. **Backup Strategy**: Regular backup of persistent blockchain data
+
+## 🔍 Container Monitoring & Health Checks
+
+### Service Health Verification
+```bash
+# Check all container status
+dockploy ps zkmed-stack
+
+# Verify blockchain accessibility
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+  https://zkmed.yourdomain.com/rpc
+
+# Test frontend accessibility
+curl -I https://zkmed.yourdomain.com
+
+# Check demo account balances
+curl https://zkmed.yourdomain.com/api/demo/balances
+```
+
+### Real-time Container Monitoring
+The Dockploy dashboard provides:
+- Container status and resource usage
+- Application logs and error tracking
+- Network traffic monitoring
+- SSL certificate status
+- Domain configuration health
+
+### Production Container Requirements
+- Monitor contract deployment success rates
+- Track demo interaction completion rates
+- Watch container resource utilization
+- Monitor SSL certificate expiration
+- Set up alerts for container failures
+
+## 📋 Container Development Best Practices
+
+### Daily Container Routine
+1. **Check Status**: `dockploy status zkmed-stack`
+2. **View Logs**: `dockploy logs zkmed-stack --tail 100`
+3. **Test Demo**: Visit https://zkmed.yourdomain.com
+4. **Monitor Resources**: Check Dockploy dashboard
+5. **Backup Data**: Ensure persistent data is backed up
+
+### Container Testing Workflow
+```bash
+# Local container testing
+docker-compose -f docker-compose.local.yml up
+
+# Integration testing with demo accounts
+npm run test:demo-integration
+
+# Container resource testing
+docker stats zkmed-containers
+
+# Full deployment test
+dockploy deploy zkmed-stack --dry-run
+```
+
+### Error Resolution for Containers
+1. **Container Health**: `dockploy health zkmed-stack`
+2. **Service Logs**: `dockploy logs [service-name]`
+3. **Container Restart**: `dockploy restart [service-name]`
+4. **Full Stack Restart**: `dockploy restart zkmed-stack`
+5. **Emergency Rollback**: `dockploy rollback zkmed-stack`
+
+## 🎯 Dockploy Production Deployment Checklist
+
+### Pre-Deployment
+- [ ] All containers tested locally (docker-compose)
+- [ ] Demo accounts and data prepared
+- [ ] Domain and SSL configuration ready
+- [ ] Resource limits and health checks configured
+- [ ] Backup and monitoring procedures documented
+
+### Deployment Steps
+1. **Deploy Container Stack**: `dockploy deploy zkmed-stack`
+2. **Verify Container Health**: Check all services running
+3. **Initialize Demo Data**: Run demo account setup scripts
+4. **Test Live Demo**: Verify frontend and blockchain connectivity
+5. **Configure Monitoring**: Setup alerting and log retention
+6. **Document Access**: Provide demo URLs and account info
+
+### Post-Deployment
+- [ ] All containers running and healthy
+- [ ] Demo accounts functional and accessible
+- [ ] Frontend application responding correctly
+- [ ] SSL certificates valid and auto-renewing
+- [ ] Monitoring and alerting active
+- [ ] Demo interaction workflows tested
+
+---
+
+**Status**: ✅ Container Architecture Ready  
+**Next Phase**: Dockploy Deployment & Live Demo Environment Setup 
+
+## 🐳 Local Development Environment (Legacy)
 
 ### L1-Only Architecture (PROVEN SOLUTION)
 **Key Insight**: vlayer works optimally with Chain ID 31337 (L1 only)
@@ -50,9 +459,9 @@ cd vlayer && npx tsx proveEmailDomain.ts
 ✅ WebSocket Proxy - Port 3003
 ```
 
-### One-Command Setup
+### One-Command Setup (Local Development)
 ```bash
-# Start complete environment
+# Start complete environment (legacy)
 make start-vlayer
 
 # Interactive monitoring dashboard

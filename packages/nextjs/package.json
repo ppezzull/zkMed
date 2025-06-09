@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typechain": "typechain --target ethers-v6 --out-dir ./utils/types/contracts '../foundry/out/Greeting.sol/Greeting.json'"
+    "typechain": "typechain --target ethers-v6 --out-dir ./utils/types/contracts '../foundry/out/Greeting.sol/Greeting.json'",
+    "build:standalone": "NEXT_OUTPUT=standalone next build",
+    "container:build": "docker build -t zkmed-frontend .",
+    "container:run": "docker run -p 3000:3000 zkmed-frontend"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
