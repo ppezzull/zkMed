@@ -8,7 +8,7 @@ const nextConfig = {
   //   // Enable optimizations
   //   optimizeCss: true,
   // },
-
+    
   // Server components external packages
   serverExternalPackages: ['ethers'],
 

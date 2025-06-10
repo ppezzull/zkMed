@@ -3,7 +3,9 @@
 import { readContract } from "thirdweb";
 import { createThirdwebClient } from "thirdweb";
 import { Greeting__factory } from "../types/contracts/factories/Greeting__factory";
-import { mantleFork, GREETING_CONTRACT_ADDRESS } from "../chain-config";
+import { mantleFork } from "../chain-config";
+import fs from 'fs/promises';
+import path from 'path';
 
 // Create client for server-side calls
 const client = createThirdwebClient({
@@ -13,12 +15,27 @@ const client = createThirdwebClient({
 // Contract ABI
 const GREETING_ABI = Greeting__factory.abi;
 
+// Get dynamic contract address
+async function getContractAddress(): Promise<string> {
+  try {
+    // Try to read from mounted contract artifacts
+    const contractsPath = path.join(process.cwd(), 'contracts', 'addresses.json');
+    const data = await fs.readFile(contractsPath, 'utf-8');
+    const contractData = JSON.parse(data);
+    return contractData.contracts.Greeting.address as `0x${string}`;
+  } catch (error) {
+    // Fallback to environment variable or default
+    return process.env.NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS || '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe';
+  }
+}
+
 // Read actions (view functions)
 export async function getGreeting() {
   try {
+    const contractAddress = await getContractAddress();
     const result = await readContract({
       contract: {
-        address: GREETING_CONTRACT_ADDRESS,
+        address: contractAddress as `0x${string}`,
         abi: GREETING_ABI,
         client,
         chain: mantleFork,
@@ -34,9 +51,10 @@ export async function getGreeting() {
 
 export async function getUserGreeting(userAddress: string) {
   try {
+    const contractAddress = await getContractAddress();
     const result = await readContract({
       contract: {
-        address: GREETING_CONTRACT_ADDRESS,
+        address: contractAddress as `0x${string}`,
         abi: GREETING_ABI,
         client,
         chain: mantleFork,
@@ -52,9 +70,10 @@ export async function getUserGreeting(userAddress: string) {
 
 export async function getTotalGreetings() {
   try {
+    const contractAddress = await getContractAddress();
     const result = await readContract({
       contract: {
-        address: GREETING_CONTRACT_ADDRESS,
+        address: contractAddress as `0x${string}`,
         abi: GREETING_ABI,
         client,
         chain: mantleFork,
@@ -70,9 +89,10 @@ export async function getTotalGreetings() {
 
 export async function getUserGreetingCount(userAddress: string) {
   try {
+    const contractAddress = await getContractAddress();
     const result = await readContract({
       contract: {
-        address: GREETING_CONTRACT_ADDRESS,
+        address: contractAddress as `0x${string}`,
         abi: GREETING_ABI,
         client,
         chain: mantleFork,
@@ -84,6 +104,11 @@ export async function getUserGreetingCount(userAddress: string) {
   } catch (error) {
     return { success: false, error: String(error) };
   }
+}
+
+// Export the address getter for use by other components
+export async function getGreetingContractAddress(): Promise<string> {
+  return await getContractAddress();
 }
 
 // Note: Write transactions are handled client-side with thirdweb hooks

@@ -157,7 +157,7 @@ Total Yield Generated: 100%
 
 ### Multi-Proof Validation System
 - **MailProof**: Domain verification for healthcare organizations
-- **WebProof**: Patient portal and hospital system validation  
+- **WebProof**: Patient portal and hospital system validation
 - **ZK Proof**: Privacy-preserving procedure validation without data exposure
 
 ### Privacy Guarantees

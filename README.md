@@ -14,53 +14,56 @@
 
 ---
 
-## 🚀 Quick Start - Local Mantle Fork Development
+## 🚀 Quick Start - Dual Deployment System
 
 ### Prerequisites
 - Docker & Docker Compose
-- Node.js 18+ 
-- Foundry (Forge, Cast, Anvil)
+- vlayer Anvil Mantle Fork running on port 8547
+- jq and curl (recommended)
 
-### 1. Start Mantle Fork Development Environment
+### 1. Setup and Validation
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd zkMed
+# Validate your setup (checks both deployment options)
+make validate
 
-# Start Mantle fork environment (Chain ID: 31339)
-cd backend
-make start-mantle-fork
-
-# Interactive monitoring dashboard
-make dashboard
-
-# Deploy contracts to Mantle fork
-make deploy-mantle
+# Check if Anvil is running
+make check-anvil
 ```
 
-### 2. Deploy Aave V3 Pool Contracts
+### 2. Choose Your Deployment Method
+
+#### 🐳 Option A: Local Testing (docker-compose.yml)
+Perfect for development, testing, and local validation:
+
 ```bash
-# Deploy healthcare-specific Aave pools
-make deploy-aave-pools
+# Single command local deployment
+make deploy
 
-# Setup mUSD integration
-make setup-musd
-
-# Test pool yield generation
-make test-pool-yield
+# Or step by step
+make up                # Start services
+make logs              # Monitor logs  
+make health            # Check health
+make down              # Stop services
 ```
 
-### 3. Frontend Development with Pool Dashboard
+#### 🚀 Option B: Dockploy Production (dockploy-compose.yml)
+Optimized for production deployment on Dockploy:
+
 ```bash
-# Create Next.js application with pool management
-npx create-next-app@latest frontend --typescript --tailwind --eslint --app
-cd frontend
+# Single command Dockploy deployment
+make dockploy-deploy
 
-# Install Web3 dependencies
-npm install wagmi viem @wagmi/core ethers @aave/core-v3 thirdweb
-
-# Use Mantle fork configuration from memory-bank/deploymentWorkflows.md
+# Or step by step
+make dockploy-logs     # Monitor logs
+make dockploy-health   # Check health
+make dockploy-stop     # Stop services
 ```
+
+### 3. Access the Application
+- **Frontend**: http://localhost:3000
+- **Dev Dashboard**: http://localhost:3000/dev  
+- **Health Check**: http://localhost:3000/api/health
+- **Contract Info**: http://localhost:3000/api/contracts
 
 ---
 
@@ -119,32 +122,100 @@ npm install wagmi viem @wagmi/core ethers @aave/core-v3 thirdweb
 
 ---
 
-## 🛠️ Development Commands - Mantle Fork Focus
+## 🛠️ Development Commands
 
-### Mantle Fork Environment Management
+### 🐳 Docker Commands (Local Testing)
 ```bash
-make start-mantle-fork    # Start Mantle fork (Chain ID: 31339)
-make deploy-mantle        # Deploy contracts to Mantle fork
-make setup-aave-pools     # Deploy Aave V3 healthcare pools
-make test-pool-yield      # Test yield generation mechanisms
-make dashboard            # Interactive pool monitoring
+# Core deployment commands
+make deploy              # Full local deployment with health checks
+make up                  # Start all services  
+make down                # Stop all services
+make restart             # Restart all services
+make logs                # Monitor container logs
+make health              # Check deployment health
+make validate            # Validate setup and dependencies
 ```
 
-### Pool Development & Testing
+### 🚀 Dockploy Commands (Production)
 ```bash
-make test-patient-pools   # Test patient pool deposits
-make test-insurer-pools   # Test insurer pool contributions
-make test-yield-dist      # Test yield distribution
-make test-pool-auth       # Test claim authorization withdrawals
+# Production deployment commands  
+make dockploy-deploy     # Full Dockploy deployment
+make dockploy-stop       # Stop Dockploy containers
+make dockploy-restart    # Restart Dockploy containers
+make dockploy-logs       # Monitor Dockploy logs
+make dockploy-health     # Check Dockploy health
+make dockploy-validate   # Validate Dockploy setup
 ```
 
-### Production Deployment (Post-Fork Testing)
+### 🔧 Utility Commands
 ```bash
-# Deploy to Mantle mainnet after thorough fork testing
-forge script script/DeployMantleProduction.s.sol --rpc-url $MANTLE_RPC_URL --broadcast --verify
+# Environment and maintenance
+make check-anvil         # Check if Anvil is running on port 8547
+make check-env           # Check environment variables configuration
+make extract-env         # Extract contract environment from deployment
+make dev-setup          # Setup development environment
+make clean              # Clean up containers and volumes
+make clean-all          # Deep clean including images
+make status             # Show deployment status for both systems
+make quick-start        # Quick start guide for new users
+```
 
-# Deploy Aave V3 pools on Mantle mainnet
-forge script script/DeployAavePools.s.sol --rpc-url $MANTLE_RPC_URL --broadcast
+---
+
+## ⚙️ Environment Configuration
+
+All required environment variables are pre-configured in both `docker-compose.yml` and `dockploy-compose.yml`. The containers use these key variables:
+
+### Blockchain Configuration
+- `NEXT_PUBLIC_RPC_URL`: `http://host.docker.internal:8547` (vlayer anvil)
+- `NEXT_PUBLIC_CHAIN_ID`: `31339` (Mantle fork)
+- `NEXT_PUBLIC_THIRDWEB_CLIENT_ID`: `b928ddd875d3769c8652f348e29a52c5`
+
+### vlayer Service URLs (Docker Container Network)
+- `VLAYER_ENV`: `dev`
+- `CHAIN_NAME`: `anvil`
+- `PROVER_URL`: `http://host.docker.internal:3000`
+- `JSON_RPC_URL`: `http://host.docker.internal:8547`
+- `NOTARY_URL`: `http://host.docker.internal:7047`
+- `WS_PROXY_URL`: `ws://host.docker.internal:3003`
+
+### Smart Wallet & Development
+- `SMART_WALLET_FACTORY_MANTLE`: `0x06224c9387a352a953d6224bfff134c3dd247313`
+- `EXAMPLES_TEST_PRIVATE_KEY`: `0xac0974...` (Anvil account #0 - development only)
+
+> **Important**: All URLs use `host.docker.internal` instead of `localhost` for proper Docker container networking.
+
+Check your environment configuration:
+```bash
+make check-env
+```
+
+### Example Workflows
+
+#### Local Development Workflow:
+```bash
+# 1. Validate environment
+make validate
+
+# 2. Deploy locally
+make deploy
+
+# 3. Monitor and develop
+make logs              # Watch logs
+make health            # Check status
+```
+
+#### Production Deployment Workflow:
+```bash
+# 1. Validate environment
+make dockploy-validate
+
+# 2. Deploy to production
+make dockploy-deploy
+
+# 3. Monitor production
+make dockploy-health   # Check health
+make dockploy-logs     # Monitor logs
 ```
 
 ---

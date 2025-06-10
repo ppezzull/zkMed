@@ -5,7 +5,8 @@ import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
 import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
 import { Greeting__factory } from '@/utils/types/contracts/factories/Greeting__factory';
-import { mantleFork, GREETING_CONTRACT_ADDRESS } from '@/utils/chain-config';
+import { mantleFork } from '@/utils/chain-config';
+import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
 import { client } from './providers/thirdweb-providers';
 
 // Contract ABI
@@ -21,9 +22,31 @@ export default function GreetingDemo() {
   const [newGreeting, setNewGreeting] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [txLoading, setTxLoading] = useState(false);
+  const [contractAddress, setContractAddress] = useState<string>('');
+  const [contractStatus, setContractStatus] = useState<'deployed' | 'fallback'>('fallback');
+
+  // Load contract address dynamically
+  useEffect(() => {
+    const loadContractInfo = async () => {
+      try {
+        const [address, status] = await Promise.all([
+          getGreetingContractAddress(),
+          getContractStatus()
+        ]);
+        setContractAddress(address);
+        setContractStatus(status);
+      } catch (error) {
+        console.error('Error loading contract info:', error);
+      }
+    };
+    
+    loadContractInfo();
+  }, []);
 
   // Fetch contract data
   const fetchData = async () => {
+    if (!contractAddress) return;
+    
     setLoading(true);
     try {
       const [greetingResult, totalResult] = await Promise.all([
@@ -59,18 +82,20 @@ export default function GreetingDemo() {
   };
 
   useEffect(() => {
+    if (contractAddress) {
     fetchData();
-  }, [account?.address]);
+    }
+  }, [account?.address, contractAddress]);
 
   const handleSetGreeting = async () => {
-    if (!account || !newGreeting.trim()) return;
+    if (!account || !newGreeting.trim() || !contractAddress) return;
 
     setTxLoading(true);
     try {
       const contract = getContract({
         client,
         chain: mantleFork,
-        address: GREETING_CONTRACT_ADDRESS,
+        address: contractAddress,
         abi: GREETING_ABI,
       });
 
@@ -96,6 +121,20 @@ export default function GreetingDemo() {
     }
   };
 
+  if (!contractAddress) {
+    return (
+      <div className="p-6 border rounded-xl bg-gray-50">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          🎉 Greeting Contract Demo
+        </h3>
+        <div className="flex items-center gap-2">
+          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Loading contract address...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!account) {
     return (
       <div className="p-6 border rounded-xl bg-gray-50">
@@ -105,15 +144,30 @@ export default function GreetingDemo() {
         <p className="text-gray-600">
           Please connect your wallet to interact with the greeting contract.
         </p>
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg text-xs">
+          <p><span className="font-medium">Contract:</span> {contractAddress}</p>
+          <p><span className="font-medium">Status:</span> {contractStatus === 'deployed' ? '✅ Deployed' : '⚠️ Fallback'}</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="p-6 border rounded-xl bg-white shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">
         🎉 Greeting Contract Demo
       </h3>
+        <div className="flex items-center gap-2">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            contractStatus === 'deployed' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {contractStatus === 'deployed' ? '✅ Live Contract' : '⚠️ Fallback Mode'}
+          </span>
+        </div>
+      </div>
       
       {loading ? (
         <div className="text-center py-8">
@@ -186,8 +240,9 @@ export default function GreetingDemo() {
       
       {/* Contract Info */}
       <div className="mt-6 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
-        <p><span className="font-medium">Contract:</span> {GREETING_CONTRACT_ADDRESS}</p>
+        <p><span className="font-medium">Contract:</span> {contractAddress}</p>
         <p><span className="font-medium">Network:</span> Anvil Mantle Fork (Chain ID: 31339)</p>
+        <p><span className="font-medium">Status:</span> {contractStatus}</p>
         <p><span className="font-medium">ABI:</span> TypeChain generated from Solidity</p>
       </div>
     </div>

@@ -35,6 +35,11 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Container networking environment defaults
+ENV NEXT_PUBLIC_CHAIN_ID=31339
+ENV NEXT_PUBLIC_RPC_URL=http://host.docker.internal:8547
+ENV NEXT_PUBLIC_THIRDWEB_CLIENT_ID=your-client-id-here
+
 # Install curl for health checks
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 

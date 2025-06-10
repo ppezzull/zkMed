@@ -9,10 +9,10 @@ export const mantleFork = defineChain({
     symbol: "MNT", 
     decimals: 18,
   },
-  rpc: "http://127.0.0.1:8547",
+  rpc: process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.internal:8547",
   testnet: true,
   blockExplorers: [],
 });
 
-// Contract configuration
-export const GREETING_CONTRACT_ADDRESS = '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe'; 
+// Contract configuration - will be updated after deployment
+export const GREETING_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS || '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe'; 

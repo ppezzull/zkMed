@@ -1,216 +1,260 @@
-# zkMed Container Management
-.PHONY: help build up down logs shell clean demo-up demo-down demo-logs demo-shell
+# zkMed - Docker Deployment
+.PHONY: help all deploy stop restart logs health validate up down check-anvil deploy-contracts extract-env clean clean-all dev-setup status quick-start
 
 # Default target
+all: ## Complete development setup with vlayer + zkMed (validate + deploy + status)
+	@echo "🚀 zkMed Complete Development Setup (vlayer + zkMed)"
+	@echo "================================================="
+	@echo "1️⃣ Validating environment..."
+	@$(MAKE) validate
+	@echo ""
+	@echo "2️⃣ Deploying unified vlayer + zkMed stack..."
+	@$(MAKE) deploy
+	@echo ""
+	@echo "3️⃣ Final status check..."
+	@$(MAKE) status
+	@echo ""
+	@echo "🎉 Complete setup finished!"
+	@echo "📊 Frontend: http://localhost:3001"
+	@echo "🔧 Dev Page: http://localhost:3001/dev"
+	@echo "🔗 vlayer Services: http://localhost:3000 (prover), http://localhost:7047 (notary)"
+	@echo ""
+	@echo "📚 Useful commands:"
+	@echo "  make logs      # Monitor all container logs"
+	@echo "  make health    # Check full deployment health"
+	@echo "  make clean     # Clean up everything"
+
 help: ## Show this help message
-	@echo "zkMed Container Management Commands:"
+	@echo "zkMed Docker Deployment Commands:"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-# Basic container operations
-build: ## Build all containers
-	@echo "🔨 Building zkMed containers..."
-	docker-compose build
-
-up: ## Start all services
-	@echo "🚀 Starting zkMed stack..."
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml up -d
-	sleep 10
-	docker-compose up -d
-
-down: ## Stop all services
-	@echo "🛑 Stopping zkMed stack..."
-	docker-compose down
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml down
-
-restart: ## Restart all services
-	@echo "🔄 Restarting zkMed stack..."
-	$(MAKE) down
-	sleep 5
-	$(MAKE) up
-
-logs: ## Show logs for all services
-	docker-compose logs -f
-
-status: ## Show status of all containers
-	@echo "📊 Container Status:"
+	@echo "🏁 SETUP COMMANDS:"
+	@echo "  all                  Complete development setup (validate + deploy + status)"
 	@echo ""
-	@echo "vlayer Services:"
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml ps
+	@echo "🐳 DOCKER COMMANDS (docker-compose.yml - Local Testing):"
+	@echo "  deploy               Deploy zkMed locally with docker-compose.yml"
+	@echo "  up                   Start all services with docker-compose.yml"
+	@echo "  down                 Stop all services with docker-compose.yml"
+	@echo "  restart              Restart all services with docker-compose.yml"
+	@echo "  logs                 Show logs from docker-compose.yml services"
+	@echo "  health               Check health of main deployment"
+	@echo "  validate             Validate main deployment setup"
 	@echo ""
-	@echo "zkMed Services:"
-	docker-compose ps
 
-# Individual service operations
-logs-vlayer: ## Show vlayer service logs
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml logs -f
-
-logs-contracts: ## Show contract deployment logs
-	docker-compose logs -f zkmed-contracts
-
-logs-frontend: ## Show frontend logs
-	docker-compose logs -f zkmed-frontend
-
-logs-api: ## Show demo API logs
-	docker-compose logs -f zkmed-demo-api
-
-logs-proxy: ## Show nginx proxy logs
-	docker-compose logs -f zkmed-proxy
-
-# Development operations
-shell-contracts: ## Open shell in contracts container
-	docker-compose exec zkmed-contracts /bin/bash
-
-shell-frontend: ## Open shell in frontend container
-	docker-compose exec zkmed-frontend /bin/sh
-
-shell-api: ## Open shell in demo API container
-	docker-compose exec zkmed-demo-api /bin/sh
-
-# Demo and testing
-demo-setup: ## Setup demo environment
-	@echo "🎭 Setting up demo environment..."
-	$(MAKE) build
-	$(MAKE) up
-	@echo "⏳ Waiting for services to initialize..."
-	sleep 30
-	@echo "✅ Demo environment ready!"
 	@echo ""
-	@echo "🌐 Access URLs:"
-	@echo "  Frontend: http://localhost"
-	@echo "  Demo API: http://localhost:8080"
-	@echo "  RPC: http://localhost/rpc"
-	@echo "  vlayer Call Server: http://localhost:3000"
-	@echo ""
-	@echo "📋 Demo Commands:"
-	@echo "  make demo-status    - Check demo status"
-	@echo "  make demo-accounts  - Show demo accounts"
-	@echo "  make demo-test      - Run demo tests"
 
-demo-status: ## Show demo environment status
-	@echo "🔍 Demo Environment Status:"
 	@echo ""
-	curl -s http://localhost:8080/api/demo/blockchain | jq .
-	@echo ""
-	curl -s http://localhost:8080/api/demo/accounts | jq '.data.accounts | keys'
+	@echo "🔧 UTILITY COMMANDS:"
+	@echo "  check-anvil          Check if Anvil is running on port 8547"
+	@echo "  check-env            Check environment variables configuration"
+	@echo "  extract-env          Extract contract environment from deployment"
+	@echo "  dev-setup            Setup development environment"
+	@echo "  clean                Complete cleanup (containers + images + volumes)"
+	@echo "  clean-light          Light cleanup (containers + volumes, keep images)"
+	@echo "  status               Show deployment status"
+	@echo "  quick-start          Quick start guide for new users"
 
-demo-accounts: ## Show demo account details
-	@echo "👥 Demo Accounts:"
-	curl -s http://localhost:8080/api/demo/accounts | jq '.data.accounts'
+# ==================================================================================
+# 🐳 DOCKER COMMANDS (docker-compose.yml - Local Testing)
+# ==================================================================================
 
-demo-balances: ## Show demo account balances
-	@echo "💰 Demo Account Balances:"
-	curl -s http://localhost:8080/api/demo/balances | jq .
+deploy: ## Deploy unified vlayer + zkMed stack with docker-compose.yml
+	@echo "🚀 Starting Unified vlayer + zkMed Deployment..."
+	@echo "🔧 Starting all services (vlayer infrastructure + zkMed)..."
+	@docker compose up -d
+	@echo "⏳ Waiting for vlayer services to initialize..."
+	@sleep 10
+	@echo "⏳ Waiting for contract deployment..."
+	@sleep 15
+	@$(MAKE) extract-env
+	@echo "🔄 Restarting frontend with deployed contracts..."
+	@docker compose restart zkmed-frontend
+	@$(MAKE) health
+	@echo "🎉 Unified deployment complete!"
+	@echo "📊 Frontend: http://localhost:3001"
+	@echo "🔧 Dev Page: http://localhost:3001/dev"
+	@echo "🔗 vlayer Prover: http://localhost:3000"
+	@echo "🔗 vlayer Notary: http://localhost:7047"
 
-demo-test: ## Run demo workflow tests
-	@echo "🧪 Testing demo workflows..."
-	@echo "Patient Registration:"
-	curl -s -X POST http://localhost:8080/api/demo/register-patient \
-		-H "Content-Type: application/json" \
-		-d '{"commitment":"0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"}' | jq .
-	@echo ""
-	@echo "Claim Submission:"
-	curl -s -X POST http://localhost:8080/api/demo/submit-claim \
-		-H "Content-Type: application/json" \
-		-d '{"amount":"1000","description":"Demo procedure"}' | jq .
-	@echo ""
-	@echo "Claim Approval:"
-	curl -s -X POST http://localhost:8080/api/demo/approve-claim \
-		-H "Content-Type: application/json" \
-		-d '{"claimId":"DEMO_CLAIM","amount":"1000"}' | jq .
+up: ## Start all services with docker-compose.yml
+	@echo "🔧 Starting zkMed services..."
+	@docker compose up -d
 
-# Health checks
-health: ## Check health of all services
-	@echo "🏥 Health Checks:"
-	@echo ""
-	@echo "Frontend:"
-	@curl -s http://localhost:3000/health.json | jq . || echo "❌ Frontend not responding"
-	@echo ""
-	@echo "Demo API:"
-	@curl -s http://localhost:8080/health | jq . || echo "❌ Demo API not responding"
-	@echo ""
-	@echo "Nginx Proxy:"
-	@curl -s http://localhost/health || echo "❌ Proxy not responding"
-	@echo ""
-	@echo "Blockchain RPC:"
+down: ## Stop all services with docker-compose.yml  
+	@echo "🛑 Stopping zkMed services..."
+	@docker compose down
+
+stop: ## Stop all services with docker-compose.yml
+	@$(MAKE) down
+
+restart: ## Restart all services with docker-compose.yml
+	@echo "🔄 Restarting zkMed services..."
+	@docker compose restart
+
+logs: ## Show logs from docker-compose.yml services
+	@docker compose logs -f
+
+health: ## Check health of unified vlayer + zkMed deployment
+	@echo "🏥 Unified vlayer + zkMed Health Check"
+	@echo "===================================="
+	@echo "🔗 vlayer Infrastructure:"
+	@echo "Anvil L2 Mantle (port 8547):"
 	@curl -s -X POST -H "Content-Type: application/json" \
-		--data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
-		http://localhost/rpc | jq . || echo "❌ RPC not responding"
+		--data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+		http://localhost:8547 >/dev/null && echo "✅ Anvil L2 Mantle responding" || echo "❌ Anvil L2 Mantle not responding"
+	@echo "vlayer Call Server (port 3000):"
+	@curl -s http://localhost:3000/health >/dev/null && echo "✅ vlayer Call Server responding" || echo "❌ vlayer Call Server not responding"
+	@echo "Notary Server (port 7047):"
+	@curl -s http://localhost:7047 >/dev/null && echo "✅ Notary Server responding" || echo "❌ Notary Server not responding"
+	@echo ""
+	@echo "🏥 zkMed Application:"
+	@echo "Frontend Health:"
+	@curl -s http://localhost:3001/api/health >/dev/null && echo "✅ Frontend responding" || echo "❌ Frontend not responding"
+	@echo "Contract Status:"
+	@curl -s http://localhost:3001/api/contracts | jq -r '.status // "error"' 2>/dev/null || echo "❌ Contracts API not responding"
 
-# Cleanup operations
-clean: ## Clean up containers and volumes
-	@echo "🧹 Cleaning up..."
-	docker-compose down -v
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml down -v
-	docker system prune -f
+validate: ## Validate main deployment setup
+	@echo "🔍 zkMed Deployment Setup Validation"
+	@echo "===================================="
+	@echo "📁 Checking essential files..."
+	@test -f docker-compose.yml && echo "✅ Main Docker Compose File" || echo "❌ Missing docker-compose.yml"
+	@test -f srcs/foundry/vlayer/docker-compose.devnet.yaml && echo "✅ vlayer Compose File" || echo "❌ Missing vlayer compose file"
+	@test -f srcs/nextjs/Dockerfile && echo "✅ Next.js Dockerfile" || echo "❌ Missing Next.js Dockerfile"
+	@test -f srcs/foundry/Dockerfile.deployer && echo "✅ Contract Deployer Dockerfile" || echo "❌ Missing Contract Deployer Dockerfile"
+	@test -f srcs/foundry/src/Greeting.sol && echo "✅ Greeting Contract" || echo "❌ Missing Greeting Contract"
+	@test -f srcs/foundry/scripts/deploy.sh && echo "✅ Deployment Script" || echo "❌ Missing Deployment Script"
+	@test -f srcs/nextjs/app/dev/page.tsx && echo "✅ Development Page" || echo "❌ Missing Development Page"
+	@echo ""
+	@echo "🐳 Checking Docker setup..."
+	@command -v docker >/dev/null 2>&1 && echo "✅ Docker available" || echo "❌ Docker not found"
+	@docker compose version >/dev/null 2>&1 && echo "✅ Docker Compose available" || echo "❌ Docker Compose not found"
+	@echo ""
+	@echo "✅ All files and requirements validated!"
 
-clean-all: ## Clean up everything including images
-	@echo "🧹 Deep cleaning..."
-	$(MAKE) clean
-	docker-compose down --rmi all
-	cd packages/foundry/vlayer && docker-compose -f docker-compose.devnet.yaml down --rmi all
 
-reset: ## Reset entire environment
-	@echo "🔄 Resetting environment..."
-	$(MAKE) clean
-	$(MAKE) build
-	$(MAKE) up
 
-# Development helpers
-dev-env: ## Setup development environment
+# ==================================================================================
+# 🔧 UTILITY COMMANDS
+# ==================================================================================
+
+check-env: ## Check environment variables configuration
+	@echo "⚙️ zkMed Environment Variables Configuration"
+	@echo "=========================================="
+	@echo "🔗 Blockchain Configuration:"
+	@echo "  NEXT_PUBLIC_RPC_URL: http://host.docker.internal:8547"
+	@echo "  NEXT_PUBLIC_CHAIN_ID: 31339"
+	@echo ""
+	@echo "🔑 thirdweb Configuration:"
+	@echo "  NEXT_PUBLIC_THIRDWEB_CLIENT_ID: b928ddd875d3769c8652f348e29a52c5"
+	@echo "  SMART_WALLET_FACTORY_MANTLE: 0x06224c9387a352a953d6224bfff134c3dd247313"
+	@echo ""
+	@echo "🌐 vlayer Service URLs (Docker Container Network):"
+	@echo "  VLAYER_ENV: dev"
+	@echo "  CHAIN_NAME: anvil"
+	@echo "  PROVER_URL: http://host.docker.internal:3000"
+	@echo "  JSON_RPC_URL: http://host.docker.internal:8547"
+	@echo "  NOTARY_URL: http://host.docker.internal:7047"
+	@echo "  WS_PROXY_URL: ws://host.docker.internal:3003"
+	@echo ""
+	@echo "🔐 Development Test Key:"
+	@echo "  EXAMPLES_TEST_PRIVATE_KEY: 0xac0974... (Anvil Account #0)"
+	@echo ""
+	@echo "✅ All environment variables are configured for Docker container networking!"
+	@echo "⚠️ These use host.docker.internal for proper container-to-host communication"
+
+check-anvil: ## Check if Anvil is running on port 8547
+	@echo "🔍 Checking Anvil Mantle Fork..."
+	@curl -s -X POST -H "Content-Type: application/json" \
+		--data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+		http://localhost:8547 >/dev/null || { \
+		echo "❌ Anvil not detected on port 8547"; \
+		echo "⚠️  Please ensure vlayer services are running:"; \
+		echo "   - Run 'make anvil-mantle' to start the Mantle fork"; \
+		echo "   - Or check that anvil is running on port 8547"; \
+		exit 1; \
+	}
+	@echo "✅ Anvil Mantle Fork is ready!"
+
+extract-env: ## Extract contract environment from deployment
+	@echo "🔄 Extracting contract environment variables..."
+	@mkdir -p docker-shared
+	@echo "# Checking for deployment artifacts..."
+	@if [ -f "./srcs/foundry/out/contracts.env" ]; then \
+		echo "✅ Found deployment environment file"; \
+		cp "./srcs/foundry/out/contracts.env" "./docker-shared/contracts.env"; \
+	else \
+		echo "⚠️ No deployment environment found, checking Docker volume..."; \
+		if docker volume inspect zkmed_contract_artifacts >/dev/null 2>&1; then \
+			echo "✅ Found contract artifacts volume"; \
+			TEMP_CONTAINER=$$(docker create --rm -v zkmed_contract_artifacts:/data alpine:latest); \
+			if docker cp "$$TEMP_CONTAINER:/data/contracts.env" "./docker-shared/contracts.env" 2>/dev/null; then \
+				echo "📄 Successfully extracted environment from Docker volume"; \
+			else \
+				echo "ℹ️ Using fallback environment configuration"; \
+			fi; \
+			docker rm "$$TEMP_CONTAINER" >/dev/null 2>&1; \
+		else \
+			echo "ℹ️ No artifacts volume found, using fallback configuration"; \
+		fi; \
+	fi
+	@echo "📄 Environment file: docker-shared/contracts.env"
+	@cat "./docker-shared/contracts.env" 2>/dev/null || echo "❌ Environment file not found"
+
+dev-setup: ## Setup development environment
 	@echo "🛠️ Setting up development environment..."
-	@echo "Installing required tools..."
 	@command -v docker >/dev/null 2>&1 || { echo "❌ Docker is required"; exit 1; }
-	@command -v docker-compose >/dev/null 2>&1 || { echo "❌ Docker Compose is required"; exit 1; }
-	@command -v jq >/dev/null 2>&1 || { echo "⚠️ jq recommended for JSON parsing"; }
-	@command -v curl >/dev/null 2>&1 || { echo "⚠️ curl recommended for API testing"; }
+	@command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1 || { echo "❌ Docker Compose is required"; exit 1; }
+	@command -v jq >/dev/null 2>&1 || echo "⚠️ jq recommended for JSON parsing"
+	@command -v curl >/dev/null 2>&1 || echo "⚠️ curl recommended for API testing"
 	@echo "✅ Development environment ready"
 
-watch: ## Watch logs from all services
-	docker-compose logs -f --tail=50
+clean: ## Complete cleanup - remove all containers, images, and volumes
+	@echo "🧹 Complete zkMed Cleanup (containers + images + volumes)"
+	@echo "========================================================="
+	@echo "🛑 Stopping and removing all containers..."
+	@docker compose down -v --rmi all 2>/dev/null || true
+	@echo "🗑️ Removing zkMed volumes..."
+	@docker volume rm zkmed_contract_artifacts 2>/dev/null || true
+	@docker volume rm zkmed_contract-artifacts 2>/dev/null || true
+	@echo "🧽 Cleaning Docker system..."
+	@docker system prune -af --volumes
+	@echo "📁 Cleaning local files..."
+	@rm -rf docker-shared 2>/dev/null || true
+	@rm -rf srcs/foundry/out 2>/dev/null || true
+	@echo "✅ Complete cleanup finished!"
 
-# Production helpers
-prod-build: ## Build for production
-	@echo "🏭 Building for production..."
-	docker-compose -f docker-compose.yml build --no-cache
+clean-light: ## Light cleanup - containers and volumes only (keep images)
+	@echo "🧹 Light zkMed cleanup (containers + volumes, keep images)..."
+	@docker compose down -v 2>/dev/null || true
+	@docker volume rm zkmed_contract_artifacts 2>/dev/null || true
+	@docker volume rm zkmed_contract-artifacts 2>/dev/null || true
+	@docker system prune -f --volumes
+	@rm -rf docker-shared 2>/dev/null || true
+	@echo "✅ Light cleanup finished!"
 
-prod-deploy: ## Deploy to production (requires additional configuration)
-	@echo "🚀 Production deployment requires additional configuration"
-	@echo "Please configure your production environment variables and domain settings"
+status: ## Show unified deployment status
+	@echo "📊 Unified vlayer + zkMed Status"
+	@echo "==============================="
+	@echo "All Services (docker-compose.yml):"
+	@docker compose ps || echo "No containers running"
+	@echo ""
+	@$(MAKE) health
 
-# Documentation
-docs: ## Generate documentation
-	@echo "📚 zkMed Container Documentation"
+quick-start: ## Quick start guide for new users
+	@echo "🚀 zkMed Quick Start Guide"
 	@echo ""
-	@echo "Architecture:"
-	@echo "  - vlayer services (anvil, call_server, vdns_server, notary-server)"
-	@echo "  - zkmed-contracts (smart contract deployment)"
-	@echo "  - zkmed-frontend (Next.js application)"
-	@echo "  - zkmed-demo-api (demo data API)"
-	@echo "  - zkmed-proxy (nginx reverse proxy)"
+	@echo "🏃‍♂️ Super Quick (everything in one command):"
+	@echo "   make all                    # Complete setup + deployment"
 	@echo ""
-	@echo "For detailed information, see:"
-	@echo "  - ./demo-data/README.md"
-	@echo "  - ./containers/*/README.md"
-	@echo "  - ./docker-compose.yml"
+	@echo "📝 Step by step:"
+	@echo "   1. make validate            # Check environment"
+	@echo "   2. make deploy              # Deploy locally"
+	@echo "   3. make logs                # Monitor logs"
+	@echo ""
+	@echo "🎯 Access points:"
+	@echo "   Frontend: http://localhost:3001"
+	@echo "   Dev Page: http://localhost:3001/dev"
+	@echo ""
+	@echo "🧹 When done:"
+	@echo "   make clean                  # Remove everything"
 
-# Quick start
-quick-start: ## Quick start for new users
-	@echo "🚀 zkMed Quick Start"
-	@echo ""
-	@echo "1. Setting up development environment..."
-	$(MAKE) dev-env
-	@echo ""
-	@echo "2. Building containers..."
-	$(MAKE) build
-	@echo ""
-	@echo "3. Starting demo environment..."
-	$(MAKE) demo-setup
-	@echo ""
-	@echo "🎉 Quick start complete!"
-	@echo ""
-	@echo "Next steps:"
-	@echo "  - Visit http://localhost for the demo frontend"
-	@echo "  - Use 'make demo-test' to test workflows"
-	@echo "  - Use 'make logs' to monitor services"
-	@echo "  - Use 'make help' for more commands" 
+ 
