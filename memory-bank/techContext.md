@@ -1,505 +1,399 @@
-# zkMed Technical Context - Pool-Enabled Healthcare Platform
+# zkMed Technical Context - Advanced Healthcare Technology Stack
 
-**Purpose**: Complete technical foundation for the revolutionary zkMed healthcare platform featuring Aave V3 pool integration, Mantle USD (mUSD) processing, dual patient registration paths, and comprehensive local fork testing environment.
-
----
-
-## 🏗️ CORE TECHNOLOGY STACK
-
-### Blockchain & Smart Contract Infrastructure
-
-#### Primary Blockchain: **Mantle Network**
-- **Target Network**: Mantle mainnet with native mUSD integration
-- **Development Environment**: Local Mantle fork (Chain ID: 31339)
-- **Benefits**: Lower transaction costs, native stablecoin, thirdweb partnership
-- **Cookathon Integration**: Optimized for The Cookathon hackathon submission
-
-#### Smart Contract Development
-- **Framework**: Foundry (Forge, Cast, Anvil)
-- **Language**: Solidity ^0.8.20
-- **Testing**: Comprehensive test suite with 100% coverage target
-- **Deployment**: Mantle-optimized deployment scripts
-
-#### Local Development Environment
-```bash
-# Mantle Fork Configuration
-FORK_URL=https://rpc.mantle.xyz
-CHAIN_ID=31339
-BLOCK_NUMBER=latest # Fork from current Mantle state
-
-# Container Setup
-Docker: mantle-dev-environment
-Port: 8545 (Anvil RPC)
-State: Real Mantle mainnet contracts available
-```
+**Purpose**: Comprehensive technical overview of zkMed's revolutionary pool-enabled healthcare platform, including all technologies, development setup, constraints, and integration patterns.
 
 ---
 
-## 💰 REVOLUTIONARY POOLING INFRASTRUCTURE
+## 🛠️ Core Technology Stack
 
-### Aave V3 Pool Integration
+### Blockchain Infrastructure
+- **Primary Chain**: Mantle Network (Ethereum L2)
+- **Chain ID**: 31339 (Local Fork) / 5000 (Mainnet)
+- **Native Currency**: Mantle USD (mUSD) for all healthcare transactions
+- **Consensus**: Optimistic rollup with fast finality
+- **Gas Optimization**: Native Layer 2 benefits for reduced transaction costs
 
-#### Core Pool Architecture
-- **Pool Management**: Automated healthcare fund pooling via Aave V3 protocols
-- **Yield Generation**: 3-5% APY on idle healthcare funds (patients & insurers)
-- **Instant Liquidity**: Proven Aave mechanisms ensure immediate claim payouts
-- **Risk Management**: Battle-tested parameters protect deposited funds
+### Smart Contract Development
+- **Framework**: Foundry (Solidity development, testing, deployment)
+- **Language**: Solidity ^0.8.20 with latest features
+- **Testing**: Forge with 100% test coverage requirement
+- **Deployment**: Automated scripts with contract verification
+- **Standards**: OpenZeppelin contracts for security and standards compliance
 
-#### Technical Integration Points
-```solidity
-// Aave V3 Interfaces
-import "@aave/core-v3/contracts/interfaces/IPool.sol";
-import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
+### Privacy & Proof Technology
+- **vlayer Integration**: Advanced email and web proof generation
+  - **MailProofs**: Domain verification for healthcare organizations
+  - **WebProofs**: Patient portal and hospital system validation
+  - **ZK Proofs**: Privacy-preserving medical procedure validation
+- **Commitment Schemes**: Cryptographic patient identity protection
+- **PRE Encryption**: Controlled post-approval medical data access
+- **Zero-Knowledge Architecture**: Complete medical privacy preservation
 
-// Key Integration Functions
-aavePool.supply(address(mUSD), amount, address(this), 0);
-aavePool.withdraw(address(mUSD), amount, hospital);
-```
+### DeFi Integration
+- **Aave V3 Protocol**: Battle-tested lending pools for yield generation
+  - **Healthcare Pools**: Dedicated pools for patient premiums and insurer funds
+  - **Yield Generation**: 3-5% APY on idle healthcare funds
+  - **Instant Liquidity**: Proven mechanisms for immediate claim payouts
+  - **Risk Management**: Aave's established risk parameters and insurance
+- **Multi-Asset Support**: mUSD primary with expansion capability
+- **Pool Management**: Automated rebalancing and optimization
 
-#### Pool Performance Metrics
-- **Patient Pools**: Individual premium deposits earning yield until claims
-- **Insurer Pools**: Operational fund deposits generating returns
-- **Yield Distribution**: 60% patients, 20% insurers, 20% protocol
-- **Liquidity Monitoring**: Real-time pool balance and utilization tracking
-
----
-
-## 🪙 NATIVE STABLECOIN PROCESSING
-
-### Mantle USD (mUSD) Integration
-
-#### Technical Benefits
-- **Native Integration**: Official Mantle stablecoin eliminates bridge risks
-- **Simplified Architecture**: Direct mUSD processing removes oracle dependencies
-- **Lower Costs**: Native asset reduces transaction fees
-- **Enhanced Security**: No external price feeds or conversion mechanisms
-
-#### Smart Contract Integration
-```solidity
-// Direct mUSD Processing
-IERC20 public mUSD = IERC20(MANTLE_USD_ADDRESS);
-
-// Premium Payments
-mUSD.transferFrom(patient, poolContract, premiumAmount);
-
-// Claim Payouts
-mUSD.transfer(hospital, authorizedAmount);
-```
-
-#### Replaced Technology (Removed)
-- ~~Flare FTSO Price Oracles~~ → Direct mUSD amounts
-- ~~USD to USDC conversion~~ → Native mUSD processing
-- ~~External price feeds~~ → Stable value by design
-- ~~Oracle update mechanisms~~ → Eliminated entirely
+### User Experience & Authentication
+- **thirdweb SDK**: Comprehensive Web3 authentication and interaction
+  - **Smart Accounts**: Abstract account management for seamless UX
+  - **Gas Sponsorship**: Sponsored transactions for healthcare interactions
+  - **Social Login**: Familiar authentication methods for user onboarding
+  - **Mobile Support**: Full mobile compatibility with responsive design
+- **Wallet Integration**: Support for all major wallet providers
+- **Session Management**: Persistent authentication across interactions
 
 ---
 
-## 🔐 MULTI-PROOF PRIVACY ARCHITECTURE
+## 🏗️ Development Environment & Tools
 
-### vlayer Integration (Enhanced)
-
-#### Proof Types Implementation
-1. **MailProofs**: Organization domain verification via email validation
-2. **WebProofs**: Patient portal and hospital system verification  
-3. **ZK Proofs**: Privacy-preserving procedure validation within encrypted EHR
-
-#### Technical Implementation
-```javascript
-// vlayer Prover Integration
-const prover = new EmailDomainProver();
-
-// MailProof Generation
-const mailProof = await prover.verifyOrganization(emailData);
-
-// WebProof Generation  
-const webProof = await prover.verifyPortalAccess(patientData);
-
-// ZK Proof Generation
-const zkProof = await prover.verifyProcedureCoverage(ehrData);
-```
-
-#### Privacy Guarantees
-- **Zero Medical Data Exposure**: Procedures validated via ZK proofs only
-- **Domain Verification**: MailProofs prevent organization impersonation
-- **Portal Validation**: WebProofs confirm legitimate system access
-- **Combined Security**: Multi-proof architecture maximizes security
-
----
-
-## 🎭 DUAL REGISTRATION INNOVATION
-
-### Enhanced Patient Onboarding
-
-#### Registration Path A: Existing Insurance Coverage
-```solidity
-function registerPatientWithInsurer(
-    bytes32 commitment,
-    address existingInsurer,
-    bytes memory mailProof
-) external {
-    // Verify insurer mailproof
-    require(verifyInsurerProof(mailProof, existingInsurer), "Invalid insurer proof");
-    
-    // Store privacy-preserving commitment
-    patientCommitments[msg.sender] = commitment;
-    
-    // Link to existing insurer pool
-    poolingContract.linkToExistingPool(msg.sender, existingInsurer);
-}
-```
-
-#### Registration Path B: New Insurance Selection
-```solidity
-function registerPatientWithSelection(
-    bytes32 commitment,
-    address selectedInsurer,
-    uint256 monthlyPremium
-) external {
-    // Record patient selection
-    patientSelections[msg.sender] = InsuranceSelection({
-        insurer: selectedInsurer,
-        premium: monthlyPremium,
-        startTime: block.timestamp
-    });
-    
-    // Create new patient pool
-    poolingContract.createPatientPool(msg.sender, selectedInsurer, monthlyPremium);
-}
-```
-
-#### Technical Benefits
-- **Flexible Onboarding**: Accommodates both existing and new insurance scenarios
-- **Pool Integration**: Both paths enable yield generation on healthcare funds
-- **Privacy Preservation**: Medical details remain encrypted regardless of registration path
-- **Automated Payments**: Seamless monthly premium processing via pool contracts
-
----
-
-## 🚀 THIRDWEB AUTHENTICATION & SPONSORSHIP
-
-### Smart Account Integration
-
-#### Gas Sponsorship Architecture
-- **Provider**: thirdweb Smart Accounts with built-in paymaster
-- **Sponsored Actions**: Patient registration, premium payments, claim submissions
-- **Cost Optimization**: Reduces barrier to entry for healthcare platform users
-- **Mantle Compatibility**: Optimized for Mantle network gas pricing
-
-#### Technical Implementation
-```typescript
-// thirdweb Smart Account Setup
-const smartAccount = new SmartAccount({
-  chain: mantleChain,
-  gasless: true,
-  bundlerUrl: THIRDWEB_BUNDLER_URL,
-  paymasterUrl: THIRDWEB_PAYMASTER_URL,
-});
-
-// Sponsored Transaction Execution
-await smartAccount.sendTransaction({
-  to: registrationContract.address,
-  data: registrationContract.interface.encodeFunctionData("registerPatientWithSelection", [
-    commitment,
-    selectedInsurer,
-    monthlyPremium
-  ]),
-});
-```
-
-#### Cookathon Alignment
-- **Official Partnership**: thirdweb is official Cookathon partner
-- **Competitive Advantage**: Leverages official tools for seamless UX
-- **Prize Track Alignment**: Maximizes compatibility with hackathon criteria
-
----
-
-## 🧪 COMPREHENSIVE TESTING ENVIRONMENT
-
-### Local Mantle Fork Strategy
-
-#### Development Environment Setup
-```bash
-# Start Mantle Fork
-anvil \
-  --fork-url https://rpc.mantle.xyz \
-  --chain-id 31339 \
-  --port 8545 \
-  --accounts 10 \
-  --balance 1000000
-
-# Deploy Aave V3 Pools
-forge script DeployAavePools --fork-url http://localhost:8545
-
-# Setup mUSD Integration
-forge script SetupMantleUSD --fork-url http://localhost:8545
-```
-
-#### Testing Strategy
-1. **Unit Testing**: Individual contract function validation
-2. **Integration Testing**: Pool interaction workflows
-3. **End-to-End Testing**: Complete claim processing flows
-4. **Performance Testing**: Gas optimization and throughput
-5. **Security Testing**: Multi-proof validation and edge cases
-
-#### Benefits of Local Fork Testing
-- **Real State Access**: Fork provides access to actual Mantle contracts
-- **Zero Cost Testing**: Unlimited testing without mainnet fees
-- **Instant Feedback**: Immediate transaction confirmation
-- **Safe Environment**: No risk to real funds or data
-
----
-
-## 📊 DEVELOPMENT TOOLS & INFRASTRUCTURE
-
-### Foundry Development Suite
-
-#### Core Tools
-```bash
-# Testing Framework
-forge test --gas-report --coverage
-
-# Deployment Scripts
-forge script DeployAll --broadcast --verify
-
-# Contract Interaction
-cast call $CONTRACT "getPatientPool(address)" $PATIENT_ADDRESS
-
-# State Inspection
-cast storage $POOLING_CONTRACT 0 --rpc-url http://localhost:8545
-```
-
-#### Advanced Features
-- **Gas Profiling**: Optimize contract efficiency
-- **Coverage Reports**: Ensure comprehensive testing
-- **State Fuzzing**: Automated edge case discovery
-- **Integration Testing**: Multi-contract workflows
+### Local Development Setup
+- **Mantle Fork Environment**: Chain ID 31339 with real mainnet state
+- **Aave V3 Contracts**: Full protocol access for pool testing
+- **vlayer Services**: Complete proof generation and verification stack
+- **Docker Containers**: Consistent development environment across teams
+- **Hot Reloading**: Instant feedback during smart contract development
 
 ### Development Workflow
 ```bash
-# 1. Start Local Environment
-make start-mantle-fork
+# Environment Setup
+make dev-setup          # Initialize complete development environment
+make start-mantle-fork  # Launch persistent Mantle fork with demo data
+make deploy-contracts   # Deploy all contracts with demo configuration
+make start-frontend     # Launch Next.js with pool dashboard
+make test-integration   # Run comprehensive integration tests
+```
 
-# 2. Deploy Contracts
-make deploy-local
+### Testing Infrastructure
+- **Unit Testing**: Individual contract function testing
+- **Integration Testing**: Cross-contract interaction validation
+- **E2E Testing**: Complete user workflow testing
+- **Gas Analysis**: Optimization and cost tracking
+- **Security Testing**: Vulnerability scanning and audit preparation
 
-# 3. Setup Pools
-make setup-aave-pools
-
-# 4. Run Tests
-make test-all
-
-# 5. Integration Testing
-make test-e2e
-
-# 6. Pool Performance Testing
-make test-yield-generation
+### Container Architecture
+```yaml
+# Development Stack
+services:
+  mantle-fork:
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: anvil --fork-url https://rpc.mantle.xyz --chain-id 31339
+    ports: ["8545:8545"]
+    
+  vlayer-services:
+    image: vlayer/dev-stack:latest
+    ports: ["3000:3000", "3002:3002", "7047:7047"]
+    
+  redis-cache:
+    image: redis:alpine
+    ports: ["6379:6379"]
+    
+  frontend:
+    build: ./packages/nextjs
+    ports: ["3001:3000"]
+    environment:
+      - NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
 ```
 
 ---
 
-## 🎯 INTEGRATION ARCHITECTURE
+## 🔐 Security Architecture & Patterns
 
-### Contract Dependency Graph
+### Smart Contract Security
+- **Access Control**: Role-based permissions with multi-signature requirements
+- **Reentrancy Protection**: Comprehensive guards against attack vectors
+- **Input Validation**: Strict validation of all user inputs and external data
+- **Emergency Pauses**: Circuit breakers for critical system functions
+- **Upgrade Patterns**: Secure proxy patterns for future improvements
 
-```mermaid
-graph TD
-    subgraph "Core Infrastructure"
-        A[RegistrationContract] --> B[PoolingContract]
-        B --> C[Aave V3 Pools]
-        B --> D[mUSD Token]
-    end
-    
-    subgraph "User Modules"
-        E[PatientModule] --> A
-        F[OrganizationModule] --> A
-        E --> B
-        F --> B
-    end
-    
-    subgraph "Processing Layer"
-        G[ClaimProcessingContract] --> B
-        H[InsuranceContract] --> B
-        G --> I[vlayer Verifier]
-        H --> I
-    end
-    
-    subgraph "External Integrations"
-        J[thirdweb Smart Accounts] --> A
-        K[Aave V3 Protocol] --> B
-        L[Mantle USD] --> B
-    end
+### Privacy Preservation Patterns
+```solidity
+// Patient Commitment Pattern
+bytes32 commitment = keccak256(abi.encodePacked(secret, patientAddress));
+
+// Zero-Knowledge Validation Pattern
+function validateWithoutExposure(bytes zkProof, bytes32 procedureHash) external {
+    require(vlayerVerifier.verifyProof(zkProof, procedureHash), "Invalid proof");
+    // Medical data never exposed, only validity confirmed
+}
+
+// Encrypted Storage Pattern
+struct EncryptedEHR {
+    string ipfsCID;     // Encrypted file reference
+    bytes preKey;       // PRE key for controlled access
+    bytes32 hash;       // Integrity verification
+}
 ```
 
-### Data Flow Architecture
-
-```mermaid
-graph LR
-    subgraph "Patient Registration"
-        A[Patient] --> B{Registration Path?}
-        B -->|Existing| C[Insurer MailProof]
-        B -->|New| D[Insurer Selection]
-        C --> E[Pool Access]
-        D --> F[Pool Creation]
-    end
-    
-    subgraph "Pool Operations"
-        E --> G[Monthly Premiums]
-        F --> G
-        G --> H[Aave V3 Pools]
-        H --> I[Yield Generation]
-    end
-    
-    subgraph "Claims Processing"
-        J[Hospital] --> K[Multi-Proof Submission]
-        K --> L[Pool Liquidity Check]
-        L --> M[Claim Authorization]
-        M --> N[Instant mUSD Payout]
-    end
-```
+### Container Security
+- **Image Scanning**: Automated vulnerability detection in container images
+- **Minimal Images**: Alpine-based containers with only required dependencies
+- **Non-Root Users**: All containers run with unprivileged user accounts
+- **Network Isolation**: Service-specific networks with controlled communication
+- **Secret Management**: Encrypted storage of sensitive configuration data
 
 ---
 
-## 🔧 OPTIMIZATION STRATEGIES
+## 💰 Aave V3 Integration Architecture
 
-### Gas Optimization Techniques
-
-#### Smart Contract Optimization
+### Pool Management Patterns
 ```solidity
-// Packed structs for storage efficiency
-struct PatientPool {
-    address patient;      // 20 bytes
-    address insurer;      // 20 bytes
-    uint128 monthlyPremium; // 16 bytes (reduced from uint256)
-    uint128 totalDeposited; // 16 bytes
-    uint64 lastDepositTime; // 8 bytes
-    bool isActive;        // 1 byte
+interface IPoolingContract {
+    // Core pool operations
+    function depositToHealthcarePool(address patient, uint256 amount) external;
+    function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount) external;
+    function calculateAccruedYield(address stakeholder) external view returns (uint256);
+    function distributeYield() external;
+    
+    // Pool state management
+    function getPoolBalance(address stakeholder) external view returns (uint256);
+    function getYieldEarned(address stakeholder) external view returns (uint256);
+    function validatePoolLiquidity(uint256 requestedAmount) external view returns (bool);
 }
 ```
 
-#### Batch Operations
+### Yield Distribution Architecture
 ```solidity
-// Batch premium processing
-function batchDepositPremiums(address[] calldata patients) external {
-    for (uint256 i = 0; i < patients.length; i++) {
-        _depositMonthlyPremium(patients[i]);
-    }
-}
-
-// Batch claim authorization
-function batchAuthorizeClaims(uint256[] calldata claimIds) external {
-    for (uint256 i = 0; i < claimIds.length; i++) {
-        _authorizeClaimPayout(claimIds[i]);
-    }
-}
-```
-
-### Pool Performance Optimization
-
-#### Aave Integration Efficiency
-- **Batch Deposits**: Combine multiple premium deposits into single Aave supply
-- **Strategic Withdrawals**: Optimize withdrawal timing for maximum yield
-- **Liquidity Management**: Dynamic rebalancing based on claim volume patterns
-- **Yield Calculation**: Efficient computation of proportional returns
-
----
-
-## �� MONITORING & ANALYTICS
-
-### Real-Time Pool Monitoring
-
-#### Key Metrics Tracking
-```solidity
-// Pool Performance Metrics
-struct PoolMetrics {
-    uint256 totalDeposited;
-    uint256 totalYieldEarned;
-    uint256 averageAPY;
-    uint256 claimsProcessed;
-    uint256 averagePayoutTime;
-    uint256 utilizationRate;
-}
-
-// Yield Distribution Tracking
 struct YieldDistribution {
-    uint256 patientReturns;
-    uint256 insurerReturns;
-    uint256 protocolReturns;
-    uint256 distributionTimestamp;
+    uint256 totalYield;
+    uint256 patientShare;    // 60% of yield
+    uint256 insurerShare;    // 20% of yield
+    uint256 protocolShare;   // 20% of yield
+    uint256 distributionTime;
+}
+
+function automatedYieldDistribution() external {
+    uint256 totalYield = aavePool.getReservesData(mUSD).liquidityIndex;
+    distributeProportionally(totalYield);
+    emit YieldDistributed(totalYield, block.timestamp);
 }
 ```
 
-#### Analytics Dashboard Integration
-- **Pool Performance**: Real-time yield tracking and utilization metrics
-- **Patient Benefits**: Effective premium costs after yield generation
-- **Insurer Metrics**: Operational fund performance and claim efficiency
-- **System Health**: Overall platform performance and growth metrics
+### Pool Safety Mechanisms
+- **Liquidity Buffers**: Minimum reserves for emergency withdrawals
+- **Gradual Withdrawal Limits**: Rate limiting for large withdrawals
+- **Pool Health Monitoring**: Continuous monitoring of utilization rates
+- **Emergency Shutdown**: Ability to pause operations during market stress
 
 ---
 
-## 🔒 SECURITY ARCHITECTURE
+## 🌐 Frontend Technology Stack
 
-### Multi-Layer Security Strategy
+### Next.js 15 Architecture
+- **App Router**: Modern routing with server-side rendering
+- **React Server Components**: Optimal performance with minimal client JavaScript
+- **TypeScript**: Full type safety across the application
+- **Tailwind CSS**: Utility-first styling with responsive design
+- **Responsive Design**: Mobile-first approach with desktop optimization
 
-#### Smart Contract Security
-1. **Formal Verification**: Mathematical proof of contract correctness
-2. **Comprehensive Testing**: 100% code coverage with edge case validation
-3. **Access Control**: Role-based permissions with multi-owner management
-4. **Upgrade Patterns**: Proxy contracts for safe feature additions
+### Web3 Integration
+```typescript
+// thirdweb Configuration
+import { createThirdwebClient, getContract } from "thirdweb";
+import { defineChain } from "thirdweb/chains";
 
-#### Privacy Protection
-1. **Zero-Knowledge Proofs**: Medical data never exposed on-chain
-2. **Commitment Schemes**: Patient identity protection via cryptographic commitments
-3. **Encrypted Storage**: All sensitive data encrypted before IPFS storage
-4. **Minimal Data**: Only essential hashes and proofs stored on-chain
+const client = createThirdwebClient({
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+});
 
-#### Pool Security
-1. **Aave Integration**: Leverage battle-tested DeFi protocols
-2. **Liquidity Validation**: Pre-authorization pool balance checks
-3. **Yield Protection**: Automated distribution prevents fund accumulation
-4. **Emergency Procedures**: Circuit breakers for unusual activity
+const mantleChain = defineChain({
+  id: 31339,
+  rpc: "http://localhost:8545",
+  nativeCurrency: { name: "Mantle", symbol: "MNT", decimals: 18 },
+});
+
+// Contract Integration
+const registrationContract = getContract({
+  client,
+  chain: mantleChain,
+  address: process.env.NEXT_PUBLIC_REGISTRATION_CONTRACT,
+});
+```
+
+### Pool Dashboard Components
+- **Real-time Yield Tracking**: Live updates of pool performance and yields
+- **Insurance Selection Interface**: Comparison of insurers by pool metrics
+- **Automated Payment Management**: Setup and monitoring of monthly premiums
+- **Claims Status Tracking**: Multi-proof validation progress and payouts
+- **Privacy-Preserving Analytics**: Pool insights without personal data exposure
+
+### State Management
+- **React Query**: Server state management with automatic caching
+- **Zustand**: Client state management for UI interactions
+- **Local Storage**: Persistent user preferences and session data
+- **Real-time Updates**: WebSocket connections for live pool data
 
 ---
 
-## 🎉 TECHNICAL ACHIEVEMENTS
+## 🐳 Production Deployment Architecture
 
-### Innovation Highlights
+### Container Orchestration (Dockploy)
+```yaml
+# Production Container Stack
+version: '3.8'
+services:
+  mantle-fork:
+    image: zkmed/mantle-fork:latest
+    restart: always
+    ports: ["8545:8545"]
+    volumes:
+      - blockchain_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-#### Revolutionary Pool Integration
-- ✅ First healthcare platform with yield-generating fund pools
-- ✅ Seamless Aave V3 integration for proven liquidity mechanisms
-- ✅ Automated yield distribution maintaining stakeholder incentives
-- ✅ Real-time pool performance monitoring and optimization
+  contract-deployer:
+    image: zkmed/deployer:latest
+    restart: "no"
+    depends_on:
+      - mantle-fork
+    environment:
+      - RPC_URL=http://mantle-fork:8545
+      - PRIVATE_KEY=${DEPLOYER_PRIVATE_KEY}
 
-#### Simplified Architecture
-- ✅ Native mUSD processing eliminates oracle dependencies
-- ✅ Direct stablecoin handling reduces complexity and risks
-- ✅ Streamlined claim processing with instant payouts
-- ✅ Enhanced security through reduced external dependencies
+  frontend:
+    image: zkmed/frontend:latest
+    restart: always
+    ports: ["3000:3000"]
+    environment:
+      - NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
+      - NEXT_PUBLIC_CHAIN_ID=31339
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
 
-#### Advanced Privacy Technology
-- ✅ Multi-proof validation architecture (ZK + Web + Mail)
-- ✅ Complete medical data privacy preservation
-- ✅ Zero-knowledge procedure validation systems
-- ✅ Privacy-preserving pool performance metrics
+  nginx-proxy:
+    image: nginx:alpine
+    restart: always
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ssl_certs:/etc/ssl/certs
+```
 
-#### Dual Registration Innovation
-- ✅ Flexible patient onboarding for all insurance scenarios
-- ✅ Pool-enabled benefits regardless of registration path
-- ✅ Automated payment systems with yield tracking
-- ✅ Market-driven insurer competition optimization
+### Infrastructure Requirements
+- **CPU**: Minimum 4 cores for production workload
+- **Memory**: 8GB RAM for all services
+- **Storage**: 100GB SSD for blockchain data and logs
+- **Network**: Stable internet with 100Mbps bandwidth
+- **SSL**: Automatic certificate management via Let's Encrypt
 
-### Competitive Advantages
+### Monitoring & Observability
+- **Health Checks**: Automated monitoring of all service endpoints
+- **Logging**: Centralized log aggregation and analysis
+- **Metrics**: Real-time performance monitoring and alerting
+- **Backup**: Automated snapshots of blockchain state and configuration
+- **Disaster Recovery**: Documented procedures for service restoration
 
-#### Technical Superiority
-- **Capital Efficiency**: Only platform generating yield on healthcare funds
-- **Instant Processing**: Aave-powered immediate claim payouts
-- **Privacy-First**: Advanced multi-proof validation without data exposure
-- **Native Integration**: Mantle ecosystem optimization for lower costs
+---
 
-#### Market Position
-- **Cookathon Optimization**: Aligned with hackathon requirements and judging criteria
-- **thirdweb Partnership**: Leverages official sponsor tools for competitive edge
-- **Proven Technology**: Built on battle-tested Aave protocols for reliability
-- **Scalable Architecture**: Designed for mainstream healthcare adoption
+## 🔧 Development Constraints & Considerations
 
-**zkMed delivers the world's first privacy-preserving healthcare platform with revolutionary yield-generating pools, setting new standards for both capital efficiency and medical privacy in Web3 healthcare!** 🚀 
+### Technical Constraints
+- **Gas Limits**: Optimized contract design for Mantle network limits
+- **Oracle Dependencies**: Eliminated through native mUSD integration
+- **Scalability**: Container architecture designed for horizontal scaling
+- **Privacy Requirements**: Zero medical data on-chain compliance
+- **Regulatory Compliance**: GDPR/HIPAA-ready architecture patterns
+
+### Performance Requirements
+- **Transaction Speed**: Sub-second confirmation times on Mantle L2
+- **Pool Updates**: Real-time yield calculations and distribution
+- **UI Responsiveness**: <200ms response times for all interactions
+- **Container Startup**: <30 seconds for full stack initialization
+- **Error Recovery**: Automatic restart and state restoration capabilities
+
+### Security Requirements
+- **Multi-Signature**: All administrative functions require multiple signatures
+- **Audit Trail**: Complete logging of all system interactions
+- **Privacy Preservation**: Medical data never stored or transmitted unencrypted
+- **Access Control**: Granular permissions with regular access reviews
+- **Vulnerability Management**: Regular security updates and patch management
+
+---
+
+## 📚 Dependencies & Integration Points
+
+### Core Dependencies
+```json
+{
+  "smart-contracts": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@aave/core-v3": "^1.19.0",
+    "vlayer": "^0.1.0",
+    "forge-std": "^1.7.0"
+  },
+  "frontend": {
+    "next": "^15.0.0",
+    "react": "^18.2.0",
+    "thirdweb": "^5.0.0",
+    "@tanstack/react-query": "^5.0.0",
+    "wagmi": "^2.0.0",
+    "zustand": "^4.4.0"
+  },
+  "infrastructure": {
+    "docker": "^24.0.0",
+    "nginx": "^1.25.0",
+    "redis": "^7.2.0"
+  }
+}
+```
+
+### External Service Integration
+- **vlayer Network**: Proof generation and verification services
+- **Aave V3 Protocol**: Lending pool integration for yield generation
+- **IPFS/Web3.Storage**: Decentralized storage for encrypted medical records
+- **Mantle RPC**: Blockchain interaction and state queries
+- **thirdweb Infrastructure**: Gas sponsorship and wallet management
+
+### API Integration Points
+```typescript
+// External Service APIs
+interface ExternalAPIs {
+  vlayer: {
+    proveEmail: (email: UnverifiedEmail) => Promise<Proof>;
+    verifyProof: (proof: Proof) => Promise<boolean>;
+  };
+  aave: {
+    supply: (asset: string, amount: bigint) => Promise<TxHash>;
+    withdraw: (asset: string, amount: bigint) => Promise<TxHash>;
+    getAPY: (asset: string) => Promise<number>;
+  };
+  thirdweb: {
+    sponsorTransaction: (tx: Transaction) => Promise<SponsoredTx>;
+    createSmartAccount: (owner: string) => Promise<SmartAccount>;
+  };
+}
+```
+
+---
+
+## 🎯 Technical Success Metrics
+
+### Performance Benchmarks
+- **Contract Deployment**: <30 seconds on Mantle network
+- **Pool Operations**: <5 seconds for deposits and withdrawals
+- **Proof Generation**: <10 seconds for multi-proof validation
+- **Frontend Loading**: <3 seconds for initial page load
+- **Real-time Updates**: <1 second latency for pool data updates
+
+### Reliability Targets
+- **System Uptime**: 99.9% availability target
+- **Container Health**: Automatic restart within 30 seconds
+- **Data Persistence**: Zero data loss across service restarts
+- **Error Handling**: Graceful degradation for all failure scenarios
+- **Recovery Time**: <5 minutes for full system restoration
+
+### Security Validation
+- **Audit Completion**: Full security audit before mainnet deployment
+- **Penetration Testing**: Regular testing of all system components
+- **Vulnerability Scanning**: Automated scanning of container images
+- **Access Review**: Monthly review of all system permissions
+- **Incident Response**: Documented procedures for security incidents
+
+**zkMed's technical architecture represents a cutting-edge integration of privacy-preserving technologies, DeFi protocols, and modern container infrastructure, delivering unprecedented healthcare innovation while maintaining enterprise-grade security and reliability.** 🚀 

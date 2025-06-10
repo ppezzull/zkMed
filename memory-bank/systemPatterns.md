@@ -1,16 +1,14 @@
 # zkMed System Patterns - Pool-Enabled Healthcare Architecture
 
-**Purpose**: Comprehensive overview of the revolutionary system architecture patterns enabling privacy-preserving healthcare with yield-generating fund pools, multi-proof validation, and seamless Mantle USD integration.
+**Purpose**: Comprehensive architecture patterns enabling privacy-preserving healthcare with yield-generating fund pools, multi-proof validation, and seamless Mantle USD integration.
 
 ---
 
-## 🏗️ REVOLUTIONARY POOL-ENABLED ARCHITECTURE
+## 🏗️ Core Architecture Patterns
 
-### Core Innovation: Healthcare Fund Pools with Yield Generation
+### Revolutionary Pool-Enabled Pattern
 
-**Fundamental Innovation**: zkMed is the first healthcare platform to integrate yield-generating fund pools with privacy-preserving claims processing, delivering unprecedented capital efficiency while maintaining complete medical privacy.
-
-#### Pool Architecture Patterns
+**Fundamental Innovation**: First healthcare platform integrating yield-generating fund pools with privacy-preserving claims processing.
 
 ```mermaid
 graph TB
@@ -21,7 +19,7 @@ graph TB
         C --> D[Stakeholder Distribution]
     end
     
-    subgraph "Yield Distribution (Automated)"
+    subgraph "Automated Distribution"
         D --> E[60% to Patients]
         D --> F[20% to Insurers]
         D --> G[20% to Protocol]
@@ -32,27 +30,24 @@ graph TB
         I --> J[Instant mUSD Withdrawal]
         J --> K[Hospital Payment]
     end
-    
-    Pool --> I
 ```
 
-#### Advantages vs Traditional Healthcare Systems
+#### Pattern Benefits vs Traditional Systems
 
-| Aspect | Traditional Healthcare | zkMed Pool-Enabled System |
-|--------|----------------------|---------------------------|
-| **Fund Utilization** | Premiums sit idle in bank accounts | Funds earn 3-5% APY via Aave V3 |
-| **Claim Payouts** | Weeks of processing delays | Instant withdrawals upon authorization |
-| **Capital Efficiency** | 0% return on waiting funds | Maximum yield generation on all deposits |
-| **Patient Benefits** | Full premium costs | Reduced effective costs via yield returns |
-| **Liquidity Management** | Manual reserve management | Automated Aave protocol mechanisms |
+| Aspect | Traditional Healthcare | zkMed Pool-Enabled |
+|--------|----------------------|-------------------|
+| **Fund Utilization** | 0% return on idle premiums | 3-5% APY via Aave V3 |
+| **Claim Payouts** | Weeks of processing delays | Instant withdrawals |
+| **Capital Efficiency** | Manual reserve management | Automated protocol mechanisms |
+| **Patient Benefits** | Full premium costs | Reduced effective costs via yield |
 
 ---
 
-## 🎭 DUAL REGISTRATION INNOVATION PATTERNS
+## 🎭 Dual Registration Architecture Pattern
 
-### Flexible Patient Onboarding Architecture
+### Flexible Patient Onboarding Design
 
-**Innovation**: First healthcare platform offering dual registration paths accommodating both existing coverage and new insurance selection scenarios.
+**Innovation**: First healthcare platform offering dual registration paths accommodating both existing coverage and new insurance selection.
 
 #### Registration Path A: Existing Coverage Integration
 ```mermaid
@@ -64,12 +59,6 @@ graph LR
     E --> F[Immediate Pool Benefits]
 ```
 
-**Pattern Benefits**:
-- **Zero Friction**: Existing patients get immediate platform access
-- **Pool Integration**: Instant yield generation on existing coverage
-- **Privacy Preservation**: No medical data exposure during verification
-- **Insurer Verification**: MailProofs prevent impersonation
-
 #### Registration Path B: Insurance Selection & Pool Creation
 ```mermaid
 graph LR
@@ -78,16 +67,9 @@ graph LR
     C --> D[Insurer Selection]
     D --> E[Pool Creation]
     E --> F[Automated Payments]
-    F --> G[Yield Tracking]
 ```
 
-**Pattern Benefits**:
-- **Informed Choice**: Pool performance metrics enable smart decisions
-- **Competitive Market**: Insurers compete on pool yield and efficiency
-- **Automated Management**: Set-and-forget monthly payment systems
-- **Transparent Returns**: Real-time yield tracking and effective cost calculation
-
-### Market Dynamics Enhancement
+#### Market Dynamics Enhancement
 ```mermaid
 graph TB
     subgraph "Insurer Competition"
@@ -98,22 +80,21 @@ graph TB
     
     subgraph "Patient Decision"
         D --> E[Yield Comparison]
-        E --> F[Coverage Analysis]
-        F --> G[Selection Decision]
+        E --> F[Selection Decision]
     end
     
     subgraph "Market Effects"
-        G --> H[Better Pool Management]
-        H --> I[Higher Yields]
-        I --> J[Lower Effective Premiums]
+        F --> G[Better Pool Management]
+        G --> H[Higher Yields]
+        H --> I[Lower Effective Premiums]
     end
 ```
 
 ---
 
-## 🔐 MULTI-PROOF PRIVACY ARCHITECTURE PATTERNS
+## 🔐 Multi-Proof Privacy Architecture
 
-### Comprehensive Privacy-Preserving Validation
+### Comprehensive Validation Pattern
 
 **Core Pattern**: Triple-proof validation ensuring maximum security while maintaining complete medical data privacy.
 
@@ -139,45 +120,30 @@ sequenceDiagram
 
 #### Proof Type Responsibilities
 
-**1. MailProof Pattern (Organization Verification)**
-```mermaid
-graph LR
-    A[Hospital Email] --> B[vlayer Notary]
-    B --> C[Domain Extraction]
-    C --> D[Admin Verification]
-    D --> E[ZK Proof Generation]
-    E --> F[Organization Verified]
-```
+**MailProof Pattern (Organization Verification)**:
+- Domain extraction and validation
+- Admin account verification
+- ZK proof generation for organization authenticity
 
-**2. WebProof Pattern (System Verification)**
-```mermaid
-graph LR
-    A[Patient Portal] --> B[Session Capture]
-    B --> C[Procedure Validation]
-    C --> D[System State Proof]
-    D --> E[WebProof Generation]
-    E --> F[Procedure Confirmed]
-```
+**WebProof Pattern (System Verification)**:
+- Patient portal session capture
+- Hospital system state validation
+- Procedure confirmation without data exposure
 
-**3. ZKProof Pattern (Privacy-Preserving Validation)**
-```mermaid
-graph LR
-    A[Encrypted EHR] --> B[ZK Circuit]
-    B --> C[Procedure Coverage Check]
-    C --> D[Privacy-Preserving Proof]
-    D --> E[Coverage Confirmed]
-    E --> F[Zero Data Exposure]
-```
+**ZKProof Pattern (Privacy-Preserving Validation)**:
+- Encrypted EHR processing
+- Coverage verification without revelation
+- Zero medical data exposure guarantee
 
 ---
 
-## 💰 NATIVE STABLECOIN ARCHITECTURE PATTERNS
+## 💰 Native Stablecoin Architecture
 
 ### Simplified Mantle USD (mUSD) Integration
 
-**Core Innovation**: Direct native stablecoin processing eliminates oracle dependencies and reduces system complexity while enhancing security.
+**Core Innovation**: Direct native stablecoin processing eliminates oracle dependencies and reduces system complexity.
 
-#### Traditional vs zkMed Architecture Comparison
+#### Traditional vs zkMed Architecture
 
 **Traditional Healthcare Payment Flow**:
 ```mermaid
@@ -203,61 +169,21 @@ graph LR
     class A,B,C,D success
 ```
 
-#### Technical Benefits Pattern
-- **Eliminated Dependencies**: No price oracles, conversion mechanisms, or bridge risks
-- **Enhanced Security**: Native asset reduces attack surface significantly
-- **Lower Costs**: Direct processing eliminates multiple transaction fees
+#### Technical Benefits
+- **Eliminated Dependencies**: No price oracles or conversion mechanisms
+- **Enhanced Security**: Native asset reduces attack surface
+- **Lower Costs**: Direct processing eliminates transaction fees
 - **Faster Processing**: Instant transfers without conversion delays
-
-#### Smart Contract Integration Pattern
-```solidity
-// Traditional Complex Pattern (Eliminated)
-// 1. Oracle price fetch
-// 2. USD to token conversion
-// 3. Bridge validation
-// 4. Multiple contract calls
-
-// zkMed Simplified Pattern
-function processDirectPayment(address hospital, uint256 mUSDAmount) external {
-    mUSD.transferFrom(poolContract, hospital, mUSDAmount);
-    emit PaymentProcessed(hospital, mUSDAmount, block.timestamp);
-}
-```
 
 ---
 
-## 🚀 AAVE V3 INTEGRATION ARCHITECTURE PATTERNS
+## 🚀 Aave V3 Integration Patterns
 
-### Battle-Tested DeFi Integration for Healthcare
+### Battle-Tested DeFi Integration
 
-**Strategic Decision**: Leverage proven Aave V3 protocols for healthcare fund management rather than building custom pooling mechanisms.
+**Strategic Decision**: Leverage proven Aave V3 protocols for healthcare fund management rather than custom pooling mechanisms.
 
-#### Aave Integration Benefits Pattern
-```mermaid
-graph TB
-    subgraph "Healthcare Funds"
-        A[Patient Premiums] --> Pool[Aave V3 Pool]
-        B[Insurer Deposits] --> Pool
-    end
-    
-    subgraph "Proven Benefits"
-        Pool --> C[Battle-Tested Security]
-        Pool --> D[Instant Liquidity]
-        Pool --> E[Automated Yield]
-        Pool --> F[Risk Management]
-    end
-    
-    subgraph "Healthcare Advantages"
-        C --> G[Fund Protection]
-        D --> H[Instant Claims]
-        E --> I[Lower Premiums]
-        F --> J[Sustainable Growth]
-    end
-```
-
-#### Technical Integration Patterns
-
-**Pool Supply Pattern**:
+#### Pool Supply Pattern
 ```solidity
 function depositToHealthcarePool(address patient, uint256 premiumAmount) external {
     // Transfer mUSD from patient
@@ -273,7 +199,7 @@ function depositToHealthcarePool(address patient, uint256 premiumAmount) externa
 }
 ```
 
-**Pool Withdrawal Pattern**:
+#### Pool Withdrawal Pattern
 ```solidity
 function authorizeClaimPayout(uint256 claimId, uint256 amount) external {
     // Validate authorization
@@ -290,11 +216,11 @@ function authorizeClaimPayout(uint256 claimId, uint256 amount) external {
 
 ---
 
-## 📊 AUTOMATED YIELD DISTRIBUTION PATTERNS
+## 📊 Automated Yield Distribution Pattern
 
 ### Stakeholder-Aligned Incentive Architecture
 
-**Innovation**: Automated yield distribution system ensuring all stakeholders benefit from pool performance while maintaining sustainable platform growth.
+**Innovation**: Automated yield distribution ensuring all stakeholders benefit from pool performance.
 
 #### Yield Distribution Architecture
 ```mermaid
@@ -304,16 +230,10 @@ graph TB
         B --> C[Total Yield Earned]
     end
     
-    subgraph "Automated Distribution (80% to Stakeholders)"
+    subgraph "Automated Distribution"
         C --> D[60% to Patients]
         C --> E[20% to Insurers]
-    end
-    
-    subgraph "Platform Sustainability (20%)"
-        C --> F[Protocol Development]
-        F --> G[Security Audits]
-        F --> H[Feature Development]
-        F --> I[Infrastructure Costs]
+        C --> F[20% to Protocol]
     end
 ```
 
@@ -322,13 +242,10 @@ graph TB
 function distributeYield() external {
     uint256 totalYield = calculateAccruedYield();
     
-    // 80% to stakeholders, 20% to protocol
-    uint256 stakeholderYield = (totalYield * 8000) / 10000;
-    uint256 protocolYield = totalYield - stakeholderYield;
-    
-    // Stakeholder distribution: 75% patients, 25% insurers
-    uint256 patientYield = (stakeholderYield * 7500) / 10000;
-    uint256 insurerYield = stakeholderYield - patientYield;
+    // Stakeholder distribution
+    uint256 patientYield = (totalYield * 6000) / 10000;
+    uint256 insurerYield = (totalYield * 2000) / 10000;
+    uint256 protocolYield = (totalYield * 2000) / 10000;
     
     // Automated proportional distribution
     distributeToPatients(patientYield);
@@ -339,11 +256,11 @@ function distributeYield() external {
 
 ---
 
-## 🔄 SEAMLESS CLAIMS PROCESSING PATTERNS
+## 🔄 Contract Interaction Patterns
 
-### Pool-Enabled Instant Authorization Workflow
+### Pool-Enabled Claims Workflow
 
-**Revolutionary Pattern**: Claims authorization automatically triggers pool withdrawals, enabling instant hospital payments while maintaining all privacy guarantees.
+**Revolutionary Pattern**: Claims authorization automatically triggers pool withdrawals, enabling instant hospital payments.
 
 #### Complete Claims Processing Flow
 ```mermaid
@@ -365,52 +282,30 @@ graph TB
         H --> I[mUSD Transfer]
         I --> J[Hospital Payment]
     end
-    
-    subgraph "Privacy Preservation"
-        K[Medical Data] --> L[Encrypted Storage]
-        L --> M[ZK Validation Only]
-        M --> N[Zero Data Exposure]
-    end
-    
-    E --> M
 ```
 
-#### Claim Authorization Pattern
-```solidity
-function processClaimWithPoolAuth(
-    uint256 claimId,
-    bytes memory multiProof,
-    uint256 requestedAmount
-) external {
-    // 1. Validate all proof types
-    require(validateMultiProof(multiProof), "Invalid proof bundle");
-    
-    // 2. Check pool liquidity
-    require(poolingContract.validateLiquidity(requestedAmount), "Insufficient funds");
-    
-    // 3. Authorize instant payout
-    poolingContract.authorizeClaimPayout(claimId, msg.sender, requestedAmount);
-    
-    // 4. Update claim status
-    claims[claimId].status = ClaimStatus.Paid;
-    claims[claimId].paymentTimestamp = block.timestamp;
-    
-    emit ClaimProcessedInstantly(claimId, msg.sender, requestedAmount);
-}
-```
+#### Smart Contract Component Relationships
+
+**Core Contract Hierarchy**:
+1. **RegistrationContract.sol** - Identity foundation
+2. **PoolingContract.sol** - Core innovation (Aave V3 integration)
+3. **PatientModule.sol** - Enhanced with insurance selection
+4. **OrganizationModule.sol** - Multi-proof claims processing
+5. **ClaimProcessingContract.sol** - Pool-aware validation
+6. **InsuranceContract.sol** - Native mUSD policy management
 
 ---
 
-## 🎯 LOCAL FORK DEVELOPMENT PATTERNS
+## 🎯 Development Environment Patterns
 
-### Comprehensive Mantle Testing Environment
+### Local Fork Development Architecture
 
-**Development Philosophy**: Local-first development with comprehensive Mantle fork testing ensures reliable deployment to mainnet with minimal risk.
+**Development Philosophy**: Local-first development with comprehensive Mantle fork testing.
 
-#### Development Environment Architecture
+#### Development Stack Pattern
 ```mermaid
 graph TB
-    subgraph "Development Stack"
+    subgraph "Development Environment"
         A[Mantle Fork (31339)] --> B[Real Mainnet State]
         B --> C[Aave V3 Contracts]
         B --> D[mUSD Token]
@@ -420,39 +315,29 @@ graph TB
     subgraph "Testing Framework"
         F[Foundry Suite] --> G[Unit Tests]
         F --> H[Integration Tests]
-        F --> I[E2E Tests]
+        F --> I[Pool Operations Tests]
         F --> J[Gas Optimization]
     end
-    
-    subgraph "Deployment Pipeline"
-        K[Local Testing] --> L[Fork Validation]
-        L --> M[Security Audit]
-        M --> N[Mainnet Deployment]
-    end
-    
-    A --> F
-    I --> K
 ```
 
-#### Testing Pattern Implementation
+#### Testing Workflow Pattern
 ```bash
-# Complete testing workflow
-make start-mantle-fork     # Start local Mantle environment
-make deploy-contracts      # Deploy all contracts to fork
+# Complete testing pipeline
+make start-mantle-fork     # Local Mantle environment
+make deploy-contracts      # Deploy all contracts
 make setup-aave-pools     # Configure Aave V3 integration
-make test-registration    # Test dual registration paths
-make test-pool-operations # Test pool deposits and withdrawals
-make test-claims-flow     # Test end-to-end claim processing
-make test-yield-generation # Test automated yield distribution
+make test-registration    # Dual registration paths
+make test-pool-operations # Pool deposits and withdrawals
+make test-claims-flow     # End-to-end claim processing
 ```
 
 ---
 
-## ✨ INNOVATION PATTERN HIGHLIGHTS
+## ✨ Innovation Pattern Highlights
 
 ### Breakthrough Architecture Combinations
 
-#### 1. **Privacy + Yield Generation Pattern**
+#### Privacy + Yield Generation Pattern
 ```mermaid
 graph LR
     A[Medical Privacy] --> B[ZK Proofs]
@@ -462,80 +347,51 @@ graph LR
     E --> F[Privacy-Preserving Yield Platform]
 ```
 
-#### 2. **Dual Registration + Pool Integration Pattern**
-```mermaid
-graph LR
-    A[Existing Coverage] --> C[Pool Integration]
-    B[New Selection] --> C
-    C --> D[Yield Benefits]
-    D --> E[Reduced Effective Costs]
-    E --> F[Enhanced Patient Value]
-```
+#### Dual Registration + Pool Integration Pattern
+- Existing coverage path enables immediate pool benefits
+- New selection path drives competitive pool optimization
+- Both paths result in yield generation for patients
+- Market dynamics improve overall pool performance
 
-#### 3. **Multi-Proof + Instant Payout Pattern**
-```mermaid
-graph LR
-    A[ZK + Web + Mail] --> B[Comprehensive Validation]
-    B --> C[Pool Authorization]
-    C --> D[Instant mUSD Transfer]
-    D --> E[Immediate Hospital Payment]
-```
-
-#### 4. **Native Asset + Simplified Processing Pattern**
-```mermaid
-graph LR
-    A[mUSD Native] --> B[Zero Conversion]
-    B --> C[Reduced Complexity]
-    C --> D[Enhanced Security]
-    D --> E[Lower Costs]
-    E --> F[Faster Processing]
-```
+#### Multi-Proof + Instant Payout Pattern
+- Comprehensive validation ensures security
+- Pool authorization triggers immediate transfers
+- Medical privacy preserved throughout process
+- Instant hospital payments improve cash flow
 
 ---
 
-## 🏆 COMPETITIVE ARCHITECTURE ADVANTAGES
+## 🏆 Competitive Architecture Advantages
 
-### Unique System Design Benefits
-
-#### Technical Superiority Matrix
+### Technical Superiority Matrix
 
 | Innovation Area | Traditional Healthcare | Other Web3 Platforms | zkMed Pool-Enabled |
 |----------------|----------------------|---------------------|-------------------|
 | **Fund Utilization** | 0% return on premiums | Basic staking (~2%) | 3-5% Aave yields |
 | **Payment Speed** | Weeks of delays | Days for processing | Instant upon approval |
-| **Medical Privacy** | Centralized databases | Limited privacy features | Zero-knowledge proofs |
+| **Medical Privacy** | Centralized databases | Limited privacy | Zero-knowledge proofs |
 | **Registration Flexibility** | Single path only | Basic onboarding | Dual-path innovation |
-| **Oracle Dependencies** | N/A (traditional) | Complex price feeds | Zero dependencies |
+| **Oracle Dependencies** | N/A | Complex price feeds | Zero dependencies |
 | **Pool Integration** | None | Custom solutions | Battle-tested Aave |
 
-#### Market Positioning Advantages
-- **First-Mover**: Only healthcare platform with yield-generating pools
-- **Proven Technology**: Built on battle-tested Aave V3 protocols
-- **Privacy Leadership**: Advanced multi-proof validation architecture
-- **User Experience**: Dual registration paths accommodate all scenarios
-- **Economic Model**: Sustainable yield distribution benefiting all stakeholders
+### Design Pattern Benefits
 
----
+#### Modularity
+- Independent contract modules with clear responsibilities
+- Pool integration layer enabling easy expansion
+- Proof validation abstraction for multiple verification types
+- Native asset handling simplifying processing logic
 
-## 🎯 ARCHITECTURAL SUCCESS METRICS
+#### Scalability
+- Aave V3 protocols proven at scale with $10B+ TVL
+- Pool-based architecture supports unlimited participants
+- Automated yield distribution reduces operational overhead
+- Container deployment enables horizontal scaling
 
-### System Performance Indicators
+#### Security
+- Battle-tested Aave integration reduces smart contract risks
+- Multi-proof validation prevents fraud across attack vectors
+- Native asset processing eliminates bridge vulnerabilities
+- Zero medical data exposure maintains privacy guarantees
 
-#### Pool Performance Metrics
-- ✅ **Yield Generation**: Target 3-5% APY on all healthcare funds
-- ✅ **Instant Liquidity**: 100% claim authorization success rate
-- ✅ **Yield Distribution**: Automated 60/20/20 stakeholder allocation
-- ✅ **Pool Utilization**: Optimal balance of deposits vs withdrawals
-
-#### Privacy Preservation Metrics
-- ✅ **Zero Data Exposure**: No medical information leaked during processing
-- ✅ **Multi-Proof Validation**: 100% proof verification success rate
-- ✅ **Privacy-Preserving Yields**: Tracking without compromising anonymity
-
-#### Platform Efficiency Metrics
-- ✅ **Processing Speed**: Instant claim authorization and payout
-- ✅ **Cost Reduction**: Lower effective premiums through yield generation
-- ✅ **User Experience**: Seamless registration and payment automation
-- ✅ **Market Competition**: Insurer optimization driven by pool performance
-
-**zkMed's revolutionary pool-enabled architecture patterns establish the foundation for the world's first privacy-preserving healthcare platform with yield-generating fund pools, setting new standards for both capital efficiency and medical privacy in Web3 healthcare innovation!** 🚀 
+**zkMed's revolutionary system patterns establish the foundation for the world's first privacy-preserving healthcare platform with yield-generating fund pools, setting new standards for both capital efficiency and medical privacy in Web3 healthcare innovation.** 🚀 

@@ -1,342 +1,265 @@
-# Active Context - zkMed Privacy-Preserving Healthcare Platform with Yield-Generating Pools
+# zkMed Active Context - Current Development Focus
 
-## 🎯 ADVANCED WEB3 HEALTHCARE PLATFORM: Dockploy Containerized Deployment
+**Current Status**: Implementing core pool-enabled healthcare architecture with Aave V3 integration and preparing containerized deployment for The Cookathon on Mantle Network.
 
-### Current Status: Registration System COMPLETE → Dockploy Production Deployment READY
-**Registration Phase**: ✅ **PRODUCTION READY** (37/37 tests passing)  
-**Pool Integration Phase**: ✅ **ARCHITECTURE COMPLETE** 
-**Dockploy Deployment**: 🚧 **IN PROGRESS** - Containerized deployment with demo accounts
-**Integration Target**: Docker Containers + Mantle Fork + Pre-configured Demo Data + Live Next.js Client
-
-### 🎉 NEW DEPLOYMENT STRATEGY: Dockploy Containerized Production
-
-#### ✅ Dockploy Production Deployment Architecture
-- **Container Orchestration**: Docker-based deployment via Dockploy platform
-- **Mantle Fork Container**: Persistent Anvil container with Chain ID 31339
-- **Smart Contract Container**: Automated deployment with pre-configured demo accounts
-- **Next.js Frontend Container**: Live client application with demo interactions
-- **Demo Data Setup**: Pre-configured insurer, hospital, and patient accounts for POC
-
-#### ✅ Pre-Configured Demo Environment Design
-- **Demo Insurer**: "Regione Lazio Health Insurance" with verified domain (@laziosalute.it)
-- **Demo Hospital**: "Ospedale San Giovanni" with verified domain (@sangiovanni.lazio.it)
-- **Demo Patient**: Pre-registered patient with existing coverage and pool access
-- **Live Interactions**: Real contract interactions with sponsored transactions
-- **Pool Operations**: Functional Aave V3 pools with mUSD on Mantle fork
-
-#### ✅ Container Architecture for Production
-- **mantle-fork**: Persistent Anvil container with real Mantle state
-- **contract-deployer**: Automated deployment with demo data initialization
-- **zkmed-frontend**: Next.js client with live demo capabilities
-- **nginx-proxy**: Reverse proxy for clean domain access
-- **All containers configured for Dockploy orchestration**
-
-### 🚀 CURRENT PHASE: Dockploy Container Implementation + Demo Setup
-
-#### Ready for Implementation
-1. **Docker Containers**: Multi-container setup for persistent deployment
-2. **Demo Account Setup**: Pre-configured accounts with real interactions
-3. **Live Frontend**: Functional Next.js client with demo workflows
-4. **Automated Deployment**: One-command setup via Dockploy
-
-#### Container Integration Points
-- **Persistent Mantle Fork**: Long-running container maintaining blockchain state
-- **Automated Demo Setup**: Script-based initialization of demo accounts and data
-- **Live Contract Interactions**: Real transaction capabilities with demo scenarios
-- **Frontend Integration**: Live client connecting to containerized blockchain
-
-### 🔧 Development Workflow - Dockploy Containerized Focus
-```bash
-# Deploy to Dockploy
-dockploy deploy zkmed-stack
-
-# Monitor containers
-dockploy logs zkmed-mantle-fork
-dockploy logs zkmed-frontend
-
-# Demo account interactions
-curl https://zkmed.yourdomain.com/api/demo/patient
-curl https://zkmed.yourdomain.com/api/demo/hospital
-
-# Scale services
-dockploy scale zkmed-frontend --replicas 3
-```
-
-### 📊 Dockploy Deployment Status
-- **Container Architecture**: ✅ Multi-service Docker setup designed
-- **Mantle Fork Persistence**: ✅ Long-running blockchain container
-- **Demo Data Setup**: ✅ Pre-configured accounts and interactions
-- **Frontend Integration**: ✅ Live Next.js client with demo capabilities
-- **Automated Deployment**: 🚧 Dockploy configuration in progress
-- **Domain Setup**: 🚧 Custom domain configuration for live access
+**Last Updated**: December 2024  
+**Active Phase**: Pool Contract Implementation & Container Deployment
 
 ---
 
-## 🏗️ ENHANCED CONTAINER ARCHITECTURE FOR DOCKPLOY
+## 🎯 Current Work Focus
 
-### Phase 1: Registration System [COMPLETED] ✅
-- **RegistrationContract.sol**: Privacy-preserving patient/organization registration with multi-owner system
-- **EmailDomainProver.sol**: vlayer email domain verification
-- **Multi-Owner Management**: Up to 10 owners with granular access controls
-- **User Activation System**: Enable/disable users with batch operations
-- **Status**: Production-ready, containerized deployment ready
+### Primary Development Priority: PoolingContract.sol Implementation
 
-### Phase 2: Dockploy Container Deployment [CURRENT FOCUS] 🚧
+**Status**: 🚧 In Active Development  
+**Critical Path**: This is the core innovation that differentiates zkMed from all other healthcare platforms
 
-#### 🔒 1. Mantle Fork Container (Persistent Blockchain)
-**Purpose**: Long-running Anvil container maintaining Mantle fork state
+#### What We're Building Right Now
+1. **Aave V3 Healthcare Pool Integration**
+   - Patient premium deposits earning 3-5% APY
+   - Insurer operational fund pools with yield generation
+   - Automated claim authorization triggering instant withdrawals
+   - Native mUSD processing without oracle dependencies
 
-**Container Features**:
-- `mantleFork.dockerfile`: Persistent Anvil setup with Mantle state
-- `persistent-data/`: Volume-mounted blockchain data
-- `demo-setup.sh`: Automated demo account creation and funding
-- **Dockploy Integration**: Configured for auto-restart and health monitoring
+2. **Pool-Enabled Claims Workflow**
+   - Real-time liquidity validation before claim processing
+   - Instant hospital payouts upon claim authorization
+   - Automated yield distribution (60% patients, 20% insurers, 20% protocol)
+   - Privacy-preserving pool tracking and performance metrics
 
-**Container Configuration**:
-```yaml
-# dockploy.yml
-services:
-  mantle-fork:
-    build: ./containers/mantle-fork
-    ports:
-      - "8545:8545"
-    volumes:
-      - mantle-data:/anvil-data
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545"]
-```
-
-#### 💰 2. Contract Deployer Container (Automated Setup)
-**Purpose**: Deploy contracts and initialize demo data on container startup
-
-**Container Features**:
-- `deploy-demo.dockerfile`: Foundry-based deployment container
-- `demo-accounts.json`: Pre-configured insurer, hospital, patient data
-- `initialization-scripts/`: Automated demo data setup
-- **One-time Execution**: Runs once to setup demo environment
-
-**Demo Account Setup**:
-```json
-{
-  "demoInsurer": {
-    "name": "Regione Lazio Health Insurance",
-    "domain": "laziosalute.it",
-    "email": "admin@laziosalute.it",
-    "walletAddress": "0x742d35Cc6634C0532925a3b8D0B5B0052A57adD4"
-  },
-  "demoHospital": {
-    "name": "Ospedale San Giovanni",
-    "domain": "sangiovanni.lazio.it", 
-    "email": "admin@sangiovanni.lazio.it",
-    "walletAddress": "0x8ba1f109551bD432803012645Hac136c7Aad5a6"
-  },
-  "demoPatient": {
-    "commitment": "0x...",
-    "walletAddress": "0x123456789abcdef123456789abcdef1234567890"
-  }
-}
-```
-
-#### 🎨 3. Next.js Frontend Container (Live Demo Client)
-**Purpose**: Live frontend application with demo interaction capabilities
-
-**Container Features**:
-- `frontend.dockerfile`: Next.js production build
-- `demo-workflows/`: Pre-built demo interaction flows
-- `environment-config/`: Container-specific environment variables
-- **Live Demo**: Real interactions with containerized blockchain
-
-**Demo Interaction Features**:
-```typescript
-// Demo workflows available in live frontend
-const demoWorkflows = {
-  patientRegistration: async () => {
-    // Use pre-configured patient account
-    await registerPatientWithInsurer(demoAccounts.patient.commitment);
-  },
-  
-  hospitalClaim: async () => {
-    // Submit demo claim with multi-proof
-    await submitClaimWithPool(demoProofs.multiProof, claimAmount);
-  },
-  
-  insurerApproval: async () => {
-    // Approve demo claim from insurer account
-    await approveClaimFromPool(demoClaimId, authorizedAmount);
-  }
-};
-```
-
-#### 🔧 4. Nginx Proxy Container (Domain Access)
-**Purpose**: Reverse proxy for clean domain access and SSL termination
-
-**Container Configuration**:
-```nginx
-# nginx.conf
-upstream zkmed-frontend {
-    server zkmed-frontend:3000;
-}
-
-upstream mantle-rpc {
-    server mantle-fork:8545;
-}
-
-server {
-    listen 80;
-    server_name zkmed.yourdomain.com;
-    
-    location / {
-        proxy_pass http://zkmed-frontend;
-    }
-    
-    location /rpc {
-        proxy_pass http://mantle-rpc;
-    }
-}
-```
+3. **Container Deployment Infrastructure**
+   - Persistent Mantle fork with pre-configured demo accounts
+   - Live frontend with real pool interactions
+   - Automated demo data initialization and management
+   - Production-ready Dockploy deployment configuration
 
 ---
 
-## 🚧 CURRENT DEVELOPMENT PRIORITIES - Dockploy Deployment Focus
+## 🔄 Recent Changes & Decisions
 
-### Immediate Next Steps (2-Week Sprint)
+### Architecture Evolution: Oracle Elimination → Native mUSD
 
-#### 1. Container Architecture Implementation [WEEK 1 - HIGH PRIORITY]
-- Multi-service Docker setup for Dockploy deployment
-- Persistent Mantle fork container configuration
-- Automated demo data initialization scripts
-- Container health monitoring and auto-restart
+**Previous Approach**: Complex oracle-based price conversion system  
+**Current Innovation**: Direct native Mantle USD processing
 
-#### 2. Demo Account Setup [WEEK 1 - HIGH PRIORITY] 
-- Pre-configured insurer, hospital, patient accounts
-- Automated registration and verification workflows
-- Demo interaction scripts and workflows
-- Live transaction capabilities with demo scenarios
+**Why This Change**:
+- Eliminated external dependencies and potential oracle failures
+- Reduced system complexity and attack surface significantly
+- Lower transaction costs and faster processing times
+- Enhanced security through native asset integration
+- Simplified development and testing workflows
 
-#### 3. Frontend Container Integration [WEEK 2 - HIGH PRIORITY]
-- Next.js production build container
-- Demo workflow integration in frontend
-- Live contract interaction capabilities
-- Clean domain access via reverse proxy
+### Registration System Enhancement: Single Path → Dual Path
 
-#### 4. Dockploy Deployment Configuration [WEEK 2 - HIGH PRIORITY]
-- Dockploy service configuration files
-- Container orchestration setup
-- Domain and SSL configuration
-- Monitoring and logging setup
+**Previous Approach**: Single patient registration flow  
+**Current Innovation**: Dual registration paths for maximum flexibility
 
----
+**Path A**: Existing insurance coverage integration via mailproof verification  
+**Path B**: New insurance selection with pool performance comparison
 
-## 🔧 TECHNICAL IMPLEMENTATION DETAILS - Dockploy Focus
+**Impact**:
+- Accommodates all patient scenarios seamlessly
+- Creates competitive pressure for insurers to optimize pools
+- Enables informed decision-making based on yield performance
+- Maximizes market adoption potential
 
-### Container Communication Pattern
-```mermaid
-graph TB
-    subgraph "Dockploy Infrastructure"
-        A[Nginx Proxy] --> B[Next.js Frontend]
-        B --> C[Mantle Fork Container]
-        D[Contract Deployer] --> C
-    end
-    
-    subgraph "External Access"
-        E[zkmed.yourdomain.com] --> A
-        F[Demo Users] --> E
-    end
-    
-    subgraph "Demo Data Flow"
-        G[Demo Accounts] --> H[Automated Setup]
-        H --> I[Live Interactions]
-        I --> J[Real Transactions]
-    end
-```
+### Deployment Strategy Evolution: Traditional → Container-First
 
-### Dockploy Deployment Pattern
-```yaml
-# dockploy.yml - Main deployment configuration
-version: '3.8'
+**Previous Approach**: Standard smart contract deployment  
+**Current Innovation**: Complete containerized production environment
 
-services:
-  mantle-fork:
-    build: ./containers/mantle-fork
-    container_name: zkmed-mantle-fork
-    ports:
-      - "8545:8545"
-    volumes:
-      - mantle-data:/anvil-data
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  contract-deployer:
-    build: ./containers/contract-deployer
-    container_name: zkmed-deployer
-    depends_on:
-      - mantle-fork
-    volumes:
-      - ./demo-data:/app/demo-data
-    environment:
-      - RPC_URL=http://mantle-fork:8545
-      - CHAIN_ID=31339
-    restart: "no"
-
-  frontend:
-    build: ./packages/nextjs
-    container_name: zkmed-frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mantle-fork
-    environment:
-      - NEXT_PUBLIC_RPC_URL=http://localhost:8545
-      - NEXT_PUBLIC_CHAIN_ID=31339
-    restart: always
-
-  nginx-proxy:
-    image: nginx:alpine
-    container_name: zkmed-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - frontend
-    restart: always
-
-volumes:
-  mantle-data:
-```
+**Container Benefits**:
+- Live demo environment with persistent demo data
+- Production-ready scalable infrastructure
+- Automated setup and configuration management
+- Real-time monitoring and health checks
+- Custom domain access with SSL termination
 
 ---
 
-## 📦 Storage & Container Infrastructure
+## 📋 Immediate Next Steps (Next 2 Weeks)
 
-| Component               | Container                    | Purpose                          |
-| ----------------------- | ---------------------------- | -------------------------------- |
-| Blockchain State        | mantle-fork (persistent)     | Maintain fork state across restarts |
-| Smart Contracts         | contract-deployer (one-time) | Deploy and setup demo accounts      |
-| Frontend Application    | zkmed-frontend (persistent)   | Live demo client interface          |
-| Reverse Proxy          | nginx-proxy (persistent)     | Domain access and SSL termination  |
-| Demo Data              | Volume-mounted directories    | Pre-configured accounts and workflows |
-| Container Logs         | Dockploy logging system      | Monitoring and debugging            |
+### Week 1: Core Pool Contract Development
+
+#### PoolingContract.sol Implementation Priority
+1. **Aave V3 Integration Functions** (Days 1-2)
+   ```solidity
+   function depositToHealthcarePool(address patient, uint256 premiumAmount)
+   function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount)
+   function calculateAccruedYield(address patient) 
+   function distributeYield()
+   ```
+
+2. **Patient Pool Management** (Days 3-4)
+   - Individual patient pool creation and tracking
+   - Monthly premium deposit automation
+   - Real-time yield calculation and distribution
+   - Pool performance metrics and reporting
+
+3. **Insurer Pool Integration** (Day 5)
+   - Operational fund deposits earning yield
+   - Pool liquidity management for claims
+   - Competitive performance tracking
+   - Automated rebalancing mechanisms
+
+### Week 2: Enhanced Module Integration
+
+#### Pool-Enabled Module Updates
+1. **PatientModule.sol Enhancement** (Days 1-2)
+   - Insurance selection based on pool performance
+   - Automated payment setup with yield tracking
+   - Pool dashboard with real-time metrics
+   - Effective cost calculation including yield benefits
+
+2. **ClaimProcessingContract.sol Integration** (Days 3-4)
+   - Pool liquidity validation before claim processing
+   - Multi-proof validation with pool authorization
+   - Instant withdrawal triggers upon approval
+   - Privacy-preserving pool interaction logging
+
+3. **Frontend Pool Dashboard** (Day 5)
+   - Real-time pool performance visualization
+   - Insurance selection interface with metrics
+   - Yield tracking and effective cost calculation
+   - Demo account interaction capabilities
 
 ---
 
-## ✅ Dockploy Integration Summary
+## 🐳 Container Development Priorities
 
-| Component                 | Role                                         | Container Integration               |
-| ------------------------- | -------------------------------------------- | ----------------------------------- |
-| `Mantle Fork Container`   | Persistent blockchain with demo data         | Long-running Anvil with Mantle state |
-| `Contract Deployer`       | Automated setup with demo accounts          | One-time deployment and initialization |
-| `Next.js Frontend`        | Live demo client with real interactions     | Production build with demo workflows |
-| `Nginx Proxy`            | Domain access and SSL termination           | Reverse proxy for clean URLs       |
-| `Dockploy Orchestration`  | Container management and monitoring          | Auto-restart, scaling, logging      |
-| `Demo Account System`     | Pre-configured accounts for POC             | Real interactions with demo data   |
+### Current Container Architecture Status
+
+#### Completed Infrastructure
+- ✅ **Mantle Fork Container**: Persistent blockchain (Chain ID: 31339)
+- ✅ **Demo Account Configuration**: Pre-configured insurer, hospital, patient accounts
+- ✅ **Basic Docker Setup**: Multi-service container orchestration
+- ✅ **Development Environment**: Local testing with Foundry integration
+
+#### Active Container Development
+- 🚧 **Contract Deployer Container**: Automated demo data initialization
+- 🚧 **Frontend Container**: Next.js production build with pool dashboard
+- 🚧 **Nginx Proxy Container**: Domain access and SSL termination
+- 🚧 **Demo Data Management**: Persistent state across container restarts
+
+#### Next Container Milestones
+- 📋 **Dockploy Configuration**: Complete deployment orchestration
+- 📋 **Live Demo Testing**: End-to-end workflow validation
+- 📋 **Performance Monitoring**: Container health and resource tracking
+- 📋 **Production Deployment**: Live domain with SSL certificate
 
 ---
 
-**🚀 Ready for Dockploy containerized deployment - Live zkMed demo with persistent Mantle fork and pre-configured accounts for real healthcare interaction workflows!** 
+## 🔧 Technical Challenges & Solutions
+
+### Current Challenge: Aave V3 Pool State Management
+
+**Problem**: Maintaining accurate pool balance tracking across patient and insurer deposits while enabling instant claims and yield distribution.
+
+**Solution Approach**:
+1. **Modular Pool Tracking**: Separate accounting for each stakeholder type
+2. **Real-time Yield Calculation**: Continuous Aave interaction for accurate yields
+3. **Automated Rebalancing**: Smart contract logic for optimal pool utilization
+4. **Emergency Withdrawal**: Fallback mechanisms for unexpected scenarios
+
+**Implementation Status**: Architecture complete, core functions in development
+
+### Current Challenge: Container Data Persistence
+
+**Problem**: Ensuring demo account states and pool data persist across container restarts while maintaining production-ready deployment patterns.
+
+**Solution Approach**:
+1. **Volume Mounting**: Persistent storage for blockchain state and demo data
+2. **Initialization Scripts**: Automated setup of demo accounts and pools
+3. **Health Monitoring**: Container restart detection with state restoration
+4. **Backup Strategy**: Regular state snapshots for disaster recovery
+
+**Implementation Status**: Basic persistence working, advanced features in development
+
+---
+
+## 🎯 Success Criteria for Current Phase
+
+### Pool Implementation Success Metrics
+- [ ] **Functional Aave Integration**: Patient premiums earning 3-5% APY
+- [ ] **Instant Claim Processing**: Real-time authorization and hospital payouts
+- [ ] **Automated Yield Distribution**: 60/20/20 stakeholder allocation working
+- [ ] **Pool Performance Tracking**: Real-time metrics and reporting functional
+
+### Container Deployment Success Metrics
+- [ ] **Live Demo Environment**: All containers running with persistent data
+- [ ] **Domain Access**: Custom domain with SSL working correctly
+- [ ] **Demo Workflows**: End-to-end patient/hospital/insurer interactions
+- [ ] **Production Readiness**: Health monitoring and auto-scaling configured
+
+### Integration Success Metrics
+- [ ] **Multi-Proof + Pools**: ZK/Web/Mail validation triggering pool operations
+- [ ] **Dual Registration + Pools**: Both paths creating functional pool access
+- [ ] **Frontend + Pools**: Dashboard showing real-time pool performance
+- [ ] **Privacy + Pools**: Zero medical data exposure during pool operations
+
+---
+
+## 🚨 Current Blockers & Risks
+
+### Technical Risks
+1. **Aave V3 Complexity**: Pool integration more complex than anticipated
+   - **Mitigation**: Local fork testing with real Aave contracts
+   - **Status**: Progressing well with comprehensive testing
+
+2. **Container Orchestration**: Multi-service coordination challenges
+   - **Mitigation**: Incremental deployment with health monitoring
+   - **Status**: Basic setup working, advanced features in progress
+
+### Timeline Risks
+1. **Cookathon Deadline**: Limited time for full implementation
+   - **Mitigation**: MVP-focused development with core features prioritized
+   - **Status**: On track for essential features, stretch goals identified
+
+2. **Frontend Integration**: Pool dashboard complexity
+   - **Mitigation**: Reusable components and demo data for rapid testing
+   - **Status**: Basic architecture complete, implementation in progress
+
+### Market Risks
+1. **Competition Emergence**: Other teams building similar solutions
+   - **Mitigation**: Unique pool-enabled architecture and privacy focus
+   - **Status**: Confident in differentiation through technical innovation
+
+---
+
+## 🎉 Recent Wins & Momentum
+
+### Technical Achievements
+- ✅ **Registration System Complete**: 37/37 tests passing with vlayer integration
+- ✅ **Architecture Simplification**: Native mUSD eliminates oracle dependencies
+- ✅ **Container Foundation**: Multi-service deployment working locally
+- ✅ **Demo Account Setup**: Pre-configured accounts with realistic data
+
+### Strategic Decisions
+- ✅ **Pool-First Strategy**: Aave V3 integration as core differentiator
+- ✅ **Dual Registration Innovation**: Flexible onboarding for market expansion
+- ✅ **Container Deployment**: Production-ready scalable infrastructure
+- ✅ **Privacy Preservation**: Multi-proof architecture maintaining medical privacy
+
+### Market Positioning
+- ✅ **First-Mover Advantage**: Only healthcare platform with yield-generating pools
+- ✅ **Technical Differentiation**: Proven infrastructure with innovative application
+- ✅ **Prize Track Alignment**: Perfect fit for Cookathon categories
+- ✅ **Demo Readiness**: Live environment for judge interaction
+
+---
+
+## 🔮 Looking Ahead: Next Month
+
+### Post-Pool Implementation Focus
+1. **Advanced Pool Features**: Multi-asset support, yield optimization
+2. **Regulatory Preparation**: Compliance framework development
+3. **Partnership Outreach**: Insurer and hospital integration planning
+4. **Market Expansion**: Cross-chain deployment strategy
+
+### Cookathon Preparation
+1. **Demo Polishing**: Perfect user experience for judge evaluation
+2. **Presentation Materials**: Comprehensive demo and technical presentation
+3. **Live Environment**: Fully functional platform for real-time demonstration
+4. **Prize Strategy**: Targeted positioning for multiple prize categories
+
+**The next two weeks are critical for establishing zkMed as the revolutionary healthcare platform with yield-generating pools. Success in pool implementation will validate our core innovation and position us for Cookathon victory and long-term market success.** 🚀 
