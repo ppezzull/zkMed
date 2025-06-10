@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Contract Deployer (deploys Greeting contract to vlayer anvil)
+  contract-deployer:
+    build:
+      context: ./srcs/foundry
+      dockerfile: Dockerfile.deployer
+    container_name: zkmed-contract-deployer
+    volumes:
+      - contract_artifacts:/app/out:rw
+    environment:
+      - RPC_URL=http://host.docker.internal:8547
+      - RPC_HOST=host.docker.internal
+      - CHAIN_ID=31339
+      - PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+    restart: "no"
+    network_mode: "host"
+
+  # zkMed Frontend (Next.js with bun)
+  zkmed-frontend:
+    build:
+      context: ./srcs/nextjs
+      dockerfile: Dockerfile
+    container_name: zkmed-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - contract-deployer
+    volumes:
+      - contract_artifacts:/app/contracts:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_CHAIN_ID=31339
+      - NEXT_PUBLIC_RPC_URL=http://localhost:8547
+      - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=${NEXT_PUBLIC_THIRDWEB_CLIENT_ID:-your-client-id}
+    restart: always
+
+# Use existing vlayer network
+networks:
+  vlayer_default:
+    external: true
+
+volumes:
+  contract_artifacts:
+    driver: local 

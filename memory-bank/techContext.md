@@ -231,57 +231,53 @@ const registrationContract = getContract({
 
 ## 🐳 Production Deployment Architecture
 
-### Container Orchestration (Dockploy)
+### Essential Container Stack (Dockploy)
 ```yaml
-# Production Container Stack
-version: '3.8'
+# Simplified Production Container Stack
 services:
-  mantle-fork:
-    image: zkmed/mantle-fork:latest
-    restart: always
-    ports: ["8545:8545"]
-    volumes:
-      - blockchain_data:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   contract-deployer:
-    image: zkmed/deployer:latest
-    restart: "no"
-    depends_on:
-      - mantle-fork
-    environment:
-      - RPC_URL=http://mantle-fork:8545
-      - PRIVATE_KEY=${DEPLOYER_PRIVATE_KEY}
-
-  frontend:
-    image: zkmed/frontend:latest
-    restart: always
-    ports: ["3000:3000"]
-    environment:
-      - NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
-      - NEXT_PUBLIC_CHAIN_ID=31339
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-
-  nginx-proxy:
-    image: nginx:alpine
-    restart: always
-    ports: ["80:80", "443:443"]
+    build:
+      context: ./srcs/foundry
+      dockerfile: Dockerfile.deployer
+    container_name: zkmed-contract-deployer
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ssl_certs:/etc/ssl/certs
+      - contract_artifacts:/app/out:rw
+    environment:
+      - RPC_URL=http://host.docker.internal:8547
+      - CHAIN_ID=31339
+      - PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+    restart: "no"
+    network_mode: "host"
+
+  zkmed-frontend:
+    build:
+      context: ./srcs/nextjs
+      dockerfile: Dockerfile
+    container_name: zkmed-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - contract-deployer
+    volumes:
+      - contract_artifacts:/app/contracts:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_CHAIN_ID=31339
+      - NEXT_PUBLIC_RPC_URL=http://localhost:8547
+      - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=${NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
+    restart: always
+
+volumes:
+  contract_artifacts:
+    driver: local
 ```
 
 ### Infrastructure Requirements
-- **CPU**: Minimum 4 cores for production workload
-- **Memory**: 8GB RAM for all services
-- **Storage**: 100GB SSD for blockchain data and logs
-- **Network**: Stable internet with 100Mbps bandwidth
-- **SSL**: Automatic certificate management via Let's Encrypt
+- **CPU**: Minimum 2 cores for essential services
+- **Memory**: 4GB RAM for both containers
+- **Storage**: 20GB SSD for contract artifacts and logs
+- **Network**: Stable internet with 50Mbps bandwidth for vlayer connectivity
+- **External Dependencies**: Existing vlayer anvil-l2-mantle container on port 8547
 
 ### Monitoring & Observability
 - **Health Checks**: Automated monitoring of all service endpoints

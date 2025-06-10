@@ -1,265 +1,196 @@
-# zkMed Active Context - Current Development Focus
+# zkMed Active Context - Simplified Container Deployment Focus
 
-**Current Status**: Implementing core pool-enabled healthcare architecture with Aave V3 integration and preparing containerized deployment for The Cookathon on Mantle Network.
+**Current Status**: Simplified container architecture focusing on essential services for Greeting contract demo and Dockploy deployment preparation.
 
 **Last Updated**: December 2024  
-**Active Phase**: Pool Contract Implementation & Container Deployment
+**Active Phase**: Simplified Container Architecture & Essential Services
 
 ---
 
 ## 🎯 Current Work Focus
 
-### Primary Development Priority: PoolingContract.sol Implementation
+### Primary Priority: Simplified Container Architecture
 
-**Status**: 🚧 In Active Development  
-**Critical Path**: This is the core innovation that differentiates zkMed from all other healthcare platforms
+**Status**: 🚧 Essential Services Implementation  
+**Architecture Change**: Eliminated complex multi-service setup in favor of minimal essential containers
 
 #### What We're Building Right Now
-1. **Aave V3 Healthcare Pool Integration**
-   - Patient premium deposits earning 3-5% APY
-   - Insurer operational fund pools with yield generation
-   - Automated claim authorization triggering instant withdrawals
-   - Native mUSD processing without oracle dependencies
+1. **Essential Container Stack**
+   - Contract deployer for Greeting contract to vlayer anvil
+   - Next.js frontend with server actions (no API endpoints)
+   - Direct vlayer anvil integration (host network mode)
+   - Simplified deployment with only necessary components
 
-2. **Pool-Enabled Claims Workflow**
-   - Real-time liquidity validation before claim processing
-   - Instant hospital payouts upon claim authorization
-   - Automated yield distribution (60% patients, 20% insurers, 20% protocol)
-   - Privacy-preserving pool tracking and performance metrics
+2. **Server Actions Architecture**
+   - Replaced all API endpoints with server actions
+   - Direct blockchain interaction via server actions
+   - Simplified state management and data fetching
+   - Better SSR compatibility and performance
 
-3. **Container Deployment Infrastructure**
-   - Persistent Mantle fork with pre-configured demo accounts
-   - Live frontend with real pool interactions
-   - Automated demo data initialization and management
-   - Production-ready Dockploy deployment configuration
+3. **vlayer Integration Optimization**
+   - Uses existing vlayer anvil-l2-mantle container (port 8547)
+   - Leverages vlayer's pre-funded demo accounts
+   - Host network mode for direct container communication
+   - No custom anvil containers needed
 
 ---
 
-## 🔄 Recent Changes & Decisions
+## 🔄 Recent Architectural Changes
 
-### Architecture Evolution: Oracle Elimination → Native mUSD
+### Simplification Strategy: Complex Multi-Service → Essential Minimal
 
-**Previous Approach**: Complex oracle-based price conversion system  
-**Current Innovation**: Direct native Mantle USD processing
+**Previous Approach**: Complex stack with demo-api, nginx proxy, custom anvil  
+**Current Innovation**: Two essential containers leveraging existing vlayer infrastructure
 
 **Why This Change**:
-- Eliminated external dependencies and potential oracle failures
-- Reduced system complexity and attack surface significantly
-- Lower transaction costs and faster processing times
-- Enhanced security through native asset integration
-- Simplified development and testing workflows
+- Eliminated unnecessary complexity and maintenance overhead
+- Faster deployment and easier debugging
+- Better alignment with user preference for server actions over APIs
+- More reliable integration with existing vlayer setup
+- Reduced attack surface and simpler security model
 
-### Registration System Enhancement: Single Path → Dual Path
+### Container Architecture Evolution: 5 Services → 2 Essential Services
 
-**Previous Approach**: Single patient registration flow  
-**Current Innovation**: Dual registration paths for maximum flexibility
+**Previous Setup**:
+- Custom anvil container (replaced by vlayer anvil)
+- Demo API service (replaced by server actions)
+- Nginx proxy (eliminated for direct frontend access)
+- Contract deployer (simplified and optimized)
+- Frontend (streamlined with server actions)
 
-**Path A**: Existing insurance coverage integration via mailproof verification  
-**Path B**: New insurance selection with pool performance comparison
+**Current Essential Stack**:
+- **contract-deployer**: One-time Greeting contract deployment
+- **zkmed-frontend**: Next.js with server actions and direct anvil integration
 
-**Impact**:
-- Accommodates all patient scenarios seamlessly
-- Creates competitive pressure for insurers to optimize pools
-- Enables informed decision-making based on yield performance
-- Maximizes market adoption potential
+### Network Architecture Simplification
 
-### Deployment Strategy Evolution: Traditional → Container-First
+**Previous**: Complex docker networks with inter-service communication  
+**Current**: Host network mode with direct vlayer anvil connection
 
-**Previous Approach**: Standard smart contract deployment  
-**Current Innovation**: Complete containerized production environment
-
-**Container Benefits**:
-- Live demo environment with persistent demo data
-- Production-ready scalable infrastructure
-- Automated setup and configuration management
-- Real-time monitoring and health checks
-- Custom domain access with SSL termination
+**Benefits**:
+- Eliminated network configuration complexity
+- Direct connection to vlayer services
+- Simplified debugging and monitoring
+- Better performance with reduced network overhead
 
 ---
 
-## 📋 Immediate Next Steps (Next 2 Weeks)
+## 📋 Immediate Implementation Status
 
-### Week 1: Core Pool Contract Development
+### Essential Container Development [80% COMPLETE]
 
-#### PoolingContract.sol Implementation Priority
-1. **Aave V3 Integration Functions** (Days 1-2)
-   ```solidity
-   function depositToHealthcarePool(address patient, uint256 premiumAmount)
-   function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount)
-   function calculateAccruedYield(address patient) 
-   function distributeYield()
-   ```
+#### 1. Contract Deployer Simplification [✅ COMPLETE]
+- Simplified deployment script for Greeting contract only
+- Direct connection to vlayer anvil (localhost:8547)
+- Uses vlayer's pre-funded demo accounts
+- Creates minimal contract artifacts for frontend
 
-2. **Patient Pool Management** (Days 3-4)
-   - Individual patient pool creation and tracking
-   - Monthly premium deposit automation
-   - Real-time yield calculation and distribution
-   - Pool performance metrics and reporting
+#### 2. Frontend Server Actions Migration [🚧 IN PROGRESS]
+- Replaced API endpoints with server actions
+- Direct blockchain interaction via server actions
+- Simplified component architecture
+- SSR-compatible design patterns
 
-3. **Insurer Pool Integration** (Day 5)
-   - Operational fund deposits earning yield
-   - Pool liquidity management for claims
-   - Competitive performance tracking
-   - Automated rebalancing mechanisms
+#### 3. vlayer Integration Optimization [✅ COMPLETE]
+- Host network mode for direct anvil access
+- Uses existing anvil-l2-mantle container
+- Leverages vlayer's demo account setup
+- Eliminated custom blockchain containers
 
-### Week 2: Enhanced Module Integration
+### Current Implementation Blockers [🚧 RESOLVING]
 
-#### Pool-Enabled Module Updates
-1. **PatientModule.sol Enhancement** (Days 1-2)
-   - Insurance selection based on pool performance
-   - Automated payment setup with yield tracking
-   - Pool dashboard with real-time metrics
-   - Effective cost calculation including yield benefits
+#### Build Issues with TypeScript/ThirdWeb
+- SSR compatibility issues with thirdweb hooks
+- TypeScript errors with contract typing
+- Component hydration mismatches
+- Need to stabilize build process
 
-2. **ClaimProcessingContract.sol Integration** (Days 3-4)
-   - Pool liquidity validation before claim processing
-   - Multi-proof validation with pool authorization
-   - Instant withdrawal triggers upon approval
-   - Privacy-preserving pool interaction logging
-
-3. **Frontend Pool Dashboard** (Day 5)
-   - Real-time pool performance visualization
-   - Insurance selection interface with metrics
-   - Yield tracking and effective cost calculation
-   - Demo account interaction capabilities
+#### Container Integration Testing
+- Verifying contract deployment to vlayer anvil
+- Testing frontend connectivity to deployed contracts
+- Validating demo account interactions
+- End-to-end workflow testing
 
 ---
 
-## 🐳 Container Development Priorities
+## 🎯 Simplified Success Criteria
 
-### Current Container Architecture Status
+### Essential Container Success Metrics
+- [ ] **Contract Deployment**: Greeting contract successfully deployed to vlayer anvil
+- [ ] **Frontend Build**: Production Next.js build completing without errors
+- [ ] **Server Actions**: All blockchain interactions via server actions working
+- [ ] **Demo Functionality**: Basic greeting contract interaction operational
 
-#### Completed Infrastructure
-- ✅ **Mantle Fork Container**: Persistent blockchain (Chain ID: 31339)
-- ✅ **Demo Account Configuration**: Pre-configured insurer, hospital, patient accounts
-- ✅ **Basic Docker Setup**: Multi-service container orchestration
-- ✅ **Development Environment**: Local testing with Foundry integration
-
-#### Active Container Development
-- 🚧 **Contract Deployer Container**: Automated demo data initialization
-- 🚧 **Frontend Container**: Next.js production build with pool dashboard
-- 🚧 **Nginx Proxy Container**: Domain access and SSL termination
-- 🚧 **Demo Data Management**: Persistent state across container restarts
-
-#### Next Container Milestones
-- 📋 **Dockploy Configuration**: Complete deployment orchestration
-- 📋 **Live Demo Testing**: End-to-end workflow validation
-- 📋 **Performance Monitoring**: Container health and resource tracking
-- 📋 **Production Deployment**: Live domain with SSL certificate
-
----
-
-## 🔧 Technical Challenges & Solutions
-
-### Current Challenge: Aave V3 Pool State Management
-
-**Problem**: Maintaining accurate pool balance tracking across patient and insurer deposits while enabling instant claims and yield distribution.
-
-**Solution Approach**:
-1. **Modular Pool Tracking**: Separate accounting for each stakeholder type
-2. **Real-time Yield Calculation**: Continuous Aave interaction for accurate yields
-3. **Automated Rebalancing**: Smart contract logic for optimal pool utilization
-4. **Emergency Withdrawal**: Fallback mechanisms for unexpected scenarios
-
-**Implementation Status**: Architecture complete, core functions in development
-
-### Current Challenge: Container Data Persistence
-
-**Problem**: Ensuring demo account states and pool data persist across container restarts while maintaining production-ready deployment patterns.
-
-**Solution Approach**:
-1. **Volume Mounting**: Persistent storage for blockchain state and demo data
-2. **Initialization Scripts**: Automated setup of demo accounts and pools
-3. **Health Monitoring**: Container restart detection with state restoration
-4. **Backup Strategy**: Regular state snapshots for disaster recovery
-
-**Implementation Status**: Basic persistence working, advanced features in development
-
----
-
-## 🎯 Success Criteria for Current Phase
-
-### Pool Implementation Success Metrics
-- [ ] **Functional Aave Integration**: Patient premiums earning 3-5% APY
-- [ ] **Instant Claim Processing**: Real-time authorization and hospital payouts
-- [ ] **Automated Yield Distribution**: 60/20/20 stakeholder allocation working
-- [ ] **Pool Performance Tracking**: Real-time metrics and reporting functional
-
-### Container Deployment Success Metrics
-- [ ] **Live Demo Environment**: All containers running with persistent data
-- [ ] **Domain Access**: Custom domain with SSL working correctly
-- [ ] **Demo Workflows**: End-to-end patient/hospital/insurer interactions
-- [ ] **Production Readiness**: Health monitoring and auto-scaling configured
+### Deployment Success Metrics
+- [ ] **Dockploy Compatibility**: Containers deploying successfully via Dockploy
+- [ ] **Direct Access**: Frontend accessible on port 3000 without proxy
+- [ ] **Health Monitoring**: Basic health checks operational
+- [ ] **Demo Workflow**: Greeting contract interaction demo functional
 
 ### Integration Success Metrics
-- [ ] **Multi-Proof + Pools**: ZK/Web/Mail validation triggering pool operations
-- [ ] **Dual Registration + Pools**: Both paths creating functional pool access
-- [ ] **Frontend + Pools**: Dashboard showing real-time pool performance
-- [ ] **Privacy + Pools**: Zero medical data exposure during pool operations
+- [ ] **vlayer Anvil**: Direct connection to existing anvil-l2-mantle
+- [ ] **Demo Accounts**: Using vlayer's pre-configured accounts
+- [ ] **Contract Artifacts**: Shared volumes working between containers
+- [ ] **Network Communication**: Host mode networking operational
 
 ---
 
-## 🚨 Current Blockers & Risks
+## 🚨 Current Blockers & Immediate Actions
 
-### Technical Risks
-1. **Aave V3 Complexity**: Pool integration more complex than anticipated
-   - **Mitigation**: Local fork testing with real Aave contracts
-   - **Status**: Progressing well with comprehensive testing
+### Technical Issues
+1. **Frontend Build Failures**: SSR/TypeScript compatibility with thirdweb
+   - **Immediate Action**: Fix component hydration and contract typing
+   - **Status**: Active debugging and component refactoring
 
-2. **Container Orchestration**: Multi-service coordination challenges
-   - **Mitigation**: Incremental deployment with health monitoring
-   - **Status**: Basic setup working, advanced features in progress
+2. **Container Networking**: Ensuring reliable vlayer anvil connectivity
+   - **Immediate Action**: Validate host network mode configuration
+   - **Status**: Testing container communication patterns
 
-### Timeline Risks
-1. **Cookathon Deadline**: Limited time for full implementation
-   - **Mitigation**: MVP-focused development with core features prioritized
-   - **Status**: On track for essential features, stretch goals identified
+### Simplification Benefits
+1. **Reduced Complexity**: Eliminated 60% of previous container services
+   - **Benefit**: Faster deployment and easier maintenance
+   - **Status**: Achieved through architectural simplification
 
-2. **Frontend Integration**: Pool dashboard complexity
-   - **Mitigation**: Reusable components and demo data for rapid testing
-   - **Status**: Basic architecture complete, implementation in progress
-
-### Market Risks
-1. **Competition Emergence**: Other teams building similar solutions
-   - **Mitigation**: Unique pool-enabled architecture and privacy focus
-   - **Status**: Confident in differentiation through technical innovation
+2. **Better vlayer Integration**: Direct use of existing infrastructure
+   - **Benefit**: More reliable and performant integration
+   - **Status**: Implemented through host network mode
 
 ---
 
-## 🎉 Recent Wins & Momentum
+## 📈 Progress Achievements
 
-### Technical Achievements
-- ✅ **Registration System Complete**: 37/37 tests passing with vlayer integration
-- ✅ **Architecture Simplification**: Native mUSD eliminates oracle dependencies
-- ✅ **Container Foundation**: Multi-service deployment working locally
-- ✅ **Demo Account Setup**: Pre-configured accounts with realistic data
+### Architectural Wins
+- ✅ **Simplified Container Stack**: Reduced from 5 to 2 essential services
+- ✅ **Eliminated API Complexity**: Server actions replace all API endpoints
+- ✅ **vlayer Integration**: Direct use of existing anvil-l2-mantle
+- ✅ **Removed Nginx Dependency**: Direct frontend access on port 3000
 
-### Strategic Decisions
-- ✅ **Pool-First Strategy**: Aave V3 integration as core differentiator
-- ✅ **Dual Registration Innovation**: Flexible onboarding for market expansion
-- ✅ **Container Deployment**: Production-ready scalable infrastructure
-- ✅ **Privacy Preservation**: Multi-proof architecture maintaining medical privacy
+### Development Efficiency
+- ✅ **Faster Builds**: Simplified container architecture
+- ✅ **Easier Debugging**: Fewer moving parts and dependencies
+- ✅ **Better Testing**: Direct component and contract interaction
+- ✅ **Cleaner Code**: Server actions instead of complex API layer
 
-### Market Positioning
-- ✅ **First-Mover Advantage**: Only healthcare platform with yield-generating pools
-- ✅ **Technical Differentiation**: Proven infrastructure with innovative application
-- ✅ **Prize Track Alignment**: Perfect fit for Cookathon categories
-- ✅ **Demo Readiness**: Live environment for judge interaction
+### Deployment Readiness
+- ✅ **Dockploy Alignment**: Simplified container stack ideal for Dockploy
+- ✅ **Resource Efficiency**: Lower resource requirements
+- ✅ **Maintenance Simplicity**: Fewer services to monitor and maintain
+- ✅ **Security Benefits**: Reduced attack surface
 
 ---
 
-## 🔮 Looking Ahead: Next Month
+## 🔮 Next Phase: Demo Completion
 
-### Post-Pool Implementation Focus
-1. **Advanced Pool Features**: Multi-asset support, yield optimization
-2. **Regulatory Preparation**: Compliance framework development
-3. **Partnership Outreach**: Insurer and hospital integration planning
-4. **Market Expansion**: Cross-chain deployment strategy
+### Week 1: Build Stabilization
+1. **Fix Frontend Build Issues**: Resolve SSR and TypeScript errors
+2. **Complete Server Actions**: Ensure all blockchain interactions working
+3. **Test Container Integration**: Validate end-to-end deployment
+4. **Demo Account Setup**: Verify vlayer account integration
 
-### Cookathon Preparation
-1. **Demo Polishing**: Perfect user experience for judge evaluation
-2. **Presentation Materials**: Comprehensive demo and technical presentation
-3. **Live Environment**: Fully functional platform for real-time demonstration
-4. **Prize Strategy**: Targeted positioning for multiple prize categories
+### Week 2: Demo Polish & Deployment
+1. **End-to-End Testing**: Complete greeting contract workflow
+2. **Dockploy Deployment**: Live environment with custom domain
+3. **Demo Documentation**: User guides and technical documentation
+4. **Performance Optimization**: Final tuning and monitoring setup
 
-**The next two weeks are critical for establishing zkMed as the revolutionary healthcare platform with yield-generating pools. Success in pool implementation will validate our core innovation and position us for Cookathon victory and long-term market success.** 🚀 
+**The simplified container architecture represents a strategic pivot towards essential services and maintainable deployment, positioning zkMed for reliable Dockploy deployment and effective demonstration capabilities while leveraging existing vlayer infrastructure.** 🚀 

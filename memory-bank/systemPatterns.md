@@ -256,43 +256,42 @@ function distributeYield() external {
 
 ---
 
-## 🔄 Contract Interaction Patterns
+## 🔄 Container Interaction Patterns
 
-### Pool-Enabled Claims Workflow
+### Simplified Container Architecture
 
-**Revolutionary Pattern**: Claims authorization automatically triggers pool withdrawals, enabling instant hospital payments.
+**Essential Pattern**: Two-container stack leveraging existing vlayer infrastructure for reliable deployment.
 
-#### Complete Claims Processing Flow
+#### Essential Container Communication Flow
 ```mermaid
 graph TB
-    subgraph "Claim Initiation"
-        A[Hospital] --> B[Multi-Proof Submission]
-        B --> C[ZK + Web + Mail Proof]
+    subgraph "vlayer Infrastructure"
+        A[anvil-l2-mantle:8547] --> B[Blockchain RPC]
+        C[Demo Accounts] --> D[Pre-funded Wallets]
     end
     
-    subgraph "Validation Pipeline"
-        C --> D[ClaimProcessingContract]
-        D --> E[Multi-Proof Validation]
-        E --> F[Pool Liquidity Check]
+    subgraph "zkMed Essential Stack"
+        E[contract-deployer] --> F[Deploy Greeting]
+        F --> G[Contract Artifacts]
+        G --> H[zkmed-frontend]
+        H --> I[Server Actions]
     end
     
-    subgraph "Instant Authorization"
-        F --> G[Pool Authorization]
-        G --> H[Aave Withdrawal]
-        H --> I[mUSD Transfer]
-        I --> J[Hospital Payment]
+    subgraph "Direct Integration"
+        B --> F
+        D --> H
+        I --> B
     end
 ```
 
-#### Smart Contract Component Relationships
+#### Essential Service Relationships
 
-**Core Contract Hierarchy**:
-1. **RegistrationContract.sol** - Identity foundation
-2. **PoolingContract.sol** - Core innovation (Aave V3 integration)
-3. **PatientModule.sol** - Enhanced with insurance selection
-4. **OrganizationModule.sol** - Multi-proof claims processing
-5. **ClaimProcessingContract.sol** - Pool-aware validation
-6. **InsuranceContract.sol** - Native mUSD policy management
+**Simplified Component Stack**:
+1. **contract-deployer** - One-time Greeting contract deployment to vlayer anvil
+2. **zkmed-frontend** - Next.js application with server actions and direct blockchain integration
+3. **Server Actions** - Replace API endpoints for blockchain interaction
+4. **vlayer Integration** - Direct connection to existing anvil-l2-mantle infrastructure
+5. **Demo Components** - Greeting contract interaction with wallet connectivity
 
 ---
 

@@ -1,326 +1,179 @@
-# zkMed Container Architecture
+# zkMed Essential Container Architecture
 
-This directory contains the Docker container configurations for the zkMed platform, designed to work with the existing vlayer infrastructure and provide a complete demo environment.
+This directory contains the minimal Docker container configurations for the zkMed platform, designed to work with the existing vlayer infrastructure.
 
 ## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    zkMed Container Stack                    │
+│                 zkMed Essential Stack                       │
 ├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │   Nginx     │  │   Next.js   │  │  Demo API   │        │
-│  │   Proxy     │  │  Frontend   │  │   Service   │        │
-│  └─────────────┘  └─────────────┘  └─────────────┘        │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐                                           │
-│  │ Contracts   │  (One-time deployment & demo setup)      │
-│  │ Deployer    │                                           │
-│  └─────────────┘                                           │
+│  ┌─────────────┐  ┌─────────────┐                          │
+│  │   Next.js   │  │  Contract   │                          │
+│  │  Frontend   │  │  Deployer   │                          │
+│  │ (Port 3000) │  │ (One-time)  │                          │
+│  └─────────────┘  └─────────────┘                          │
 ├─────────────────────────────────────────────────────────────┤
 │              Existing vlayer Infrastructure                 │
-│  ┌─────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌───────┐ │
-│  │Anvil│  │  Call   │  │  VDNS   │  │ Notary  │  │WebSocket│
-│  │ L1  │  │ Server  │  │ Server  │  │ Server  │  │ Proxy  │ │
-│  └─────┘  └─────────┘  └─────────┘  └─────────┘  └───────┘ │
+│  ┌─────────────────┐  ┌─────────┐  ┌─────────┐  ┌───────┐  │
+│  │  anvil-l2-mantle│  │  Call   │  │  VDNS   │  │ Other │  │
+│  │  (Port 8547)    │  │ Server  │  │ Server  │  │Services│  │
+│  └─────────────────┘  └─────────┘  └─────────┘  └───────┘  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Container Services
+## Essential Services
 
-### 1. zkmed-contracts
-**Purpose**: Deploy smart contracts and setup demo accounts
-- **Dockerfile**: `./contracts/Dockerfile`
+### 1. contract-deployer
+**Purpose**: Deploy smart contracts to vlayer anvil
 - **Type**: One-time execution container
-- **Dependencies**: anvil (from vlayer)
-- **Outputs**: Contract addresses, demo account configuration
+- **Network**: host mode (connects to vlayer anvil on localhost:8547)
+- **Outputs**: Contract artifacts in shared volume
 
 **Key Features**:
-- Deploys RegistrationContract and EmailDomainProver
-- Funds demo accounts with ETH
-- Registers demo patient with commitment
-- Generates configuration files for other services
+- Deploys Greeting contract to anvil-l2-mantle (chain-id 31339)
+- Creates artifacts for frontend consumption
+- Uses vlayer's pre-funded demo accounts
 
 ### 2. zkmed-frontend  
-**Purpose**: Next.js application container
-- **Dockerfile**: `../packages/nextjs/Dockerfile`
+**Purpose**: Next.js application with server actions
 - **Type**: Long-running web service
 - **Port**: 3000
-- **Dependencies**: zkmed-contracts (for contract addresses)
+- **Dependencies**: contract-deployer (for contract addresses)
 
 **Key Features**:
-- Production-optimized Next.js build
-- Demo mode with pre-configured accounts
-- Integration with vlayer services
-- Real-time demo interactions
-
-### 3. zkmed-demo-api
-**Purpose**: REST API for demo data and blockchain interactions
-- **Dockerfile**: `./demo-api/Dockerfile`
-- **Type**: Long-running API service  
-- **Port**: 8080
-- **Dependencies**: zkmed-contracts, anvil
-
-**Key Features**:
-- RESTful endpoints for demo account information
-- Blockchain interaction utilities
-- Account balance monitoring
-- Demo workflow simulation
-
-### 4. zkmed-proxy
-**Purpose**: Nginx reverse proxy for unified access
-- **Configuration**: `./nginx/nginx.conf`
-- **Type**: Long-running proxy service
-- **Ports**: 80, 443
-- **Dependencies**: zkmed-frontend, zkmed-demo-api
-
-**Key Features**:
-- Routes traffic to appropriate services
-- CORS configuration for API access
-- SSL termination (when configured)
-- Rate limiting and security headers
+- Production-optimized Next.js build with bun
+- Server actions instead of API endpoints
+- Direct integration with vlayer anvil
+- /dev page with GreetingDemo, ChainStats, WalletFunding components
 
 ## Network Architecture
 
 ### Service Communication
-- **Internal Network**: `vlayer-network` (shared with vlayer services)
-- **External Access**: Only through nginx proxy on ports 80/443
-- **Inter-Service**: Containers communicate via internal hostnames
+- **vlayer anvil**: Runs on host localhost:8547 (chain-id 31339)
+- **Frontend**: Connects directly to anvil via host network
+- **Contract deployer**: Uses host network to deploy to vlayer anvil
 
 ### Port Mapping
-| Service | Internal Port | External Port | Purpose |
-|---------|--------------|---------------|----------|
-| anvil | 8545 | 8545 | Blockchain RPC (via vlayer) |
-| zkmed-frontend | 3000 | - | Web application |
-| zkmed-demo-api | 8080 | - | Demo API |
-| zkmed-proxy | 80/443 | 80/443 | Public access |
-
-### URL Routing
-```
-http://localhost/              → zkmed-frontend (Next.js app)
-http://localhost/api/demo/     → zkmed-demo-api (demo endpoints)
-http://localhost/api/contracts → zkmed-demo-api (contract info)
-http://localhost/rpc           → anvil (blockchain RPC)
-http://localhost/health        → nginx health check
-```
+| Service | Port | Purpose |
+|---------|------|---------|
+| vlayer anvil-l2-mantle | 8547 | Blockchain RPC |
+| zkmed-frontend | 3000 | Web application |
 
 ## Demo Environment
 
-### Pre-configured Accounts
-The container stack creates demo accounts with Anvil's deterministic keys:
+### Pre-configured Accounts (from vlayer)
+Uses vlayer's deterministic anvil accounts:
 
 ```json
 {
-  "insurer": {
+  "deployer": {
     "address": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
-    "name": "Regione Lazio Health Insurance",
-    "domain": "laziosalute.it"
+    "privateKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
   },
-  "hospital": {
+  "user1": {
     "address": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
-    "name": "Ospedale San Giovanni", 
-    "domain": "sangiovanni.lazio.it"
+    "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
   },
-  "patient": {
+  "user2": {
     "address": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
-    "commitment": "0x1234...cdef"
+    "privateKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
   }
 }
 ```
 
-### Demo Workflows
-1. **Patient Registration**: Pre-registered with commitment
-2. **Organization Verification**: Domain verification via vlayer
-3. **Claim Submission**: Multi-proof claim processing
-4. **Claim Approval**: Insurer approval workflow
-
 ## Deployment Instructions
 
 ### Prerequisites
+- vlayer containers already running (anvil-l2-mantle on port 8547)
 - Docker and Docker Compose installed
-- jq (for JSON processing in Makefile)
-- curl (for health checks and testing)
 
 ### Quick Start
 ```bash
-# Clone and navigate to zkMed directory
-cd zkMed
-
-# Setup development environment
-make dev-env
-
-# Quick start (builds and starts everything)
-make quick-start
-
-# Access the demo
-open http://localhost
-```
-
-### Manual Deployment
-```bash
-# 1. Start vlayer services first
+# Ensure vlayer is running
 cd packages/foundry/vlayer
-docker-compose -f docker-compose.devnet.yaml up -d
+docker-compose -f docker-compose.devnet.yaml ps
 
-# 2. Wait for anvil to be ready
-sleep 10
-
-# 3. Build zkMed containers  
+# Deploy zkMed essential services
 cd ../../../
-docker-compose build
+docker-compose -f dockploy-compose.yml up -d
 
-# 4. Start zkMed services
-docker-compose up -d
+# Check status
+docker-compose -f dockploy-compose.yml ps
 
-# 5. Check status
-make status
+# Access the app
+open http://localhost:3000/dev
 ```
 
 ### Development Workflow
 ```bash
 # View logs
-make logs
-
-# Check health
-make health
-
-# Run demo tests
-make demo-test
-
-# Access individual services
-make shell-frontend
-make shell-api
+docker-compose -f dockploy-compose.yml logs -f
 
 # Restart services
-make restart
+docker-compose -f dockploy-compose.yml restart
+
+# Check contract deployment
+docker-compose -f dockploy-compose.yml logs contract-deployer
+
+# Access frontend shell
+docker-compose -f dockploy-compose.yml exec zkmed-frontend /bin/bash
 ```
 
 ## Configuration
 
 ### Environment Variables
 
-#### zkmed-contracts
-- `RPC_URL`: Blockchain RPC endpoint (default: http://anvil:8545)
-- `CHAIN_ID`: Chain ID (default: 31337)
-- `DEMO_MODE`: Enable demo setup (default: true)
-- `PRIVATE_KEY_*`: Demo account private keys
+#### contract-deployer
+- `RPC_URL`: vlayer anvil endpoint (http://host.docker.internal:8547)
+- `CHAIN_ID`: Chain ID (31339)
+- `PRIVATE_KEY`: Deployer account private key
 
 #### zkmed-frontend
-- `NEXT_PUBLIC_RPC_URL`: Public RPC URL for browser
-- `NEXT_PUBLIC_CHAIN_ID`: Chain ID for frontend
-- `NEXT_PUBLIC_DEMO_MODE`: Enable demo mode
-- `NEXT_PUBLIC_DEMO_*`: Demo account addresses
-- `NEXT_PUBLIC_VLAYER_*`: vlayer service endpoints
-
-#### zkmed-demo-api
-- `RPC_URL`: Blockchain RPC for API calls
-- `CHAIN_ID`: Chain ID for network validation
-- `DEMO_ACCOUNTS_FILE`: Path to demo accounts configuration
+- `NEXT_PUBLIC_RPC_URL`: Public RPC for browser (http://localhost:8547)
+- `NEXT_PUBLIC_CHAIN_ID`: Chain ID for frontend (31339)
+- `NEXT_PUBLIC_THIRDWEB_CLIENT_ID`: Thirdweb client ID
 
 ### Volume Mounts
-- `contract-artifacts`: Shared contract addresses and ABIs
-- `./demo-data`: Demo account configuration and test data
-- `./packages/foundry`: Smart contract source code
+- `contract_artifacts`: Shared contract artifacts between deployer and frontend
 
-## Monitoring and Debugging
+## Server Actions
+
+The frontend uses server actions instead of API endpoints:
+
+- `getContractAddresses()`: Get deployed contract addresses
+- `getGreetingContract()`: Get Greeting contract info
+- `getChainInfo()`: Get blockchain network information
+- `getDemoAccounts()`: Get demo account information
+
+## Monitoring and Health
 
 ### Health Checks
-All containers include health check endpoints:
-
 ```bash
-# Overall system health
-make health
+# Frontend health
+curl http://localhost:3000/api/health
 
-# Individual service health
-curl http://localhost:3000/health.json  # Frontend
-curl http://localhost:8080/health       # Demo API
-curl http://localhost/health            # Nginx proxy
-```
-
-### Log Monitoring
-```bash
-# All services
-make logs
-
-# Individual services
-make logs-frontend
-make logs-api
-make logs-contracts
-make logs-vlayer
+# Check anvil connection
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+  http://localhost:8547
 ```
 
 ### Common Issues
 
-1. **Container startup order**: Ensure vlayer services start first
-2. **Network connectivity**: Check that containers are on vlayer-network
-3. **Contract deployment**: Verify zkmed-contracts completed successfully
-4. **Demo data**: Check that `/app/demo-data/accounts.json` was created
-
-### Debugging Commands
-```bash
-# Check container status
-docker-compose ps
-
-# View detailed logs
-docker-compose logs -f [service-name]
-
-# Access container shell
-docker-compose exec [service-name] /bin/bash
-
-# Restart specific service
-docker-compose restart [service-name]
-
-# Rebuild and restart
-docker-compose up -d --build [service-name]
-```
+1. **vlayer not running**: Ensure anvil-l2-mantle is running on port 8547
+2. **Contract deployment fails**: Check contract-deployer logs
+3. **Frontend can't connect**: Verify RPC_URL environment variables
 
 ## Production Deployment
 
-### Dockploy Integration
-This container architecture is designed for Dockploy deployment:
+For production deployment on Dockploy:
 
 1. **Repository Setup**: Push to Git repository
-2. **Dockploy Configuration**: Import repository and configure services
-3. **Environment Variables**: Set production environment variables
-4. **Domain Configuration**: Configure custom domain and SSL
-5. **Monitoring**: Setup container health monitoring
-
-### Security Considerations
-- Change default demo private keys for production
-- Configure proper SSL certificates
-- Setup firewall rules for container access
-- Enable container resource limits
-- Configure log retention and rotation
-
-### Scaling
-- **Frontend**: Can be horizontally scaled via Dockploy
-- **Demo API**: Can be scaled for higher API throughput
-- **Blockchain**: Anvil is single-instance (consider mainnet for production)
-- **Proxy**: Nginx can handle multiple backend instances
-
-## Contributing
-
-### Adding New Containers
-1. Create new directory under `./containers/[service-name]/`
-2. Add Dockerfile and required configuration files
-3. Update `docker-compose.yml` with new service
-4. Add Makefile targets for management
-5. Update this README with service documentation
-
-### Container Development
-- Use multi-stage builds for optimized images
-- Include health checks in all containers
-- Follow security best practices (non-root users)
-- Add proper logging and error handling
-- Document environment variables and volumes
-
-### Testing
-- Test containers individually and as a stack
-- Verify demo workflows work end-to-end
-- Check health endpoints respond correctly
-- Validate container restart behavior
-- Test with different resource constraints
+2. **Environment Variables**: Set production values for THIRDWEB_CLIENT_ID
+3. **Domain Configuration**: Configure custom domain for port 3000
+4. **Health Monitoring**: Monitor container health via Dockploy
 
 ---
 
-For questions or support, please refer to the main zkMed documentation or open an issue in the repository. 
+This simplified architecture focuses on the essential components needed for the zkMed greeting demo, leveraging vlayer's existing infrastructure and server actions for optimal performance. 

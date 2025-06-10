@@ -3,14 +3,14 @@ const nextConfig = {
   // Enable standalone output for Docker containers
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   
-  // Experimental features
-  experimental: {
-    // Enable optimizations
-    optimizeCss: true,
-    
-    // Server components
-    serverComponentsExternalPackages: ['ethers']
-  },
+  // Experimental features (disabled for production stability)
+  // experimental: {
+  //   // Enable optimizations
+  //   optimizeCss: true,
+  // },
+
+  // Server components external packages
+  serverExternalPackages: ['ethers'],
 
   // Environment variables
   env: {

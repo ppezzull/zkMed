@@ -99,70 +99,80 @@
 
 ## 🚧 ACTIVE DEVELOPMENT PHASE
 
-### Phase Status: Architecture Complete → Implementation In Progress
+### Phase Status: Simplified Container Architecture → Essential Services Implementation
 
-#### 1. PoolingContract.sol - Core Innovation [80% COMPLETE]
-**Status**: 🚧 Aave V3 integration architecture designed, implementation in progress
+#### 1. Essential Container Stack [85% COMPLETE]
+**Status**: 🚧 Simplified two-container architecture with vlayer integration
 
-**Completed Design Elements**:
-- ✅ **Patient Pool Architecture**: Individual premium deposits earning yield
-- ✅ **Insurer Pool Management**: Operational fund pools with yield generation
-- ✅ **Claim Authorization Flow**: Instant withdrawal upon validation
-- ✅ **Yield Distribution Logic**: 60% patients, 20% insurers, 20% protocol
-- ✅ **Native mUSD Integration**: Direct Mantle USD processing
+**Completed Architecture Elements**:
+- ✅ **Container Simplification**: Reduced from 5 services to 2 essential containers
+- ✅ **vlayer Integration**: Direct connection to existing anvil-l2-mantle (port 8547)
+- ✅ **Server Actions**: Replaced all API endpoints with server actions
+- ✅ **Host Network Mode**: Direct container communication with vlayer infrastructure
+- ✅ **Demo Account Setup**: Using vlayer's pre-funded deterministic accounts
 
 **Current Implementation Focus**:
-```solidity
-// Core functions in active development
-function depositToHealthcarePool(address patient, uint256 premiumAmount) external;
-function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount) external;
-function calculateAccruedYield(address stakeholder) external view returns (uint256);
-function distributeYield() external;
-function validatePoolLiquidity(uint256 requestedAmount) external view returns (bool);
+```yaml
+# Essential Container Stack
+services:
+  contract-deployer:    # One-time Greeting contract deployment
+    network_mode: "host"
+    environment:
+      - RPC_URL=http://host.docker.internal:8547
+      - CHAIN_ID=31339
+      
+  zkmed-frontend:       # Next.js with server actions
+    ports: ["3000:3000"]
+    depends_on: [contract-deployer]
 ```
 
-**Integration Benefits**:
-- Healthcare funds earn 3-5% APY through proven Aave V3 protocols
-- Instant claim liquidity through battle-tested withdrawal mechanisms
-- Automated yield distribution with transparent stakeholder allocation
-- Real-time pool performance tracking and optimization
+**Simplification Benefits**:
+- Eliminated complex multi-service orchestration and maintenance overhead
+- Direct vlayer integration without custom blockchain containers
+- Faster deployment and debugging with minimal moving parts
+- Better alignment with Dockploy deployment requirements
 
-#### 2. Enhanced Module Integration [60% COMPLETE]
-**Status**: 🚧 Pool integration across patient, organization, and claims modules
+#### 2. Frontend Server Actions Migration [70% COMPLETE]
+**Status**: 🚧 Replacing API endpoints with server actions for better SSR compatibility
 
-**PatientModule.sol Enhancement Progress**:
-- ✅ **Insurance Selection Architecture**: Browse insurers by pool performance
-- ✅ **Automated Payment Design**: Monthly mUSD deposit configuration
-- 🚧 **Pool Dashboard Integration**: Real-time yield tracking implementation
-- 🚧 **Effective Cost Calculation**: Premium costs minus yield benefits
+**Server Actions Implementation**:
+- ✅ **Contract Interaction**: Direct blockchain calls via server actions
+- ✅ **Demo Account Management**: Pre-configured vlayer account integration
+- 🚧 **Component Architecture**: SSR-compatible component design
+- 🚧 **State Management**: Simplified state with server action patterns
 
-**OrganizationModule.sol Pool Integration**:
-- ✅ **Multi-Proof Validation**: ZK + Web + Mail proof architecture
-- 🚧 **Pool-Enabled Claims**: Liquidity validation before processing
-- 🚧 **Instant Withdrawals**: Hospital payout upon authorization
-- 🚧 **Performance Analytics**: Pool efficiency and utilization tracking
+**Greeting Demo Components**:
+- ✅ **Chain Stats**: Network information via server actions
+- ✅ **Wallet Funding**: Demo account funding functionality
+- 🚧 **Greeting Demo**: Contract interaction with TypeScript fixes needed
+- 🚧 **Wallet Connect**: thirdweb integration with SSR compatibility
 
-**ClaimProcessingContract.sol Development**:
-- ✅ **Multi-Proof Architecture**: Comprehensive validation system
-- 🚧 **Pool Authorization Logic**: Automated withdrawal triggers
-- 🚧 **Privacy-Preserving Processing**: Medical data protection during validation
-- 🚧 **Audit Trail Generation**: Complete interaction logging
+**Key Server Actions Implemented**:
+- `getContractAddresses()`: Retrieve deployed contract addresses
+- `getGreetingContract()`: Get Greeting contract information
+- `getChainInfo()`: Blockchain network details
+- `getDemoAccounts()`: Pre-configured vlayer demo accounts
 
-#### 3. Frontend Pool Dashboard [40% COMPLETE]
-**Status**: 🚧 Next.js 15 application with pool visualization components
+#### 3. Build System Stabilization [60% COMPLETE]
+**Status**: 🚧 Resolving SSR/TypeScript compatibility issues for production builds
 
-**Completed Frontend Elements**:
-- ✅ **Basic Architecture**: Next.js 15 with App Router
-- ✅ **thirdweb Integration**: Gas sponsorship and smart accounts
-- ✅ **Wallet Connectivity**: Multi-wallet support with session management
-- ✅ **Responsive Design**: Mobile-first with desktop optimization
+**Build System Progress**:
+- ✅ **Bun Integration**: Migrated from npm to bun for faster builds
+- ✅ **Dynamic Imports**: SSR-safe component loading patterns
+- 🚧 **TypeScript Fixes**: Resolving contract type compatibility
+- 🚧 **thirdweb SSR**: Client-side only hook execution patterns
 
-**Active Frontend Development**:
-- 🚧 **Pool Performance Dashboard**: Real-time yield and balance tracking
-- 🚧 **Insurance Selection Interface**: Comparison shopping with metrics
-- 🚧 **Payment Automation**: Setup and management of monthly deposits
-- 🚧 **Claims Status Tracking**: Multi-proof validation progress
-- 🚧 **Demo Account Integration**: Pre-configured account workflows
+**Container Build Elements**:
+- ✅ **Multi-stage Dockerfile**: Optimized production build process
+- ✅ **Health Checks**: Container health monitoring endpoints
+- 🚧 **Production Build**: Fixing Next.js build failures
+- 🚧 **Volume Mounting**: Contract artifacts sharing between containers
+
+**Demo Page Architecture**:
+- ✅ **Dynamic Component Loading**: Prevents SSR issues with Web3 hooks
+- ✅ **Client-Side Rendering**: Wallet and contract interactions
+- 🚧 **Component Hydration**: Fixing hydration mismatches
+- 🚧 **Error Boundaries**: Graceful error handling for demo failures
 
 ---
 

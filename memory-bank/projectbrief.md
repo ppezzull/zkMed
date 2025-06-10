@@ -49,16 +49,16 @@
 
 ---
 
-## 🐳 Container-First Production Strategy
+## 🐳 Essential Container Strategy
 
-### Revolutionary Dockploy Deployment Architecture
+### Simplified Dockploy Deployment Architecture
 
-#### Live Demo Environment Features
-- **Persistent Mantle Fork**: Long-running blockchain container (Chain ID: 31339)
-- **Pre-Configured Demo Accounts**: Ready-to-use insurer, hospital, and patient accounts
-- **Live Frontend Client**: Functional Next.js application with real interactions
-- **Automated Setup**: One-command deployment with demo data initialization
-- **Clean Domain Access**: Custom domain with SSL via reverse proxy
+#### Essential Demo Environment Features
+- **vlayer Integration**: Direct connection to existing anvil-l2-mantle (Chain ID: 31339)
+- **Pre-Configured Demo Accounts**: Uses vlayer's deterministic demo accounts
+- **Live Frontend Client**: Next.js application with server actions and direct blockchain integration
+- **Minimal Setup**: Two-container deployment with contract deployer and frontend
+- **Direct Access**: Frontend accessible on port 3000 without proxy complexity
 
 #### Demo Account Configuration
 ```json
@@ -83,29 +83,26 @@
 }
 ```
 
-#### Container Services Architecture
+#### Essential Services Architecture
 ```yaml
-# Dockploy Container Stack
+# Essential Dockploy Container Stack
 services:
-  mantle-fork:          # Persistent blockchain (Chain ID: 31339)
-    image: zkmed/mantle-fork
-    ports: ["8545:8545"]
-    restart: always
-    
-  contract-deployer:    # Demo setup (one-time)
-    image: zkmed/deployer
-    depends_on: [mantle-fork]
+  contract-deployer:    # One-time Greeting contract deployment
+    network_mode: "host"
+    environment:
+      - RPC_URL=http://host.docker.internal:8547
+      - CHAIN_ID=31339
     restart: "no"
     
-  zkmed-frontend:       # Live Next.js client
-    image: zkmed/frontend
+  zkmed-frontend:       # Next.js with server actions
     ports: ["3000:3000"]
+    depends_on: [contract-deployer]
+    environment:
+      - NEXT_PUBLIC_RPC_URL=http://localhost:8547
+      - NEXT_PUBLIC_CHAIN_ID=31339
     restart: always
-    
-  nginx-proxy:          # Domain access + SSL
-    image: nginx:alpine
-    ports: ["80:80", "443:443"]
-    restart: always
+
+# External dependency: vlayer anvil-l2-mantle:8547
 ```
 
 ---
