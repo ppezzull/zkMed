@@ -1,5 +1,5 @@
 # zkMed - Docker Deployment
-.PHONY: help all deploy stop restart logs health validate up down check-anvil deploy-contracts extract-env clean clean-all dev-setup status quick-start
+.PHONY: help all deploy stop restart logs health validate up down check-anvil deploy-contracts extract-env clean clean-all dev-setup status quick-start reset check-contracts
 
 # Default target
 all: ## Complete development setup with vlayer + zkMed (validate + deploy + status)
@@ -29,6 +29,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "🏁 SETUP COMMANDS:"
 	@echo "  all                  Complete development setup (validate + deploy + status)"
+	@echo "  reset                Clean everything and redeploy from scratch"
 	@echo ""
 	@echo "🐳 DOCKER COMMANDS (docker-compose.yml - Local Testing):"
 	@echo "  deploy               Deploy zkMed locally with docker-compose.yml"
@@ -46,10 +47,12 @@ help: ## Show this help message
 	@echo "🔧 UTILITY COMMANDS:"
 	@echo "  check-anvil          Check if Anvil is running on port 8547"
 	@echo "  check-env            Check environment variables configuration"
+	@echo "  check-contracts      Check dynamic contract status via API"
 	@echo "  extract-env          Extract contract environment from deployment"
 	@echo "  dev-setup            Setup development environment"
 	@echo "  clean                Complete cleanup (containers + images + volumes)"
 	@echo "  clean-light          Light cleanup (containers + volumes, keep images)"
+	@echo "  reset                Clean everything and redeploy from scratch"
 	@echo "  status               Show deployment status"
 	@echo "  quick-start          Quick start guide for new users"
 
@@ -65,15 +68,13 @@ deploy: ## Deploy unified vlayer + zkMed stack with docker-compose.yml
 	@sleep 10
 	@echo "⏳ Waiting for contract deployment..."
 	@sleep 15
-	@$(MAKE) extract-env
-	@echo "🔄 Restarting frontend with deployed contracts..."
-	@docker compose restart zkmed-frontend
 	@$(MAKE) health
 	@echo "🎉 Unified deployment complete!"
 	@echo "📊 Frontend: http://localhost:3001"
 	@echo "🔧 Dev Page: http://localhost:3001/dev"
 	@echo "🔗 vlayer Prover: http://localhost:3000"
 	@echo "🔗 vlayer Notary: http://localhost:7047"
+	@echo "📄 Contract addresses are dynamically loaded via API"
 
 up: ## Start all services with docker-compose.yml
 	@echo "🔧 Starting zkMed services..."
@@ -174,30 +175,23 @@ check-anvil: ## Check if Anvil is running on port 8547
 	}
 	@echo "✅ Anvil Mantle Fork is ready!"
 
+check-contracts: ## Check dynamic contract status via API
+	@echo "📋 Dynamic Contract Status Check"
+	@echo "==============================="
+	@echo "🔗 Contract API endpoint:"
+	@curl -s http://localhost:3001/api/contracts | jq '.' 2>/dev/null || { \
+		echo "❌ Frontend not responding or jq not installed"; \
+		echo "🔧 Raw response:"; \
+		curl -s http://localhost:3001/api/contracts 2>/dev/null || echo "❌ Cannot reach frontend API"; \
+	}
+	@echo ""
+	@echo "✅ Contracts are loaded dynamically - no static configuration needed!"
+
 extract-env: ## Extract contract environment from deployment
-	@echo "🔄 Extracting contract environment variables..."
-	@mkdir -p docker-shared
-	@echo "# Checking for deployment artifacts..."
-	@if [ -f "./srcs/foundry/out/contracts.env" ]; then \
-		echo "✅ Found deployment environment file"; \
-		cp "./srcs/foundry/out/contracts.env" "./docker-shared/contracts.env"; \
-	else \
-		echo "⚠️ No deployment environment found, checking Docker volume..."; \
-		if docker volume inspect zkmed_contract_artifacts >/dev/null 2>&1; then \
-			echo "✅ Found contract artifacts volume"; \
-			TEMP_CONTAINER=$$(docker create --rm -v zkmed_contract_artifacts:/data alpine:latest); \
-			if docker cp "$$TEMP_CONTAINER:/data/contracts.env" "./docker-shared/contracts.env" 2>/dev/null; then \
-				echo "📄 Successfully extracted environment from Docker volume"; \
-			else \
-				echo "ℹ️ Using fallback environment configuration"; \
-			fi; \
-			docker rm "$$TEMP_CONTAINER" >/dev/null 2>&1; \
-		else \
-			echo "ℹ️ No artifacts volume found, using fallback configuration"; \
-		fi; \
-	fi
-	@echo "📄 Environment file: docker-shared/contracts.env"
-	@cat "./docker-shared/contracts.env" 2>/dev/null || echo "❌ Environment file not found"
+	@echo "🔄 Checking contract deployment status..."
+	@echo "📄 Contract addresses are automatically available via Docker volume"
+	@echo "🔗 Frontend API endpoint: http://localhost:3001/api/contracts"
+	@echo "✅ Dynamic contract loading is active - no manual extraction needed"
 
 dev-setup: ## Setup development environment
 	@echo "🛠️ Setting up development environment..."
@@ -218,7 +212,6 @@ clean: ## Complete cleanup - remove all containers, images, and volumes
 	@echo "🧽 Cleaning Docker system..."
 	@docker system prune -af --volumes
 	@echo "📁 Cleaning local files..."
-	@rm -rf docker-shared 2>/dev/null || true
 	@rm -rf srcs/foundry/out 2>/dev/null || true
 	@echo "✅ Complete cleanup finished!"
 
@@ -228,7 +221,6 @@ clean-light: ## Light cleanup - containers and volumes only (keep images)
 	@docker volume rm zkmed_contract_artifacts 2>/dev/null || true
 	@docker volume rm zkmed_contract-artifacts 2>/dev/null || true
 	@docker system prune -f --volumes
-	@rm -rf docker-shared 2>/dev/null || true
 	@echo "✅ Light cleanup finished!"
 
 status: ## Show unified deployment status
@@ -244,6 +236,7 @@ quick-start: ## Quick start guide for new users
 	@echo ""
 	@echo "🏃‍♂️ Super Quick (everything in one command):"
 	@echo "   make all                    # Complete setup + deployment"
+	@echo "   make reset                  # Clean everything and start fresh"
 	@echo ""
 	@echo "📝 Step by step:"
 	@echo "   1. make validate            # Check environment"
@@ -256,5 +249,22 @@ quick-start: ## Quick start guide for new users
 	@echo ""
 	@echo "🧹 When done:"
 	@echo "   make clean                  # Remove everything"
+
+reset: ## Clean everything and redeploy from scratch
+	@echo "🔄 zkMed Complete Reset & Fresh Deployment"
+	@echo "=========================================="
+	@echo "1️⃣ Cleaning all existing containers, images, and volumes..."
+	@$(MAKE) clean
+	@echo ""
+	@echo "2️⃣ Waiting for cleanup to complete..."
+	@sleep 3
+	@echo ""
+	@echo "3️⃣ Starting fresh deployment..."
+	@$(MAKE) all
+	@echo ""
+	@echo "🎉 Fresh deployment complete!"
+	@echo "📊 Frontend: http://localhost:3001"
+	@echo "🔧 Dev Page: http://localhost:3001/dev"
+	@echo "🔗 vlayer Services: http://localhost:3000 (prover), http://localhost:7047 (notary)"
 
  

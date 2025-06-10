@@ -29,8 +29,7 @@ DEPLOY_OUTPUT="/tmp/deploy_output.txt"
 # Use forge script for deployment - capture all output
 if forge script script/DeployGreeting.s.sol:DeployGreeting \
     --rpc-url ${RPC_URL:-http://anvil-l2-mantle:8545} \
-    --broadcast \
-    --verbose > "$DEPLOY_OUTPUT" 2>&1; then
+    --broadcast  > "$DEPLOY_OUTPUT" 2>&1; then
     
     echo "✅ Forge script completed successfully!"
     echo "📄 Deployment output:"
@@ -66,7 +65,26 @@ echo "CHAIN_ID=${CHAIN_ID:-31339}" >> out/addresses.txt
 echo "RPC_URL=${RPC_URL:-http://anvil-l2-mantle:8545}" >> out/addresses.txt
 echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
 
-# Create environment file for frontend
+# Create JSON file for frontend API
+echo "📝 Creating contracts JSON file..."
+cat > out/addresses.json << EOF
+{
+  "chainId": ${CHAIN_ID:-31339},
+  "rpcUrl": "${RPC_URL:-http://anvil-l2-mantle:8545}",
+  "contracts": {
+    "Greeting": {
+      "address": "$GREETING_ADDRESS",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    }
+  },
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "status": "deployed"
+}
+EOF
+
+echo "Contract addresses saved to out/addresses.json"
+
+# Also create environment file for compatibility
 echo "📝 Creating environment variables..."
 cat > out/contracts.env << EOF
 NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=$GREETING_ADDRESS
@@ -75,13 +93,8 @@ DEPLOYED_RPC_URL=${RPC_URL:-http://anvil-l2-mantle:8545}
 DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 
-echo "Environment variables saved to out/contracts.env"
-
 echo "🎉 Deployment completed successfully!"
 echo "Contract Address: $GREETING_ADDRESS"
 echo "Chain ID: ${CHAIN_ID:-31339}"
 echo "RPC URL: ${RPC_URL:-http://anvil-l2-mantle:8545}"
-
-# Export contract address for Docker environment
-echo "NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=$GREETING_ADDRESS" > /app/out/contract.env
-echo "🌍 Contract address exported to environment file" 
+echo "📄 Contract data exported to Docker volume" 
