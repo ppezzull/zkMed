@@ -7,7 +7,7 @@ import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount }
 import { Greeting__factory } from '@/utils/types/contracts/factories/Greeting__factory';
 import { mantleFork } from '@/utils/chain-config';
 import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
-import { client } from './providers/thirdweb-providers';
+import { client } from '../providers/thirdweb-providers';
 
 // Contract ABI
 const GREETING_ABI = Greeting__factory.abi;

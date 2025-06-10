@@ -10,7 +10,7 @@ import {
 import { privateKeyToAccount } from 'thirdweb/wallets';
 import { toEther, toWei } from 'thirdweb/utils';
 import { mantleFork } from '@/utils/chain-config';
-import { client } from './providers/thirdweb-providers';
+import { client } from '../providers/thirdweb-providers';
 
 export default function WalletFunding() {
   const account = useActiveAccount();

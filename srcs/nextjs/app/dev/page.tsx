@@ -1,7 +1,7 @@
-import ChainStats from "@/components/chain-stats";
+import ChainStats from "@/components/dev/chain-stats";
 import WalletConnect from "@/components/wallet-connect";
-import WalletFunding from "@/components/wallet-funding";
-import GreetingDemo from "@/components/greeting-demo";
+import WalletFunding from "@/components/dev/wallet-funding";
+import GreetingDemo from "@/components/dev/greeting-demo";
 
 export default function DevPage() {
   return (
