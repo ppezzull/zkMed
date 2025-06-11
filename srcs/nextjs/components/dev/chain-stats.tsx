@@ -1,7 +1,7 @@
 'use client';
 
 import { useActiveAccount } from 'thirdweb/react';
-import { mantleFork } from '../providers/thirdweb-providers';
+import { mantleFork } from '@/utils/chain-config';
 
 export default function ChainStats() {
   const account = useActiveAccount();
@@ -15,7 +15,7 @@ export default function ChainStats() {
       <div className="space-y-1">
         <p><span className="font-medium">Network:</span> {mantleFork.name}</p>
         <p><span className="font-medium">Chain ID:</span> {mantleFork.id}</p>
-        <p><span className="font-medium">RPC:</span> {mantleFork.rpc}</p>
+        <p><span className="font-medium">RPC:</span> Anvil Mantle Fork (via proxy)</p>
         <p><span className="font-medium">Status:</span> Connected to Anvil Mantle Fork</p>
         {account && (
           <>

@@ -1,0 +1,31 @@
+FROM oven/bun:1
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock* ./
+
+# Install dependencies
+RUN bun install
+
+# Set development environment
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Container networking environment defaults
+ENV NEXT_PUBLIC_CHAIN_ID=31339
+ENV NEXT_PUBLIC_RPC_URL=http://host.docker.internal:8547
+ENV NEXT_PUBLIC_THIRDWEB_CLIENT_ID=your-client-id-here
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Start development server with hot reloading
+CMD ["bun", "run", "dev", "--hostname", "0.0.0.0"]

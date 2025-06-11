@@ -5,7 +5,7 @@ import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
 import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
 import { Greeting__factory } from '@/utils/types/contracts/factories/Greeting__factory';
-import { mantleFork } from '@/utils/chain-config';
+import { getClientChain } from '@/utils/chain-config';
 import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
 import { client } from '../providers/thirdweb-providers';
 
@@ -14,6 +14,7 @@ const GREETING_ABI = Greeting__factory.abi;
 
 export default function GreetingDemo() {
   const account = useActiveAccount();
+  const mantleFork = getClientChain();
   
   const [greeting, setGreeting] = useState<string>('');
   const [userGreeting, setUserGreeting] = useState<string>('');

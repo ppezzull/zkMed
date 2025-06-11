@@ -33,7 +33,7 @@ services:
   zkmed-frontend:
     build:
       context: ./srcs/nextjs
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: zkmed-frontend
     ports:
       - "3001:3000"
@@ -46,8 +46,11 @@ services:
         condition: service_healthy
     volumes:
       - contract-artifacts:/app/contracts:ro
+      - ./srcs/nextjs:/app:rw
+      - /app/node_modules
+      - /app/.next
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - NEXT_PUBLIC_CHAIN_ID=31339
       - NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
       - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5

@@ -9,7 +9,7 @@ import {
 } from 'thirdweb';
 import { privateKeyToAccount } from 'thirdweb/wallets';
 import { toEther, toWei } from 'thirdweb/utils';
-import { mantleFork } from '@/utils/chain-config';
+import { getClientChain } from '@/utils/chain-config';
 import { client } from '../providers/thirdweb-providers';
 
 export default function WalletFunding() {
@@ -17,6 +17,9 @@ export default function WalletFunding() {
   const [balance, setBalance] = useState<bigint>(BigInt(0));
   const [loading, setLoading] = useState(false);
   const [funding, setFunding] = useState(false);
+
+  // Get the client-side chain configuration
+  const clientChain = getClientChain();
 
   // Anvil's default pre-funded account private key
   const ANVIL_DEFAULT_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
@@ -27,7 +30,7 @@ export default function WalletFunding() {
 
     setLoading(true);
     try {
-      const rpc = getRpcClient({ client, chain: mantleFork });
+      const rpc = getRpcClient({ client, chain: clientChain });
       const balanceHex = await rpc({
         method: 'eth_getBalance',
         params: [account.address, 'latest'],
@@ -58,7 +61,7 @@ export default function WalletFunding() {
       // Prepare the funding transaction
       const transaction = prepareTransaction({
         client,
-        chain: mantleFork,
+        chain: clientChain,
         to: account.address,
         value: toWei(amount),
       });

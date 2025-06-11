@@ -2,7 +2,7 @@
 
 import { ThirdwebProvider } from 'thirdweb/react';
 import { createThirdwebClient } from 'thirdweb';
-import { mantleFork } from '@/utils/chain-config';
+import { mantleFork, getClientChain } from '@/utils/chain-config';
 
 // Create the thirdweb client
 const client = createThirdwebClient({
@@ -17,5 +17,5 @@ export default function ThirdwebProviders({ children }: { children: React.ReactN
   );
 }
 
-// Export the client and chain for use in components
-export { client, mantleFork };
+// Export the client and chains for use in components
+export { client, mantleFork, getClientChain };

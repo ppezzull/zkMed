@@ -7,7 +7,7 @@ echo "🚀 Starting zkMed Contract Deployment..."
 echo "⏳ Waiting for Anvil to be ready..."
 while ! curl -s -X POST -H "Content-Type: application/json" \
     --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
-    ${RPC_URL:-http://anvil-l2-mantle:8545} > /dev/null; do
+    ${RPC_URL:-http://host.docker.internal:8547} > /dev/null; do
     echo "Waiting for Anvil..."
     sleep 2
 done
@@ -28,7 +28,7 @@ DEPLOY_OUTPUT="/tmp/deploy_output.txt"
 
 # Use forge script for deployment - capture all output
 if forge script script/DeployGreeting.s.sol:DeployGreeting \
-    --rpc-url ${RPC_URL:-http://anvil-l2-mantle:8545} \
+    --rpc-url ${RPC_URL:-http://host.docker.internal:8547} \
     --broadcast  > "$DEPLOY_OUTPUT" 2>&1; then
     
     echo "✅ Forge script completed successfully!"
@@ -62,7 +62,7 @@ echo "✅ Greeting contract deployed at: $GREETING_ADDRESS"
 echo "📄 Creating simple contract addresses file..."
 echo "GREETING_ADDRESS=$GREETING_ADDRESS" > out/addresses.txt
 echo "CHAIN_ID=${CHAIN_ID:-31339}" >> out/addresses.txt
-echo "RPC_URL=${RPC_URL:-http://anvil-l2-mantle:8545}" >> out/addresses.txt
+echo "RPC_URL=${RPC_URL:-http://host.docker.internal:8547}" >> out/addresses.txt
 echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
 
 # Create JSON file for frontend API
@@ -70,7 +70,7 @@ echo "📝 Creating contracts JSON file..."
 cat > out/addresses.json << EOF
 {
   "chainId": ${CHAIN_ID:-31339},
-  "rpcUrl": "${RPC_URL:-http://anvil-l2-mantle:8545}",
+  "rpcUrl": "${RPC_URL:-http://host.docker.internal:8547}",
   "contracts": {
     "Greeting": {
       "address": "$GREETING_ADDRESS",
@@ -89,12 +89,12 @@ echo "📝 Creating environment variables..."
 cat > out/contracts.env << EOF
 NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=$GREETING_ADDRESS
 DEPLOYED_CHAIN_ID=${CHAIN_ID:-31339}
-DEPLOYED_RPC_URL=${RPC_URL:-http://anvil-l2-mantle:8545}
+DEPLOYED_RPC_URL=${RPC_URL:-http://host.docker.internal:8547}
 DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 
 echo "🎉 Deployment completed successfully!"
 echo "Contract Address: $GREETING_ADDRESS"
 echo "Chain ID: ${CHAIN_ID:-31339}"
-echo "RPC URL: ${RPC_URL:-http://anvil-l2-mantle:8545}"
+echo "RPC URL: ${RPC_URL:-http://host.docker.internal:8547}"
 echo "📄 Contract data exported to Docker volume" 

@@ -1,13 +1,16 @@
 'use client';
 
 import { ConnectButton, useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
-import { client, mantleFork } from './providers/thirdweb-providers';
+import { client, getClientChain } from './providers/thirdweb-providers';
 import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
 import { Button } from '@/components/ui/button';
 
+// Get the appropriate chain for client-side operations
+const clientChain = getClientChain();
+
 // Configure wallets with smart wallet for gas abstraction
 const smartWalletOptions = smartWallet({
-  chain: mantleFork,
+  chain: clientChain,
   factoryAddress: process.env.NEXT_PUBLIC_SMART_WALLET_FACTORY_ADDRESS, // Default smart wallet factory
   gasless: true, // Enable gasless transactions
 });
@@ -46,7 +49,7 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         <ConnectButton
           client={client}
           wallets={wallets}
-          chain={mantleFork}
+          chain={clientChain}
           connectButton={{
             label: "Connect Wallet",
             style: {
@@ -90,12 +93,11 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         <div className="text-center">
           <p className="text-gray-600 mb-4">
             Connect your wallet to access zkMed with gasless transactions
-          </p>
-          <ConnectButton
-            client={client}
-            wallets={wallets}
-            chain={mantleFork}
-            connectButton={{
+          </p>        <ConnectButton
+          client={client}
+          wallets={wallets}
+          chain={clientChain}
+          connectButton={{
               label: "Connect Wallet",
               style: {
                 backgroundColor: "#0066CC",
