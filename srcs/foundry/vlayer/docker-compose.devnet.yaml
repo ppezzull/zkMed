@@ -10,7 +10,7 @@ include:
   - notary-server/service.yaml
 
 networks:
-  default:
-    name: vlayer-network
+  zkmed-network: # Renamed from vlayer-network
+    name: zkmed-network # Renamed from vlayer-network
     driver: bridge
 

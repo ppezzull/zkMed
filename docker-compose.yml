@@ -27,7 +27,7 @@ services:
       anvil-l2-mantle:
         condition: service_started
     networks:
-      - vlayer-network
+      - zkmed-network # Renamed from vlayer-network
 
   # Next.js Frontend Container  
   zkmed-frontend:
@@ -72,12 +72,13 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - vlayer-network
+      - zkmed-network # Renamed from vlayer-network
 
 volumes:
   contract-artifacts:
     driver: local
 
 networks:
-  vlayer-network:
-    external: true 
+  zkmed-network: # Renamed from vlayer-network
+    name: zkmed-network # Renamed from vlayer-network
+    driver: bridge

@@ -66,10 +66,6 @@ deploy: ## Deploy unified vlayer + zkMed stack with docker-compose.yml
 	@echo "🚀 Starting Unified vlayer + zkMed Deployment..."
 	@echo "🔧 Starting all services (vlayer infrastructure + zkMed)..."
 	@docker compose up -d
-	@echo "⏳ Waiting for vlayer services to initialize..."
-	@sleep 10
-	@echo "⏳ Waiting for contract deployment..."
-	@sleep 15
 	@$(MAKE) health
 	@echo "🎉 Unified deployment complete!"
 	@echo "📊 Frontend: http://localhost:3001"
