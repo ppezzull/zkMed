@@ -14,6 +14,31 @@ done
 
 echo "✅ Anvil is ready!"
 
+# Check if contracts are already deployed
+echo "🔍 Checking for existing contract deployment..."
+# Check both the local out directory and the volume mount location (which is /app/out)
+ADDRESSES_FILE=""
+if [ -f "out/addresses.json" ] && [ -s "out/addresses.json" ]; then
+    ADDRESSES_FILE="out/addresses.json"
+fi
+
+if [ ! -z "$ADDRESSES_FILE" ] && [ -s "$ADDRESSES_FILE" ]; then
+    # Check if the JSON file has a valid contract address
+    EXISTING_ADDRESS=$(jq -r '.contracts.Greeting.address // empty' "$ADDRESSES_FILE" 2>/dev/null)
+    if [ ! -z "$EXISTING_ADDRESS" ] && [ "$EXISTING_ADDRESS" != "null" ]; then
+        echo "✅ Contract already deployed at: $EXISTING_ADDRESS"
+        echo "⏭️ Skipping deployment - using existing contract"
+        echo "🎉 Deployment check completed successfully!"
+        echo "Contract Address: $EXISTING_ADDRESS"
+        echo "Chain ID: $(jq -r '.chainId // 31339' "$ADDRESSES_FILE" 2>/dev/null)"
+        echo "RPC URL: $(jq -r '.rpcUrl // "http://host.docker.internal:8547"' "$ADDRESSES_FILE" 2>/dev/null)"
+        echo "📄 Using existing contract data"
+        exit 0
+    fi
+fi
+
+echo "📝 No existing contract found - proceeding with new deployment..."
+
 # Build contracts
 echo "🔨 Building contracts..."
 forge soldeer install

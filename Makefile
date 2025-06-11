@@ -48,6 +48,8 @@ help: ## Show this help message
 	@echo "  check-anvil          Check if Anvil is running on port 8547"
 	@echo "  check-env            Check environment variables configuration"
 	@echo "  check-contracts      Check dynamic contract status via API"
+	@echo "  redeploy-contracts   Force redeploy contracts (clear existing and deploy new)"
+	@echo "  clear-contracts      Clear deployed contract artifacts"
 	@echo "  extract-env          Extract contract environment from deployment"
 	@echo "  dev-setup            Setup development environment"
 	@echo "  clean                Complete cleanup (containers + images + volumes)"
@@ -186,6 +188,22 @@ check-contracts: ## Check dynamic contract status via API
 	}
 	@echo ""
 	@echo "✅ Contracts are loaded dynamically - no static configuration needed!"
+
+redeploy-contracts: ## Force redeploy contracts (clear existing and deploy new)
+	@echo "🔄 Force Redeploying Contracts..."
+	@echo "🗑️ Clearing existing contract artifacts..."
+	@docker run --rm -v zkmed_contract-artifacts:/volume alpine sh -c "rm -f /volume/addresses.json /volume/addresses.txt /volume/contracts.env" 2>/dev/null || true
+	@echo "🚀 Starting fresh contract deployment..."
+	@docker compose restart zkmed-contracts
+	@echo "⏳ Waiting for contract deployment..."
+	@sleep 10
+	@$(MAKE) check-contracts
+	@echo "✅ Contract redeployment complete!"
+
+clear-contracts: ## Clear deployed contract artifacts (next deployment will create new contracts)
+	@echo "🗑️ Clearing Contract Artifacts..."
+	@docker run --rm -v zkmed_contract-artifacts:/volume alpine sh -c "rm -f /volume/addresses.json /volume/addresses.txt /volume/contracts.env" 2>/dev/null || true
+	@echo "✅ Contract artifacts cleared - next deployment will create new contracts"
 
 extract-env: ## Extract contract environment from deployment
 	@echo "🔄 Checking contract deployment status..."
