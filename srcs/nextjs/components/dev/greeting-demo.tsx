@@ -1,124 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
-import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
-import { Greeting__factory } from '@/utils/types/contracts/factories/Greeting__factory';
-import { getClientChain } from '@/utils/chain-config';
-import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
-import { client } from '../providers/thirdweb-providers';
-
-// Contract ABI
-const GREETING_ABI = Greeting__factory.abi;
+import { useGreetingContract } from '@/hooks/getGreetingContract';
 
 export default function GreetingDemo() {
   const account = useActiveAccount();
-  const mantleFork = getClientChain();
-  
-  const [greeting, setGreeting] = useState<string>('');
-  const [userGreeting, setUserGreeting] = useState<string>('');
-  const [totalGreetings, setTotalGreetings] = useState<bigint>(BigInt(0));
-  const [userGreetingCount, setUserGreetingCount] = useState<bigint>(BigInt(0));
   const [newGreeting, setNewGreeting] = useState<string>('');
-  const [loading, setLoading] = useState(false);
-  const [txLoading, setTxLoading] = useState(false);
-  const [contractAddress, setContractAddress] = useState<string>('');
-  const [contractStatus, setContractStatus] = useState<'deployed' | 'fallback'>('fallback');
-
-  // Load contract address dynamically
-  useEffect(() => {
-    const loadContractInfo = async () => {
-      try {
-        const [address, status] = await Promise.all([
-          getGreetingContractAddress(),
-          getContractStatus()
-        ]);
-        setContractAddress(address);
-        setContractStatus(status);
-      } catch (error) {
-        console.error('Error loading contract info:', error);
-      }
-    };
-    
-    loadContractInfo();
-  }, []);
-
-  // Fetch contract data
-  const fetchData = async () => {
-    if (!contractAddress) return;
-    
-    setLoading(true);
-    try {
-      const [greetingResult, totalResult] = await Promise.all([
-        getGreeting(),
-        getTotalGreetings(),
-      ]);
-
-      if (greetingResult.success) {
-        setGreeting(greetingResult.data as string);
-      }
-      if (totalResult.success) {
-        setTotalGreetings(totalResult.data as bigint);
-      }
-
-      if (account?.address) {
-        const [userGreetingResult, userCountResult] = await Promise.all([
-          getUserGreeting(account.address),
-          getUserGreetingCount(account.address),
-        ]);
-
-        if (userGreetingResult.success) {
-          setUserGreeting(userGreetingResult.data as string);
-        }
-        if (userCountResult.success) {
-          setUserGreetingCount(userCountResult.data as bigint);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (contractAddress) {
-    fetchData();
-    }
-  }, [account?.address, contractAddress]);
+  
+  const {
+    greeting,
+    userGreeting,
+    totalGreetings,
+    userGreetingCount,
+    contractAddress,
+    contractStatus,
+    loading,
+    txLoading,
+    setGreeting,
+    refreshData
+  } = useGreetingContract();
 
   const handleSetGreeting = async () => {
-    if (!account || !newGreeting.trim() || !contractAddress) return;
+    if (!newGreeting.trim()) return;
 
-    setTxLoading(true);
     try {
-      const contract = getContract({
-        client,
-        chain: mantleFork,
-        address: contractAddress,
-        abi: GREETING_ABI,
-      });
-
-      const transaction = prepareContractCall({
-        contract,
-        method: "setGreeting",
-        params: [newGreeting.trim()],
-      });
-
-      const result = await sendAndConfirmTransaction({
-        transaction,
-        account,
-      });
-
-      console.log('Transaction successful:', result);
+      await setGreeting(newGreeting);
       setNewGreeting('');
-      // Refresh data after successful transaction
-      setTimeout(fetchData, 2000);
     } catch (error) {
-      console.error('Transaction failed:', error);
-    } finally {
-      setTxLoading(false);
+      console.error('Failed to set greeting:', error);
+      // You could add toast notification here
     }
   };
 
@@ -229,7 +140,7 @@ export default function GreetingDemo() {
 
             {/* Refresh Button */}
             <button
-              onClick={fetchData}
+              onClick={refreshData}
               disabled={loading}
               className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:bg-gray-400 transition-colors"
             >
