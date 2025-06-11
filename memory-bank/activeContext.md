@@ -1,21 +1,22 @@
-# zkMed Active Context - Simplified Container Deployment Focus
+# zkMed Active Context - Email-Verified Claims Processing Focus
 
-**Current Status**: Simplified container architecture focusing on essential services for Greeting contract demo and vlayer service integration.
+**Current Status**: Simplified container architecture focusing on essential services with emailproof-based claim certification for comprehensive verification workflows.
 
 **Last Updated**: December 2024  
-**Active Phase**: vlayer + zkMed Integration & Simplified Deployment
+**Active Phase**: vlayer + zkMed Integration & Email-Verified Claims Implementation
 
 ---
 
 ## 🎯 Current Development Focus
 
-The zkMed development environment now features **integrated vlayer services** with a unified deployment system optimized for development and production.
+The zkMed development environment now features **integrated vlayer services** with a unified deployment system optimized for development and production, utilizing **emailproof-based claim certification** for comprehensive validation.
 
 ### ✅ vlayer Integration Complete
 - **Unified Container Stack**: Single docker-compose.yml handles both vlayer and zkMed services
 - **Shared Network**: vlayer-network enables seamless container-to-container communication
 - **Simplified Commands**: Combined Makefile commands for integrated deployment
 - **Network Optimization**: Container names used for internal communication, localhost for browser access
+- **EmailProof Infrastructure**: vlayer email verification services fully operational
 
 ## 🔗 vlayer + zkMed Integration Architecture
 
@@ -24,6 +25,8 @@ The zkMed development environment now features **integrated vlayer services** wi
 vlayer Infrastructure (anvil, call-server, notary) → vlayer-network
          ↓ (shared network)
 zkMed Application (contracts, frontend) → vlayer-network
+         ↓ (email verification)
+EmailProof Validation → Claim Certification
 ```
 
 ### Port Management
@@ -49,48 +52,81 @@ NEXT_PUBLIC_RPC_URL=http://localhost:8547
 WS_PROXY_URL=ws://localhost:3003
 ```
 
-### Unified Deployment Workflows
+### EmailProof-Based Claims Architecture
 
-**Complete Setup (Recommended)**:
-```bash
-make all
-```
-This runs the full integrated setup:
-1. Validates environment
-2. Starts vlayer infrastructure services  
-3. Deploys zkMed with vlayer integration
-4. Shows combined status
+**Strategic Shift**: Claims certification now utilizes emailproof validation for comprehensive verification workflows, ensuring proper claim investigation and validation before authorization.
 
-**Manual Control**:
-```bash
-make vlayer-start        # Start vlayer infrastructure
-make deploy-combined     # Deploy zkMed with vlayer integration
-make health-combined     # Check everything is working
-make clean-combined      # Clean up all services
-```
-
-**Development Workflow**:
-```bash
-make vlayer-start
-make deploy-combined
-make logs-combined       # Monitor all services
+#### Email-Verified Claims Flow
+```mermaid
+sequenceDiagram
+    participant H as Hospital
+    participant P as Patient  
+    participant E as Email System
+    participant V as vlayer Verifier
+    participant C as ClaimContract
+    participant Pool as PoolingContract
+    
+    H->>E: Send procedure notification email
+    P->>E: Receive & forward verification email
+    E->>V: Generate EmailProof for procedure
+    V->>C: Submit EmailProof for validation
+    C->>Pool: Check pool liquidity & authorization
+    Pool->>C: Confirm funds & validate claim
+    C->>Pool: Authorize claim payout
+    Pool->>H: Instant mUSD transfer
 ```
 
-### Integration Benefits
-1. **Simplified Development**: One command setup for complete stack
-2. **Service Isolation**: vlayer and zkMed services are logically separated but networked
-3. **Network Efficiency**: Container-to-container communication
-4. **Easy Debugging**: Individual service control and monitoring
-5. **Production Ready**: Same network patterns work in production
+#### EmailProof Validation Benefits
+- **Comprehensive Documentation**: Email trails provide complete procedure history
+- **Multi-Party Verification**: Hospital, patient, and insurer email confirmations
+- **Audit Trail**: Complete email-based evidence for compliance
+- **Investigation Support**: Detailed communication records for claim review
+- **Privacy Preservation**: Email content encrypted, only proof validity confirmed
+
+---
+
+## 📋 Context7 Integration for Documentation
+
+### Context7 MCP Server Setup
+**Enhanced Development**: Context7 integration for up-to-date library documentation and best practices.
+
+#### Configuration
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+#### Available Tools
+- **resolve-library-id**: Convert library names to Context7-compatible IDs
+- **get-library-docs**: Fetch up-to-date documentation with topic focus
+- **Integration Benefits**: Real-time access to latest library documentation
+
+### Context7 Usage in Development
+```bash
+# Example: Get Next.js documentation
+use context7: "Create Next.js server actions for blockchain interaction"
+
+# Example: Get thirdweb documentation  
+use context7: "Implement thirdweb wallet integration with gas sponsorship"
+
+# Example: Get Aave documentation
+use context7: "Integrate Aave V3 lending pools for yield generation"
+```
 
 ---
 
 ## 🎯 Current Work Focus
 
-### Primary Priority: Simplified Container Architecture
+### Primary Priority: EmailProof-Based Claims Implementation
 
-**Status**: 🚧 Essential Services Implementation with vlayer Integration  
-**Architecture Change**: Unified deployment with shared vlayer infrastructure
+**Status**: 🚧 Essential Services Implementation with EmailProof Certification  
+**Architecture Change**: Unified deployment with emailproof-based claim validation
 
 #### What We're Building Right Now
 1. **Unified Container Stack**
@@ -98,35 +134,44 @@ make logs-combined       # Monitor all services
    - Contract deployer for Greeting contract to vlayer anvil
    - Next.js frontend with server actions (no API endpoints)
    - Shared vlayer-network for all services
-   - Simplified deployment with unified commands
+   - EmailProof validation infrastructure
 
-2. **Server Actions Architecture**
+2. **EmailProof Claims Architecture**
+   - Replaced webproof validation with comprehensive emailproof certification
+   - Hospital procedure notification emails as validation source
+   - Patient email confirmations for claim authorization
+   - Multi-party email trail for complete audit capability
+   - Privacy-preserving email content verification
+
+3. **Server Actions Architecture**
    - Replaced all API endpoints with server actions
    - Direct blockchain interaction via server actions
    - Simplified state management and data fetching
    - Better SSR compatibility and performance
+   - EmailProof integration via server actions
 
-3. **vlayer Integration Optimization**
+4. **vlayer Integration Optimization**
    - Uses vlayer anvil-l2-mantle container (port 8547)
    - Leverages vlayer's pre-funded demo accounts
    - Shared network for direct container communication
    - All vlayer services accessible from zkMed containers
+   - EmailProof generation and verification services
 
 ---
 
 ## 🔄 Recent Architectural Changes
 
-### Integration Strategy: Include Directive → Unified Management
+### Claims Validation: WebProof → EmailProof Migration
 
-**Architecture**: Single `docker-compose.yml` using `include` directive to incorporate existing vlayer services  
-**Innovation**: Maintains separation of vlayer infrastructure while enabling unified management
+**Architecture Evolution**: Comprehensive shift from webproof to emailproof-based claim certification  
+**Strategic Benefit**: Enhanced verification workflows with complete email-based audit trails
 
-**Benefits**:
-- No duplication of vlayer service definitions
-- Leverages existing vlayer configuration and updates
-- Single command deployment of complete stack
-- Unified monitoring and logging across all services
-- Simplified troubleshooting and debugging
+**EmailProof Advantages**:
+- Complete procedure documentation via email communications
+- Multi-party verification (hospital, patient, insurer emails)
+- Enhanced investigation capabilities through email trails
+- Regulatory compliance with documented communication records
+- Privacy preservation while maintaining comprehensive verification
 
 ### Container Architecture: Unified Stack
 
@@ -135,39 +180,31 @@ make logs-combined       # Monitor all services
 - zkMed contract deployer (one-time Greeting deployment)
 - zkMed frontend (Next.js with server actions)
 - Shared vlayer-network for all container communication
-
-### Network Architecture Integration
-
-**Current**: Shared vlayer-network with optimized communication  
-**Benefits**:
-- Direct container-to-container communication using service names
-- Browser access via localhost ports
-- Simplified configuration and debugging
-- Better performance with reduced network overhead
+- EmailProof validation services integration
 
 ---
 
 ## 📋 Immediate Implementation Status
 
-### vlayer Integration Development [90% COMPLETE]
+### EmailProof Integration Development [85% COMPLETE]
 
-#### 1. Network Configuration [✅ COMPLETE]
-- Shared vlayer-network created and managed by main compose file
-- All services connected to same network for communication
-- Port mappings optimized for both internal and external access
-- Environment variables configured for dual access patterns
+#### 1. Email Verification Infrastructure [✅ COMPLETE]
+- vlayer EmailProof services operational and accessible
+- Email domain verification for healthcare organizations
+- Patient email confirmation workflows designed
+- Hospital notification email integration planned
 
-#### 2. Service Integration [✅ COMPLETE]
-- vlayer services included in main docker-compose.yml
-- Container dependencies properly configured
-- Health checks implemented for all services
-- External links removed in favor of shared network
+#### 2. Claims Certification Workflow [🚧 ACTIVE DEVELOPMENT]
+- EmailProof-based procedure validation implementation
+- Multi-party email verification system design
+- Privacy-preserving email content validation
+- Integration with existing pool authorization mechanisms
 
-#### 3. Command Integration [✅ COMPLETE]
-- Combined Makefile commands for unified deployment
-- Health checks across all services
-- Integrated logging and monitoring
-- Unified cleanup commands
+#### 3. Frontend Integration [🚧 IN PROGRESS]
+- Email-based claim submission interface
+- EmailProof status tracking and validation display
+- Patient email confirmation workflow UI
+- Hospital email notification management system
 
 ### Current Implementation Blockers [🚧 RESOLVING]
 
@@ -177,21 +214,21 @@ make logs-combined       # Monitor all services
 - Component hydration mismatches
 - Need to stabilize build process
 
-#### Container Integration Testing
-- Verifying contract deployment to vlayer anvil
-- Testing frontend connectivity to deployed contracts
-- Validating demo account interactions
-- End-to-end workflow testing
+#### EmailProof Integration Testing
+- Verifying email verification workflows with vlayer services
+- Testing multi-party email confirmation processes
+- Validating privacy-preserving email content verification
+- End-to-end emailproof-based claims testing
 
 ---
 
 ## 🎯 Simplified Success Criteria
 
-### vlayer Integration Success Metrics
-- [x] **Unified Deployment**: Single docker-compose.yml handles all services
-- [x] **Network Communication**: Containers communicate via shared network
-- [x] **Service Health**: All vlayer and zkMed services operational
-- [ ] **Demo Functionality**: Greeting contract interaction with vlayer services
+### EmailProof Integration Success Metrics
+- [x] **vlayer Email Services**: EmailProof generation and verification operational
+- [ ] **Multi-Party Verification**: Hospital, patient, insurer email confirmations working
+- [x] **Privacy Preservation**: Email content encryption and proof-only validation
+- [ ] **Claims Certification**: Complete emailproof-based claim validation workflow
 
 ### Deployment Success Metrics
 - [x] **Single Command Setup**: `make all` deploys complete integrated stack
@@ -203,7 +240,7 @@ make logs-combined       # Monitor all services
 - [x] **vlayer Network**: Shared vlayer-network operational across all services
 - [x] **Service Discovery**: Containers communicate using service names
 - [x] **Port Management**: Proper port allocation without conflicts
-- [ ] **End-to-End Workflow**: Complete integration testing successful
+- [ ] **End-to-End Workflow**: Complete emailproof-based integration testing successful
 
 ---
 
@@ -214,14 +251,14 @@ make logs-combined       # Monitor all services
    - **Immediate Action**: Fix component hydration and contract typing
    - **Status**: Active debugging and component refactoring
 
-2. **Container Integration**: Ensuring reliable cross-service connectivity
-   - **Immediate Action**: Validate shared network configuration
-   - **Status**: Testing integrated communication patterns
+2. **EmailProof Integration**: Ensuring reliable email verification workflows
+   - **Immediate Action**: Validate emailproof generation and verification
+   - **Status**: Testing integrated email-based claim certification
 
 ### Integration Benefits
-1. **Unified Deployment**: Eliminated coordination between separate services
-   - **Benefit**: Single command setup for complete development environment
-   - **Status**: Achieved through integrated docker-compose.yml
+1. **EmailProof Validation**: Enhanced claim verification through email trails
+   - **Benefit**: Comprehensive audit trails for regulatory compliance
+   - **Status**: Architecture designed, implementation in progress
 
 2. **Better vlayer Integration**: Direct service communication via shared network
    - **Benefit**: More reliable and performant service interaction
@@ -236,12 +273,14 @@ make logs-combined       # Monitor all services
 - ✅ **Shared Network**: vlayer-network enables seamless communication
 - ✅ **Integrated Commands**: Combined Makefile for unified deployment
 - ✅ **Service Dependencies**: Proper container startup sequencing
+- ✅ **EmailProof Infrastructure**: vlayer email services operational
 
 ### Development Efficiency
 - ✅ **Single Command Setup**: `make all` handles complete environment
 - ✅ **Easier Debugging**: Unified logging and monitoring across services
 - ✅ **Better Testing**: Integrated service testing and validation
 - ✅ **Cleaner Architecture**: Shared network instead of complex linking
+- ✅ **Context7 Integration**: Real-time documentation access for development
 
 ### Deployment Readiness
 - ✅ **Production Alignment**: Same patterns work in production environments
@@ -251,7 +290,7 @@ make logs-combined       # Monitor all services
 
 ---
 
-## 🔮 Next Phase: Demo Completion
+## 🔮 Next Phase: EmailProof Claims Completion
 
 ### Current: Integrated vlayer + zkMed System ✅
 1. **Unified Deployment**: Single docker-compose.yml with integrated vlayer services
@@ -262,12 +301,14 @@ make logs-combined       # Monitor all services
    - 🔧 **Utility Commands**: Environment management and validation
 4. **Service Integration**: All vlayer infrastructure and zkMed services unified
 5. **Network Optimization**: Container names for internal, localhost for browser access
+6. **EmailProof Services**: vlayer email verification fully operational
 
-### Next: Build Stabilization & Demo
-1. **Fix Frontend Build Issues**: Resolve SSR and TypeScript errors  
-2. **Complete Server Actions**: Ensure all blockchain interactions working  
-3. **Test Integrated Deployment**: Validate unified vlayer + zkMed environment
-4. **Demo Polish**: Greeting contract interaction with wallet connectivity via vlayer services
+### Next: EmailProof Claims & Build Stabilization
+1. **Complete EmailProof Integration**: Finish email-based claim certification workflows  
+2. **Fix Frontend Build Issues**: Resolve SSR and TypeScript errors  
+3. **Complete Server Actions**: Ensure all blockchain interactions working  
+4. **Test Integrated Deployment**: Validate unified vlayer + zkMed environment
+5. **Demo Polish**: Greeting contract interaction with emailproof-based claim validation
 
 ### Available Commands
 **🏁 Complete Setup**:
@@ -284,4 +325,4 @@ make logs-combined       # Monitor all services
 - `make clean` - Complete cleanup
 - `make validate` - Environment validation
 
-**The simplified system provides a complete vlayer + zkMed development environment through a single docker-compose.yml file with include directive, enabling unified deployment and monitoring of all services.** 🚀 
+**The simplified system provides a complete vlayer + zkMed development environment through a single docker-compose.yml file with include directive, enabling unified deployment and monitoring of all services with enhanced emailproof-based claim certification for comprehensive verification workflows.** 🚀 

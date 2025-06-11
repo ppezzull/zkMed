@@ -1,6 +1,6 @@
 # zkMed Technical Context - Advanced Healthcare Technology Stack
 
-**Purpose**: Comprehensive technical overview of zkMed's revolutionary pool-enabled healthcare platform, including all technologies, development setup, constraints, and integration patterns.
+**Purpose**: Comprehensive technical overview of zkMed's revolutionary pool-enabled healthcare platform, including all technologies, development setup, constraints, and integration patterns with emailproof-based claim certification.
 
 ---
 
@@ -21,10 +21,10 @@
 - **Standards**: OpenZeppelin contracts for security and standards compliance
 
 ### Privacy & Proof Technology
-- **vlayer Integration**: Advanced email and web proof generation
+- **vlayer Integration**: Advanced email and proof generation services
+  - **EmailProofs**: Comprehensive email verification for claim certification
   - **MailProofs**: Domain verification for healthcare organizations
-  - **WebProofs**: Patient portal and hospital system validation
-  - **ZK Proofs**: Privacy-preserving medical procedure validation
+  - **Email Infrastructure**: Complete email-based audit trail generation
 - **Commitment Schemes**: Cryptographic patient identity protection
 - **PRE Encryption**: Controlled post-approval medical data access
 - **Zero-Knowledge Architecture**: Complete medical privacy preservation
@@ -49,14 +49,86 @@
 
 ---
 
+## 📋 Context7 Integration for Real-Time Documentation
+
+### Context7 MCP Server Setup
+**Enhanced Development Environment**: Context7 integration provides up-to-date library documentation and best practices during development.
+
+#### Installation & Configuration
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": "6000"
+      }
+    }
+  }
+}
+```
+
+#### Alternative Configurations
+```bash
+# Using bunx for better module resolution
+{
+  "mcpServers": {
+    "context7": {
+      "command": "bunx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+
+# Remote Context7 server
+{
+  "mcpServers": {
+    "context7": {
+      "type": "streamable-http",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+#### Available Context7 Tools
+- **resolve-library-id**: Convert general library names to Context7-compatible IDs
+- **get-library-docs**: Fetch up-to-date documentation with topic focus
+- **Integration Benefits**: Real-time access to latest library documentation during development
+
+### Context7 Usage Patterns in Development
+```bash
+# Example: Next.js server actions for blockchain interaction
+use context7: "Create Next.js 15 server actions for thirdweb contract interaction"
+
+# Example: thirdweb wallet integration with gas sponsorship  
+use context7: "Implement thirdweb smart accounts with gas sponsorship for healthcare transactions"
+
+# Example: Aave V3 pool integration
+use context7: "Integrate Aave V3 lending pools for mUSD yield generation"
+
+# Example: vlayer EmailProof integration
+use context7: "Implement vlayer EmailProof verification for healthcare claims"
+```
+
+#### Context7 Development Benefits
+- **Real-Time Documentation**: Always current library information
+- **Best Practices**: Latest patterns and recommendations
+- **Integration Examples**: Up-to-date code snippets and patterns
+- **Version Compatibility**: Documentation for specific library versions
+
+---
+
 ## 🏗️ Development Environment & Tools
 
 ### Local Development Setup
 - **Mantle Fork Environment**: Chain ID 31339 with real mainnet state
 - **Aave V3 Contracts**: Full protocol access for pool testing
-- **vlayer Services**: Complete proof generation and verification stack
+- **vlayer Services**: Complete EmailProof generation and verification stack
 - **Docker Containers**: Consistent development environment across teams
 - **Hot Reloading**: Instant feedback during smart contract development
+- **Context7 Integration**: Real-time documentation access
 
 ### Development Workflow
 ```bash
@@ -66,14 +138,16 @@ make start-mantle-fork  # Launch persistent Mantle fork with demo data
 make deploy-contracts   # Deploy all contracts with demo configuration
 make start-frontend     # Launch Next.js with pool dashboard
 make test-integration   # Run comprehensive integration tests
+make test-emailproof    # Test EmailProof verification workflows
 ```
 
 ### Testing Infrastructure
 - **Unit Testing**: Individual contract function testing
 - **Integration Testing**: Cross-contract interaction validation
-- **E2E Testing**: Complete user workflow testing
+- **E2E Testing**: Complete user workflow testing including EmailProof validation
 - **Gas Analysis**: Optimization and cost tracking
 - **Security Testing**: Vulnerability scanning and audit preparation
+- **EmailProof Testing**: Comprehensive email verification workflow validation
 
 ### Container Architecture
 ```yaml
@@ -87,6 +161,8 @@ services:
   vlayer-services:
     image: vlayer/dev-stack:latest
     ports: ["3000:3000", "3002:3002", "7047:7047"]
+    environment:
+      - EMAILPROOF_ENABLED=true
     
   redis-cache:
     image: redis:alpine
@@ -97,6 +173,7 @@ services:
     ports: ["3001:3000"]
     environment:
       - NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
+      - NEXT_PUBLIC_EMAILPROOF_ENABLED=true
 ```
 
 ---
@@ -110,22 +187,31 @@ services:
 - **Emergency Pauses**: Circuit breakers for critical system functions
 - **Upgrade Patterns**: Secure proxy patterns for future improvements
 
-### Privacy Preservation Patterns
+### EmailProof-Based Privacy Preservation Patterns
 ```solidity
 // Patient Commitment Pattern
 bytes32 commitment = keccak256(abi.encodePacked(secret, patientAddress));
 
-// Zero-Knowledge Validation Pattern
-function validateWithoutExposure(bytes zkProof, bytes32 procedureHash) external {
-    require(vlayerVerifier.verifyProof(zkProof, procedureHash), "Invalid proof");
-    // Medical data never exposed, only validity confirmed
+// EmailProof Validation Pattern
+function validateEmailProofClaim(
+    bytes calldata emailProof, 
+    bytes32 procedureHash,
+    uint256 claimId
+) external view returns (bool) {
+    require(vlayerVerifier.verifyEmailProof(emailProof), "Invalid email proof");
+    
+    // Verify email proof corresponds to claim without exposing content
+    bytes32 emailHash = keccak256(emailProof);
+    return claimEmailHashes[claimId] == emailHash;
 }
 
-// Encrypted Storage Pattern
-struct EncryptedEHR {
-    string ipfsCID;     // Encrypted file reference
-    bytes preKey;       // PRE key for controlled access
-    bytes32 hash;       // Integrity verification
+// Privacy-Preserving Email Content Verification
+struct EmailProofClaim {
+    bytes32 emailContentHash;    // Hash of email content for verification
+    address hospital;            // Hospital that sent notification
+    address patient;             // Patient that confirmed procedure
+    uint256 timestamp;           // Email timestamp for audit trail
+    bool verified;               // Verification status
 }
 ```
 
@@ -140,14 +226,24 @@ struct EncryptedEHR {
 
 ## 💰 Aave V3 Integration Architecture
 
-### Pool Management Patterns
+### EmailProof-Enabled Pool Management Patterns
 ```solidity
 interface IPoolingContract {
-    // Core pool operations
+    // Core pool operations with EmailProof integration
     function depositToHealthcarePool(address patient, uint256 amount) external;
-    function authorizeClaimPayout(uint256 claimId, address hospital, uint256 amount) external;
+    function authorizeClaimPayoutWithEmailProof(
+        uint256 claimId, 
+        bytes calldata emailProof,
+        address hospital, 
+        uint256 amount
+    ) external;
     function calculateAccruedYield(address stakeholder) external view returns (uint256);
     function distributeYield() external;
+    
+    // EmailProof-specific functions
+    function validateEmailProofClaim(bytes calldata emailProof, uint256 claimId) external view returns (bool);
+    function getEmailProofAuditTrail(uint256 claimId) external view returns (EmailProofClaim memory);
+    function getClaimInvestigationData(uint256 claimId) external view returns (InvestigationData memory);
     
     // Pool state management
     function getPoolBalance(address stakeholder) external view returns (uint256);
@@ -156,25 +252,59 @@ interface IPoolingContract {
 }
 ```
 
-### Yield Distribution Architecture
+### EmailProof-Based Yield Distribution Architecture
 ```solidity
-struct YieldDistribution {
+struct EmailProofYieldDistribution {
     uint256 totalYield;
     uint256 patientShare;    // 60% of yield
     uint256 insurerShare;    // 20% of yield
     uint256 protocolShare;   // 20% of yield
     uint256 distributionTime;
+    bytes32 emailProofHash;  // Hash of email proof that triggered distribution
 }
 
-function automatedYieldDistribution() external {
+function automatedYieldDistributionWithEmailProof(bytes calldata emailProof) external {
+    require(vlayerVerifier.verifyEmailProof(emailProof), "Invalid email proof");
+    
     uint256 totalYield = aavePool.getReservesData(mUSD).liquidityIndex;
     distributeProportionally(totalYield);
-    emit YieldDistributed(totalYield, block.timestamp);
+    
+    emit YieldDistributedWithEmailProof(totalYield, keccak256(emailProof), block.timestamp);
+}
+```
+
+### EmailProof Investigation & Audit Features
+```solidity
+struct InvestigationData {
+    uint256 claimId;
+    bytes32 hospitalEmailHash;     // Hash of hospital notification email
+    bytes32 patientEmailHash;      // Hash of patient confirmation email
+    bytes32 insurerEmailHash;      // Hash of insurer investigation email
+    uint256[] emailTimestamps;     // Timeline of email communications
+    bool investigationComplete;    // Investigation status
+    string investigationNotes;     // Encrypted investigation notes
+}
+
+function initializeClaimInvestigation(
+    uint256 claimId,
+    bytes calldata hospitalEmail,
+    bytes calldata patientEmail
+) external {
+    require(hasRole(INVESTIGATOR_ROLE, msg.sender), "Unauthorized");
+    
+    InvestigationData storage investigation = claimInvestigations[claimId];
+    investigation.claimId = claimId;
+    investigation.hospitalEmailHash = keccak256(hospitalEmail);
+    investigation.patientEmailHash = keccak256(patientEmail);
+    investigation.emailTimestamps.push(block.timestamp);
+    
+    emit ClaimInvestigationInitiated(claimId, msg.sender);
 }
 ```
 
 ### Pool Safety Mechanisms
 - **Liquidity Buffers**: Minimum reserves for emergency withdrawals
+- **EmailProof Validation**: Multi-party email verification before withdrawals
 - **Gradual Withdrawal Limits**: Rate limiting for large withdrawals
 - **Pool Health Monitoring**: Continuous monitoring of utilization rates
 - **Emergency Shutdown**: Ability to pause operations during market stress
@@ -190,9 +320,9 @@ function automatedYieldDistribution() external {
 - **Tailwind CSS**: Utility-first styling with responsive design
 - **Responsive Design**: Mobile-first approach with desktop optimization
 
-### Web3 Integration
+### Web3 Integration with EmailProof Support
 ```typescript
-// thirdweb Configuration
+// thirdweb Configuration with EmailProof integration
 import { createThirdwebClient, getContract } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
 
@@ -206,26 +336,39 @@ const mantleChain = defineChain({
   nativeCurrency: { name: "Mantle", symbol: "MNT", decimals: 18 },
 });
 
-// Contract Integration
-const registrationContract = getContract({
+// Contract Integration with EmailProof support
+const poolingContract = getContract({
   client,
   chain: mantleChain,
-  address: process.env.NEXT_PUBLIC_REGISTRATION_CONTRACT,
+  address: process.env.NEXT_PUBLIC_POOLING_CONTRACT,
+  abi: poolingContractABI, // Includes EmailProof functions
 });
+
+// EmailProof Integration
+interface EmailProofClaimData {
+  claimId: string;
+  hospitalEmail: string;
+  patientEmail: string;
+  emailProofHash: string;
+  verificationStatus: 'pending' | 'verified' | 'failed';
+  auditTrail: EmailProofAuditEntry[];
+}
 ```
 
-### Pool Dashboard Components
+### EmailProof Dashboard Components
 - **Real-time Yield Tracking**: Live updates of pool performance and yields
 - **Insurance Selection Interface**: Comparison of insurers by pool metrics
 - **Automated Payment Management**: Setup and monitoring of monthly premiums
-- **Claims Status Tracking**: Multi-proof validation progress and payouts
+- **EmailProof Claims Tracking**: Multi-party email verification progress and payouts
+- **Investigation Dashboard**: Complete audit trail and investigation support interface
 - **Privacy-Preserving Analytics**: Pool insights without personal data exposure
 
 ### State Management
 - **React Query**: Server state management with automatic caching
 - **Zustand**: Client state management for UI interactions
 - **Local Storage**: Persistent user preferences and session data
-- **Real-time Updates**: WebSocket connections for live pool data
+- **Real-time Updates**: WebSocket connections for live pool data and EmailProof status
+- **EmailProof State**: Dedicated state management for email verification workflows
 
 ---
 
@@ -233,7 +376,7 @@ const registrationContract = getContract({
 
 ### Essential Container Stack (Dockploy)
 ```yaml
-# Simplified Production Container Stack
+# Simplified Production Container Stack with EmailProof Support
 services:
   contract-deployer:
     build:
@@ -246,6 +389,7 @@ services:
       - RPC_URL=http://host.docker.internal:8547
       - CHAIN_ID=31339
       - PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+      - EMAILPROOF_ENABLED=true
     restart: "no"
     network_mode: "host"
 
@@ -265,6 +409,8 @@ services:
       - NEXT_PUBLIC_CHAIN_ID=31339
       - NEXT_PUBLIC_RPC_URL=http://localhost:8547
       - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=${NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
+      - NEXT_PUBLIC_EMAILPROOF_ENABLED=true
+      - NEXT_PUBLIC_VLAYER_PROVER_URL=http://localhost:3000
     restart: always
 
 volumes:
@@ -275,14 +421,18 @@ volumes:
 ### Infrastructure Requirements
 - **CPU**: Minimum 2 cores for essential services
 - **Memory**: 4GB RAM for both containers
-- **Storage**: 20GB SSD for contract artifacts and logs
+- **Storage**: 20GB SSD for contract artifacts, logs, and EmailProof data
 - **Network**: Stable internet with 50Mbps bandwidth for vlayer connectivity
-- **External Dependencies**: Existing vlayer anvil-l2-mantle container on port 8547
+- **External Dependencies**: 
+  - Existing vlayer anvil-l2-mantle container on port 8547
+  - vlayer EmailProof services for email verification
+  - Email infrastructure for audit trail generation
 
 ### Monitoring & Observability
 - **Health Checks**: Automated monitoring of all service endpoints
 - **Logging**: Centralized log aggregation and analysis
 - **Metrics**: Real-time performance monitoring and alerting
+- **EmailProof Monitoring**: Verification workflow tracking and alerts
 - **Backup**: Automated snapshots of blockchain state and configuration
 - **Disaster Recovery**: Documented procedures for service restoration
 
@@ -296,10 +446,12 @@ volumes:
 - **Scalability**: Container architecture designed for horizontal scaling
 - **Privacy Requirements**: Zero medical data on-chain compliance
 - **Regulatory Compliance**: GDPR/HIPAA-ready architecture patterns
+- **EmailProof Validation**: Comprehensive email verification without content exposure
 
 ### Performance Requirements
 - **Transaction Speed**: Sub-second confirmation times on Mantle L2
 - **Pool Updates**: Real-time yield calculations and distribution
+- **EmailProof Processing**: <10 seconds for email verification workflows
 - **UI Responsiveness**: <200ms response times for all interactions
 - **Container Startup**: <30 seconds for full stack initialization
 - **Error Recovery**: Automatic restart and state restoration capabilities
@@ -308,6 +460,7 @@ volumes:
 - **Multi-Signature**: All administrative functions require multiple signatures
 - **Audit Trail**: Complete logging of all system interactions
 - **Privacy Preservation**: Medical data never stored or transmitted unencrypted
+- **EmailProof Security**: Email content encrypted, only proof validity confirmed
 - **Access Control**: Granular permissions with regular access reviews
 - **Vulnerability Management**: Regular security updates and patch management
 
@@ -336,24 +489,29 @@ volumes:
     "docker": "^24.0.0",
     "nginx": "^1.25.0",
     "redis": "^7.2.0"
+  },
+  "context7": {
+    "@upstash/context7-mcp": "^1.0.6"
   }
 }
 ```
 
 ### External Service Integration
-- **vlayer Network**: Proof generation and verification services
+- **vlayer Network**: EmailProof generation and verification services
 - **Aave V3 Protocol**: Lending pool integration for yield generation
 - **IPFS/Web3.Storage**: Decentralized storage for encrypted medical records
 - **Mantle RPC**: Blockchain interaction and state queries
 - **thirdweb Infrastructure**: Gas sponsorship and wallet management
+- **Context7 MCP**: Real-time documentation access during development
 
 ### API Integration Points
 ```typescript
-// External Service APIs
+// External Service APIs with EmailProof support
 interface ExternalAPIs {
   vlayer: {
-    proveEmail: (email: UnverifiedEmail) => Promise<Proof>;
-    verifyProof: (proof: Proof) => Promise<boolean>;
+    proveEmail: (email: UnverifiedEmail) => Promise<EmailProof>;
+    verifyEmailProof: (proof: EmailProof) => Promise<boolean>;
+    generateEmailAuditTrail: (emails: Email[]) => Promise<AuditTrail>;
   };
   aave: {
     supply: (asset: string, amount: bigint) => Promise<TxHash>;
@@ -363,6 +521,10 @@ interface ExternalAPIs {
   thirdweb: {
     sponsorTransaction: (tx: Transaction) => Promise<SponsoredTx>;
     createSmartAccount: (owner: string) => Promise<SmartAccount>;
+  };
+  context7: {
+    resolveLibraryId: (libraryName: string) => Promise<string>;
+    getLibraryDocs: (libraryId: string, topic?: string) => Promise<Documentation>;
   };
 }
 ```
@@ -374,9 +536,17 @@ interface ExternalAPIs {
 ### Performance Benchmarks
 - **Contract Deployment**: <30 seconds on Mantle network
 - **Pool Operations**: <5 seconds for deposits and withdrawals
-- **Proof Generation**: <10 seconds for multi-proof validation
+- **EmailProof Generation**: <10 seconds for email verification
+- **EmailProof Validation**: <5 seconds for proof verification
 - **Frontend Loading**: <3 seconds for initial page load
 - **Real-time Updates**: <1 second latency for pool data updates
+
+### EmailProof Verification Metrics
+- **Email Processing**: <15 seconds for complete email verification workflow
+- **Multi-Party Verification**: <30 seconds for hospital, patient, insurer confirmations
+- **Audit Trail Generation**: <5 seconds for complete communication history
+- **Investigation Support**: <2 seconds for audit trail retrieval
+- **Privacy Preservation**: 100% success rate for content encryption
 
 ### Reliability Targets
 - **System Uptime**: 99.9% availability target
@@ -384,6 +554,7 @@ interface ExternalAPIs {
 - **Data Persistence**: Zero data loss across service restarts
 - **Error Handling**: Graceful degradation for all failure scenarios
 - **Recovery Time**: <5 minutes for full system restoration
+- **EmailProof Reliability**: 99.5% verification success rate
 
 ### Security Validation
 - **Audit Completion**: Full security audit before mainnet deployment
@@ -391,5 +562,6 @@ interface ExternalAPIs {
 - **Vulnerability Scanning**: Automated scanning of container images
 - **Access Review**: Monthly review of all system permissions
 - **Incident Response**: Documented procedures for security incidents
+- **EmailProof Security**: Zero email content exposure incidents
 
-**zkMed's technical architecture represents a cutting-edge integration of privacy-preserving technologies, DeFi protocols, and modern container infrastructure, delivering unprecedented healthcare innovation while maintaining enterprise-grade security and reliability.** 🚀 
+**zkMed's technical architecture represents a cutting-edge integration of privacy-preserving technologies, DeFi protocols, modern container infrastructure, and comprehensive emailproof-based verification systems, delivering unprecedented healthcare innovation while maintaining enterprise-grade security, reliability, and comprehensive investigation capabilities.** 🚀 

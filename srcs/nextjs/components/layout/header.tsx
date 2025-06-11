@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import WalletConnect from '@/components/wallet-connect';
 import { useRouter } from 'next/navigation';
+import { useWallet } from '@/hooks/useWallet';
 
 export default function Header() {
   const account = useActiveAccount();
@@ -15,6 +16,7 @@ export default function Header() {
   const [currentAPY, setCurrentAPY] = useState(4.2);
   const [tvl, setTvl] = useState(2.3);
   const [claims, setClaims] = useState(1247);
+  const { disconnect } = useWallet();
 
   useEffect(() => {
     // Simulate live data updates
@@ -26,12 +28,6 @@ export default function Header() {
 
     return () => clearInterval(interval);
   }, []);
-
-  const handleLogout = () => {
-    // Disconnect wallet logic will be handled by WalletConnect component
-    // For now, we'll just refresh the page
-    window.location.reload();
-  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200 shadow-sm">
@@ -117,7 +113,7 @@ export default function Header() {
                       🛠️ Developer Tools
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                    <DropdownMenuItem onClick={disconnect} className="text-red-600">
                       🚪 Disconnect
                     </DropdownMenuItem>
                   </DropdownMenuContent>

@@ -1,55 +1,32 @@
 'use client';
 
-import { ConnectButton, useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
-import { client, getClientChain } from './providers/thirdweb-providers';
-import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
+import { ConnectButton } from 'thirdweb/react';
 import { Button } from '@/components/ui/button';
-
-// Get the appropriate chain for client-side operations
-const clientChain = getClientChain();
-
-// Configure wallets with smart wallet for gas abstraction
-const smartWalletOptions = smartWallet({
-  chain: clientChain,
-  factoryAddress: process.env.NEXT_PUBLIC_SMART_WALLET_FACTORY_ADDRESS, // Default smart wallet factory
-  gasless: true, // Enable gasless transactions
-});
-
-const wallets = [
-  smartWalletOptions,
-  inAppWallet({
-    auth: {
-      options: ["email", "google", "apple", "facebook"],
-    },
-  }),
-  createWallet("io.metamask"),
-  createWallet("com.coinbase.wallet"),
-  createWallet("me.rainbow"),
-];
+import { useWallet } from '@/hooks/useWallet';
 
 interface WalletConnectProps {
   variant?: 'header' | 'full';
 }
 
 export default function WalletConnect({ variant = 'full' }: WalletConnectProps) {
-  const account = useActiveAccount();
-  const wallet = useActiveWallet();
-  const { disconnect } = useDisconnect();
-
-  const handleDisconnect = async () => {
-    if (wallet) {
-      await disconnect(wallet);
-    }
-  };
+  const { 
+    account, 
+    isConnected, 
+    shortAddress, 
+    disconnect, 
+    wallets, 
+    client, 
+    chain 
+  } = useWallet();
 
   // Header variant - compact for navigation
   if (variant === 'header') {
-    if (!account) {
+    if (!isConnected) {
       return (
         <ConnectButton
           client={client}
           wallets={wallets}
-          chain={clientChain}
+          chain={chain}
           connectButton={{
             label: "Connect Wallet",
             style: {
@@ -73,11 +50,11 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
 
     return (
       <Button
-        onClick={handleDisconnect}
+        onClick={disconnect}
         variant="outline"
         className="border-gray-300 text-gray-700 hover:bg-gray-50"
       >
-        {account.address.slice(0, 6)}...{account.address.slice(-4)}
+        {shortAddress}
       </Button>
     );
   }
@@ -89,15 +66,16 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         Connect Your Wallet
       </h2>
       
-      {!account ? (
+      {!isConnected ? (
         <div className="text-center">
           <p className="text-gray-600 mb-4">
             Connect your wallet to access zkMed with gasless transactions
-          </p>        <ConnectButton
-          client={client}
-          wallets={wallets}
-          chain={clientChain}
-          connectButton={{
+          </p>
+          <ConnectButton
+            client={client}
+            wallets={wallets}
+            chain={chain}
+            connectButton={{
               label: "Connect Wallet",
               style: {
                 backgroundColor: "#0066CC",
@@ -120,13 +98,13 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         <div className="text-center">
           <p className="text-green-600 mb-2">✅ Connected</p>
           <p className="text-sm text-gray-600 mb-2">
-            Address: {account.address.slice(0, 8)}...{account.address.slice(-6)}
+            Address: {account?.address.slice(0, 8)}...{account?.address.slice(-6)}
           </p>
           <p className="text-xs text-blue-600 mb-4">
             🚀 Gas abstraction enabled - Enjoy gasless transactions!
           </p>
           <Button
-            onClick={handleDisconnect}
+            onClick={disconnect}
             variant="destructive"
             className="bg-red-600 hover:bg-red-700"
           >
@@ -135,7 +113,7 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         </div>
       )}
       
-      {account && (
+      {isConnected && (
         <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
           <p className="font-medium">Smart Wallet Features:</p>
           <ul className="list-disc list-inside mt-1 space-y-1">
