@@ -5,16 +5,13 @@ const nextConfig: NextConfig = {
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   
   turbopack: {
+    resolveAlias: {
+      underscore: 'lodash',
+    },
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
     rules: {
       '*.svg': {
-        loaders: [
-          {
-            loader: '@svgr/webpack',
-            options: {
-              icon: true,
-            },
-          },
-        ],
+        loaders: ['@svgr/webpack'],
         as: '*.js',
       },
     },
