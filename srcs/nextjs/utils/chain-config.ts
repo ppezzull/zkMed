@@ -9,7 +9,7 @@ export const mantleFork = defineChain({
     symbol: "MNT", 
     decimals: 18,
   },
-  rpc: process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.internal:8547",
+  rpc: process.env.NEXT_PUBLIC_RPC_URL || process.env.NEXT_PUBLIC_ANVIL_RPC_URL || "http://localhost:8547",
   testnet: true,
   blockExplorers: [],
 });
