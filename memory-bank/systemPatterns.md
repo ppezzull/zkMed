@@ -94,65 +94,66 @@ sequenceDiagram
     Note over U,P: All patients earn regardless of payment preference
 ```
 
-#### **Pure Web2 Flow: Traditional Premiums + Blockchain Claims**
+#### **Unified Web3 + MailProof Architecture with thirdweb Payment Integration**
 
-**CRITICAL CLARIFICATION**: This flow applies **ONLY to registration and premium payments**. **Claim payments still use blockchain automation for instant settlement.**
+**Revolutionary Approach**: Single flow architecture where thirdweb enables both fiat and crypto payments to flow directly into yield-generating Uniswap v4 pools, while maintaining hybrid Web2/Web3 claim processing for regulatory compliance.
 
-##### **Hybrid Architecture: Off-Chain Premiums + On-Chain Claims**
+##### **Unified Premium Collection + Hybrid Claims Processing**
 ```mermaid
 graph TB
-    subgraph "Registration & Premium Payments (Traditional Banking)"
+    subgraph "Unified Premium Collection (thirdweb-Powered)"
         A[Patient-Insurer Agreement] --> B[DKIM-Signed MailProof]
-        B --> C[Banking Details in Email]
-        C --> D[SEPA/Wire Setup]
-        D --> E[Monthly Bank Transfers]
-        E --> F[Insurer Bank Account]
+        B --> C[thirdweb Payment Setup]
+        C --> D[Fiat OR Crypto Payment Choice]
+        D --> E[Automatic Conversion to mUSD]
+        E --> F[Uniswap v4 Pool Deposit]
+        F --> G[Universal Yield Generation]
     end
     
-    subgraph "Claims Processing (Blockchain Automation)"
-        F --> G[Medical Procedure Occurs]
-        G --> H[Traditional Claim Review]
-        H --> I[MailProof Claim Authorization]
-        I --> J[On-Chain MailProof Submission]
-        J --> K[Uniswap v4 Pool Payment]
-        K --> L[Instant mUSD to Hospital/Patient]
+    subgraph "Hybrid Claims Processing (Web2 Review + Web3 Payment)"
+        G --> H[Medical Procedure Occurs]
+        H --> I[Traditional Claim Review]
+        I --> J[MailProof Claim Authorization]
+        J --> K[On-Chain MailProof Submission]
+        K --> L[Uniswap v4 Pool Payment]
+        L --> M[Instant mUSD to Hospital/Patient]
     end
     
-    Note1[Premiums: Traditional Banking]
-    Note2[Claims: Blockchain Automation]
-    Note3[MailProof: Both Flows]
+    Note1[Premiums: thirdweb Fiat/Crypto → Uniswap v4 Pools]
+    Note2[Claims: Web2 Review → Web3 Automation]
+    Note3[MailProof: Universal Verification]
 ```
 
-**Dual Architecture Benefits**:
+**Unified Architecture Benefits**:
 
-**Premium Payments (Off-Chain Traditional Banking)**:
-- ✅ **Familiar Banking**: SEPA, wire transfers, direct debit
-- ✅ **No Blockchain Complexity**: Standard bank app interfaces
-- ✅ **Regulatory Clarity**: Existing banking compliance frameworks
-- ✅ **Zero Crypto Risk**: No volatility or technical risks
-- ✅ **Universal Access**: Anyone with bank account can participate
+**thirdweb-Powered Premium Collection**:
+- ✅ **Payment Flexibility**: Fiat, crypto, or hybrid payment methods
+- ✅ **Universal Yield Access**: All patients earn 3-5% APY regardless of payment method
+- ✅ **Seamless Conversion**: Automatic fiat-to-mUSD conversion
+- ✅ **Familiar Experience**: Credit card/bank payments for traditional users
+- ✅ **Web3 Native**: Direct crypto payments for advanced users
+- ✅ **Gas Sponsorship**: Transaction fees covered for seamless UX
 
-**Claim Payments (On-Chain Blockchain Automation)**:
+**Hybrid Claim Processing (Maintained Separation)**:
+- ✅ **Regulatory Compliance**: Medical review stays in traditional systems
 - ✅ **Instant Settlement**: Immediate mUSD payments via Uniswap v4
 - ✅ **MailProof Security**: DKIM verification prevents fraud
-- ✅ **Pool Liquidity**: Guaranteed funds availability
-- ✅ **Complete Transparency**: Blockchain audit trail
-- ✅ **No Payment Delays**: Eliminate traditional claim processing delays
+- ✅ **Pool Liquidity**: Guaranteed funds availability from unified pools
+- ✅ **Complete Transparency**: Blockchain audit trail for payments
+- ✅ **Privacy Protection**: Medical data never exposed on-chain
 
-**Strategic Innovation: Optimal User Experience**
-- **Premium Collection**: Remove blockchain friction from regular payments
-- **Claim Processing**: Leverage blockchain benefits where they matter most
-- **Legal Framework**: MailProof provides consistent verification across both
-- **Market Adoption**: Lower barrier to entry while delivering core value
+**Strategic Innovation: Universal Yield + Regulatory Compliance**
+- **Premium Collection**: All users access yield benefits through familiar payment methods
+- **Claim Processing**: Leverage blockchain benefits while maintaining compliance
+- **Legal Framework**: MailProof provides consistent verification across all operations
+- **Market Expansion**: Dramatically increased addressable market through fiat support
 
 **Example Complete Patient Flow**:
 ```
-MailProof Agreement → SEPA Premium Setup → Monthly Bank Transfers → Medical Event → Traditional Claim Review → MailProof Authorization → Blockchain Claim Payment → Instant mUSD Settlement
+MailProof Agreement → thirdweb Payment Setup → Fiat/Crypto Premium Payments → Uniswap v4 Pool Deposits → Universal Yield → Medical Event → Web2 Claim Review → MailProof Authorization → Instant Blockchain Payment Settlement
 ```
 
-**Key Insight**: This hybrid approach strategically applies blockchain automation only where it provides maximum value (instant claim payments) while keeping familiar banking for routine premium collection.
-
-**This demonstrates zkMed's sophisticated approach: using traditional banking for comfort and compliance in premium collection, while leveraging blockchain automation for revolutionary instant claim settlements.**
+**Key Innovation**: This unified approach enables all patients to access DeFi yield benefits through familiar payment methods while maintaining sophisticated hybrid architecture for regulatory compliance in claim processing.
 
 
 
@@ -235,22 +236,29 @@ sequenceDiagram
     I->>D: Create Patient Agreement Record
     D->>D: Generate Unique Agreement ID (A12345)
     I->>E: Compose DKIM-Signed Registration Email
-    E->>P: Send MailProof Registration Email
+    E->>P: Send MailProof with thirdweb Payment Setup
     
-    alt Web2 Flow
-        P->>I: Setup Traditional Payment (Bank/SEPA)
-        I->>D: Update Payment Tracking
-    else Web3 Flow
-        P->>V: Submit MailProof for Verification
-        V->>R: Register Patient-Insurer Mapping
-        R->>U: Setup Pool Access & Premium Tracking
-        P->>U: Deposit Premiums → Yield Generation
+    P->>V: Submit MailProof for Verification
+    V->>R: Register Patient-Insurer Mapping  
+    R->>U: Setup Pool Access & Premium Tracking
+    V->>T: Initialize thirdweb Payment Profile
+    
+    alt Fiat Payment via thirdweb
+        P->>T: Setup Credit Card/Bank Payment
+        T->>T: Auto Convert Fiat to mUSD
+        T->>U: Deposit to Pool → Yield Generation
+    else Crypto Payment via thirdweb
+        P->>T: Connect Crypto Wallet
+        T->>U: Direct mUSD Deposit → Yield Generation
+    else Hybrid Payment via thirdweb
+        P->>T: Setup Both Payment Methods
+        T->>U: Flexible Payment Routing → Yield Generation
     end
     
     I->>D: Index Patient Registration
     
-    Note over I,R: Dual indexing: off-chain + on-chain
-    Note over E,P: Agreement ID, premium, terms included
+    Note over I,R: Universal on-chain registration with thirdweb integration
+    Note over E,P: Agreement ID, premium, terms, payment options included
 ```
 
 ##### **Agreement Update & Modification Pattern**
@@ -269,13 +277,14 @@ sequenceDiagram
     E->>P: Send Agreement Update Notification
     P->>P: Review Updated Terms
     
-    alt Web2 Update
-        P->>I: Confirm Updated Payment Terms
-        I->>D: Update Payment Tracking
-    else Web3 Update
-        P->>V: Submit Updated MailProof
-        V->>R: Verify & Update On-Chain Terms
-        R->>R: Update Patient-Insurer Mapping
+    P->>V: Submit Updated MailProof
+    V->>R: Verify & Update On-Chain Terms
+    R->>R: Update Patient-Insurer Mapping
+    V->>T: Update thirdweb Payment Profile
+    
+    alt Payment Method Update
+        P->>T: Modify Payment Method (Fiat/Crypto/Hybrid)
+        T->>U: Update Pool Routing Configuration
     end
     
     I->>D: Log Agreement Change for Audit
@@ -293,10 +302,10 @@ sequenceDiagram
 - **Multi-Patient Management**: Scalable patient agreement infrastructure
 
 **Patient Agreement Management**:
-- **Dual Flow Support**: Manage both Web2 and Web3 patient registrations
+- **Universal Registration**: Manage all patients through unified thirdweb-powered flow
 - **Unique Agreement IDs**: Traceable identifiers (e.g., A12345) for all patient agreements
-- **On-Chain Integration**: Patient-insurer mappings stored in smart contracts
-- **Off-Chain Indexing**: Comprehensive database for compliance and reporting
+- **On-Chain Integration**: Patient-insurer mappings stored in smart contracts with pool access
+- **Payment Flexibility**: Support fiat, crypto, and hybrid payment methods via thirdweb
 - **Real-Time Updates**: Modify agreement terms via new MailProof verification
 
 **Example MailProof Registration Email Structure**:
@@ -310,8 +319,9 @@ Agreement Details:
 - Premium: 100 mUSD
 - Payment Period: Monthly
 - Coverage: Standard Health Plan
-- Patient Wallet: 0x1234...abcd (Web3 flow only)
-- Pool Instructions: Deposit to healthcare pool for yield
+- thirdweb Payment Options: Fiat (Credit Card/Bank) OR Crypto (Wallet)
+- Pool Instructions: All payments route to healthcare pool for yield generation
+- Yield Benefits: Earn 3-5% APY regardless of payment method
 
 [DKIM-signed cryptographic verification]
 ```
@@ -939,7 +949,6 @@ zkMed's system patterns are founded on cutting-edge research validating hybrid b
 
 | Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
 |-----------|-------------------|---------------|------------------|-----------|-----------------|
-| **Pure Web2 + MailProof** | Off-chain contract + DKIM email | Bank transfer, SEPA, etc. | New MailProof email | No | No |
-| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Uniswap v4 pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
+| **Unified thirdweb + MailProof + Pools** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pool | New MailProof email | Yes | Yes (3-5% APY for ALL users) |
 
-**zkMed's revolutionary system patterns establish the foundation for the first practical implementation of hybrid Web2/Web3 architecture in healthcare insurance, delivering research-validated benefits while maintaining regulatory compliance. This separation of Web2 and Web3 operations balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency across all healthcare stakeholder roles.** 🚀 
+**zkMed's revolutionary system patterns establish the foundation for the first practical implementation of universal yield-generating healthcare insurance through thirdweb's fiat-to-crypto infrastructure. This unified premium collection approach combined with hybrid claim processing delivers research-validated benefits while maintaining regulatory compliance, enabling all patients to access DeFi yield regardless of their Web3 knowledge across all healthcare stakeholder roles.** 🚀 

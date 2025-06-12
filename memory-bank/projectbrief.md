@@ -381,17 +381,12 @@ interface IInsuranceContract {
 #### 6. **Enhanced InsuranceContract.sol** - Comprehensive Agreement Management
 ```solidity
 interface IEnhancedInsuranceContract {
-    // Dual flow patient registration
-    function registerPatientWeb2(
+    // Universal patient registration with thirdweb integration
+    function registerPatientUnified(
         bytes calldata mailProof,
         string calldata agreementId,
-        string calldata patientIdentifier
-    ) external;
-    
-    function registerPatientWeb3(
-        bytes calldata mailProof,
-        string calldata agreementId,
-        address patientWallet
+        address patientWallet,
+        ThirdwebPaymentParams calldata paymentParams
     ) external;
     
     // Agreement management
@@ -406,11 +401,14 @@ interface IEnhancedInsuranceContract {
     function getInsurerPatients(address insurer) external view returns (PatientRecord[] memory);
     function indexPatientAgreements(address insurer) external view returns (Agreement[] memory);
     
-    // Payment tracking (dual flow support)
-    function trackWeb2Payment(string calldata agreementId, uint256 amount) external;
-    function processWeb3Premium(address patient, uint256 amount) external;
+    // Payment tracking (unified thirdweb flow)
+    function processThirdwebPremium(
+        address patient, 
+        uint256 amount, 
+        PaymentMethod method
+    ) external;
     
-    // Pool integration for Web3 flow
+    // Pool integration for unified flow
     function getPatientPoolBalance(address patient) external view returns (uint256);
     function getInsurerPoolBalance(address insurer) external view returns (uint256);
     function calculateYieldDistribution(address insurer) external view returns (YieldBreakdown memory);
@@ -419,22 +417,21 @@ interface IEnhancedInsuranceContract {
     struct Agreement {
         string agreementId;        // Unique identifier (e.g., A12345)
         address insurer;           // Insurer contract address
-        address patientWallet;     // Patient wallet (Web3 flow only)
-        string patientIdentifier;  // Patient ID (Web2 flow only)
+        address patientWallet;     // Patient wallet address
         uint256 premium;           // Monthly premium amount
         uint256 period;            // Payment period in seconds
         string coverage;           // Coverage type description
-        bool isWeb3;              // Flow type identifier
+        PaymentMethod preferredMethod; // Fiat, Crypto, or Hybrid via thirdweb
         uint256 createdAt;        // Agreement creation timestamp
         uint256 updatedAt;        // Last update timestamp
     }
     
     struct PatientRecord {
         address wallet;
-        string identifier;
         string agreementId;
         uint256 totalPaid;
         uint256 yieldEarned;
+        PaymentMethod paymentMethod;
         bool isActive;
     }
     
@@ -446,27 +443,27 @@ interface IEnhancedInsuranceContract {
     }
     
     // Events for transparency and indexing
-    event PatientRegisteredWeb2(string indexed agreementId, address indexed insurer, string patientId);
-    event PatientRegisteredWeb3(string indexed agreementId, address indexed insurer, address indexed patient);
+    event PatientRegisteredUnified(string indexed agreementId, address indexed insurer, address indexed patient, PaymentMethod method);
     event AgreementUpdated(string indexed agreementId, uint256 timestamp);
-    event PremiumProcessed(string indexed agreementId, uint256 amount, bool isWeb3);
+    event PremiumProcessed(string indexed agreementId, uint256 amount, PaymentMethod method);
     event YieldDistributed(address indexed insurer, uint256 totalYield, uint256 timestamp);
+    event PaymentMethodChanged(address indexed patient, PaymentMethod oldMethod, PaymentMethod newMethod);
 }
 ```
 
-#### Registration Flow Comparison Summary
+#### Universal Registration Flow Summary
 
 | Flow Type | Agreement Creation | Payment Method | Smart Contract Integration | Yield Generation | Legal Protection |
 |-----------|-------------------|---------------|---------------------------|-----------------|-----------------|
-| **Pure Web2 + MailProof** | Off-chain negotiation + DKIM email | Bank transfer/SEPA | MailProof verification only | No | DKIM-signed legal record |
-| **Web3 + MailProof + Pools** | Off-chain negotiation + DKIM email | Wallet deposits to pools | Full on-chain integration | Yes (3-5% APY) | DKIM + blockchain verification |
+| **Unified thirdweb + MailProof + Pools** | Off-chain negotiation + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pools | Full on-chain integration with payment flexibility | Yes (3-5% APY for ALL users) | DKIM + blockchain verification |
 
-**Key Innovation: Universal MailProof Verification**
-- Both flows use identical DKIM-signed email verification for legal consistency
-- Smart contracts support dual indexing for both registration types
-- Insurers can manage both Web2 and Web3 patients from single interface
-- Patients can migrate between flows without losing agreement history
-- Complete audit trail maintained across both traditional and blockchain systems
+**Key Innovation: Universal Yield Access via thirdweb**
+- Single flow with payment method flexibility (fiat, crypto, hybrid)
+- All patients access yield benefits regardless of payment preference
+- Smart contracts support universal registration with thirdweb integration
+- Insurers manage all patients through unified interface
+- Seamless payment method switching without losing agreement history
+- Complete audit trail maintained with unified blockchain architecture
 
 ---
 
