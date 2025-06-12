@@ -37,21 +37,153 @@ zkMed Platform → MailProof Authorization → Instant Automated Payments
 ```mermaid
 sequenceDiagram
     participant P as Patient
+    participant Bank as Traditional Bank
     participant I as Insurer
     participant E as Email System
     participant V as vlayer MailProof
 
-    P->>I: Agree on Insurance Contract (Off-chain)
+    Note over P,V: All Payments via Traditional Banking
+    P->>I: Negotiate Insurance Agreement
     I->>E: Generate DKIM-Signed Agreement Email
-    E->>P: Send MailProof Registration Email
-    P->>V: Verify MailProof Agreement
-    V->>P: Agreement Verified & Recorded
-    P->>I: Make Web2 Premium Payments (Bank Transfer)
+    E->>P: Send MailProof with Banking Instructions
+    P->>V: Verify MailProof DKIM Signature
     
-    Note over P,I: Premium: X mUSD every Y period
-    Note over E,V: DKIM-signed cryptographic verification
-    Note over P,I: Traditional payment methods maintained
+    loop Monthly Premium Payments
+        P->>Bank: SEPA/Wire Transfer (100 mUSD equivalent)
+        Bank->>I: Traditional Bank Transfer
+        I->>I: Update Payment Records
+    end
+    
+    Note over P,Bank: Standard banking (SEPA, wire, direct debit)
+    Note over Bank,I: No blockchain involvement in payments
+    Note over I,V: MailProof provides cryptographic legal protection
 ```
+
+**Theoretical Benefits of Pure Off-Chain Payments**:
+
+**1. Zero Blockchain Dependency**
+- No wallet setup or management required
+- No gas fees or transaction costs
+- No blockchain network risks or downtime
+- Works with existing banking infrastructure
+
+**2. Regulatory Simplicity**
+- Payments through established, regulated banking channels
+- Familiar compliance frameworks (SEPA, banking regulations)
+- No cryptocurrency or DeFi regulatory concerns
+- Standard KYC/AML processes apply
+
+**3. Universal Accessibility**
+- Anyone with a bank account can participate
+- No technical blockchain knowledge required
+- No concern about wallet security or private key management
+- Standard banking app/online banking interfaces
+
+**4. MailProof Innovation Value**
+- **Cryptographic Legal Protection**: DKIM-signed emails provide tamper-proof agreement records
+- **Dispute Resolution**: Immutable proof of agreement terms and modifications
+- **Audit Trail**: Complete email-based evidence for regulatory compliance
+- **Update Mechanism**: Secure way to modify agreement terms via new MailProof emails
+
+**5. Cost Efficiency**
+- No blockchain transaction fees
+- Standard banking fees (often zero for SEPA)
+- No need for blockchain infrastructure or development
+- Lower technical implementation complexity
+
+**Example Pure Web2 MailProof Email Structure**:
+```
+From: contracts@insuranceco.com
+To: patient@example.com
+Subject: Insurance Agreement Registration – Policy #A12345
+
+Agreement Details:
+- Agreement ID: A12345
+- Premium: 100 EUR (equivalent to 100 mUSD)
+- Payment Period: Monthly
+- Payment Method: SEPA Transfer
+- Bank Details: IBAN DE89 3704 0044 0532 0130 00
+- Reference: A12345-PREMIUM
+
+[DKIM-signed cryptographic verification]
+```
+
+**Claim Processing in Pure Web2 Flow**:
+- Traditional insurance claim review (same Web2 process as current)
+- Insurer sends MailProof authorization for approved claims
+- Hospital/patient receives payment via traditional bank transfer
+- MailProof serves as cryptographic proof of authorization
+- Complete audit trail maintained for investigation/compliance
+
+**This approach demonstrates zkMed's flexibility: even with zero blockchain payment integration, the MailProof verification system still provides revolutionary legal protection and audit capabilities over traditional insurance processes.**
+
+#### **Pure Web2 Flow: Traditional Registration + Blockchain Claims**
+
+**IMPORTANT CLARIFICATION**: This flow is **ONLY about registration and premium payments** being off-chain. **Claim payments still happen via blockchain automation.**
+
+##### **Hybrid Payment Architecture: Traditional Premiums + Blockchain Claims**
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant Bank as Traditional Bank
+    participant I as Insurer
+    participant E as Email System
+    participant V as vlayer MailProof
+    participant U as Uniswap v4 Pool
+
+    Note over P,I: Registration & Premium Payments (Traditional Banking)
+    P->>I: Negotiate Insurance Agreement
+    I->>E: Generate DKIM-Signed Agreement Email
+    E->>P: Send MailProof with Banking Instructions
+    P->>V: Verify MailProof DKIM Signature
+    
+    loop Monthly Premium Payments (Off-Chain)
+        P->>Bank: SEPA/Wire Transfer (100 EUR)
+        Bank->>I: Traditional Bank Transfer
+        I->>I: Update Payment Records
+    end
+    
+    Note over P,U: Medical Claims Processing (Blockchain Automation)
+    P->>P: Medical Procedure Occurs
+    I->>E: Generate Claim Authorization MailProof
+    E->>P: Send DKIM-Signed Claim Authorization
+    P->>V: Submit Claim MailProof On-Chain
+    V->>U: Verify & Trigger Pool Payment
+    U->>P: Instant mUSD Payment to Patient/Hospital
+    
+    Note over P,Bank: Premiums via traditional banking
+    Note over V,U: Claims via blockchain automation
+```
+
+**Dual Payment Architecture Benefits**:
+
+**Registration & Premiums (Traditional Banking)**:
+- ✅ Familiar SEPA/wire transfer payments
+- ✅ No blockchain learning curve for premiums
+- ✅ Standard banking fees (often zero for SEPA)
+- ✅ Existing KYC/AML compliance
+
+**Claims Processing (Blockchain Automation)**:
+- ✅ **Instant claim payments** via Uniswap v4 pools
+- ✅ **MailProof verification** prevents fraud
+- ✅ **Immediate liquidity** for hospitals/patients
+- ✅ **Complete audit trail** for compliance
+- ✅ **No payment delays** common in traditional claims
+
+**Key Innovation: Best of Both Worlds**
+- **Premium Collection**: Traditional, familiar, regulated banking
+- **Claim Payments**: Revolutionary instant blockchain automation
+- **Legal Protection**: MailProof verification throughout both flows
+- **User Experience**: Simple premium payments + instant claim settlements
+
+**Example Patient Journey**:
+1. **Setup**: Receive MailProof agreement → Setup SEPA monthly transfer
+2. **Monthly**: Automatic 100 EUR premium via bank transfer
+3. **Medical Event**: Get medical treatment at hospital
+4. **Claim**: Receive MailProof claim authorization email
+5. **Payment**: Submit MailProof → Instant mUSD payment via blockchain
+
+**This hybrid approach removes blockchain complexity from regular premium payments while maintaining instant blockchain automation for the critical claim payment process where speed and verification matter most.**
 
 ##### **Option B: Web3 Payment Registration with MailProof and Web2 Agreement**
 ```mermaid

@@ -81,6 +81,66 @@ sequenceDiagram
     Note over I,D: Off-chain compliance & reporting
 ```
 
+#### **Pure Web2 Flow: Traditional Premiums + Blockchain Claims**
+
+**CRITICAL CLARIFICATION**: This flow applies **ONLY to registration and premium payments**. **Claim payments still use blockchain automation for instant settlement.**
+
+##### **Hybrid Architecture: Off-Chain Premiums + On-Chain Claims**
+```mermaid
+graph TB
+    subgraph "Registration & Premium Payments (Traditional Banking)"
+        A[Patient-Insurer Agreement] --> B[DKIM-Signed MailProof]
+        B --> C[Banking Details in Email]
+        C --> D[SEPA/Wire Setup]
+        D --> E[Monthly Bank Transfers]
+        E --> F[Insurer Bank Account]
+    end
+    
+    subgraph "Claims Processing (Blockchain Automation)"
+        F --> G[Medical Procedure Occurs]
+        G --> H[Traditional Claim Review]
+        H --> I[MailProof Claim Authorization]
+        I --> J[On-Chain MailProof Submission]
+        J --> K[Uniswap v4 Pool Payment]
+        K --> L[Instant mUSD to Hospital/Patient]
+    end
+    
+    Note1[Premiums: Traditional Banking]
+    Note2[Claims: Blockchain Automation]
+    Note3[MailProof: Both Flows]
+```
+
+**Dual Architecture Benefits**:
+
+**Premium Payments (Off-Chain Traditional Banking)**:
+- ✅ **Familiar Banking**: SEPA, wire transfers, direct debit
+- ✅ **No Blockchain Complexity**: Standard bank app interfaces
+- ✅ **Regulatory Clarity**: Existing banking compliance frameworks
+- ✅ **Zero Crypto Risk**: No volatility or technical risks
+- ✅ **Universal Access**: Anyone with bank account can participate
+
+**Claim Payments (On-Chain Blockchain Automation)**:
+- ✅ **Instant Settlement**: Immediate mUSD payments via Uniswap v4
+- ✅ **MailProof Security**: DKIM verification prevents fraud
+- ✅ **Pool Liquidity**: Guaranteed funds availability
+- ✅ **Complete Transparency**: Blockchain audit trail
+- ✅ **No Payment Delays**: Eliminate traditional claim processing delays
+
+**Strategic Innovation: Optimal User Experience**
+- **Premium Collection**: Remove blockchain friction from regular payments
+- **Claim Processing**: Leverage blockchain benefits where they matter most
+- **Legal Framework**: MailProof provides consistent verification across both
+- **Market Adoption**: Lower barrier to entry while delivering core value
+
+**Example Complete Patient Flow**:
+```
+MailProof Agreement → SEPA Premium Setup → Monthly Bank Transfers → Medical Event → Traditional Claim Review → MailProof Authorization → Blockchain Claim Payment → Instant mUSD Settlement
+```
+
+**Key Insight**: This hybrid approach strategically applies blockchain automation only where it provides maximum value (instant claim payments) while keeping familiar banking for routine premium collection.
+
+**This demonstrates zkMed's sophisticated approach: using traditional banking for comfort and compliance in premium collection, while leveraging blockchain automation for revolutionary instant claim settlements.**
+
 ##### **Pattern B: Web3 Payment Registration with MailProof and Smart Contract Integration**
 ```mermaid
 sequenceDiagram
