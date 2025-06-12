@@ -56,29 +56,42 @@ graph TB
 
 **Innovation**: First healthcare platform offering role-specific registration workflows with MailProof verification for organizations and seamless authentication for patients.
 
-#### Comprehensive Patient Registration Patterns
+#### Unified Patient Registration Pattern with thirdweb Integration
 
-##### **Pattern A: Pure Web2 Registration with MailProof Verification**
+##### **Universal Pattern: thirdweb-Powered Flexible Premium Collection**
 ```mermaid
 sequenceDiagram
     participant P as Patient
     participant I as Insurer
     participant E as Email System
     participant V as vlayer MailProof
-    participant D as Document Store
+    participant T as thirdweb Platform
+    participant U as Uniswap v4 Pool
 
     P->>I: Negotiate Insurance Agreement (Off-chain)
     I->>E: Generate DKIM-Signed Agreement Email
-    E->>P: Send MailProof Registration Email
+    E->>P: Send MailProof with thirdweb Payment Setup
     P->>V: Verify DKIM Signature & Agreement Terms
-    V->>D: Store Verified Agreement Record
-    P->>I: Setup Web2 Premium Payments (Bank/SEPA)
-    I->>D: Index Patient & Agreement Details
+    V->>T: Initialize Patient Payment Profile
     
-    Note over P,I: Premium: X mUSD every Y period
+    alt Fiat Payment Choice
+        P->>T: Setup Credit Card/Bank Payment
+        T->>T: Automatic Fiat-to-mUSD Conversion
+        T->>U: Deposit Converted mUSD to Pool
+    else Crypto Payment Choice
+        P->>T: Connect Crypto Wallet
+        T->>U: Direct mUSD Deposit to Pool
+    else Hybrid Payment Choice
+        P->>T: Setup Both Payment Methods
+        T->>U: Flexible Payment Routing
+    end
+    
+    U->>P: Universal Yield Generation Begins (3-5% APY)
+    
+    Note over P,I: Premium: X mUSD every Y period via any payment method
     Note over E,V: Cryptographically verifiable agreement
-    Note over P,I: Traditional payment methods maintained
-    Note over I,D: Off-chain compliance & reporting
+    Note over T,U: Universal access to yield benefits
+    Note over U,P: All patients earn regardless of payment preference
 ```
 
 #### **Pure Web2 Flow: Traditional Premiums + Blockchain Claims**
@@ -141,50 +154,25 @@ MailProof Agreement → SEPA Premium Setup → Monthly Bank Transfers → Medica
 
 **This demonstrates zkMed's sophisticated approach: using traditional banking for comfort and compliance in premium collection, while leveraging blockchain automation for revolutionary instant claim settlements.**
 
-##### **Pattern B: Web3 Payment Registration with MailProof and Smart Contract Integration**
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant I as Insurer
-    participant E as Email System
-    participant V as vlayer MailProof
-    participant R as RegistrationContract
-    participant U as Uniswap v4 Pool
 
-    P->>I: Negotiate Insurance Agreement with Wallet Address
-    I->>E: Generate DKIM-Signed Web3 Registration Email
-    E->>P: Send MailProof with Pool Instructions
-    P->>V: Verify MailProof & Extract Payment Details
-    V->>R: Submit MailProof for On-Chain Registration
-    R->>R: Store Patient-Insurer-Agreement Mapping
-    R->>U: Setup Pool Access & Premium Tracking
-    P->>U: Deposit Premiums → Yield Generation Begins
-    I->>R: Index On-Chain Patient Registry
-    
-    Note over P,I: Agreement includes wallet address
-    Note over E,V: DKIM verification with payment instructions
-    Note over V,R: On-chain verification & registration
-    Note over R,U: Pool access with yield benefits
-    Note over I,R: Dual indexing (off-chain + on-chain)
-```
 
-**Comprehensive Patient Registration Benefits**:
+**Universal Patient Registration Benefits**:
 
-**Pure Web2 Flow Advantages**:
+**thirdweb-Powered Universal Access**:
+- **Payment Flexibility**: Choose fiat, crypto, or hybrid payment methods anytime
+- **Universal Yield**: All patients earn 3-5% APY regardless of payment preference
+- **Simplified Onboarding**: One registration flow with payment method choice during setup
+- **Barrier-Free Access**: Web2 users access Web3 benefits without learning curve
 - **Legal Verification**: MailProof serves as cryptographically verifiable legal record
-- **Familiar Process**: Traditional payment methods (bank transfer, SEPA, direct debit)
-- **Timestamped Audit**: DKIM-signed emails provide immutable dispute resolution records
-- **Easy Updates**: Insurers modify terms via new MailProof emails
-- **Regulatory Alignment**: Web2 payments comply with existing financial regulations
-- **No Blockchain Dependency**: Works without wallet or blockchain knowledge
+- **Seamless Conversion**: Automatic fiat-to-mUSD conversion with competitive rates
 
-**Web3 Enhanced Flow Advantages**:
-- **Yield Generation**: Premium deposits immediately earn returns in Uniswap v4 pools
-- **Cost Reduction**: Yield reduces effective premium costs over time
-- **Instant Verification**: Cryptographic proof of coverage and payment capacity
-- **Automated Tracking**: Real-time on-chain monitoring of payments and yields
-- **Smart Contract Security**: Terms secured by blockchain with MailProof authentication
-- **Transparent Performance**: Pool metrics provide insurer performance comparison
+**Enhanced User Experience Benefits**:
+- **Cost Transparency**: Real-time tracking of effective premium costs after yield
+- **Payment Switching**: Change payment methods anytime without re-registration
+- **Gas Sponsorship**: Transaction fees covered for seamless user experience
+- **Smart Account Management**: Simplified wallet management with social recovery
+- **Cross-Platform Integration**: Works across all devices and platforms
+- **Gradual Web3 Adoption**: Educational pathway from fiat to crypto payments
 
 #### Hospital Registration Pattern
 ```mermaid

@@ -32,83 +32,68 @@
 
 ## 🏗️ Comprehensive User Flow Architecture
 
-### Patient Registration & Actions - Dual Path Support
+### Patient Registration & Actions - Unified thirdweb-Powered Flow
 
-#### **Option A: Pure Web2 Registration with MailProof Verification**
+#### **Universal Registration with Payment Flexibility**
 ```mermaid
 sequenceDiagram
     participant P as Patient
     participant I as Insurer
     participant E as Email System
     participant V as vlayer MailProof
-    participant D as Document Store
+    participant T as thirdweb Platform
+    participant U as Uniswap v4 Pool
 
     P->>I: Negotiate Insurance Agreement (Off-chain)
     I->>E: Generate DKIM-Signed Agreement Email
-    E->>P: Send MailProof Registration Email (Agreement ID: A12345)
+    E->>P: Send MailProof with thirdweb Payment Setup (Agreement ID: A12345)
     P->>V: Verify DKIM Signature & Agreement Terms
-    V->>D: Store Verified Agreement Record
-    P->>I: Setup Traditional Premium Payments (Bank/SEPA)
-    I->>D: Index Patient Agreement for Tracking
+    V->>T: Initialize Patient Payment Profile
     
-    loop Monthly Payments
-        P->>I: Transfer Premium via Bank (100 mUSD)
-        I->>D: Update Payment Status
+    alt Fiat Payment Preference
+        P->>T: Setup Credit Card/Bank via thirdweb
+        loop Monthly Payments
+            T->>T: Auto Convert Fiat to mUSD (100 mUSD)
+            T->>U: Deposit to Healthcare Pool
+            U->>P: Earn Yield (3-5% APY)
+        end
+    else Crypto Payment Preference
+        P->>T: Connect Wallet via thirdweb
+        loop Monthly Payments
+            P->>T: Transfer mUSD (100 mUSD)
+            T->>U: Deposit to Healthcare Pool
+            U->>P: Earn Yield (3-5% APY)
+        end
+    else Hybrid Payment Preference
+        P->>T: Setup Both Fiat and Crypto Options
+        loop Flexible Monthly Payments
+            T->>U: Route Payment to Healthcare Pool
+            U->>P: Earn Yield (3-5% APY)
+        end
     end
     
-    Note over P,I: Premium: 100 mUSD every month
-    Note over E,V: DKIM-signed cryptographic verification
-    Note over P,I: Traditional payment methods maintained
+    Note over P,I: Premium: 100 mUSD every month via any payment method
+    Note over T,U: Universal access to yield benefits
+    Note over U,P: All patients earn 3-5% APY regardless of payment choice
 ```
 
-#### **Option B: Web3 Payment Registration with MailProof and Pool Integration**
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant I as Insurer
-    participant E as Email System
-    participant V as vlayer MailProof
-    participant Z as zkMed Platform
-    participant U as Uniswap v4 Pool
+**Universal Registration Experience Benefits**:
 
-    P->>I: Negotiate Agreement with Wallet Address (0x1234...abcd)
-    I->>E: Generate DKIM-Signed Web3 Registration Email
-    E->>P: Send MailProof with Pool Instructions (Agreement ID: A12345)
-    P->>V: Submit MailProof for Verification
-    V->>Z: Verify DKIM & Register Patient-Insurer Link
-    Z->>U: Setup Pool Access & Premium Tracking
-    P->>U: Deposit Premiums into Healthcare Pool (100 mUSD)
-    U->>P: Yield Generation Begins (3-5% APY)
-    
-    loop Premium Deposits & Yield
-        P->>U: Monthly Premium Deposit
-        U->>P: Yield Distribution (60% to patients)
-        U->>I: Yield Share (20% to insurers)
-        U->>U: Protocol Revenue (20% to treasury)
-    end
-    
-    Note over P,I: Agreement includes wallet address
-    Note over E,V: DKIM verification with payment instructions
-    Note over Z,U: On-chain registration with pool benefits
-```
-
-**Patient Registration Experience Details**:
-
-**Pure Web2 Flow Benefits**:
-- **Familiar Process**: Traditional bank transfer/SEPA payment methods
+**thirdweb-Powered Universal Access**:
+- **Payment Flexibility**: Choose fiat, crypto, or hybrid payment methods during registration
+- **Universal Yield**: All patients earn 3-5% APY regardless of payment preference
+- **Simplified Onboarding**: Single registration flow with payment choice
+- **Seamless Conversion**: Automatic fiat-to-mUSD conversion with competitive rates
 - **Legal Verification**: DKIM-signed MailProof serves as cryptographically verifiable agreement
-- **No Blockchain Learning**: Works without wallet or Web3 knowledge
-- **Regulatory Compliance**: Web2 payments meet existing financial regulations
-- **Easy Updates**: Insurers modify terms via new MailProof emails
-- **Audit Trail**: Complete email-based evidence for dispute resolution
+- **Barrier-Free Access**: Web2 users access Web3 benefits without learning curve
 
-**Web3 Enhanced Flow Benefits**:
-- **Cost Reduction**: Premium costs reduced by yield generation (3-5% APY)
-- **Pool Participation**: Deposits earn returns in Uniswap v4 healthcare pools
-- **Transparent Performance**: Real-time visibility into pool performance and yields
-- **Smart Contract Security**: Terms secured by blockchain with MailProof authentication
-- **Instant Verification**: Cryptographic proof of coverage and payment capacity
-- **Modern Payment Experience**: Seamless wallet-based premium management
+**Enhanced User Experience**:
+- **Payment Switching**: Change payment methods anytime without re-registration
+- **Cost Transparency**: Real-time tracking of effective premium costs after yield
+- **Gas Sponsorship**: Transaction fees covered for seamless user experience
+- **Smart Account Management**: Simplified wallet management with social recovery
+- **Cross-Platform Integration**: Works across all devices and platforms
+- **Gradual Web3 Adoption**: Educational pathway from fiat to crypto payments
 
 ### Hospital Registration & Actions
 ```mermaid
@@ -763,7 +748,6 @@ zkMed's architecture is founded on cutting-edge research in blockchain healthcar
 
 | Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
 |-----------|-------------------|---------------|------------------|-----------|-----------------|
-| **Pure Web2 + MailProof** | Off-chain contract + DKIM email | Bank transfer, SEPA, etc. | New MailProof email | No | No |
-| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Uniswap v4 pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
+| **Unified thirdweb + MailProof** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pool | New MailProof email | Yes | Yes (3-5% APY for ALL users) |
 
-**zkMed represents the first practical implementation of hybrid Web2/Web3 architecture in healthcare insurance, delivering research-validated benefits while maintaining regulatory compliance and user familiarity. This revolutionary platform bridges traditional healthcare systems with blockchain innovation, balancing regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency.** 🚀 
+**zkMed represents the first practical implementation of universal yield-generating healthcare insurance through thirdweb's fiat-to-crypto infrastructure, enabling all patients to access DeFi benefits regardless of their Web3 knowledge. This revolutionary platform combines familiar payment methods with blockchain innovation, delivering research-validated benefits while maintaining regulatory compliance and user familiarity through unified premium collection and hybrid claim processing.** 🚀 
