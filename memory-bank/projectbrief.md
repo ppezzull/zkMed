@@ -34,21 +34,7 @@
 
 ### Patient Registration & Actions - Unified thirdweb-Powered Flow
 
-#### **Universal Registration with Payment Flexibility**
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant I as Insurer
-    participant E as Email System
-    participant V as vlayer MailProof
-    participant T as thirdweb Platform
-    participant U as Uniswap v4 Pool
-
-    P->>I: Negotiate Insurance Agreement (Off-chain)
-    I->>E: Generate DKIM-Signed Agreement Email
-    E->>P: Send MailProof with thirdweb Payment Setup (Agreement ID: A12345)
-    P->>V: Verify DKIM Signature & Agreement Terms
-    V->>T: Initialize Patient Payment Profile
+*Detailed flow available in activeContext.md and systemPatterns.md*
     
     alt Fiat Payment Preference
         P->>T: Setup Credit Card/Bank via thirdweb
@@ -96,21 +82,7 @@ sequenceDiagram
 - **Gradual Web3 Adoption**: Educational pathway from fiat to crypto payments
 
 ### Hospital Registration & Actions
-```mermaid
-sequenceDiagram
-    participant H as Hospital
-    participant E as Email Domain
-    participant V as vlayer MailProof
-    participant Z as zkMed Platform
-    participant U as Uniswap v4 Pool
-
-    H->>E: Send DKIM-Signed Domain Email
-    E->>V: Generate Domain MailProof
-    V->>Z: Submit Domain Verification
-    Z->>Z: Validate DKIM Signature
-    Z->>U: Grant Payment Reception Rights
-    U->>H: Hospital Verified & Payment Ready
-```
+*Detailed flow available in systemPatterns.md*
 
 **Hospital Experience**:
 - **Domain Verification**: Cryptographic proof of official email domain control
@@ -119,20 +91,7 @@ sequenceDiagram
 - **Financial Tracking**: Comprehensive dashboard for payment and yield monitoring
 
 ### Insurance Company Registration & Actions
-```mermaid
-sequenceDiagram
-    participant I as Insurer
-    participant E as Email Infrastructure
-    participant V as vlayer MailProof
-    participant Z as zkMed Platform
-    participant U as Uniswap v4 Pool
-
-    I->>E: DKIM-Signed Domain Email
-    E->>V: MailProof Generation
-    V->>Z: Domain Ownership Verification
-    Z->>U: Initialize Healthcare Pool
-    U->>I: Pool Management Access Complete
-```
+*Detailed flow available in systemPatterns.md*
 
 **Insurance Company Experience**:
 - **Pool Creation**: Automatic Uniswap v4 pool initialization with custom healthcare hooks
@@ -160,7 +119,7 @@ graph TB
 
 ## 💰 Enhanced Claim Processing Flow
 
-### Comprehensive Web2/Web3 Hybrid Claim Processing
+*See comprehensive hybrid claim processing patterns and detailed flows in activeContext.md and systemPatterns.md*
 
 #### **Web2 (Off-Chain) Traditional Insurance Processing**
 ```mermaid

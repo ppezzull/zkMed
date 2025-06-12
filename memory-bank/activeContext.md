@@ -67,38 +67,7 @@ zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Uniswap v4 Yield + Ins
 **Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables all patients to access yield-generating Uniswap v4 pools regardless of their Web3 experience, while maintaining familiar payment methods.
 
 #### **Universal Patient Registration and Premium Flow**
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant I as Insurer
-    participant E as Email System
-    participant V as vlayer MailProof
-    participant T as thirdweb Platform
-    participant U as Uniswap v4 Pool
-
-    P->>I: Negotiate Insurance Agreement (Off-chain)
-    I->>E: Generate DKIM-Signed Agreement Email
-    E->>P: Send MailProof with thirdweb Payment Setup
-    P->>V: Verify DKIM Signature & Agreement Terms
-    V->>T: Initialize Patient Payment Profile
-    
-    alt Fiat Payment Preference
-        P->>T: Setup Credit Card/Bank Payment
-        T->>T: Automatic Fiat-to-mUSD Conversion
-        T->>U: Deposit Converted mUSD to Pool
-    else Crypto Payment Preference  
-        P->>T: Connect Existing Wallet
-        T->>U: Direct mUSD Deposit to Pool
-    else Hybrid Payment Preference
-        P->>T: Setup Both Fiat and Crypto Options
-        T->>U: Flexible Payment Routing to Pool
-    end
-    
-    U->>P: Yield Generation Begins (3-5% APY)
-    U->>P: Real-time Cost Reduction Tracking
-    
-    Note over P,I: Agreement includes thirdweb payment profile
-    Note over T,U: Universal access to yield benefits
+*See detailed sequence diagrams in systemPatterns.md*
     Note over P,U: Seamless user experience regardless of payment method
 ```
 

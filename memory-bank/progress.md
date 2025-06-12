@@ -26,29 +26,7 @@
 
 ## ✅ COMPLETED ACHIEVEMENTS
 
-### Foundation Layer [100% PRODUCTION READY]
-
-#### 1. Registration System with vlayer Integration (✅ COMPLETE)
-**Status**: 37/37 tests passing, production-ready deployment
-
-**Technical Achievements**:
-- **EmailDomainProver.sol**: Complete vlayer prover for domain verification
-- **RegistrationContract.sol**: Dual-path patient registration system
-- **Multi-Owner Access Control**: Up to 10 owners with granular permissions
-- **Privacy-Preserving Commitments**: Zero personal data on-chain storage
-- **Comprehensive Testing**: 100% test coverage with integration validation
-
-**Key Features Delivered**:
-- Privacy-preserving patient registration via cryptographic commitments
-- Organization verification through domain-validated MailProofs
-- Role-based access control with flexible permission management
-- Replay attack prevention through email hash tracking
-- Emergency controls with admin oversight capabilities
-
-#### 2. vlayer MailProof-Based Claims Architecture (✅ COMPLETE)
-**Status**: Advanced implementation with comprehensive DKIM-based email verification workflows
-
-**vlayer MailProof Innovations**:
+*See detailed technical achievements and status in projectbrief.md and systemPatterns.md*
 - **Hospital Domain Verification**: DKIM-signed procedure notification email capture and verification
 - **Patient Confirmation Workflows**: Email-based patient consent and confirmation via MailProofs
 - **Multi-Party Verification**: Hospital, patient, insurer DKIM-signed email confirmations
