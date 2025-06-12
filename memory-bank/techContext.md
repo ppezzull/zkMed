@@ -1,6 +1,6 @@
-# zkMed Technical Context - Advanced Healthcare Technology Stack
+# zkMed Technical Context - Comprehensive Healthcare Technology Stack with Uniswap v4
 
-**Purpose**: Comprehensive technical overview of zkMed's revolutionary pool-enabled healthcare platform, including all technologies, development setup, constraints, and integration patterns with emailproof-based claim certification.
+**Purpose**: Advanced technical overview of zkMed's revolutionary healthcare platform with yield-generating Uniswap v4 pools, comprehensive vlayer MailProof verification, multi-role user management, and Context7-enhanced development workflows.
 
 ---
 
@@ -21,22 +21,23 @@
 - **Standards**: OpenZeppelin contracts for security and standards compliance
 
 ### Privacy & Proof Technology
-- **vlayer Integration**: Advanced email and proof generation services
-  - **EmailProofs**: Comprehensive email verification for claim certification
-  - **MailProofs**: Domain verification for healthcare organizations
-  - **Email Infrastructure**: Complete email-based audit trail generation
+- **vlayer Integration**: Advanced MailProof verification and domain authentication
+  - **MailProofs**: DKIM-signed email verification for payment authorization
+  - **Domain Verification**: Cryptographic proof of organizational email control
+  - **Email Infrastructure**: Complete audit trail generation with privacy preservation
 - **Commitment Schemes**: Cryptographic patient identity protection
 - **PRE Encryption**: Controlled post-approval medical data access
 - **Zero-Knowledge Architecture**: Complete medical privacy preservation
 
-### DeFi Integration
-- **Aave V3 Protocol**: Battle-tested lending pools for yield generation
-  - **Healthcare Pools**: Dedicated pools for patient premiums and insurer funds
-  - **Yield Generation**: 3-5% APY on idle healthcare funds
+### DeFi Integration - Uniswap v4 Healthcare Pools
+- **Uniswap v4 Protocol**: Advanced automated market maker with custom hooks
+  - **Healthcare Pools**: Specialized mUSD/USDC pools with custom logic
+  - **Custom Hooks**: Healthcare-specific beforeSwap and afterSwap implementations
+  - **Yield Generation**: Trading fees and incentives for yield generation
   - **Instant Liquidity**: Proven mechanisms for immediate claim payouts
-  - **Risk Management**: Aave's established risk parameters and insurance
-- **Multi-Asset Support**: mUSD primary with expansion capability
-- **Pool Management**: Automated rebalancing and optimization
+  - **Risk Management**: Battle-tested AMM protocols with custom healthcare validation
+- **Pool Management**: Automated rebalancing and yield distribution
+- **Hook Architecture**: Custom healthcare logic integrated into swap operations
 
 ### User Experience & Authentication
 - **thirdweb SDK**: Comprehensive Web3 authentication and interaction
@@ -49,12 +50,12 @@
 
 ---
 
-## 📋 Context7 Integration for Real-Time Documentation
+## 📋 Context7 Integration for Enhanced Development
 
-### Context7 MCP Server Setup
-**Enhanced Development Environment**: Context7 integration provides up-to-date library documentation and best practices during development.
+### Context7 MCP Server Configuration
+**Revolutionary Development Environment**: Context7 integration provides real-time access to up-to-date library documentation, enabling rapid development of complex healthcare platform features.
 
-#### Installation & Configuration
+#### Production Configuration
 ```json
 {
   "mcpServers": {
@@ -62,61 +63,115 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp"],
       "env": {
-        "DEFAULT_MINIMUM_TOKENS": "6000"
+        "DEFAULT_MINIMUM_TOKENS": "10000",
+        "CONTEXT7_CACHE_TTL": "3600"
       }
     }
   }
 }
 ```
 
-#### Alternative Configurations
-```bash
-# Using bunx for better module resolution
+#### Alternative Configuration Options
+```json
+// High-performance bunx configuration
 {
   "mcpServers": {
     "context7": {
       "command": "bunx",
-      "args": ["-y", "@upstash/context7-mcp"]
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": "12000"
+      },
+      "timeout": 45000
     }
   }
 }
 
-# Remote Context7 server
+// Remote Context7 server for production environments
 {
   "mcpServers": {
     "context7": {
       "type": "streamable-http",
-      "url": "https://mcp.context7.com/mcp"
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CONTEXT7_API_KEY}",
+        "X-Context7-Project": "zkMed-Healthcare"
+      }
+    }
+  }
+}
+
+// Local Context7 server for air-gapped development
+{
+  "mcpServers": {
+    "context7": {
+      "command": "node",
+      "args": ["./local-context7-server.js"],
+      "env": {
+        "CONTEXT7_LOCAL_MODE": "true"
+      }
     }
   }
 }
 ```
 
-#### Available Context7 Tools
-- **resolve-library-id**: Convert general library names to Context7-compatible IDs
-- **get-library-docs**: Fetch up-to-date documentation with topic focus
-- **Integration Benefits**: Real-time access to latest library documentation during development
+#### Context7 Healthcare Development Workflows
 
-### Context7 Usage Patterns in Development
+**Uniswap v4 Integration Development**:
 ```bash
-# Example: Next.js server actions for blockchain interaction
-use context7: "Create Next.js 15 server actions for thirdweb contract interaction"
+# Get latest Uniswap v4 hook development patterns
+use context7: "Implement Uniswap v4 custom hooks for healthcare payment automation with beforeSwap validation"
 
-# Example: thirdweb wallet integration with gas sponsorship  
-use context7: "Implement thirdweb smart accounts with gas sponsorship for healthcare transactions"
+# Advanced pool management strategies
+use context7: "Create Uniswap v4 pool manager with custom healthcare logic and yield distribution"
 
-# Example: Aave V3 pool integration
-use context7: "Integrate Aave V3 lending pools for mUSD yield generation"
+# Gas optimization for healthcare transactions
+use context7: "Optimize Uniswap v4 healthcare hook gas usage with efficient validation patterns"
+```
 
-# Example: vlayer EmailProof integration
-use context7: "Implement vlayer EmailProof verification for healthcare claims"
+**vlayer MailProof Integration**:
+```bash
+# DKIM signature verification in Solidity
+use context7: "Integrate vlayer MailProofs for DKIM email verification in healthcare smart contracts"
+
+# Domain ownership validation patterns
+use context7: "Implement secure domain verification using vlayer MailProofs for hospital registration"
+
+# Email-based payment authorization
+use context7: "Extract payment instructions from DKIM-signed emails using vlayer verification"
+```
+
+**Next.js Healthcare Platform Development**:
+```bash
+# Server actions for blockchain interaction
+use context7: "Create Next.js 15 server actions for Uniswap v4 pool management and MailProof verification"
+
+# Real-time healthcare dashboards
+use context7: "Build real-time multi-role healthcare dashboard with pool monitoring and claim tracking"
+
+# thirdweb authentication integration
+use context7: "Implement role-based authentication system with thirdweb and healthcare permissions"
+```
+
+**Container and Infrastructure**:
+```bash
+# Complex healthcare platform deployment
+use context7: "Docker compose setup for healthcare platform with Uniswap v4, vlayer, and multi-service architecture"
+
+# Healthcare-specific monitoring
+use context7: "Implement comprehensive monitoring for healthcare DeFi platform with custom alerts"
+
+# Security patterns for medical data
+use context7: "Healthcare blockchain security patterns with privacy-preserving MailProof verification"
 ```
 
 #### Context7 Development Benefits
-- **Real-Time Documentation**: Always current library information
-- **Best Practices**: Latest patterns and recommendations
-- **Integration Examples**: Up-to-date code snippets and patterns
-- **Version Compatibility**: Documentation for specific library versions
+- **Real-Time Documentation**: Always current information on rapidly evolving DeFi and Web3 technologies
+- **Best Practice Integration**: Latest patterns and recommendations for secure healthcare development
+- **Rapid Prototyping**: Accelerated development with proven code patterns and implementations
+- **Security Enhancement**: Current security practices and vulnerability prevention strategies
+- **Performance Optimization**: Latest optimization techniques for gas efficiency and user experience
+- **Healthcare Specialization**: Domain-specific patterns for medical privacy and compliance
 
 ---
 
@@ -124,34 +179,38 @@ use context7: "Implement vlayer EmailProof verification for healthcare claims"
 
 ### Local Development Setup
 - **Mantle Fork Environment**: Chain ID 31339 with real mainnet state
-- **Aave V3 Contracts**: Full protocol access for pool testing
-- **vlayer Services**: Complete EmailProof generation and verification stack
+- **Uniswap v4 Contracts**: Full protocol access for pool testing and hook development
+- **vlayer Services**: Complete MailProof generation and verification stack
 - **Docker Containers**: Consistent development environment across teams
 - **Hot Reloading**: Instant feedback during smart contract development
-- **Context7 Integration**: Real-time documentation access
+- **Context7 Integration**: Real-time documentation access for enhanced development velocity
 
-### Development Workflow
+### Enhanced Development Workflow
 ```bash
-# Environment Setup
-make dev-setup          # Initialize complete development environment
+# Environment Setup with Context7
+make dev-setup          # Initialize complete development environment with Context7
 make start-mantle-fork  # Launch persistent Mantle fork with demo data
 make deploy-contracts   # Deploy all contracts with demo configuration
-make start-frontend     # Launch Next.js with pool dashboard
+make setup-uniswap-pools # Initialize Uniswap v4 pools with custom healthcare hooks
+make start-frontend     # Launch Next.js with multi-role dashboard
 make test-integration   # Run comprehensive integration tests
-make test-emailproof    # Test EmailProof verification workflows
+make test-mailproof     # Test MailProof verification workflows
+make context7-docs      # Access real-time documentation for development
 ```
 
 ### Testing Infrastructure
-- **Unit Testing**: Individual contract function testing
+- **Unit Testing**: Individual contract function testing with gas analysis
 - **Integration Testing**: Cross-contract interaction validation
-- **E2E Testing**: Complete user workflow testing including EmailProof validation
-- **Gas Analysis**: Optimization and cost tracking
+- **E2E Testing**: Complete user workflow testing including MailProof validation
+- **Hook Testing**: Specialized testing for Uniswap v4 custom hook implementations
+- **Gas Analysis**: Optimization and cost tracking for healthcare transactions
 - **Security Testing**: Vulnerability scanning and audit preparation
-- **EmailProof Testing**: Comprehensive email verification workflow validation
+- **MailProof Testing**: Comprehensive email verification workflow validation
+- **Pool Testing**: Uniswap v4 pool operations and yield distribution validation
 
-### Container Architecture
+### Container Architecture with Healthcare Services
 ```yaml
-# Development Stack
+# Comprehensive Development Stack
 services:
   mantle-fork:
     image: ghcr.io/foundry-rs/foundry:latest
@@ -162,18 +221,36 @@ services:
     image: vlayer/dev-stack:latest
     ports: ["3000:3000", "3002:3002", "7047:7047"]
     environment:
-      - EMAILPROOF_ENABLED=true
+      - MAILPROOF_ENABLED=true
+      - HEALTHCARE_MODE=true
+    
+  uniswap-v4-environment:
+    image: uniswap/v4-core:latest
+    ports: ["8546:8545"]
+    environment:
+      - HOOKS_ENABLED=true
+      - HEALTHCARE_HOOKS=true
     
   redis-cache:
     image: redis:alpine
     ports: ["6379:6379"]
+    command: redis-server --appendonly yes
+    
+  context7-server:
+    image: context7/mcp-server:latest
+    ports: ["3007:3000"]
+    environment:
+      - CONTEXT7_MODE=healthcare
+      - LIBRARY_CACHE_SIZE=1000
     
   frontend:
     build: ./packages/nextjs
     ports: ["3001:3000"]
     environment:
       - NEXT_PUBLIC_RPC_URL=http://mantle-fork:8545
-      - NEXT_PUBLIC_EMAILPROOF_ENABLED=true
+      - NEXT_PUBLIC_MAILPROOF_ENABLED=true
+      - NEXT_PUBLIC_UNISWAP_V4_ENABLED=true
+      - CONTEXT7_API_URL=http://context7-server:3000
 ```
 
 ---
@@ -187,31 +264,56 @@ services:
 - **Emergency Pauses**: Circuit breakers for critical system functions
 - **Upgrade Patterns**: Secure proxy patterns for future improvements
 
-### EmailProof-Based Privacy Preservation Patterns
+### Enhanced MailProof-Based Privacy Preservation
 ```solidity
-// Patient Commitment Pattern
+// Patient Commitment Pattern with MailProof Integration
 bytes32 commitment = keccak256(abi.encodePacked(secret, patientAddress));
 
-// EmailProof Validation Pattern
-function validateEmailProofClaim(
-    bytes calldata emailProof, 
-    bytes32 procedureHash,
+// MailProof Validation Pattern for Payment Authorization
+function validateMailProofPayment(
+    bytes calldata mailProof,
+    bytes32 paymentHash,
     uint256 claimId
 ) external view returns (bool) {
-    require(vlayerVerifier.verifyEmailProof(emailProof), "Invalid email proof");
+    require(vlayerVerifier.verifyMailProof(mailProof), "Invalid MailProof");
     
-    // Verify email proof corresponds to claim without exposing content
-    bytes32 emailHash = keccak256(emailProof);
-    return claimEmailHashes[claimId] == emailHash;
+    // Extract payment instructions without exposing medical data
+    (address recipient, uint256 amount, address token) = extractPaymentData(mailProof);
+    
+    // Verify payment authorization corresponds to claim
+    bytes32 authHash = keccak256(abi.encodePacked(recipient, amount, token, claimId));
+    return claimPaymentHashes[claimId] == authHash;
 }
 
-// Privacy-Preserving Email Content Verification
-struct EmailProofClaim {
-    bytes32 emailContentHash;    // Hash of email content for verification
-    address hospital;            // Hospital that sent notification
-    address patient;             // Patient that confirmed procedure
-    uint256 timestamp;           // Email timestamp for audit trail
-    bool verified;               // Verification status
+// Privacy-Preserving MailProof Claim Processing
+struct MailProofClaim {
+    bytes32 emailDomainHash;     // Hash of verified domain
+    bytes32 paymentAuthHash;     // Hash of payment authorization
+    address hospital;            // Hospital receiving payment
+    address patient;             // Patient with coverage
+    uint256 timestamp;           // Authorization timestamp
+    bool processed;              // Processing status
+}
+
+// Uniswap v4 Hook Integration for MailProof Validation
+function beforeSwap(
+    address sender,
+    PoolKey calldata key,
+    IPoolManager.SwapParams calldata params,
+    bytes calldata hookData
+) external override returns (bytes4) {
+    // Decode MailProof from hook data
+    bytes memory mailProof = abi.decode(hookData, (bytes));
+    
+    // Validate MailProof authorization
+    require(validateMailProofPayment(mailProof, extractPaymentHash(params), getCurrentClaimId(sender)), 
+            "Invalid payment authorization");
+    
+    // Verify pool has sufficient liquidity for healthcare payment
+    require(validateHealthcarePoolLiquidity(key, params.amountSpecified), 
+            "Insufficient healthcare pool liquidity");
+    
+    return BaseHook.beforeSwap.selector;
 }
 ```
 
@@ -224,87 +326,139 @@ struct EmailProofClaim {
 
 ---
 
-## 💰 Aave V3 Integration Architecture
+## 💰 Uniswap v4 Healthcare Pool Architecture
 
-### EmailProof-Enabled Pool Management Patterns
+### Advanced Pool Management with Custom Healthcare Hooks
 ```solidity
-interface IPoolingContract {
-    // Core pool operations with EmailProof integration
-    function depositToHealthcarePool(address patient, uint256 amount) external;
-    function authorizeClaimPayoutWithEmailProof(
-        uint256 claimId, 
-        bytes calldata emailProof,
-        address hospital, 
-        uint256 amount
+interface IHealthcarePoolManager {
+    // Pool initialization with healthcare-specific hooks
+    function initializeHealthcarePool(
+        PoolKey calldata key,
+        uint160 sqrtPriceX96,
+        address hookContract
+    ) external returns (PoolId);
+    
+    // Healthcare payment processing through Uniswap v4
+    function processHealthcarePayment(
+        PoolKey calldata key,
+        bytes calldata mailProof,
+        HealthcarePaymentParams calldata params
+    ) external returns (BalanceDelta);
+    
+    // Yield distribution for healthcare stakeholders
+    function distributeHealthcareYield(
+        PoolId poolId,
+        YieldDistributionParams calldata params
     ) external;
-    function calculateAccruedYield(address stakeholder) external view returns (uint256);
-    function distributeYield() external;
     
-    // EmailProof-specific functions
-    function validateEmailProofClaim(bytes calldata emailProof, uint256 claimId) external view returns (bool);
-    function getEmailProofAuditTrail(uint256 claimId) external view returns (EmailProofClaim memory);
-    function getClaimInvestigationData(uint256 claimId) external view returns (InvestigationData memory);
-    
-    // Pool state management
-    function getPoolBalance(address stakeholder) external view returns (uint256);
-    function getYieldEarned(address stakeholder) external view returns (uint256);
-    function validatePoolLiquidity(uint256 requestedAmount) external view returns (bool);
-}
-```
-
-### EmailProof-Based Yield Distribution Architecture
-```solidity
-struct EmailProofYieldDistribution {
-    uint256 totalYield;
-    uint256 patientShare;    // 60% of yield
-    uint256 insurerShare;    // 20% of yield
-    uint256 protocolShare;   // 20% of yield
-    uint256 distributionTime;
-    bytes32 emailProofHash;  // Hash of email proof that triggered distribution
+    // Pool monitoring and health checks
+    function getHealthcarePoolMetrics(PoolId poolId) external view returns (HealthcarePoolMetrics memory);
+    function validateHealthcarePoolState(PoolId poolId) external view returns (bool);
 }
 
-function automatedYieldDistributionWithEmailProof(bytes calldata emailProof) external {
-    require(vlayerVerifier.verifyEmailProof(emailProof), "Invalid email proof");
+// Healthcare-specific Uniswap v4 Hook Implementation
+contract HealthcarePoolHook is BaseHook {
+    using PoolIdLibrary for PoolKey;
     
-    uint256 totalYield = aavePool.getReservesData(mUSD).liquidityIndex;
-    distributeProportionally(totalYield);
+    struct HealthcareSwapParams {
+        bytes mailProof;
+        uint256 claimId;
+        address patient;
+        address hospital;
+        uint256 authorizationDeadline;
+    }
     
-    emit YieldDistributedWithEmailProof(totalYield, keccak256(emailProof), block.timestamp);
-}
-```
-
-### EmailProof Investigation & Audit Features
-```solidity
-struct InvestigationData {
-    uint256 claimId;
-    bytes32 hospitalEmailHash;     // Hash of hospital notification email
-    bytes32 patientEmailHash;      // Hash of patient confirmation email
-    bytes32 insurerEmailHash;      // Hash of insurer investigation email
-    uint256[] emailTimestamps;     // Timeline of email communications
-    bool investigationComplete;    // Investigation status
-    string investigationNotes;     // Encrypted investigation notes
-}
-
-function initializeClaimInvestigation(
-    uint256 claimId,
-    bytes calldata hospitalEmail,
-    bytes calldata patientEmail
-) external {
-    require(hasRole(INVESTIGATOR_ROLE, msg.sender), "Unauthorized");
+    // Before swap: Validate healthcare payment authorization
+    function beforeSwap(
+        address sender,
+        PoolKey calldata key,
+        IPoolManager.SwapParams calldata params,
+        bytes calldata hookData
+    ) external override onlyPoolManager returns (bytes4) {
+        HealthcareSwapParams memory healthcareParams = abi.decode(hookData, (HealthcareSwapParams));
+        
+        // Validate MailProof authorization
+        require(vlayerVerifier.verifyMailProof(healthcareParams.mailProof), "Invalid MailProof");
+        
+        // Extract and validate payment instructions
+        (address authorizedRecipient, uint256 authorizedAmount) = 
+            extractPaymentInstructions(healthcareParams.mailProof);
+        
+        require(authorizedRecipient == healthcareParams.hospital, "Unauthorized recipient");
+        require(uint256(-params.amountSpecified) <= authorizedAmount, "Exceeds authorized amount");
+        
+        // Verify claim is still valid
+        require(block.timestamp <= healthcareParams.authorizationDeadline, "Authorization expired");
+        require(!processedClaims[healthcareParams.claimId], "Claim already processed");
+        
+        // Mark claim as being processed
+        processedClaims[healthcareParams.claimId] = true;
+        
+        return BaseHook.beforeSwap.selector;
+    }
     
-    InvestigationData storage investigation = claimInvestigations[claimId];
-    investigation.claimId = claimId;
-    investigation.hospitalEmailHash = keccak256(hospitalEmail);
-    investigation.patientEmailHash = keccak256(patientEmail);
-    investigation.emailTimestamps.push(block.timestamp);
+    // After swap: Handle yield distribution and claim completion
+    function afterSwap(
+        address sender,
+        PoolKey calldata key,
+        IPoolManager.SwapParams calldata params,
+        BalanceDelta delta,
+        bytes calldata hookData
+    ) external override onlyPoolManager returns (bytes4) {
+        HealthcareSwapParams memory healthcareParams = abi.decode(hookData, (HealthcareSwapParams));
+        
+        // Calculate and distribute yield
+        uint256 swapFees = calculateSwapFees(delta);
+        distributeHealthcareYield(key, swapFees, healthcareParams);
+        
+        // Update patient and hospital balances
+        updateStakeholderBalances(healthcareParams.patient, healthcareParams.hospital, delta);
+        
+        // Emit healthcare payment event
+        emit HealthcarePaymentProcessed(
+            healthcareParams.claimId,
+            healthcareParams.patient,
+            healthcareParams.hospital,
+            uint256(-params.amountSpecified),
+            block.timestamp
+        );
+        
+        return BaseHook.afterSwap.selector;
+    }
     
-    emit ClaimInvestigationInitiated(claimId, msg.sender);
+    // Healthcare-specific yield distribution (60/20/20 split)
+    function distributeHealthcareYield(
+        PoolKey calldata key,
+        uint256 totalYield,
+        HealthcareSwapParams memory params
+    ) internal {
+        // 60% to patients (premium cost reduction)
+        uint256 patientYield = (totalYield * 6000) / 10000;
+        allocatePatientYield(params.patient, patientYield);
+        
+        // 20% to insurers (operational returns)
+        uint256 insurerYield = (totalYield * 2000) / 10000;
+        address insurer = getPatientInsurer(params.patient);
+        allocateInsurerYield(insurer, insurerYield);
+        
+        // 20% to protocol treasury
+        uint256 protocolYield = (totalYield * 2000) / 10000;
+        allocateProtocolYield(protocolYield);
+        
+        emit HealthcareYieldDistributed(
+            params.claimId,
+            patientYield,
+            insurerYield,
+            protocolYield,
+            block.timestamp
+        );
+    }
 }
 ```
 
 ### Pool Safety Mechanisms
 - **Liquidity Buffers**: Minimum reserves for emergency withdrawals
-- **EmailProof Validation**: Multi-party email verification before withdrawals
+- **MailProof Validation**: Multi-party email verification before withdrawals
 - **Gradual Withdrawal Limits**: Rate limiting for large withdrawals
 - **Pool Health Monitoring**: Continuous monitoring of utilization rates
 - **Emergency Shutdown**: Ability to pause operations during market stress
@@ -313,16 +467,16 @@ function initializeClaimInvestigation(
 
 ## 🌐 Frontend Technology Stack
 
-### Next.js 15 Architecture
+### Next.js 15 Architecture with Healthcare Features
 - **App Router**: Modern routing with server-side rendering
 - **React Server Components**: Optimal performance with minimal client JavaScript
 - **TypeScript**: Full type safety across the application
 - **Tailwind CSS**: Utility-first styling with responsive design
 - **Responsive Design**: Mobile-first approach with desktop optimization
 
-### Web3 Integration with EmailProof Support
+### Web3 Integration with MailProof and Multi-Role Support
 ```typescript
-// thirdweb Configuration with EmailProof integration
+// thirdweb Configuration with Healthcare Integration
 import { createThirdwebClient, getContract } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
 
@@ -336,72 +490,116 @@ const mantleChain = defineChain({
   nativeCurrency: { name: "Mantle", symbol: "MNT", decimals: 18 },
 });
 
-// Contract Integration with EmailProof support
-const poolingContract = getContract({
+// Healthcare Contract Integration
+const healthcarePoolContract = getContract({
   client,
   chain: mantleChain,
-  address: process.env.NEXT_PUBLIC_POOLING_CONTRACT,
-  abi: poolingContractABI, // Includes EmailProof functions
+  address: process.env.NEXT_PUBLIC_HEALTHCARE_POOL_CONTRACT,
+  abi: healthcarePoolABI, // Includes MailProof and Uniswap v4 functions
 });
 
-// EmailProof Integration
-interface EmailProofClaimData {
+// MailProof Integration for Healthcare Claims
+interface MailProofClaimData {
   claimId: string;
   hospitalEmail: string;
-  patientEmail: string;
-  emailProofHash: string;
-  verificationStatus: 'pending' | 'verified' | 'failed';
-  auditTrail: EmailProofAuditEntry[];
+  patientWallet: string;
+  mailProofHash: string;
+  verificationStatus: 'pending' | 'verified' | 'processed' | 'failed';
+  paymentAmount: string;
+  authorizationDeadline: number;
+  auditTrail: MailProofAuditEntry[];
+}
+
+// Multi-Role User Interface State
+interface HealthcareUserState {
+  userRole: 'patient' | 'hospital' | 'insurer' | 'admin';
+  permissions: string[];
+  verificationStatus: boolean;
+  poolAccess: boolean;
+  activeCllaims: MailProofClaimData[];
+  yieldEarned: string;
 }
 ```
 
-### EmailProof Dashboard Components
-- **Real-time Yield Tracking**: Live updates of pool performance and yields
-- **Insurance Selection Interface**: Comparison of insurers by pool metrics
-- **Automated Payment Management**: Setup and monitoring of monthly premiums
-- **EmailProof Claims Tracking**: Multi-party email verification progress and payouts
-- **Investigation Dashboard**: Complete audit trail and investigation support interface
+### Healthcare Dashboard Components
+- **Real-time Pool Tracking**: Live updates of Uniswap v4 pool performance and yields
+- **Multi-Role Authentication**: Specialized interfaces for patients, hospitals, insurers, and admins
+- **MailProof Claims Management**: Complete claim submission and tracking interface
+- **Yield Distribution Monitoring**: Real-time tracking of yield allocation and distribution
+- **Automated Payment Management**: Setup and monitoring of premium and claim payments
 - **Privacy-Preserving Analytics**: Pool insights without personal data exposure
 
 ### State Management
 - **React Query**: Server state management with automatic caching
 - **Zustand**: Client state management for UI interactions
 - **Local Storage**: Persistent user preferences and session data
-- **Real-time Updates**: WebSocket connections for live pool data and EmailProof status
-- **EmailProof State**: Dedicated state management for email verification workflows
+- **Real-time Updates**: WebSocket connections for live pool data and MailProof status
+- **Multi-Role State**: Dedicated state management for different user roles and permissions
 
 ---
 
 ## 🐳 Production Deployment Architecture
 
-### Essential Container Stack (Dockploy)
+### Enhanced Container Stack for Healthcare Platform
 ```yaml
-# Simplified Production Container Stack with EmailProof Support
+# Production Healthcare Platform Container Stack
 services:
-  contract-deployer:
+  healthcare-contracts:
     build:
       context: ./srcs/foundry
-      dockerfile: Dockerfile.deployer
-    container_name: zkmed-contract-deployer
+      dockerfile: Dockerfile.healthcare
+    container_name: zkmed-healthcare-contracts
     volumes:
       - contract_artifacts:/app/out:rw
+      - healthcare_config:/app/config:rw
     environment:
       - RPC_URL=http://host.docker.internal:8547
       - CHAIN_ID=31339
-      - PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-      - EMAILPROOF_ENABLED=true
+      - PRIVATE_KEY=${DEPLOYER_PRIVATE_KEY}
+      - MAILPROOF_ENABLED=true
+      - UNISWAP_V4_ENABLED=true
+      - HEALTHCARE_MODE=production
     restart: "no"
     network_mode: "host"
+
+  uniswap-v4-pools:
+    build:
+      context: ./srcs/uniswap-v4
+      dockerfile: Dockerfile.pools
+    container_name: zkmed-uniswap-pools
+    depends_on:
+      - healthcare-contracts
+    volumes:
+      - contract_artifacts:/app/contracts:ro
+      - pool_state:/app/state:rw
+    environment:
+      - POOL_MANAGER_ADDRESS=${POOL_MANAGER_ADDRESS}
+      - HEALTHCARE_HOOK_ADDRESS=${HEALTHCARE_HOOK_ADDRESS}
+      - INITIAL_LIQUIDITY=${INITIAL_LIQUIDITY}
+    restart: always
+
+  vlayer-mailproof:
+    image: vlayer/mailproof-server:latest
+    container_name: zkmed-vlayer-mailproof
+    ports:
+      - "3002:3000"
+    environment:
+      - MAILPROOF_VERIFICATION_ENABLED=true
+      - DKIM_VALIDATION_STRICT=true
+      - HEALTHCARE_DOMAINS_WHITELIST=${HEALTHCARE_DOMAINS}
+    restart: always
 
   zkmed-frontend:
     build:
       context: ./srcs/nextjs
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.healthcare
     container_name: zkmed-frontend
     ports:
       - "3000:3000"
     depends_on:
-      - contract-deployer
+      - healthcare-contracts
+      - uniswap-v4-pools
+      - vlayer-mailproof
     volumes:
       - contract_artifacts:/app/contracts:ro
     environment:
@@ -409,30 +607,62 @@ services:
       - NEXT_PUBLIC_CHAIN_ID=31339
       - NEXT_PUBLIC_RPC_URL=http://localhost:8547
       - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=${NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
-      - NEXT_PUBLIC_EMAILPROOF_ENABLED=true
-      - NEXT_PUBLIC_VLAYER_PROVER_URL=http://localhost:3000
+      - NEXT_PUBLIC_MAILPROOF_ENABLED=true
+      - NEXT_PUBLIC_UNISWAP_V4_ENABLED=true
+      - NEXT_PUBLIC_HEALTHCARE_POOL_ADDRESS=${HEALTHCARE_POOL_ADDRESS}
+      - CONTEXT7_API_URL=http://context7-server:3000
+    restart: always
+
+  context7-server:
+    image: context7/mcp-server:healthcare
+    container_name: zkmed-context7
+    ports:
+      - "3007:3000"
+    environment:
+      - CONTEXT7_MODE=healthcare
+      - LIBRARY_CACHE_SIZE=2000
+      - HEALTHCARE_DOCS_ENABLED=true
+    restart: always
+
+  monitoring-stack:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile.healthcare
+    container_name: zkmed-monitoring
+    ports:
+      - "3001:3000"
+      - "9090:9090"
+    environment:
+      - PROMETHEUS_ENABLED=true
+      - GRAFANA_ENABLED=true
+      - HEALTHCARE_METRICS=true
     restart: always
 
 volumes:
   contract_artifacts:
     driver: local
+  healthcare_config:
+    driver: local
+  pool_state:
+    driver: local
 ```
 
 ### Infrastructure Requirements
-- **CPU**: Minimum 2 cores for essential services
-- **Memory**: 4GB RAM for both containers
-- **Storage**: 20GB SSD for contract artifacts, logs, and EmailProof data
-- **Network**: Stable internet with 50Mbps bandwidth for vlayer connectivity
+- **CPU**: Minimum 4 cores for healthcare services
+- **Memory**: 8GB RAM for complete stack
+- **Storage**: 50GB SSD for contract artifacts, pool state, and MailProof data
+- **Network**: Stable internet with 100Mbps bandwidth for DeFi and vlayer connectivity
 - **External Dependencies**: 
-  - Existing vlayer anvil-l2-mantle container on port 8547
-  - vlayer EmailProof services for email verification
-  - Email infrastructure for audit trail generation
+  - Existing vlayer infrastructure for MailProof verification
+  - Uniswap v4 protocol contracts on Mantle Network
+  - Healthcare domain email infrastructure for DKIM verification
 
 ### Monitoring & Observability
 - **Health Checks**: Automated monitoring of all service endpoints
 - **Logging**: Centralized log aggregation and analysis
 - **Metrics**: Real-time performance monitoring and alerting
-- **EmailProof Monitoring**: Verification workflow tracking and alerts
+- **MailProof Monitoring**: Verification workflow tracking and alerts
+- **Pool Monitoring**: Uniswap v4 pool health and yield tracking
 - **Backup**: Automated snapshots of blockchain state and configuration
 - **Disaster Recovery**: Documented procedures for service restoration
 
@@ -446,23 +676,26 @@ volumes:
 - **Scalability**: Container architecture designed for horizontal scaling
 - **Privacy Requirements**: Zero medical data on-chain compliance
 - **Regulatory Compliance**: GDPR/HIPAA-ready architecture patterns
-- **EmailProof Validation**: Comprehensive email verification without content exposure
+- **MailProof Validation**: Comprehensive email verification without content exposure
+- **Hook Gas Limits**: Uniswap v4 hook gas optimization for complex healthcare logic
 
 ### Performance Requirements
 - **Transaction Speed**: Sub-second confirmation times on Mantle L2
 - **Pool Updates**: Real-time yield calculations and distribution
-- **EmailProof Processing**: <10 seconds for email verification workflows
+- **MailProof Processing**: <10 seconds for email verification workflows
 - **UI Responsiveness**: <200ms response times for all interactions
 - **Container Startup**: <30 seconds for full stack initialization
 - **Error Recovery**: Automatic restart and state restoration capabilities
+- **Hook Performance**: <50,000 gas for healthcare hook execution
 
 ### Security Requirements
 - **Multi-Signature**: All administrative functions require multiple signatures
 - **Audit Trail**: Complete logging of all system interactions
 - **Privacy Preservation**: Medical data never stored or transmitted unencrypted
-- **EmailProof Security**: Email content encrypted, only proof validity confirmed
+- **MailProof Security**: Email content encrypted, only proof validity confirmed
 - **Access Control**: Granular permissions with regular access reviews
 - **Vulnerability Management**: Regular security updates and patch management
+- **Hook Security**: Comprehensive validation in Uniswap v4 hook implementations
 
 ---
 
@@ -473,7 +706,8 @@ volumes:
 {
   "smart-contracts": {
     "@openzeppelin/contracts": "^5.0.0",
-    "@aave/core-v3": "^1.19.0",
+    "@uniswap/v4-core": "^0.1.0",
+    "@uniswap/v4-periphery": "^0.1.0",
     "vlayer": "^0.1.0",
     "forge-std": "^1.7.0"
   },
@@ -492,13 +726,17 @@ volumes:
   },
   "context7": {
     "@upstash/context7-mcp": "^1.0.6"
+  },
+  "uniswap-v4": {
+    "@uniswap/v4-sdk": "^1.0.0",
+    "@uniswap/v4-hook-library": "^1.0.0"
   }
 }
 ```
 
 ### External Service Integration
-- **vlayer Network**: EmailProof generation and verification services
-- **Aave V3 Protocol**: Lending pool integration for yield generation
+- **vlayer Network**: MailProof generation and verification services
+- **Uniswap v4 Protocol**: Pool management and custom hook integration
 - **IPFS/Web3.Storage**: Decentralized storage for encrypted medical records
 - **Mantle RPC**: Blockchain interaction and state queries
 - **thirdweb Infrastructure**: Gas sponsorship and wallet management
@@ -506,17 +744,17 @@ volumes:
 
 ### API Integration Points
 ```typescript
-// External Service APIs with EmailProof support
-interface ExternalAPIs {
+// External Service APIs with Healthcare Integration
+interface HealthcareAPIs {
   vlayer: {
-    proveEmail: (email: UnverifiedEmail) => Promise<EmailProof>;
-    verifyEmailProof: (proof: EmailProof) => Promise<boolean>;
-    generateEmailAuditTrail: (emails: Email[]) => Promise<AuditTrail>;
+    proveEmail: (email: UnverifiedEmail) => Promise<MailProof>;
+    verifyMailProof: (proof: MailProof) => Promise<boolean>;
+    generateAuditTrail: (emails: Email[]) => Promise<AuditTrail>;
   };
-  aave: {
-    supply: (asset: string, amount: bigint) => Promise<TxHash>;
-    withdraw: (asset: string, amount: bigint) => Promise<TxHash>;
-    getAPY: (asset: string) => Promise<number>;
+  uniswap: {
+    initializePool: (key: PoolKey, sqrtPriceX96: bigint, hookData: bytes) => Promise<TxHash>;
+    swap: (key: PoolKey, params: SwapParams, hookData: bytes) => Promise<BalanceDelta>;
+    getPoolState: (poolId: PoolId) => Promise<PoolState>;
   };
   thirdweb: {
     sponsorTransaction: (tx: Transaction) => Promise<SponsoredTx>;
@@ -524,7 +762,8 @@ interface ExternalAPIs {
   };
   context7: {
     resolveLibraryId: (libraryName: string) => Promise<string>;
-    getLibraryDocs: (libraryId: string, topic?: string) => Promise<Documentation>;
+    getLibraryDocs: (libraryId: string, topic?: string, tokens?: number) => Promise<Documentation>;
+    getHealthcareDocs: (topic: string) => Promise<HealthcareDocumentation>;
   };
 }
 ```
@@ -536,17 +775,25 @@ interface ExternalAPIs {
 ### Performance Benchmarks
 - **Contract Deployment**: <30 seconds on Mantle network
 - **Pool Operations**: <5 seconds for deposits and withdrawals
-- **EmailProof Generation**: <10 seconds for email verification
-- **EmailProof Validation**: <5 seconds for proof verification
+- **MailProof Generation**: <10 seconds for email verification
+- **MailProof Validation**: <5 seconds for proof verification
 - **Frontend Loading**: <3 seconds for initial page load
 - **Real-time Updates**: <1 second latency for pool data updates
+- **Hook Execution**: <50,000 gas for healthcare hook operations
 
-### EmailProof Verification Metrics
+### MailProof Verification Metrics
 - **Email Processing**: <15 seconds for complete email verification workflow
 - **Multi-Party Verification**: <30 seconds for hospital, patient, insurer confirmations
 - **Audit Trail Generation**: <5 seconds for complete communication history
-- **Investigation Support**: <2 seconds for audit trail retrieval
+- **Domain Verification**: <10 seconds for DKIM signature validation
 - **Privacy Preservation**: 100% success rate for content encryption
+
+### Uniswap v4 Pool Performance
+- **Pool Initialization**: <20 seconds for healthcare pool setup with custom hooks
+- **Swap Execution**: <10 seconds for healthcare payment processing
+- **Yield Distribution**: <15 seconds for automated 60/20/20 allocation
+- **Hook Performance**: <3 seconds for beforeSwap and afterSwap execution
+- **Liquidity Management**: Real-time rebalancing with <5% slippage
 
 ### Reliability Targets
 - **System Uptime**: 99.9% availability target
@@ -554,7 +801,7 @@ interface ExternalAPIs {
 - **Data Persistence**: Zero data loss across service restarts
 - **Error Handling**: Graceful degradation for all failure scenarios
 - **Recovery Time**: <5 minutes for full system restoration
-- **EmailProof Reliability**: 99.5% verification success rate
+- **MailProof Reliability**: 99.5% verification success rate
 
 ### Security Validation
 - **Audit Completion**: Full security audit before mainnet deployment
@@ -562,6 +809,6 @@ interface ExternalAPIs {
 - **Vulnerability Scanning**: Automated scanning of container images
 - **Access Review**: Monthly review of all system permissions
 - **Incident Response**: Documented procedures for security incidents
-- **EmailProof Security**: Zero email content exposure incidents
+- **MailProof Security**: Zero email content exposure incidents
 
-**zkMed's technical architecture represents a cutting-edge integration of privacy-preserving technologies, DeFi protocols, modern container infrastructure, and comprehensive emailproof-based verification systems, delivering unprecedented healthcare innovation while maintaining enterprise-grade security, reliability, and comprehensive investigation capabilities.** 🚀 
+**zkMed's advanced technical architecture represents a cutting-edge integration of privacy-preserving technologies, advanced DeFi protocols (Uniswap v4), modern container infrastructure, comprehensive MailProof verification systems, and enhanced development workflows with Context7 integration, delivering unprecedented healthcare innovation while maintaining enterprise-grade security, reliability, and comprehensive regulatory compliance capabilities.** 🚀 

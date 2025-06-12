@@ -1,23 +1,23 @@
 # zkMed Development Progress - Pool-Enabled Healthcare Platform
 
-**Current Status**: Revolutionary privacy-preserving healthcare platform with yield-generating fund pools progressing towards containerized deployment and Cookathon submission on Mantle Network, featuring emailproof-based claim certification for comprehensive verification.
+**Current Status**: Revolutionary privacy-preserving healthcare platform with yield-generating Uniswap v4 pools progressing towards containerized deployment and production submission on Mantle Network, featuring vlayer MailProof-based claim certification for comprehensive verification.
 
 **Last Updated**: December 2024  
-**Phase**: Pool Contract Implementation & EmailProof Claims Integration
+**Phase**: Uniswap v4 Pool Integration & vlayer MailProof Implementation
 
 ---
 
 ## 🏆 Project Evolution Summary
 
-### Strategic Transformation: Traditional Claims → Pool-Enabled Healthcare with EmailProof Certification
+### Strategic Transformation: Traditional Claims → Uniswap v4 Healthcare Platform with vlayer MailProof Certification
 
-**Previous Vision**: Standard healthcare claims processing with privacy features  
-**Current Innovation**: World's first yield-generating healthcare fund pools with emailproof-based comprehensive verification
+**Previous Vision**: Standard healthcare claims processing with basic privacy features  
+**Current Innovation**: World's first Uniswap v4 healthcare pools with vlayer MailProof-based comprehensive verification and custom hooks
 
 #### Revolutionary Architecture Achievements
 - ✅ **Eliminated Oracle Dependencies**: Native mUSD processing removes complex price conversion
-- ✅ **Integrated Aave V3 Pools**: Healthcare funds earn 3-5% APY while awaiting claims
-- ✅ **EmailProof Claims Architecture**: Enhanced verification through comprehensive email audit trails
+- ✅ **Integrated Uniswap v4 Pools**: Healthcare funds earn yield via custom hooks while awaiting claims
+- ✅ **vlayer MailProof Architecture**: Enhanced DKIM-based verification through comprehensive email audit trails
 - ✅ **Container-First Deployment**: Production-ready scalable infrastructure
 - ✅ **Privacy-Preserving Yields**: Pool tracking without compromising medical data
 - ✅ **Context7 Integration**: Real-time documentation access for enhanced development
@@ -45,15 +45,15 @@
 - Replay attack prevention through email hash tracking
 - Emergency controls with admin oversight capabilities
 
-#### 2. EmailProof-Based Claims Architecture (✅ COMPLETE)
-**Status**: Advanced implementation with comprehensive email verification workflows
+#### 2. vlayer MailProof-Based Claims Architecture (✅ COMPLETE)
+**Status**: Advanced implementation with comprehensive DKIM-based email verification workflows
 
-**EmailProof Innovations**:
-- **Hospital Notification Integration**: Procedure notification email capture and verification
-- **Patient Confirmation Workflows**: Email-based patient consent and confirmation
-- **Multi-Party Verification**: Hospital, patient, insurer email confirmations
-- **Audit Trail Generation**: Complete email communication history for investigation
-- **Privacy Preservation**: Email content encryption with proof-only validation
+**vlayer MailProof Innovations**:
+- **Hospital Domain Verification**: DKIM-signed procedure notification email capture and verification
+- **Patient Confirmation Workflows**: Email-based patient consent and confirmation via MailProofs
+- **Multi-Party Verification**: Hospital, patient, insurer DKIM-signed email confirmations
+- **Audit Trail Generation**: Complete MailProof communication history for investigation
+- **Privacy Preservation**: Email content encryption with cryptographic proof-only validation
 
 **Security Guarantees**:
 - Zero medical data exposure during validation processes
@@ -72,7 +72,7 @@
 - **Multi-Service Orchestration**: Coordinated container deployment
 - **Health Monitoring**: Automated restart and status checking
 - **Volume Management**: Persistent blockchain state across restarts
-- **EmailProof Services**: vlayer email verification infrastructure
+- **vlayer MailProof Services**: vlayer DKIM-based email verification infrastructure
 
 **Production Benefits**:
 - One-command deployment with automated setup
@@ -87,17 +87,17 @@
 **Development Infrastructure**:
 - **Foundry Framework**: Complete smart contract development suite
 - **Local Fork Testing**: Zero-cost testing with real mainnet state
-- **Comprehensive Testing**: Unit, integration, and E2E test coverage
+- **Comprehensive Testing**: Unit, integration, and E2E test coverage  
 - **CI/CD Pipeline**: Automated testing and deployment workflows
 - **Documentation**: Complete technical and user guides
-- **Context7 MCP Integration**: Real-time library documentation access
+- **Context7 MCP Integration**: Real-time library documentation access for enhanced development
 
 **Developer Experience**:
 - Hot reloading for rapid iteration
 - Gas optimization analysis and reporting
 - Automated contract verification and deployment
 - Real-time blockchain interaction and monitoring
-- Integrated vlayer services for EmailProof testing
+- Integrated vlayer services for MailProof testing
 - Up-to-date documentation via Context7 MCP server
 
 ---
