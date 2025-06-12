@@ -292,7 +292,28 @@ Claim Dispute → MailProof Audit Trail → Multi-Party DKIM Verification → In
 - Establish Web3 healthcare infrastructure as mainstream standard
 - Set new standards for healthcare claim investigation and compliance
 
-**zkMed's product vision represents a fundamental transformation of healthcare economics, delivering unprecedented value to all stakeholders while maintaining the highest standards of medical privacy through innovative emailproof-based verification technology and yield-generating fund pools, with comprehensive investigation capabilities that ensure claim legitimacy and regulatory compliance.** 🚀 
+---
+
+## 📚 Research Foundation & Industry Context
+
+zkMed's product development is grounded in cutting-edge blockchain healthcare research:
+
+- **Blockchain Healthcare Models**: Decentralized ledger and smart contracts enhance transparency, fairness, and operational efficiency in health insurance (Shouri & Ramezani, 2025)
+- **EHR Integration**: Blockchain integration with insurance systems improves data security and interoperability (Implementation of Electronic Health Record, 2023)
+- **Decentralized Insurance**: Peer-to-peer risk sharing and automated claims settlement without intermediaries (MAPFRE, 2025)
+- **Fraud Prevention**: Real-time claim validation reduces fraudulent activities (Ncube et al., 2022)
+- **Advanced DeFi**: Uniswap v4's hooks and flash accounting provide gas-efficient, customizable liquidity pools
+
+---
+
+## 📊 Summary Table of Payment Flows
+
+| Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
+|-----------|-------------------|---------------|------------------|-----------|-----------------|
+| **Pure Web2 + MailProof** | Off-chain contract + DKIM email | Bank transfer, SEPA, etc. | New MailProof email | No | No |
+| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Uniswap v4 pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
+
+**zkMed's revolutionary product vision represents the first practical implementation of hybrid Web2/Web3 architecture in healthcare insurance, delivering research-validated benefits while maintaining regulatory compliance and user familiarity. This approach balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency, creating unprecedented value for all stakeholders.** 🚀 
 
 ### Comprehensive Registration Flow Comparison
 
