@@ -1,17 +1,17 @@
-import HeroSection from "@/components/home/hero-section";
-import ValueProposition from "@/components/home/value-proposition";
-import InsurerSection from "@/components/home/insurer-section";
-import RegistrationSection from "@/components/home/registration-section";
-import TechnologyPartners from "@/components/home/technology-partners";
+import HeroSection from '@/components/home/hero-section';
+import ValueProposition from '@/components/home/value-proposition';
+import InsurerSection from '@/components/home/insurer-section';
+import RegistrationSection from '@/components/home/registration-section';
+import TechnologyPartners from '@/components/home/technology-partners';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <HeroSection />
       <ValueProposition />
       <InsurerSection />
       <RegistrationSection />
       <TechnologyPartners />
-    </div>
+    </main>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
 
 export default function ValueProposition() {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,34 +26,64 @@ export default function ValueProposition() {
 
   const features = [
     {
-      icon: '🛡️',
-      title: 'Zero-Knowledge Privacy',
-      subtitle: 'Medical Data Protection',
-      description: 'Submit procedures without exposing any medical information. Zero-knowledge proofs verify eligibility while keeping your health data completely private.',
-      stats: '100% Privacy',
+      icon: '🔐',
+      title: 'MailProof Privacy',
+      subtitle: 'Zero Medical Data Exposure',
+      description: 'Revolutionary vlayer MailProof technology verifies claims through DKIM-signed emails without exposing any medical information on-chain. Complete privacy preservation.',
+      stats: 'Zero Data Exposure',
       color: 'from-indigo-500 to-purple-600',
       bgColor: 'bg-indigo-50',
       delay: 'delay-100'
     },
     {
-      icon: '⚡',
-      title: 'Instant Processing',
-      subtitle: 'Fast Verification',
-      description: 'Automated verification through smart contracts processes your procedures in under 5 minutes. No paperwork, no waiting rooms.',
-      stats: '< 5 minutes',
+      icon: '💰',
+      title: 'Merchant Moe Pools',
+      subtitle: 'Yield Generation',
+      description: 'Healthcare funds earn 3-5% APY through Merchant Moe Liquidity Book pools with custom healthcare hooks. Automated 60/20/20 yield distribution to all stakeholders.',
+      stats: '3-5% APY',
       color: 'from-emerald-500 to-teal-600',
       bgColor: 'bg-emerald-50',
       delay: 'delay-300'
     },
     {
-      icon: '💰',
-      title: 'Earn While Protected',
-      subtitle: 'Yield Generation',
-      description: 'Your deposited funds automatically earn yield in Aave V3 pools on Mantle while providing procedure coverage.',
-      stats: '3-5% APY',
+      icon: '⚡',
+      title: 'Instant Settlement',
+      subtitle: 'Dual Payment Options',
+      description: 'Choose direct hospital payment or patient reimbursement. MailProof verification triggers instant mUSD transfers from pools in seconds, not weeks.',
+      stats: 'Instant Payments',
       color: 'from-violet-500 to-purple-600',
       bgColor: 'bg-violet-50',
       delay: 'delay-500'
+    },
+    {
+      icon: '🌍',
+      title: 'Universal Platform',
+      subtitle: 'Any Insurance Company',
+      description: 'Works with any health insurance company globally. Hybrid Web2/Web3 architecture maintains regulatory compliance while delivering blockchain benefits.',
+      stats: 'Global Compatible',
+      color: 'from-blue-500 to-cyan-600',
+      bgColor: 'bg-blue-50',
+      delay: 'delay-700'
+    },
+    {
+      icon: '🔗',
+      title: 'thirdweb Integration',
+      subtitle: 'Seamless Access',
+      description: 'Fiat-to-crypto payments and smart account management. Web3 benefits with traditional user experience through comprehensive thirdweb integration.',
+      stats: 'Fiat + Crypto',
+      color: 'from-orange-500 to-red-600',
+      bgColor: 'bg-orange-50',
+      delay: 'delay-900'
+    },
+    {
+      icon: '🏢',
+      title: 'Multi-Role Support',
+      subtitle: 'Complete Ecosystem',
+      description: 'Comprehensive platform for patients, hospitals, insurers, and administrators. Specialized dashboards and workflows for each stakeholder role.',
+      stats: '4 User Types',
+      color: 'from-pink-500 to-rose-600',
+      bgColor: 'bg-pink-50',
+      delay: 'delay-1100'
     }
   ];
 
@@ -65,20 +96,20 @@ export default function ValueProposition() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className={`text-center mb-16 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <Badge className="bg-indigo-100 text-indigo-700 mb-6 px-4 py-2 text-sm">
-            🇮🇹 Regione Lazio Healthcare Revolution
+          <Badge className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 mb-6 px-4 py-2 text-sm">
+            🚀 Revolutionary Healthcare Innovation
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent">
-            Privacy-First Healthcare in Lazio
+            Web3 + MailProof + Pools Architecture
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            The first platform combining zero-knowledge privacy, instant procedure processing, 
-            and yield generation for your healthcare funds in Regione Lazio.
+          <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+            The world's first platform combining privacy-preserving MailProof verification, yield-generating Merchant Moe Liquidity Book pools, 
+            and instant settlement capabilities for global healthcare insurance companies.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -119,51 +150,81 @@ export default function ValueProposition() {
           ))}
         </div>
 
-        {/* Bottom CTA Section */}
+        {/* Enhanced Bottom CTA Section */}
         <div className={`text-center mt-20 transform transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl p-8 md:p-12 border border-indigo-100">
-            <div className="max-w-2xl mx-auto">
+          <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-8 md:p-12 border border-indigo-100">
+            <div className="max-w-4xl mx-auto">
               <h3 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
-                Ready to Experience Private Healthcare in Lazio?
+                Ready to Transform Healthcare Insurance?
               </h3>
-              <p className="text-slate-600 mb-6">
-                Join Regione Lazio residents who trust zkMed for their healthcare procedure processing.
+              <p className="text-slate-600 mb-8">
+                Join the revolution in healthcare payments with our comprehensive Web3 + MailProof + Pools platform.
+                Compatible with any insurance company worldwide.
               </p>
               
-              {/* Demo Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Enhanced Demo Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">1,247</div>
-                  <div className="text-sm text-slate-500">Lazio Procedures Processed</div>
+                  <div className="text-2xl font-bold text-indigo-600">15,847</div>
+                  <div className="text-sm text-slate-500">Global Claims Processed</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">€850K</div>
-                  <div className="text-sm text-slate-500">Protected in Pools</div>
+                  <div className="text-2xl font-bold text-emerald-600">$12.7M</div>
+                  <div className="text-sm text-slate-500">Total Value Locked</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600">100%</div>
                   <div className="text-sm text-slate-500">Privacy Maintained</div>
                 </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">47</div>
+                  <div className="text-sm text-slate-500">Insurance Partners</div>
+                </div>
               </div>
               
-              <div className="flex flex-wrap justify-center gap-4 mb-6">
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
                 <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-medium hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
-                  🏥 Start Your First Procedure
+                  🏢 Schedule Integration Demo
+                </button>
+                <button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-medium hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                  👥 Patient Portal Demo
                 </button>
                 <button className="border-2 border-slate-300 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 px-8 py-3 rounded-xl font-medium hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
-                  📖 Learn More
+                  📊 View Live Analytics
                 </button>
               </div>
 
-              {/* Regional Expansion Note */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                <div className="flex items-center justify-center space-x-3">
-                  <span className="text-amber-500 text-lg">🌍</span>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-amber-800">From outside Regione Lazio?</p>
-                    <button className="text-xs text-amber-700 underline hover:text-amber-900">
-                      Contact our dev team to add WebProof support for your region
-                    </button>
+              {/* Technology Stack Showcase */}
+              <div className="bg-white/80 backdrop-blur-sm border border-white/50 rounded-xl p-6">
+                <h4 className="text-lg font-semibold text-slate-800 mb-4">Powered by Leading Web3 Technologies</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div className="space-y-2">
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg mx-auto flex items-center justify-center">
+                      <Image src="/icons/mantle-network.jpg" alt="Mantle Network" width={32} height={32} className="w-8 h-8 rounded" />
+                    </div>
+                    <div className="text-sm font-medium text-slate-700">Mantle Network</div>
+                    <div className="text-xs text-slate-500">L2 Blockchain (Testnet)</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg mx-auto flex items-center justify-center">
+                      <Image src="/icons/vlayer-logo.png" alt="vlayer" width={32} height={32} className="w-8 h-8 rounded" />
+                    </div>
+                    <div className="text-sm font-medium text-slate-700">vlayer MailProof</div>
+                    <div className="text-xs text-slate-500">Privacy Verification</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg mx-auto flex items-center justify-center">
+                      <Image src="/icons/merchant-moe.png" alt="Merchant Moe" width={32} height={32} className="w-8 h-8 rounded" />
+                    </div>
+                    <div className="text-sm font-medium text-slate-700">Merchant Moe LB</div>
+                    <div className="text-xs text-slate-500">Yield Generation</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg mx-auto flex items-center justify-center">
+                      <Image src="/icons/thirdweb.png" alt="thirdweb" width={32} height={32} className="w-8 h-8 rounded" />
+                    </div>
+                    <div className="text-sm font-medium text-slate-700">thirdweb SDK</div>
+                    <div className="text-xs text-slate-500">Web3 Integration</div>
                   </div>
                 </div>
               </div>
