@@ -14,20 +14,19 @@
 ## 🎯 Project Vision
 
 ### Overview
-zkMed is a **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals using cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration.
+zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment.
 
 ### Core Innovation
-**Web2/Web3 hybrid architecture** maintaining regulatory compliance while delivering blockchain benefits:
+**Web2/Web3 hybrid architecture** that maintains regulatory compliance while delivering revolutionary blockchain benefits:
 - **Web2 Layer**: Traditional claim processing, medical review, regulatory compliance
 - **Web3 Layer**: MailProof verification, instant payments, yield generation
 - **Bridge**: DKIM-signed emails provide cryptographic proof without exposing medical data
 
-### Current MVP
+### Current MVP Stage
 - ✅ **Docker Environment**: Fully configured container orchestration with vlayer services
-- ✅ **Smart Wallet Integration**: Working thirdweb connection with local Mantle fork  
-- ✅ **Dynamic Address Resolution**: Automatic contract address discovery
-- ✅ **Complete Homepage**: Full landing page with hero section, features, and navigation
-- ✅ **Dev Dashboard**: Interface at `/dev` showing system status and wallet interaction
+- ✅ **Smart Wallet Integration**: Working interaction with anvil-l2-mantle container  
+- ✅ **Dynamic Address Resolution**: Client automatically connects to appropriate contract addresses
+- ✅ **Dev Dashboard**: Basic interface showing container status and wallet connection at `/dev`
 
 ---
 
@@ -36,20 +35,20 @@ zkMed is a **privacy-preserving healthcare insurance payment platform** that aut
 ### Blockchain Infrastructure
 - **Primary Chain**: [Mantle Network](https://www.mantle.xyz/) (Ethereum L2)
 - **Chain ID**: 31339 (Local Fork) / 5000 (Mainnet)
-- **Native Currency**: Mantle USD (mUSD)
+- **Native Currency**: Mantle USD (mUSD) for all healthcare transactions
 - **Consensus**: Optimistic rollup with fast finality
 
 ### Privacy Layer
-- **vlayer MailProof**: DKIM verification for payment authorization (planned)
+- **[vlayer MailProof](https://book.vlayer.xyz/features/email.html)**: DKIM verification for payment authorization (planned)
 - **Domain Verification**: Cryptographic proof of organizational email control
 - **Zero-Knowledge Architecture**: Complete medical privacy preservation
-- **Audit Trails**: Email verification history for compliance
+- **Audit Trails**: Complete email verification history for compliance
 
 ### Frontend
 - **Framework**: Next.js with Server Actions for SSR compatibility
 - **Web3 Integration**: [thirdweb SDK](https://playground.thirdweb.com/) for seamless authentication
 - **Smart Accounts**: Abstract account management with gas sponsorship
-- **UI Components**: Shadcn/ui with Tailwind CSS for modern design system
+- **Responsive Design**: Mobile-first approach with modern UI/UX
 
 ### Infrastructure
 - **Container Orchestration**: Docker-based microservices architecture
@@ -59,56 +58,10 @@ zkMed is a **privacy-preserving healthcare insurance payment platform** that aut
 
 ---
 
-## 🔐 MailProof Technology
-
-### Purpose in zkMed
-MailProofs enable **automated payment verification** by proving that claim approval emails come from legitimate insurance companies, eliminating manual verification while maintaining complete privacy of medical data.
-
-### How DKIM Verification Works
-**DKIM (DomainKeys Identified Mail)** provides cryptographic proof that emails are authentic:
-
-1. **Email Signing**: Insurance company's SMTP server signs emails with a private key
-2. **DNS Publication**: The corresponding public key is published in DNS records
-3. **Signature Verification**: vlayer verifies the DKIM signature against the DNS public key
-4. **Domain Authentication**: Proves the email truly originated from the claimed domain
-
-### zkMed Implementation Flow
-```mermaid
-sequenceDiagram
-    participant I as Insurance Company
-    participant H as Hospital
-    participant V as vlayer Prover
-    participant DNS as DNS Notary
-    participant SC as Smart Contract
-    
-    I->>H: Send DKIM-signed claim approval email
-    H->>V: Submit email for MailProof generation
-    V->>DNS: Fetch public key from DNS records
-    DNS->>V: Return verified DNS record + signature
-    V->>V: Verify DKIM signature authenticity
-    V->>SC: Generate proof of domain + claim details
-    SC->>H: Trigger automatic mUSD payment
-```
-
-### Security Benefits
-- **Domain Verification**: Cryptographically proves emails come from legitimate insurers
-- **Privacy Preservation**: Only proves domain authenticity, never exposes medical content
-- **Fraud Prevention**: Impossible to forge emails from verified insurance domains
-- **Regulatory Compliance**: Maintains audit trails while protecting sensitive data
-
-### Technical Requirements
-For zkMed MailProofs to work, insurance company emails must:
-- ✅ Be signed with DKIM-Signature header
-- ✅ Have matching sender domain in DKIM `d=` tag and `From:` header  
-- ✅ Use supported email providers (major providers like Gmail, Outlook)
-- ✅ Include claim approval details in structured format
-
----
-
 ## 🚀 Current Implementation
 
 ### Development Environment
-**Status**: ✅ **Local testing ready Docker container stack** with foundry + vlayer + anvil integration
+**Status**: ✅ **Production-ready Docker container stack** with foundry + vlayer + anvil integration
 
 ```mermaid
 graph TB
@@ -138,11 +91,22 @@ graph TB
     G --> I
 ```
 
-### Key Features
-- ✅ **Smart Wallet Integration**: Direct connection to anvil-l2-mantle with pre-funded accounts
-- ✅ **Dynamic Address Resolution**: Frontend reads contract addresses from shared volume
-- ✅ **Dev Dashboard**: Container monitoring, wallet connection, and basic contract interaction
-- ✅ **Transaction Processing**: Gas-optimized smart contract interaction via thirdweb
+### Smart Wallet Integration
+- ✅ **Working Interaction**: Direct connection to anvil-l2-mantle container
+- ✅ **Account Management**: Pre-funded development accounts
+- ✅ **Transaction Processing**: Smart contract interaction via thirdweb
+- ✅ **Gas Optimization**: Sponsored transactions for seamless UX
+
+### Dynamic Address Resolution
+- ✅ **Automatic Discovery**: Frontend reads deployed contract addresses from shared volume
+- ✅ **Live Updates**: Real-time contract artifact synchronization
+- ✅ **Environment Agnostic**: Works across development and production environments
+
+### Dev Dashboard
+- ✅ **Container Status**: Real-time monitoring of all services
+- ✅ **Wallet Connection**: thirdweb integration with smart account support
+- ✅ **Contract Interaction**: Basic greeting contract demonstration
+- ✅ **Network Information**: Chain details and account balances
 
 ---
 
@@ -178,6 +142,67 @@ sequenceDiagram
 - **Privacy Protection**: Medical information never exposed on-chain
 - **Instant Settlement**: Blockchain automation for immediate payment execution
 
+### Example MailProof Emails
+
+#### Claim Authorization Email (Insurer to Hospital)
+```
+From: claims@insurancecorp.com
+To: billing@cityhospital.org
+Subject: Claim #CH-78291 Approved for Payment - Patient ID: 483726
+Date: Thu, 13 Jun 2025 14:27:31 +0000
+
+Dear City Hospital Billing Department,
+
+CLAIM PAYMENT AUTHORIZATION
+
+This email serves as official authorization for payment of the following claim:
+
+Claim Reference: CH-78291
+Patient ID: 483726
+Service Date: June 7, 2025
+Approved Amount: 1,875.00 mUSD
+CPT Codes Approved: 99215, 73610, 96372
+
+This claim has been reviewed and approved according to policy #INS-54321. 
+Payment will be automatically processed through the zkMed platform upon 
+verification of this email's authenticity.
+
+Regards,
+Jennifer Martinez
+Claims Authorization Department
+InsuranceCorp, Inc.
+```
+
+#### Domain Registration Email (Hospital to zkMed)
+```
+From: admin@newhospital.org
+To: register@zkmed.io
+Subject: Domain Verification for zkMed Registration
+Date: Thu, 13 Jun 2025 10:15:22 +0000
+
+DOMAIN VERIFICATION REQUEST
+
+Registration ID: NH-20250613-001
+Organization Name: New Hospital Medical Center
+Organization Type: Hospital
+Domain: newhospital.org
+Wallet Address: 0x7C2b77Bbe254DaF83965a48C74afF60a94B45335
+
+This email serves as official verification that New Hospital Medical Center 
+is requesting domain verification and registration on the zkMed platform.
+I am authorized to represent newhospital.org for this registration.
+
+By submitting this email as a MailProof, I authorize zkMed to:
+1. Verify our domain ownership through DKIM signature validation
+2. Register our organization with the provided wallet address
+3. Enable our participation in the zkMed healthcare platform
+
+Best regards,
+Dr. Robert Chen
+Chief Technology Officer
+New Hospital Medical Center
+```
+
 ---
 
 ## 🚀 Getting Started
@@ -194,39 +219,30 @@ sequenceDiagram
 git clone git@github.com:ppezzull/zkMed.git
 cd zkMed
 
-# See available commands
-make help
-
 # Launch complete environment
 make all
+
+# Alternative: Direct Docker Compose
+docker-compose up -d
 
 # Verify deployment
 make health
 ```
 
 ### Environment Variables
-All configuration is pre-configured in `docker-compose.yml`:
+Basic configuration is pre-configured for development:
 
 ```bash
-# Next.js Configuration
-NODE_ENV=development
+# Blockchain Configuration
 NEXT_PUBLIC_CHAIN_ID=31339
 NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
-NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
-NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=${NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS:-}
-NEXT_TELEMETRY_DISABLED=1
 
-# vlayer Environment
-VLAYER_ENV=dev
-CHAIN_NAME=anvil
+# vlayer Services
 PROVER_URL=http://vlayer-call-server:3000
-JSON_RPC_URL=http://anvil-l2-mantle:8545
-EXAMPLES_TEST_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 NOTARY_URL=http://notary-server:7047
-WS_PROXY_URL=ws://localhost:3003
 
-# Smart Wallet Configuration
-SMART_WALLET_FACTORY_MANTLE=0x06224c9387a352a953d6224bfff134c3dd247313
+# thirdweb Integration
+NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
 ```
 
 ### Local Access
@@ -298,9 +314,81 @@ contract HealthcareHook is BaseHook {
 
 ---
 
-## 🎯 Economic Model
+## 🧪 Testing the Environment
 
-> **Note**: This is an initial layout for the economic model. Percentages and distribution mechanisms are still being refined and optimized.
+### Verification Steps
+
+```bash
+# 1. Check all services are running
+docker-compose ps
+
+# 2. Verify Mantle fork is active
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+  http://localhost:8547
+
+# 3. Test vlayer services
+curl http://localhost:3000/health  # vlayer call server
+curl http://localhost:7047         # notary server
+
+# 4. Check frontend health
+curl http://localhost:3001/api/health
+```
+
+### Smart Wallet Demo
+1. Navigate to http://localhost:3001/dev
+2. Connect wallet using thirdweb interface
+3. Interact with deployed Greeting contract
+4. Verify transaction on local Mantle fork
+
+### Troubleshooting
+
+**Common Issues:**
+- **Port Conflicts**: Ensure ports 3001, 8547, 3000, 7047 are available
+- **Container Startup**: Wait for all dependencies before accessing frontend
+- **Contract Deployment**: Check `docker logs zkmed-contracts` for deployment status
+
+**Solutions:**
+```bash
+# Reset environment
+make clean && make all
+
+# Check specific service logs
+docker logs anvil-l2-mantle
+docker logs zkmed-frontend
+
+# Restart specific service
+docker-compose restart zkmed-frontend
+```
+
+---
+
+## 👨‍💻 Solo Development Notes
+
+### Project Status
+**Solo Development Project** - Currently developed by a single developer with focus on:
+- Container infrastructure and DevOps automation
+- Smart contract architecture and deployment
+- Frontend integration with Web3 services
+- vlayer MailProof integration planning
+
+### Implementation Approach
+**Prioritizing container infrastructure** to enable:
+- Rapid iteration and testing
+- Reliable deployment across environments  
+- Seamless integration of multiple services
+- Production-ready scalability from day one
+
+### Contribution Guidelines
+**Feedback and contributions welcome:**
+- 🐛 **Bug Reports**: Open issues for any problems encountered
+- 💡 **Feature Suggestions**: Ideas for healthcare platform improvements
+- 🔧 **Technical Feedback**: Architecture and implementation suggestions
+- 📖 **Documentation**: Help improve setup and usage documentation
+
+---
+
+## 🎯 Economic Model
 
 ### Stakeholder Benefits
 
@@ -338,4 +426,4 @@ Total Yield Generated: 100%
 
 ---
 
-*Cooked with passion for revolutionizing healthcare finance at The Cookathon! 👨‍🍳🏥*
+*Built with ❤️ for the future of healthcare finance*
