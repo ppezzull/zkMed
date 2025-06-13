@@ -1,370 +1,453 @@
-# zkMed - Privacy-Preserving Healthcare Platform with Yield-Generating Pools
+# zkMed - Revolutionary Healthcare Insurance Platform
 
-## 🎉 Status: ADVANCED WEB3 HEALTHCARE PLATFORM
+> **Privacy-preserving healthcare platform using vlayer MailProofs and Merchant Moe Liquidity Book pools on Mantle Network**
 
-**zkMed** is a revolutionary Web3 healthcare platform that combines privacy-preserving medical claims processing with intelligent fund pooling using Aave V3 infrastructure, native Mantle USD (mUSD), and cutting-edge technologies including vlayer WebProofs/MailProofs and thirdweb authentication. Built for deployment on Mantle blockchain as part of [The Cookathon](https://www.cookathon.dev/) hackathon.
+[![Mantle Network](https://img.shields.io/badge/Mantle-Network-blue)](https://www.mantle.xyz/)
+[![vlayer](https://img.shields.io/badge/vlayer-MailProofs-green)](https://book.vlayer.xyz/features/email.html)
+[![Merchant Moe](https://img.shields.io/badge/Merchant%20Moe-DEX-orange)](https://docs.merchantmoe.com/)
+[![thirdweb](https://img.shields.io/badge/thirdweb-SDK-purple)](https://playground.thirdweb.com/)
 
-### ✅ Core Achievements
-- **Privacy-First Architecture**: Complete privacy-preserving healthcare claims processing
-- **Smart Contracts**: Complete implementation with 37/37 tests passing (100% success)
-- **vlayer Integration**: Email domain verification and WebProof system working end-to-end
-- **Dual Registration Paths**: Flexible patient onboarding via insurer verification or selection
-- **Local Mantle Fork Testing**: Comprehensive development environment on Mantle fork
-- **Aave V3 Pool Integration**: Yield-generating healthcare fund pools for capital efficiency
+**Originally developed at [ETHGlobal Prague](https://ethglobal.com/events/prague) hackathon, now evolved for [The Cookathon on Mantle](https://www.cookathon.dev/)**
 
 ---
 
-## 🚀 Quick Start - Dual Deployment System
+## 🎯 1. Project Vision
+
+### Overview
+zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment.
+
+### Core Innovation
+**Web2/Web3 hybrid architecture** that maintains regulatory compliance while delivering revolutionary blockchain benefits:
+- **Web2 Layer**: Traditional claim processing, medical review, regulatory compliance
+- **Web3 Layer**: MailProof verification, instant payments, yield generation
+- **Bridge**: DKIM-signed emails provide cryptographic proof without exposing medical data
+
+### Current MVP Stage
+- ✅ **Docker Environment**: Fully configured container orchestration with vlayer services
+- ✅ **Smart Wallet Integration**: Working interaction with anvil-l2-mantle container  
+- ✅ **Dynamic Address Resolution**: Client automatically connects to appropriate contract addresses
+- ✅ **Dev Dashboard**: Basic interface showing container status and wallet connection at `/dev`
+
+---
+
+## 🏗️ 2. Technical Architecture
+
+### Blockchain Infrastructure
+- **Primary Chain**: [Mantle Network](https://www.mantle.xyz/) (Ethereum L2)
+- **Chain ID**: 31339 (Local Fork) / 5000 (Mainnet)
+- **Native Currency**: Mantle USD (mUSD) for all healthcare transactions
+- **Consensus**: Optimistic rollup with fast finality
+
+### Privacy Layer
+- **[vlayer MailProof](https://book.vlayer.xyz/features/email.html)**: DKIM verification for payment authorization (planned)
+- **Domain Verification**: Cryptographic proof of organizational email control
+- **Zero-Knowledge Architecture**: Complete medical privacy preservation
+- **Audit Trails**: Complete email verification history for compliance
+
+### Frontend
+- **Framework**: Next.js with Server Actions for SSR compatibility
+- **Web3 Integration**: [thirdweb SDK](https://playground.thirdweb.com/) for seamless authentication
+- **Smart Accounts**: Abstract account management with gas sponsorship
+- **Responsive Design**: Mobile-first approach with modern UI/UX
+
+### Infrastructure
+- **Container Orchestration**: Docker-based microservices architecture
+- **Development Environment**: Foundry framework with automated deployment
+- **Service Mesh**: vlayer services for MailProof verification
+- **Persistent Storage**: Shared volumes for contract artifacts
+
+---
+
+## 🚀 3. Current Implementation
+
+### Development Environment
+**Status**: ✅ **Production-ready Docker container stack** with foundry + vlayer + anvil integration
+
+```mermaid
+graph TB
+    subgraph "vlayer Infrastructure"
+        A[anvil-l2-mantle:8547] --> B[vlayer-call-server:3000]
+        A --> C[notary-server:7047]
+        A --> D[vdns-server]
+        B --> E[websockify:3003]
+    end
+    
+    subgraph "zkMed Application"
+        F[zkmed-contracts] --> A
+        F --> G[zkmed-frontend:3001]
+        G --> B
+        G --> C
+    end
+    
+    subgraph "Shared Resources"
+        H[contract-artifacts volume]
+        I[zkmed-network]
+    end
+    
+    F --> H
+    G --> H
+    A --> I
+    F --> I
+    G --> I
+```
+
+### Smart Wallet Integration
+- ✅ **Working Interaction**: Direct connection to anvil-l2-mantle container
+- ✅ **Account Management**: Pre-funded development accounts
+- ✅ **Transaction Processing**: Smart contract interaction via thirdweb
+- ✅ **Gas Optimization**: Sponsored transactions for seamless UX
+
+### Dynamic Address Resolution
+- ✅ **Automatic Discovery**: Frontend reads deployed contract addresses from shared volume
+- ✅ **Live Updates**: Real-time contract artifact synchronization
+- ✅ **Environment Agnostic**: Works across development and production environments
+
+### Dev Dashboard
+- ✅ **Container Status**: Real-time monitoring of all services
+- ✅ **Wallet Connection**: thirdweb integration with smart account support
+- ✅ **Contract Interaction**: Basic greeting contract demonstration
+- ✅ **Network Information**: Chain details and account balances
+
+---
+
+## 🐳 4. Docker Infrastructure
+
+### Container Setup
+**One-command deployment** with comprehensive service orchestration:
+
+```bash
+# Complete environment startup
+docker-compose up -d
+```
+
+### Key Containers
+
+#### Core Services
+- **`anvil-l2-mantle`**: Local Mantle blockchain environment (Chain ID 31339)
+- **`zkmed-contracts`**: Smart contract deployment with Foundry framework
+- **`zkmed-frontend`**: Next.js application with thirdweb integration
+
+#### vlayer Services
+- **`vlayer-call-server`**: MailProof verification service
+- **`notary-server`**: DKIM signature validation
+- **`vdns-server`**: Domain verification
+- **`websockify`**: WebSocket proxy for real-time updates
+
+#### Architecture Benefits
+- **Persistent State**: Blockchain data maintained across restarts
+- **Shared Volumes**: Contract artifacts automatically synchronized
+- **Health Checks**: Automated service monitoring and dependencies
+- **Network Isolation**: Secure inter-container communication
+
+---
+
+## 🚀 5. Getting Started
 
 ### Prerequisites
-- Docker & Docker Compose
-- vlayer Anvil Mantle Fork running on port 8547
-- jq and curl (recommended)
+- **Docker**: Version 20.10+ with Docker Compose
+- **Node.js**: Version 18+ (for local development)
+- **Git**: For repository cloning
 
-### 1. Setup and Validation
-```bash
-# Validate your setup (checks both deployment options)
-make validate
-
-# Check if Anvil is running
-make check-anvil
-```
-
-### 2. Choose Your Deployment Method
-
-#### 🐳 Option A: Local Testing (docker-compose.yml)
-Perfect for development, testing, and local validation:
+### Quick Start
 
 ```bash
-# Single command local deployment
-make deploy
+# Clone the repository
+git clone git@github.com:ppezzull/zkMed.git
+cd zkMed
 
-# Or step by step
-make up                # Start services
-make logs              # Monitor logs  
-make health            # Check health
-make down              # Stop services
+# Launch complete environment
+make all
+
+# Alternative: Direct Docker Compose
+docker-compose up -d
+
+# Verify deployment
+make health
 ```
 
-#### 🚀 Option B: Dockploy Production (dockploy-compose.yml)
-Optimized for production deployment on Dockploy:
+### Environment Variables
+Basic configuration is pre-configured for development:
 
 ```bash
-# Single command Dockploy deployment
-make dockploy-deploy
+# Blockchain Configuration
+NEXT_PUBLIC_CHAIN_ID=31339
+NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
 
-# Or step by step
-make dockploy-logs     # Monitor logs
-make dockploy-health   # Check health
-make dockploy-stop     # Stop services
+# vlayer Services
+PROVER_URL=http://vlayer-call-server:3000
+NOTARY_URL=http://notary-server:7047
+
+# thirdweb Integration
+NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
 ```
 
-### 3. Access the Application
-- **Frontend**: http://localhost:3000
-- **Dev Dashboard**: http://localhost:3000/dev  
-- **Health Check**: http://localhost:3000/api/health
-- **Contract Info**: http://localhost:3000/api/contracts
+### Local Access
+- **Frontend**: http://localhost:3001
+- **Dev Dashboard**: http://localhost:3001/dev
+- **Mantle Fork**: http://localhost:8547
+- **vlayer Services**: http://localhost:3000 (prover), http://localhost:7047 (notary)
 
 ---
 
-## 🏗️ Revolutionary Healthcare Pool Architecture
+## 📋 6. Smart Contract Architecture
 
-### Core Innovation: Yield-Generating Healthcare Funds
-- **Patient Pool Deposits**: Monthly premiums earn yield in Aave V3 pools while awaiting claims
-- **Insurer Pool Contributions**: Insurance companies deposit operational funds earning interest
-- **Authorization-Based Withdrawals**: Funds released to hospitals only after claim authorization
-- **Real-time Liquidity Management**: Dynamic pool rebalancing based on claim volume
-- **Capital Efficiency**: Idle healthcare funds productive until needed
+### Core Contracts (Planned)
 
-### Dual Patient Registration Paths
-**Option A: Existing Insurance Coverage**
-- Patient receives mailproof from verified insurer confirming coverage
-- Privacy-preserving commitment creation with insurer verification
-- Automatic access to existing insurer pool funds
+#### Current State
+- ✅ **Greeting.sol**: Basic smart contract interaction demonstration
+- ✅ **Dynamic Deployment**: Automated contract deployment with artifact generation
+- ✅ **Frontend Integration**: Live contract address resolution
 
-**Option B: New Insurance Selection**
-- Patient browses verified insurers on platform
-- Selects preferred insurer and coverage plan
-- Sets up automated monthly mUSD payments to Aave pool
+#### Future Implementation
 
-### Core Components
-- **RegistrationContract.sol**: Dual-path patient/organization registration with multi-owner system
-- **PoolingContract.sol**: Aave V3 healthcare pool management with yield distribution
-- **PatientModule.sol**: Insurance selection flow and monthly payment setup
-- **InsuranceContract.sol**: Native mUSD policy coverage with pool integration
-- **ClaimProcessingContract.sol**: Pool authorization and fund release triggers
-- **vlayer Stack**: Email/Web proof generation and verification infrastructure
-- **thirdweb Integration**: Gas sponsorship and smart account management
+```solidity
+// Healthcare MailProof verification
+contract HealthcareMailProof {
+    function registerHospital(bytes calldata domainProof) external;
+    function submitClaim(bytes calldata mailProof, uint256 amount) external;
+    function verifyClaim(uint256 claimId) external;
+}
 
-### Privacy & Yield Features
-- **Zero Personal Data**: Patient information stored as cryptographic commitments
-- **Yield Generation**: Healthcare funds earn interest while awaiting claims
-- **Pool Authorization**: Smart contract triggers for claim payments
-- **Multi-Proof Validation**: Combined MailProof + WebProof + ZK proof validation
-- **Native mUSD Processing**: Stable value handling without volatility risk
-- **Sponsored Transactions**: Gas-free interactions via thirdweb paymaster
+// Merchant Moe Pool Management
+contract HealthcarePoolManager {
+    function depositPremium(uint256 amount) external;
+    function processClaimPayment(address hospital, uint256 amount) external;
+    function distributeYield() external; // 60/20/20 split
+}
 
----
+// Custom Healthcare Hooks
+contract HealthcareHook is BaseHook {
+    function beforeSwap() external; // Validate MailProof authorization
+    function afterSwap() external;  // Trigger yield distribution
+}
+```
 
-## 📊 Performance Metrics with Pool Integration
+### Smart Contract Evolution Path
 
-| Function | Gas Cost | Pool Benefit | Status |
-|----------|----------|--------------|---------|
-| Patient Registration (Dual Path) | 121,229 gas | Instant access to pools | ⚠️ Optimization opportunity |
-| Pool Deposit (mUSD) | 85,000 gas | Immediate yield generation | ✅ Optimal |
-| Claim Authorization | 95,000 gas | Automated pool withdrawal | ✅ Optimal |
-| Yield Distribution | 65,000 gas | Stakeholder rewards | ✅ Optimal |
-| Pool Rebalancing | 120,000 gas | Optimized liquidity | ⚠️ Batch optimization planned |
-
-**Test Results**: 53/53 tests passing ✅
-**Pool Integration**: Aave V3 contracts deployed and tested ✅  
-**Yield Generation**: Healthcare fund pools earning 3-5% APY ✅
+**Phase 1**: MailProof verification for hospital domain authentication  
+**Phase 2**: [Merchant Moe Liquidity Book](https://docs.merchantmoe.com/) pool integration  
+**Phase 3**: Custom healthcare hooks for automated yield distribution
 
 ---
 
-## 🛠️ Development Commands
+## 🗺️ 7. Development Roadmap
 
-### 🐳 Docker Commands (Local Testing)
+### Current MVP (Hours Remaining)
+- ✅ **Docker Environment**: Complete container orchestration
+- ✅ **Wallet Integration**: Smart account interaction via thirdweb
+- ✅ **Contract Deployment**: Automated Foundry-based deployment
+- ✅ **Dev Interface**: Basic dashboard at `/dev` showing system status
+
+### Short-Term Goals (Next 2 weeks)
+- 🚧 **Organization Registration**: Hospital domain verification with [vlayer MailProofs](https://book.vlayer.xyz/features/email.html)
+- 🚧 **Pool Integration**: [Merchant Moe Liquidity Book](https://docs.merchantmoe.com/) custom hooks
+- 🚧 **Enhanced Frontend**: Multi-role dashboard for patients, hospitals, insurers
+
+### Medium-Term Goals (Following 2 weeks)
+- 📋 **Patient Registration**: Premium payment setup with yield tracking
+- 📋 **Claim Processing**: End-to-end MailProof-based claim automation
+- 📋 **Yield Distribution**: Automated 60/20/20 stakeholder rewards
+
+### Long-Term Vision (Post-Hackathon)
+- 📋 **Full Implementation**: Complete Web2/Web3 hybrid claim processing
+- 📋 **Regulatory Compliance**: GDPR/HIPAA compliance framework
+- 📋 **Production Deployment**: Live platform with real healthcare providers
+
+---
+
+## 🧪 8. Testing the Environment
+
+### Verification Steps
+
 ```bash
-# Core deployment commands
-make deploy              # Full local deployment with health checks
-make up                  # Start all services  
-make down                # Stop all services
-make restart             # Restart all services
-make logs                # Monitor container logs
-make health              # Check deployment health
-make validate            # Validate setup and dependencies
+# 1. Check all services are running
+docker-compose ps
+
+# 2. Verify Mantle fork is active
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+  http://localhost:8547
+
+# 3. Test vlayer services
+curl http://localhost:3000/health  # vlayer call server
+curl http://localhost:7047         # notary server
+
+# 4. Check frontend health
+curl http://localhost:3001/api/health
 ```
 
-### 🚀 Dockploy Commands (Production)
+### Smart Wallet Demo
+1. Navigate to http://localhost:3001/dev
+2. Connect wallet using thirdweb interface
+3. Interact with deployed Greeting contract
+4. Verify transaction on local Mantle fork
+
+### Troubleshooting
+
+**Common Issues:**
+- **Port Conflicts**: Ensure ports 3001, 8547, 3000, 7047 are available
+- **Container Startup**: Wait for all dependencies before accessing frontend
+- **Contract Deployment**: Check `docker logs zkmed-contracts` for deployment status
+
+**Solutions:**
 ```bash
-# Production deployment commands  
-make dockploy-deploy     # Full Dockploy deployment
-make dockploy-stop       # Stop Dockploy containers
-make dockploy-restart    # Restart Dockploy containers
-make dockploy-logs       # Monitor Dockploy logs
-make dockploy-health     # Check Dockploy health
-make dockploy-validate   # Validate Dockploy setup
+# Reset environment
+make clean && make all
+
+# Check specific service logs
+docker logs anvil-l2-mantle
+docker logs zkmed-frontend
+
+# Restart specific service
+docker-compose restart zkmed-frontend
 ```
 
-### 🔧 Utility Commands
+---
+
+## 👨‍💻 9. Solo Development Notes
+
+### Project Status
+**Solo Development Project** - Currently developed by a single developer with focus on:
+- Container infrastructure and DevOps automation
+- Smart contract architecture and deployment
+- Frontend integration with Web3 services
+- vlayer MailProof integration planning
+
+### Implementation Approach
+**Prioritizing container infrastructure** to enable:
+- Rapid iteration and testing
+- Reliable deployment across environments  
+- Seamless integration of multiple services
+- Production-ready scalability from day one
+
+### Contribution Guidelines
+**Feedback and contributions welcome:**
+- 🐛 **Bug Reports**: Open issues for any problems encountered
+- 💡 **Feature Suggestions**: Ideas for healthcare platform improvements
+- 🔧 **Technical Feedback**: Architecture and implementation suggestions
+- 📖 **Documentation**: Help improve setup and usage documentation
+
+---
+
+## 🔄 10. Hybrid Claim Processing Flow
+
+### Web2/Web3 Integration Architecture
+
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
+    
+    Note over P,I: Web2 Traditional Claim Processing
+    P->>H: 1. Receive Medical Treatment
+    H->>I: 2. Submit Claim via Portal/EHR
+    I->>I: 3. Review & Assess Claim (Manual Process)
+    I->>I: 4. Approve/Deny Decision
+    
+    Note over I,LB: Web3 Automated Payment Processing
+    I->>H: 5. Send DKIM-Signed MailProof Email
+    H->>V: 6. Submit MailProof for Verification
+    V->>LB: 7. Trigger Pool Payment via Smart Contract
+    LB->>H: 8. Instant mUSD Transfer to Hospital
+    LB->>LB: 9. Distribute Yield to Stakeholders (60/20/20)
+```
+
+### Why Hybrid Architecture?
+- **Regulatory Compliance**: Medical data stays in traditional systems (GDPR/HIPAA)
+- **Industry Integration**: Seamless adoption without disrupting existing workflows
+- **Privacy Protection**: Medical information never exposed on-chain
+- **Instant Settlement**: Blockchain automation for immediate payment execution
+
+---
+
+## 📚 11. Documentation & References
+
+### Core Technologies
+- **[Mantle Network](https://www.mantle.xyz/)**: Layer 2 blockchain with native mUSD
+- **[vlayer MailProofs](https://book.vlayer.xyz/features/email.html)**: DKIM-based email verification
+- **[Merchant Moe DEX](https://docs.merchantmoe.com/)**: Liquidity Book with custom hooks
+- **[thirdweb SDK](https://playground.thirdweb.com/)**: Web3 authentication and smart accounts
+
+### Hackathon Context
+- **Origin**: [ETHGlobal Prague](https://ethglobal.com/events/prague) - vlayer MailProof foundation
+- **Current**: [The Cookathon on Mantle](https://www.cookathon.dev/) - Mantle ecosystem integration
+- **Evolution**: From basic MailProof verification to comprehensive healthcare platform
+
+### Research Foundation
+zkMed's development is grounded in cutting-edge blockchain healthcare research:
+- **Blockchain Healthcare Models**: Enhanced transparency and operational efficiency
+- **Decentralized Insurance**: Peer-to-peer risk sharing and automated settlement
+- **Privacy-Preserving Systems**: Zero-knowledge architectures for medical data
+- **DeFi Integration**: Yield-generating liquidity pools for capital efficiency
+
+---
+
+## 🎯 12. Economic Model
+
+### Stakeholder Benefits
+
+#### Patients (60% yield share)
+- **Lower Effective Costs**: Premium burden reduced by yield generation
+- **Enhanced Privacy**: Medical data never exposed during processing
+- **Instant Claims**: Approved procedures result in immediate payments
+
+#### Hospitals (Direct Benefits)
+- **Immediate Cash Flow**: Instant payments upon claim authorization
+- **Reduced Admin Costs**: Streamlined processing reduces overhead
+- **Enhanced Security**: MailProof validation prevents fraud
+
+#### Insurers (20% yield share)
+- **Capital Efficiency**: Operational funds earn returns via Merchant Moe pools
+- **Competitive Edge**: Pool performance becomes differentiator
+- **Reduced Costs**: Automated processing lowers expenses
+
+#### Protocol (20% yield share)
+- **Sustainable Development**: Platform treasury for ongoing improvements
+- **Innovation Funding**: Research and development of new features
+- **Community Incentives**: Rewards for platform adoption and growth
+
+### Revenue Distribution (60/20/20)
+```
+Total Yield Generated: 100%
+├── 60% → Patient Premium Reduction
+├── 20% → Insurer Operations  
+└── 20% → Protocol Treasury
+```
+
+---
+
+## 🚀 13. Getting Involved
+
+### For Developers
 ```bash
-# Environment and maintenance
-make check-anvil         # Check if Anvil is running on port 8547
-make check-env           # Check environment variables configuration
-make extract-env         # Extract contract environment from deployment
-make dev-setup          # Setup development environment
-make clean              # Clean up containers and volumes
-make clean-all          # Deep clean including images
-make status             # Show deployment status for both systems
-make quick-start        # Quick start guide for new users
+# Fork the repository
+git clone <your-fork>
+cd zkMed
+
+# Set up development environment
+make dev-setup
+
+# Start contributing
+make all
 ```
 
----
+### For Healthcare Professionals
+- **Feedback**: Share insights on healthcare workflow integration
+- **Testing**: Help validate real-world use cases and requirements
+- **Partnerships**: Explore pilot program opportunities
 
-## ⚙️ Environment Configuration
-
-All required environment variables are pre-configured in both `docker-compose.yml` and `dockploy-compose.yml`. The containers use these key variables:
-
-### Blockchain Configuration
-- `NEXT_PUBLIC_RPC_URL`: `http://host.docker.internal:8547` (vlayer anvil)
-- `NEXT_PUBLIC_CHAIN_ID`: `31339` (Mantle fork)
-- `NEXT_PUBLIC_THIRDWEB_CLIENT_ID`: `b928ddd875d3769c8652f348e29a52c5`
-
-### vlayer Service URLs (Docker Container Network)
-- `VLAYER_ENV`: `dev`
-- `CHAIN_NAME`: `anvil`
-- `PROVER_URL`: `http://host.docker.internal:3000`
-- `JSON_RPC_URL`: `http://host.docker.internal:8547`
-- `NOTARY_URL`: `http://host.docker.internal:7047`
-- `WS_PROXY_URL`: `ws://host.docker.internal:3003`
-
-### Smart Wallet & Development
-- `SMART_WALLET_FACTORY_MANTLE`: `0x06224c9387a352a953d6224bfff134c3dd247313`
-- `EXAMPLES_TEST_PRIVATE_KEY`: `0xac0974...` (Anvil account #0 - development only)
-
-> **Important**: All URLs use `host.docker.internal` instead of `localhost` for proper Docker container networking.
-
-Check your environment configuration:
-```bash
-make check-env
-```
-
-### Example Workflows
-
-#### Local Development Workflow:
-```bash
-# 1. Validate environment
-make validate
-
-# 2. Deploy locally
-make deploy
-
-# 3. Monitor and develop
-make logs              # Watch logs
-make health            # Check status
-```
-
-#### Production Deployment Workflow:
-```bash
-# 1. Validate environment
-make dockploy-validate
-
-# 2. Deploy to production
-make dockploy-deploy
-
-# 3. Monitor production
-make dockploy-health   # Check health
-make dockploy-logs     # Monitor logs
-```
+### For Investors & Partners
+- **Technical Due Diligence**: Review architecture and implementation
+- **Market Validation**: Assess healthcare industry fit and adoption potential
+- **Strategic Partnerships**: Explore integration opportunities
 
 ---
 
-## 🔧 Local Mantle Fork Development Environment
-
-### Optimized Fork Configuration
-- **Chain ID**: 31339 (Mantle fork for development)
-- **Fork Source**: https://rpc.mantle.xyz (Mantle mainnet state)
-- **Native Assets**: mUSD, MNT, and other Mantle ecosystem tokens
-- **Aave V3**: Full protocol deployment for healthcare pool testing
-- **Benefits**: 
-  - Zero-cost testing of complex pool interactions
-  - Access to real Mantle mainnet state and contracts
-  - Safe environment for yield strategy development
-
-### vlayer Services Stack (Mantle Compatible)
-```
-✅ Anvil Mantle Fork (Chain ID: 31339) - Port 8547
-✅ Call Server (Proof Generation) - Port 3000
-✅ VDNS Server (DNS Service) - Port 3002
-✅ Notary Server (TLS Notarization) - Port 7047
-✅ WebSocket Proxy - Port 3003
-```
-
-### Pool Testing Environment
-```bash
-# Complete pool development cycle
-make start-mantle-fork && make deploy-aave-pools
-make test-all-pools
-
-# Real-time pool monitoring
-make pool-dashboard
-```
+**zkMed represents the first practical implementation of yield-generating healthcare insurance through Web3 technology, delivering measurable benefits while maintaining regulatory compliance and user familiarity.** 🚀
 
 ---
 
-## 🎨 Next.js Integration with Pool Management
-
-### Enhanced Technology Stack
-- **Next.js 15** with App Router for modern React patterns
-- **thirdweb React SDK** for seamless authentication and gas sponsorship
-- **Aave V3 SDK** for pool management and yield tracking
-- **vlayer client + verifier SDK** for proof generation
-- **Mantle USD Integration** for native stablecoin handling
-- **Pool Dashboard Components** for real-time yield monitoring
-
-### Pool Management Features
-```typescript
-// Pool interaction examples
-const PoolDashboard = () => {
-  const [poolYield, setPoolYield] = useState(0);
-  const [patientBalance, setPatientBalance] = useState(0);
-  
-  return (
-    <div className="pool-dashboard">
-      <YieldTracker yield={poolYield} />
-      <PatientPoolBalance balance={patientBalance} />
-      <InsurerSelection onSelect={handleInsurerSelection} />
-      <ClaimAuthorization onApprove={handleClaimApproval} />
-    </div>
-  );
-};
-```
-
----
-
-## 🛡️ Security & Privacy with Pool Protection
-
-### Production Security Measures ✅
-- **Pool Fund Security**: Aave V3's battle-tested risk parameters protect deposited healthcare funds
-- **Authorization-Based Withdrawals**: Multi-proof validation required for fund release
-- **Yield Distribution**: Transparent and automated reward mechanisms
-- **Privacy Preservation**: No personal data stored, only cryptographic commitments
-- **Domain Ownership Protection**: vlayer MailProofs prevent impersonation
-- **Pool Access Control**: Role-based permissions for pool interactions
-
-### Pool-Specific Privacy Guarantees ✅
-- **Yield Privacy**: Pool earnings visible but medical details remain private
-- **Claim Authorization**: Automatic fund release without exposing procedure details
-- **Patient Choice**: Dual registration maintains patient autonomy
-- **Insurer Separation**: Pool funds isolated by insurer for proper accounting
-
----
-
-## 📋 Updated Documentation Structure
-
-All comprehensive documentation has been updated in the **memory-bank/** directory:
-
-- **activeContext.md**: Current development status focusing on pool integration
-- **deploymentWorkflows.md**: Mantle fork testing and pool deployment guides
-- **progress.md**: Updated achievement tracking with pool milestones
-- **systemPatterns.md**: Architecture patterns including Aave V3 integration
-- **techContext.md**: Technology stack with mUSD and pool management
-- **productContext.md**: Value proposition including yield generation benefits
-- **contractsOverview.md**: Complete contract suite with PoolingContract
-- **claimsProcessingPlan.md**: Pool-enabled claims processing workflows
-
----
-
-## 🎯 Current Focus: Pool-Enabled Healthcare Platform
-
-The registration and proof systems are **production-ready**. Current development focuses on:
-
-1. **Pool Integration Frontend**: React components for pool management and yield tracking
-2. **Dual Registration UX**: Seamless patient onboarding with insurer choice
-3. **Yield Dashboard**: Real-time monitoring of pool performance and distributions
-4. **Claim Authorization UI**: Automated pool withdrawal interfaces
-5. **Mantle Mainnet Migration**: Deploy thoroughly tested contracts from fork
-
-### Pool Integration Benefits
-- **Capital Efficiency**: Healthcare funds earn 3-5% APY while awaiting claims
-- **Instant Liquidity**: Aave's proven mechanisms ensure funds available when needed
-- **Automated Yields**: Interest distributed to patients, insurers, and stakeholders
-- **Risk Management**: Battle-tested Aave V3 protocols protect deposited funds
-
----
-
-## 📈 Future Pool Enhancements
-
-### Advanced Pool Features (Post-MVP)
-- **Multi-Asset Pools**: Support for diverse Mantle ecosystem tokens
-- **Dynamic Yield Strategies**: Automated optimization based on market conditions
-- **Cross-Pool Lending**: Liquidity sharing between different insurance providers
-- **Governance Tokens**: Pool participants receive governance rights
-
-### Mantle Ecosystem Integration
-- **Native mUSD Optimization**: Leverage Mantle's official stablecoin benefits
-- **Lower Transaction Costs**: Benefit from Mantle's optimized fee structure
-- **Ecosystem Partnerships**: Integration with other Mantle DeFi protocols
-
----
-
-## 🚀 Cookathon Competitive Advantages
-
-### Unique Value Proposition
-- **First Healthcare + DeFi Pool Platform**: Pioneering yield generation in healthcare
-- **Privacy-Preserving Pool Management**: Earn yield without exposing medical data
-- **Dual Registration Innovation**: Flexible patient onboarding maximizes adoption
-- **Native Mantle Integration**: Built specifically for Mantle ecosystem optimization
-- **Multi-Proof Security**: Advanced validation combining vlayer + thirdweb + Aave
-
-**Ready for Cookathon demonstration with live pool functionality and yield generation!** 🏆
-
----
-
-## 📞 Support
-
-For detailed setup instructions, pool configuration, and troubleshooting, see the updated documentation in the **memory-bank/** directory.
-
-**Development Status**: ✅ Pool Integration Ready  
-**Next Phase**: Mantle Mainnet Deployment & Cookathon Submission 🚀 
+*Built with ❤️ for the future of healthcare finance*
