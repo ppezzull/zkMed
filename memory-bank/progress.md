@@ -12,11 +12,11 @@
 ### Strategic Transformation: Traditional Claims → Web2/Web3 Hybrid Healthcare Platform
 
 **Previous Vision**: Standard healthcare claims processing with basic privacy features  
-**Current Innovation**: Hybrid platform where Web2 claim processing triggers Web3 Merchant Moe pool automation via MailProof verification
+**Current Innovation**: Web3 + MailProof + Pools platform where Web2 claim processing triggers Web3 Merchant Moe pool automation via MailProof verification with flexible payment options
 
 **Key Architecture**: 
 - **Web2**: Patient registration, claim review, approval decisions (off-chain)
-- **Web3**: MailProof verification, pool payments, yield distribution (on-chain)
+- **Web3**: MailProof verification, pool payments (direct hospital payment or patient reimbursement), yield distribution (on-chain)
 
 #### Revolutionary Architecture Achievements
 - ✅ **Eliminated Oracle Dependencies**: Native mUSD processing removes complex price conversion

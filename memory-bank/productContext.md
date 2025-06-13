@@ -56,12 +56,12 @@
 - Limited recourse during coverage disputes
 - No return on premium payments
 
-**zkMed Unified Experience**:
+**zkMed Web3 + MailProof Experience**:
 1. **Off-Chain Agreement**: Negotiate insurance terms with insurer (Premium: 100 mUSD monthly)
 2. **MailProof Reception**: Receive DKIM-signed agreement email with unique ID (A12345)
-3. **thirdweb Payment Setup**: Choose credit card for automatic fiat-to-mUSD conversion
-4. **Seamless Pool Deposits**: thirdweb converts payments and deposits to Uniswap v4 pools
-5. **Yield Generation**: Earn 3-5% APY without any Web3 knowledge required
+3. **thirdweb Payment Setup**: Choose fiat-to-crypto or direct crypto for automatic conversion
+4. **Merchant Moe Pool Deposits**: thirdweb converts payments and deposits to Merchant Moe Liquidity Book pools
+5. **Yield Generation**: Earn 3-5% APY through custom healthcare hooks
 6. **Cost Tracking**: Monitor real-time premium cost reduction through yield
 7. **Agreement Updates**: Receive updated terms via new MailProof emails when changes occur
 
@@ -76,12 +76,12 @@
 - No transparency in insurer performance
 - Lack of DeFi integration opportunities
 
-**zkMed Advanced Experience**:
+**zkMed Web3 Native Experience**:
 1. **Agreement with Wallet**: Negotiate insurance including wallet address (0x1234...abcd)
 2. **MailProof Registration**: Receive DKIM-signed email with pool deposit instructions
 3. **Direct Crypto Payments**: Use existing mUSD or other crypto via thirdweb
-4. **Advanced Pool Interaction**: Direct management of Uniswap v4 position
-5. **Optimized Yield**: Access to advanced DeFi strategies and pool optimization
+4. **Advanced Pool Interaction**: Direct management of Merchant Moe Liquidity Book position
+5. **Optimized Yield**: Access to advanced DeFi strategies and custom healthcare hooks
 6. **Performance Analytics**: Deep insights into pool performance and yield optimization
 7. **Cross-Platform Integration**: Connect with other DeFi protocols and strategies
 
@@ -90,13 +90,13 @@
 #### Scenario C: Emma - Hybrid User with Payment Flexibility
 **Background**: 45-year-old teacher transitioning from traditional to modern insurance
 
-**zkMed Flexible Experience**:
-- **Start Simple**: Begin with credit card payments via thirdweb
-- **Learn Gradually**: Educational resources about yield generation and Web3 benefits
-- **Add Crypto Option**: Connect wallet when comfortable for direct payments
-- **Switch Anytime**: Flexible payment method switching based on preferences
-- **Consistent Benefits**: Earn yield regardless of payment method choice
-- **Unified Interface**: Same dashboard and experience across all payment types
+**zkMed Web3 + MailProof Experience**:
+- **Flexible Entry**: Begin with fiat-to-crypto via thirdweb or direct crypto payments
+- **Learn Gradually**: Educational resources about yield generation and Merchant Moe pools
+- **Pool Optimization**: Optimize liquidity positions for maximum yield
+- **Switch Strategies**: Flexible pool management based on market conditions
+- **Consistent Benefits**: Earn yield through Merchant Moe Liquidity Book pools
+- **Unified Interface**: Same dashboard for all Web3 + MailProof interactions
 
 **Value Delivered**: Flexibility + education + gradual adoption + consistent benefits
 
@@ -149,6 +149,7 @@ sequenceDiagram
 
 ### Comprehensive Web2/Web3 Hybrid Claims Processing Journey
 
+#### Option A: Direct Hospital Payment
 ```mermaid
 sequenceDiagram
     participant P as Patient
@@ -163,11 +164,34 @@ sequenceDiagram
     I->>I: 3. Manual Review & Medical Assessment
     I->>I: 4. Coverage Verification & Approval Decision
     
-    Note over I,LB: Web3 zkMed Blockchain Automation
-    I->>H: 5. Send DKIM-Signed MailProof Email
+    Note over I,LB: Web3 zkMed Blockchain Automation (Direct Hospital Payment)
+    I->>H: 5. Send DKIM-Signed MailProof Email (Hospital Payment Authorization)
     H->>V: 6. Submit MailProof for On-Chain Validation
     V->>LB: 7. Trigger Pool Authorization via Smart Contract
-    LB->>H: 8. Execute Instant mUSD Payment
+    LB->>H: 8. Execute Instant mUSD Payment to Hospital
+    LB->>LB: 9. Distribute Yield to All Stakeholders
+```
+
+#### Option B: Patient Reimbursement
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital  
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
+    
+    Note over P,I: Web2 Traditional Insurance Processing
+    P->>H: 1. Receive Medical Treatment (Patient Pays Upfront)
+    P->>I: 2. Submit Claim via Portal with Receipts
+    I->>I: 3. Manual Review & Medical Assessment
+    I->>I: 4. Coverage Verification & Approval Decision
+    
+    Note over I,LB: Web3 zkMed Blockchain Automation (Patient Reimbursement)
+    I->>P: 5. Send DKIM-Signed MailProof Email (Reimbursement Authorization)
+    P->>V: 6. Submit MailProof for On-Chain Validation
+    V->>LB: 7. Trigger Pool Authorization via Smart Contract
+    LB->>P: 8. Execute Instant mUSD Reimbursement to Patient
     LB->>LB: 9. Distribute Yield to All Stakeholders
 ```
 
@@ -232,7 +256,9 @@ sequenceDiagram
 2. **Multi-Party Verification**: Hospital, patient, and insurer DKIM-signed email confirmations
 3. **Instant Validation**: Real-time verification through MailProof workflows
 4. **Automated Authorization**: Merchant Moe pool withdrawal triggered by validation
-5. **Immediate Payment**: Hospital receives mUSD instantly
+5. **Flexible Payment Options**: 
+   - **Direct Hospital Payment**: Instant mUSD transfer to hospital upon claim approval
+   - **Patient Reimbursement**: Instant mUSD reimbursement to patient for upfront payments
 6. **Complete Audit Trail**: Comprehensive MailProof-based evidence for investigation
 
 #### Pool Management
@@ -283,8 +309,8 @@ sequenceDiagram
 ### Unique Value Propositions
 
 #### Capital Efficiency Revolution
-- **Only Platform**: Healthcare funds earning 3-5% APY via Aave V3
-- **Proven Infrastructure**: Battle-tested DeFi protocols
+- **Only Platform**: Healthcare funds earning 3-5% APY via Merchant Moe Liquidity Book pools
+- **Proven Infrastructure**: Battle-tested DeFi protocols with custom healthcare hooks
 - **Instant Liquidity**: Pool mechanisms ensure claim funds always available
 - **Stakeholder Alignment**: All parties benefit from pool performance
 
@@ -344,8 +370,7 @@ zkMed's product development is grounded in cutting-edge blockchain healthcare re
 
 | Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
 |-----------|-------------------|---------------|------------------|-----------|-----------------|
-| **Pure Web2 + MailProof** | Off-chain contract + DKIM email | Bank transfer, SEPA, etc. | New MailProof email | No | No |
-| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Merchant Moe pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
+| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Merchant Moe Liquidity Book pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
 
 **zkMed's revolutionary product vision represents the first practical implementation of hybrid Web2/Web3 architecture in healthcare insurance, delivering research-validated benefits while maintaining regulatory compliance and user familiarity. This approach balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency, creating unprecedented value for all stakeholders.** 🚀 
 
@@ -355,29 +380,29 @@ zkMed's product development is grounded in cutting-edge blockchain healthcare re
 
 | Flow Type | How Agreement Is Made | How Payment Is Made | How Changes Are Handled | On-Chain? | Yield Generation |
 |-----------|----------------------|-------------------|------------------------|-----------|-----------------|
-| **Unified thirdweb + MailProof** | Off-chain negotiation + DKIM-signed email | thirdweb fiat-to-crypto OR direct crypto to Merchant Moe pools | New MailProof email with updated terms | Yes | Yes (3-5% APY for ALL users) |
+| **Web3 + MailProof + Pools** | Off-chain negotiation + DKIM-signed email | thirdweb fiat-to-crypto OR direct crypto to Merchant Moe Liquidity Book pools | New MailProof email with updated terms | Yes | Yes (3-5% APY for ALL users) |
 
 #### Universal Registration Benefits Matrix
 
-| Aspect | Traditional Healthcare | zkMed Unified thirdweb Flow |
-|--------|----------------------|----------------------------|
-| **User Experience** | Complex paperwork + bank setup | One-click setup with payment choice |
+| Aspect | Traditional Healthcare | zkMed Web3 + MailProof + Pools Flow |
+|--------|----------------------|-------------------------------------|
+| **User Experience** | Complex paperwork + bank setup | Streamlined Web3 setup with payment flexibility |
 | **Legal Protection** | Paper contracts only | DKIM-signed cryptographic proof |
-| **Payment Methods** | Bank transfers only | Fiat, crypto, or hybrid via thirdweb |
-| **Cost Efficiency** | No return on premiums | 3-5% APY for ALL users |
+| **Payment Methods** | Bank transfers only | Fiat-to-crypto or direct crypto via thirdweb |
+| **Cost Efficiency** | No return on premiums | 3-5% APY through Merchant Moe pools |
 | **Technical Complexity** | High manual processes | Simplified via thirdweb automation |
 | **Dispute Resolution** | Limited paper trail | Complete MailProof audit trail |
 | **Agreement Updates** | Manual paperwork | New MailProof email updates |
-| **Fund Utilization** | 0% return, idle funds | Universal yield generation |
+| **Fund Utilization** | 0% return, idle funds | Yield generation via Liquidity Book pools |
 | **Transparency** | Opaque traditional systems | Full blockchain transparency |
-| **Market Access** | Traditional users only | Universal access regardless of Web3 knowledge |
+| **Market Access** | Traditional users only | Web3-enabled users with fiat-to-crypto bridge |
 
-#### Key Innovation: Universal Yield Access via thirdweb
+#### Key Innovation: Web3 + MailProof + Pools Integration
 
-**Revolutionary Approach**: zkMed is the first healthcare platform enabling all patients to access DeFi yield benefits through familiar payment methods, powered by thirdweb's fiat-to-crypto infrastructure:
+**Revolutionary Approach**: zkMed is the first healthcare platform combining Web3 yield generation with privacy-preserving MailProof verification, powered by Merchant Moe Liquidity Book pools:
 
-1. **Universal Yield**: All patients earn 3-5% APY regardless of payment method preference
-2. **Payment Flexibility**: Seamless switching between fiat, crypto, and hybrid payments
-3. **Simplified Onboarding**: One registration flow with payment method choice
-4. **Barrier-Free Access**: Web2 users access Web3 benefits without learning curve
-5. **Unified Legal Framework**: MailProof provides consistent legal protection across all payment types 
+1. **Yield Generation**: All patients earn 3-5% APY through custom healthcare hooks
+2. **Payment Flexibility**: Fiat-to-crypto conversion or direct crypto payments via thirdweb
+3. **Privacy-First**: MailProof verification without exposing medical data
+4. **Instant Settlement**: Immediate claim payments through pool automation
+5. **Legal Framework**: DKIM-signed MailProof provides cryptographic legal protection 

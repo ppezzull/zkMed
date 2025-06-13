@@ -37,12 +37,12 @@ Your production-ready container architecture includes:
 - End-to-end claim processing from MailProof to instant pool payments
 - Production deployment with monitoring and health checks
 
-### ✅ Core Innovation: Unified Premium + Hybrid Claims Architecture
-- **Unified Premium Payments**: thirdweb fiat-to-crypto enables seamless payment flow to Merchant Moe Liquidity Book pools
+### ✅ Core Innovation: Web3 + MailProof + Pools Architecture
+- **Web3 Premium Payments**: thirdweb fiat-to-crypto enables seamless payment flow to Merchant Moe Liquidity Book pools
 - **Hybrid Claim Processing**: Clear Web2/Web3 separation for regulatory compliance  
 - **MailProof Bridge**: Cryptographically verifiable emails connecting both worlds
 - **Merchant Moe Integration**: Capital-efficient liquidity pools with custom healthcare hooks
-- **Research-Backed Design**: Based on latest blockchain healthcare research findings
+- **Flexible Payment Options**: Direct hospital payment or patient reimbursement via instant pool withdrawals
 
 ### Mantle Network & mantleUSD Foundation
 
@@ -64,10 +64,10 @@ Your production-ready container architecture includes:
 - **Market Readiness**: Architecture designed specifically for compliance with GDPR, HIPAA, and emerging blockchain healthcare regulations
 - **Future Scalability**: Cross-chain capabilities enable platform expansion across multiple healthcare blockchain networks
 
-## 🏗️ Revolutionary Unified Premium Payment Architecture
+## 🏗️ Web3 + MailProof + Pools Architecture
 
-### thirdweb-Powered Seamless Premium Collection
-zkMed leverages thirdweb's fiat-to-crypto capabilities to create a unified premium payment system that removes barriers while delivering yield generation benefits to all patients.
+### thirdweb-Powered Web3 Premium Collection
+zkMed leverages thirdweb's fiat-to-crypto capabilities to create a Web3 premium payment system that delivers yield generation benefits through Merchant Moe Liquidity Book pools.
 
 ```mermaid
 sequenceDiagram
@@ -102,26 +102,26 @@ sequenceDiagram
 #### Revolutionary Innovation Enhancement
 ```
 Traditional Healthcare: Manual Premiums + Manual Claims → No Yield + Weeks of Delays
-zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Merchant Moe Liquidity Book Yield + Instant Claims
+zkMed Web3 Platform: thirdweb Fiat-to-Crypto Premiums → Merchant Moe Liquidity Book Yield + Instant Claims
 ```
 
 ---
 
-## 💳 Unified Premium Payment System with thirdweb
+## 💳 Web3 Premium Payment System with thirdweb
 
-### Seamless Fiat-to-Crypto Premium Collection
+### Fiat-to-Crypto Premium Collection
 
-**Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables all patients to access yield-generating Merchant Moe Liquidity Book pools regardless of their Web3 experience, while maintaining familiar payment methods.
+**Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables patients to access yield-generating Merchant Moe Liquidity Book pools through Web3 payments, with fiat-to-crypto conversion for accessibility.
 
 #### **Universal Patient Registration and Premium Flow**
 
     Note over P,LB: Seamless user experience regardless of payment method
 
 #### **thirdweb Integration Benefits**
-- **Universal Access**: Fiat payments via credit card, bank transfer, or digital wallets
+- **Fiat-to-Crypto Access**: Fiat payments via credit card, bank transfer, or digital wallets
 - **Automatic Conversion**: Seamless fiat-to-mUSD conversion with competitive rates
 - **Web3 Native**: Direct crypto payments for Web3-savvy users
-- **Hybrid Flexibility**: Switch between fiat and crypto payments anytime
+- **Payment Flexibility**: Choose between fiat-to-crypto or direct crypto payments
 - **Gas Sponsorship**: Transaction fees covered for seamless user experience
 - **Smart Accounts**: Simplified wallet management with social recovery
 

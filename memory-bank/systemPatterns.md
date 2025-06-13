@@ -6,9 +6,9 @@
 
 ## 🎯 Architectural Foundation
 
-**Core Design Philosophy**: Hybrid Web2/Web3 architecture that maintains regulatory compliance while delivering revolutionary blockchain benefits through proven DeFi infrastructure and comprehensive user management.
+**Core Design Philosophy**: Web3 + MailProof + Pools architecture that maintains regulatory compliance while delivering revolutionary blockchain benefits through proven DeFi infrastructure and comprehensive user management.
 
-**Fundamental Innovation**: First healthcare platform integrating yield-generating Merchant Moe Liquidity Book pools with privacy-preserving MailProof claims processing and comprehensive multi-role user management.
+**Fundamental Innovation**: First healthcare platform integrating yield-generating Merchant Moe Liquidity Book pools with privacy-preserving MailProof claims processing, supporting both direct hospital payments and patient reimbursements.
 
 ### Revolutionary System Integration
 
@@ -38,12 +38,13 @@ graph TB
 
 ### Competitive Architecture Analysis
 
-| **Feature** | **Traditional** | **Basic Blockchain** | **DeFi Integration** | **zkMed (Merchant Moe Integration)** |
+| **Feature** | **Traditional** | **Basic Blockchain** | **DeFi Integration** | **zkMed (Web3 + MailProof + Pools)** |
 |-------------|----------------|---------------------|---------------------|-------------------------------------|
 | **Premium Processing** | Manual bank processing | Simple token transfers | Basic staking mechanisms | Merchant Moe discretized liquidity bins |
 | **Yield Generation** | 0% return | Limited staking rewards | Standard DeFi yields | 3-5% APY via custom healthcare hooks |
 | **Fund Utilization** | 0% return on idle funds | Simple staking mechanisms | Merchant Moe Liquidity Book yield with custom hooks |
 | **Claim Speed** | Weeks | Days | Hours | Instant via MailProof |
+| **Payment Options** | Single payment method | Limited flexibility | Basic options | Direct hospital payment or patient reimbursement |
 | **Privacy Protection** | Centralized exposure | Basic encryption | Limited anonymity | Complete MailProof privacy |
 | **Regulatory Compliance** | Traditional only | Blockchain compliance risk | Partial compliance | Hybrid compliance framework |
 
