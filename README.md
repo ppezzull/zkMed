@@ -26,6 +26,7 @@ zkMed is a **privacy-preserving healthcare insurance payment platform** that aut
 - ✅ **Docker Environment**: Fully configured container orchestration with vlayer services
 - ✅ **Smart Wallet Integration**: Working thirdweb connection with local Mantle fork  
 - ✅ **Dynamic Address Resolution**: Automatic contract address discovery
+- ✅ **Complete Homepage**: Full landing page with hero section, features, and navigation
 - ✅ **Dev Dashboard**: Interface at `/dev` showing system status and wallet interaction
 
 ---
@@ -193,6 +194,9 @@ sequenceDiagram
 git clone git@github.com:ppezzull/zkMed.git
 cd zkMed
 
+# See available commands
+make help
+
 # Launch complete environment
 make all
 
@@ -201,7 +205,7 @@ make health
 ```
 
 ### Environment Variables
-Complete development configuration:
+All configuration is pre-configured in `docker-compose.yml`:
 
 ```bash
 # Next.js Configuration
