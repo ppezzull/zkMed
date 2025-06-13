@@ -350,9 +350,9 @@ graph TB
     end
     
     subgraph "Infrastructure Services"
-        I[Session Management (On-Chain)]
-        J[Healthcare Data (MailProofs)]
-        K[Monitoring & Analytics]
+        I[Session Management On-Chain]
+        J[Healthcare Data MailProofs]
+        K[Monitoring Analytics]
         L[Load Balancer]
     end
     
