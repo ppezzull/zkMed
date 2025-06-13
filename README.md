@@ -14,19 +14,19 @@
 ## 🎯 Project Vision
 
 ### Overview
-zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment.
+zkMed is a **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals using cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration.
 
 ### Core Innovation
-**Web2/Web3 hybrid architecture** that maintains regulatory compliance while delivering revolutionary blockchain benefits:
+**Web2/Web3 hybrid architecture** maintaining regulatory compliance while delivering blockchain benefits:
 - **Web2 Layer**: Traditional claim processing, medical review, regulatory compliance
 - **Web3 Layer**: MailProof verification, instant payments, yield generation
 - **Bridge**: DKIM-signed emails provide cryptographic proof without exposing medical data
 
-### Current MVP Stage
+### Current MVP
 - ✅ **Docker Environment**: Fully configured container orchestration with vlayer services
-- ✅ **Smart Wallet Integration**: Working interaction with anvil-l2-mantle container  
-- ✅ **Dynamic Address Resolution**: Client automatically connects to appropriate contract addresses
-- ✅ **Dev Dashboard**: Basic interface showing container status and wallet connection at `/dev`
+- ✅ **Smart Wallet Integration**: Working thirdweb connection with local Mantle fork  
+- ✅ **Dynamic Address Resolution**: Automatic contract address discovery
+- ✅ **Dev Dashboard**: Interface at `/dev` showing system status and wallet interaction
 
 ---
 
@@ -35,20 +35,20 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 ### Blockchain Infrastructure
 - **Primary Chain**: [Mantle Network](https://www.mantle.xyz/) (Ethereum L2)
 - **Chain ID**: 31339 (Local Fork) / 5000 (Mainnet)
-- **Native Currency**: Mantle USD (mUSD) for all healthcare transactions
+- **Native Currency**: Mantle USD (mUSD)
 - **Consensus**: Optimistic rollup with fast finality
 
 ### Privacy Layer
-- **[vlayer MailProof](https://book.vlayer.xyz/features/email.html)**: DKIM verification for payment authorization (planned)
+- **vlayer MailProof**: DKIM verification for payment authorization (planned)
 - **Domain Verification**: Cryptographic proof of organizational email control
 - **Zero-Knowledge Architecture**: Complete medical privacy preservation
-- **Audit Trails**: Complete email verification history for compliance
+- **Audit Trails**: Email verification history for compliance
 
 ### Frontend
 - **Framework**: Next.js with Server Actions for SSR compatibility
 - **Web3 Integration**: [thirdweb SDK](https://playground.thirdweb.com/) for seamless authentication
 - **Smart Accounts**: Abstract account management with gas sponsorship
-- **Responsive Design**: Mobile-first approach with modern UI/UX
+- **UI Components**: Shadcn/ui with Tailwind CSS for modern design system
 
 ### Infrastructure
 - **Container Orchestration**: Docker-based microservices architecture
@@ -61,7 +61,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 ## 🚀 Current Implementation
 
 ### Development Environment
-**Status**: ✅ **Production-ready Docker container stack** with foundry + vlayer + anvil integration
+**Status**: ✅ **Local testing ready Docker container stack** with foundry + vlayer + anvil integration
 
 ```mermaid
 graph TB
@@ -91,22 +91,11 @@ graph TB
     G --> I
 ```
 
-### Smart Wallet Integration
-- ✅ **Working Interaction**: Direct connection to anvil-l2-mantle container
-- ✅ **Account Management**: Pre-funded development accounts
-- ✅ **Transaction Processing**: Smart contract interaction via thirdweb
-- ✅ **Gas Optimization**: Sponsored transactions for seamless UX
-
-### Dynamic Address Resolution
-- ✅ **Automatic Discovery**: Frontend reads deployed contract addresses from shared volume
-- ✅ **Live Updates**: Real-time contract artifact synchronization
-- ✅ **Environment Agnostic**: Works across development and production environments
-
-### Dev Dashboard
-- ✅ **Container Status**: Real-time monitoring of all services
-- ✅ **Wallet Connection**: thirdweb integration with smart account support
-- ✅ **Contract Interaction**: Basic greeting contract demonstration
-- ✅ **Network Information**: Chain details and account balances
+### Key Features
+- ✅ **Smart Wallet Integration**: Direct connection to anvil-l2-mantle with pre-funded accounts
+- ✅ **Dynamic Address Resolution**: Frontend reads contract addresses from shared volume
+- ✅ **Dev Dashboard**: Container monitoring, wallet connection, and basic contract interaction
+- ✅ **Transaction Processing**: Gas-optimized smart contract interaction via thirdweb
 
 ---
 
@@ -160,9 +149,6 @@ cd zkMed
 
 # Launch complete environment
 make all
-
-# Alternative: Direct Docker Compose
-docker-compose up -d
 
 # Verify deployment
 make health
@@ -253,81 +239,9 @@ contract HealthcareHook is BaseHook {
 
 ---
 
-## 🧪 Testing the Environment
-
-### Verification Steps
-
-```bash
-# 1. Check all services are running
-docker-compose ps
-
-# 2. Verify Mantle fork is active
-curl -X POST -H "Content-Type: application/json" \
-  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
-  http://localhost:8547
-
-# 3. Test vlayer services
-curl http://localhost:3000/health  # vlayer call server
-curl http://localhost:7047         # notary server
-
-# 4. Check frontend health
-curl http://localhost:3001/api/health
-```
-
-### Smart Wallet Demo
-1. Navigate to http://localhost:3001/dev
-2. Connect wallet using thirdweb interface
-3. Interact with deployed Greeting contract
-4. Verify transaction on local Mantle fork
-
-### Troubleshooting
-
-**Common Issues:**
-- **Port Conflicts**: Ensure ports 3001, 8547, 3000, 7047 are available
-- **Container Startup**: Wait for all dependencies before accessing frontend
-- **Contract Deployment**: Check `docker logs zkmed-contracts` for deployment status
-
-**Solutions:**
-```bash
-# Reset environment
-make clean && make all
-
-# Check specific service logs
-docker logs anvil-l2-mantle
-docker logs zkmed-frontend
-
-# Restart specific service
-docker-compose restart zkmed-frontend
-```
-
----
-
-## 👨‍💻 Solo Development Notes
-
-### Project Status
-**Solo Development Project** - Currently developed by a single developer with focus on:
-- Container infrastructure and DevOps automation
-- Smart contract architecture and deployment
-- Frontend integration with Web3 services
-- vlayer MailProof integration planning
-
-### Implementation Approach
-**Prioritizing container infrastructure** to enable:
-- Rapid iteration and testing
-- Reliable deployment across environments  
-- Seamless integration of multiple services
-- Production-ready scalability from day one
-
-### Contribution Guidelines
-**Feedback and contributions welcome:**
-- 🐛 **Bug Reports**: Open issues for any problems encountered
-- 💡 **Feature Suggestions**: Ideas for healthcare platform improvements
-- 🔧 **Technical Feedback**: Architecture and implementation suggestions
-- 📖 **Documentation**: Help improve setup and usage documentation
-
----
-
 ## 🎯 Economic Model
+
+> **Note**: This is an initial layout for the economic model. Percentages and distribution mechanisms are still being refined and optimized.
 
 ### Stakeholder Benefits
 
