@@ -1,10 +1,10 @@
-# zkMed Project Brief - Comprehensive Healthcare Insurance Platform with Uniswap v4
+# zkMed Project Brief - Comprehensive Healthcare Insurance Platform with Merchant Moe Liquidity Book
 
 ## 🎯 Project Vision
 
-**zkMed** is the world's first privacy-preserving healthcare insurance payment platform that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Uniswap v4 with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment, zkMed transforms healthcare economics through comprehensive multi-role user management and Context7-enhanced development workflows.
+**zkMed** is the world's first privacy-preserving healthcare insurance payment platform that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment, zkMed transforms healthcare economics through comprehensive multi-role user management and Context7-enhanced development workflows.
 
-**Core Innovation**: Healthcare funds earn yield in Uniswap v4 pools with custom healthcare-specific hooks until MailProof-authorized claims trigger instant mUSD payouts to hospitals - all while preserving complete medical privacy through advanced DKIM-based email verification.
+**Core Innovation**: Healthcare funds earn yield in Merchant Moe Liquidity Book pools with custom healthcare-specific hooks until MailProof-authorized claims trigger instant mUSD payouts to hospitals - all while preserving complete medical privacy through advanced DKIM-based email verification.
 
 **Deployment Strategy**: Container-first production with persistent Mantle fork, multi-role demo accounts, live frontend accessible via custom domain with SSL, and real-time development acceleration through Context7 integration.
 
@@ -16,10 +16,10 @@
 
 **Problem**: Traditional healthcare systems waste $2T+ in idle premiums (0% return) while exposing sensitive medical data during manual claims processing, creating weeks of payment delays, privacy risks, high administrative overhead, and complex multi-party verification challenges.
 
-**Solution**: zkMed enables healthcare funds to earn yield via proven Uniswap v4 protocols with custom healthcare hooks while maintaining instant claim liquidity and complete medical privacy through cryptographically verifiable MailProof authorization - all with comprehensive multi-role user management supporting patients, hospitals, insurers, and administrators.
+**Solution**: zkMed enables healthcare funds to earn yield via proven Merchant Moe Liquidity Book protocols with custom healthcare hooks while maintaining instant claim liquidity and complete medical privacy through cryptographically verifiable MailProof authorization - all with comprehensive multi-role user management supporting patients, hospitals, insurers, and administrators.
 
 ### Key Innovations
-- **Uniswap v4 Healthcare Pools**: Custom hooks for healthcare-specific payment logic and yield generation
+- **Merchant Moe Healthcare Pools**: Custom hooks for healthcare-specific payment logic and yield generation using discretized liquidity bins
 - **MailProof Automation**: DKIM-signed email verification for instant payment authorization
 - **Multi-Role Architecture**: Comprehensive user management for all healthcare stakeholders  
 - **Complete Privacy**: Medical data never exposed during verification or payment processing
@@ -40,27 +40,27 @@
         P->>T: Setup Credit Card/Bank via thirdweb
         loop Monthly Payments
             T->>T: Auto Convert Fiat to mUSD (100 mUSD)
-            T->>U: Deposit to Healthcare Pool
-            U->>P: Earn Yield (3-5% APY)
+            T->>LB: Deposit to Healthcare Pool
+            LB->>P: Earn Yield (3-5% APY)
         end
     else Crypto Payment Preference
         P->>T: Connect Wallet via thirdweb
         loop Monthly Payments
             P->>T: Transfer mUSD (100 mUSD)
-            T->>U: Deposit to Healthcare Pool
-            U->>P: Earn Yield (3-5% APY)
+            T->>LB: Deposit to Healthcare Pool
+            LB->>P: Earn Yield (3-5% APY)
         end
     else Hybrid Payment Preference
         P->>T: Setup Both Fiat and Crypto Options
         loop Flexible Monthly Payments
-            T->>U: Route Payment to Healthcare Pool
-            U->>P: Earn Yield (3-5% APY)
+            T->>LB: Route Payment to Healthcare Pool
+            LB->>P: Earn Yield (3-5% APY)
         end
     end
     
     Note over P,I: Premium: 100 mUSD every month via any payment method
-    Note over T,U: Universal access to yield benefits
-    Note over U,P: All patients earn 3-5% APY regardless of payment choice
+    Note over T,LB: Universal access to yield benefits via Merchant Moe
+    Note over LB,P: All patients earn 3-5% APY regardless of payment choice
 ```
 
 **Universal Registration Experience Benefits**:
@@ -94,7 +94,7 @@
 *Detailed flow available in systemPatterns.md*
 
 **Insurance Company Experience**:
-- **Pool Creation**: Automatic Uniswap v4 pool initialization with custom healthcare hooks
+- **Pool Creation**: Automatic Merchant Moe Liquidity Book pool initialization with custom healthcare hooks
 - **Claim Management**: Traditional off-chain review with on-chain automation
 - **MailProof Authorization**: Send DKIM-signed payment authorization emails
 - **Performance Monitoring**: Real-time pool management and yield optimization
@@ -146,16 +146,16 @@ sequenceDiagram
     participant P as Patient/Hospital
     participant V as vlayer MailProof
     participant C as ClaimProcessingContract
-    participant U as Uniswap v4 Pool
+    participant LB as Merchant Moe Liquidity Book Pool
 
-    Note over Review,U: zkMed Blockchain Payment Automation (Web3)
+    Note over Review,LB: zkMed Blockchain Payment Automation (Web3)
     Review->>E: 5. Send DKIM-Signed MailProof Authorization Email
     E->>P: 6. Deliver Payment Authorization to Patient/Hospital
     P->>V: 7. Submit MailProof On-Chain for Verification
     V->>C: Verify DKIM Signature & Domain Ownership
-    C->>U: 8. Trigger Automated Payment via Custom Hook
-    U->>P: Instant mUSD Transfer to Recipient Wallet
-         U->>U: 9. Distribute Yield (60% Patients, 20% Insurers, 20% Protocol)
+    C->>LB: 8. Trigger Automated Payment via Custom Hook
+    LB->>P: Instant mUSD Transfer to Recipient Wallet
+         LB->>LB: 9. Distribute Yield (60% Patients, 20% Insurers, 20% Protocol)
 ```
 
 ### Hybrid Approach: Why Web2 + Web3?
@@ -170,7 +170,7 @@ sequenceDiagram
 - **Proven Infrastructure**: Web2 handles complex medical assessments, Web3 automates payments
 - **Enhanced Efficiency**: Blockchain automation only for payment execution, not sensitive data processing
 - **Fraud Prevention**: Cryptographic MailProof verification prevents payment authorization spoofing
-- **Instant Settlement**: Immediate liquidity through Uniswap v4 pools upon claim approval
+- **Instant Settlement**: Immediate liquidity through Merchant Moe Liquidity Book pools upon claim approval
 
 ### Detailed Hybrid Claim Flow Steps
 
@@ -216,12 +216,12 @@ sequenceDiagram
 
 #### 7. **Automated Payment Execution**
 - Upon successful verification, zkMed triggers **instant payments** in mUSD
-- Payments executed from **Uniswap v4 liquidity pool** directly to recipient wallets
-- Uniswap v4 custom hooks validate payment authorization and execute transfer
+- Payments executed from **Merchant Moe Liquidity Book liquidity pool** directly to recipient wallets
+- Merchant Moe Liquidity Book custom hooks validate payment authorization and execute transfer
 - Fully automated, transparent, and privacy-preserving payment processing
 
 #### 8. **Yield Distribution and Monitoring**
-- Liquidity pool continues generating yield via Uniswap v4 fees and incentives
+- Liquidity pool continues generating yield via Merchant Moe Liquidity Book fees and incentives
 - Automated yield distribution per protocol economic model (60/20/20 split)
 - Real-time monitoring and transparent tracking of all distributions
 - Immediate liquidity and cash flow improvement for healthcare providers
@@ -271,7 +271,7 @@ interface IEmailDomainProver {
 }
 ```
 
-#### 3. **PoolingContract.sol** - Uniswap v4 Healthcare Pools
+#### 3. **PoolingContract.sol** - Merchant Moe Liquidity Book Healthcare Pools
 ```solidity
 interface IHealthcarePoolManager {
     // Pool initialization with custom healthcare hooks
@@ -414,7 +414,7 @@ interface IEnhancedInsuranceContract {
 
 | Flow Type | Agreement Creation | Payment Method | Smart Contract Integration | Yield Generation | Legal Protection |
 |-----------|-------------------|---------------|---------------------------|-----------------|-----------------|
-| **Unified thirdweb + MailProof + Pools** | Off-chain negotiation + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pools | Full on-chain integration with payment flexibility | Yes (3-5% APY for ALL users) | DKIM + blockchain verification |
+| **Unified thirdweb + MailProof + Pools** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Merchant Moe Liquidity Book pools | Full on-chain integration with payment flexibility | Yes (3-5% APY for ALL users) | DKIM + blockchain verification |
 
 **Key Innovation: Universal Yield Access via thirdweb**
 - Single flow with payment method flexibility (fiat, crypto, hybrid)
@@ -426,11 +426,11 @@ interface IEnhancedInsuranceContract {
 
 ---
 
-## 💡 Uniswap v4 Custom Healthcare Hooks
+## 💡 Merchant Moe Liquidity Book Custom Healthcare Hooks
 
 ### Revolutionary Pool Logic Integration
 
-**Innovation**: First healthcare platform leveraging Uniswap v4's advanced hook system for specialized medical payment validation and automated yield distribution.
+**Innovation**: First healthcare platform leveraging Merchant Moe Liquidity Book's advanced hook system for specialized medical payment validation and automated yield distribution.
 
 #### Healthcare Hook Architecture
 ```solidity
@@ -475,7 +475,7 @@ contract HealthcarePoolHook is BaseHook {
 ### Healthcare-Specific Pool Benefits
 - **Custom Validation Logic**: MailProof verification integrated into swap operations
 - **Automated Yield Distribution**: 60% patients, 20% insurers, 20% protocol
-- **Instant Liquidity**: Proven Uniswap mechanisms ensure immediate claim payouts
+- **Instant Liquidity**: Proven Merchant Moe Liquidity Book mechanisms ensure immediate claim payouts
 - **Gas Optimization**: Efficient hook implementations reduce transaction costs
 
 ---
@@ -504,8 +504,8 @@ contract HealthcarePoolHook is BaseHook {
 
 #### Development Workflow Enhancement
 ```bash
-# Uniswap v4 integration with real-time documentation
-use context7: "Implement Uniswap v4 custom hooks for healthcare payment automation"
+# Merchant Moe Liquidity Book integration with real-time documentation
+use context7: "Implement Merchant Moe Liquidity Book custom hooks for healthcare payment automation"
 
 # vlayer MailProof best practices  
 use context7: "Integrate vlayer MailProofs for DKIM email verification in healthcare contracts"
@@ -514,7 +514,7 @@ use context7: "Integrate vlayer MailProofs for DKIM email verification in health
 use context7: "Build multi-role healthcare dashboard with real-time pool monitoring"
 
 # Container orchestration for healthcare platform
-use context7: "Docker compose setup for healthcare platform with Uniswap v4 and vlayer"
+use context7: "Docker compose setup for healthcare platform with Merchant Moe Liquidity Book and vlayer"
 ```
 
 #### Context7 Benefits
@@ -533,11 +533,11 @@ use context7: "Docker compose setup for healthcare platform with Uniswap v4 and 
 - **Insurers (20% yield)**: Operational funds earn returns while awaiting claims
 - **Protocol (20% yield)**: Sustainable development funding
 
-### Uniswap v4 Pool Economics
+### Merchant Moe Liquidity Book Pool Economics
 - **Trading Fees**: Generated from mUSD/USDC pool operations
 - **Custom Hook Yield**: Healthcare-specific fee structures and incentives
 - **Instant Liquidity**: Proven AMM mechanisms ensure claim funds always available
-- **Risk Management**: Battle-tested Uniswap parameters protect deposited funds
+- **Risk Management**: Battle-tested Merchant Moe Liquidity Book parameters protect deposited funds
 
 ### Revenue Distribution Model (60/20/20)
 ```
@@ -561,7 +561,7 @@ Total Yield Generated: 100%
 ### Security Features
 - **Multi-Signature Administration**: All critical functions require multiple signatures
 - **MailProof Replay Prevention**: Email hash tracking prevents duplicate submissions
-- **Custom Hook Validation**: Comprehensive authorization checks in Uniswap v4 operations
+- **Custom Hook Validation**: Comprehensive authorization checks in Merchant Moe Liquidity Book operations
 - **Emergency Controls**: Circuit breakers for critical system functions
 - **Complete Audit Trail**: Full verification history for regulatory compliance
 
@@ -574,7 +574,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 
 #### Production Container Requirements
 - **Healthcare Contract Deployment**: Automated smart contract deployment with verification
-- **Uniswap v4 Pool Management**: Custom hook integration and pool initialization
+- **Merchant Moe Liquidity Book Pool Management**: Custom hook integration and pool initialization
 - **vlayer MailProof Services**: DKIM verification and domain authentication
 - **Multi-Role Frontend**: Specialized interfaces for all user types
 - **Context7 Integration**: Real-time documentation server for development
@@ -583,7 +583,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 #### Live Demo Workflows
 1. **Multi-Role Registration**: Experience registration for patients, hospitals, insurers, and admins
 2. **MailProof Verification**: Live domain verification and DKIM signature validation
-3. **Pool Operations**: Real-time Uniswap v4 pool management and yield tracking
+3. **Pool Operations**: Real-time Merchant Moe Liquidity Book pool management and yield tracking
 4. **Claim Processing**: Complete MailProof-based claim authorization and instant payments
 5. **Yield Distribution**: Live demonstration of automated 60/20/20 yield allocation
 
@@ -600,13 +600,13 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 
 ### Technical Achievements
 - [x] **Multi-Role Registration**: Complete user management for all healthcare stakeholders
-- [ ] **Uniswap v4 Pool Performance**: Custom hooks delivering 3-5% APY on healthcare funds
+- [ ] **Merchant Moe Liquidity Book Pool Performance**: Custom hooks delivering 3-5% APY on healthcare funds
 - [ ] **MailProof Processing**: <10 seconds for email verification and payment authorization
 - [ ] **Instant Payments**: Real-time claim authorization and hospital payment execution
 - [ ] **Automated Yield Distribution**: Seamless 60/20/20 allocation to stakeholders
 
 ### Market Impact Metrics  
-- [ ] **Industry First**: Healthcare platform with yield-generating Uniswap v4 pools
+- [ ] **Industry First**: Healthcare platform with yield-generating Merchant Moe Liquidity Book pools
 - [ ] **Cost Reduction**: Measurable premium savings for patients through yield generation
 - [ ] **Cash Flow Enhancement**: Improved liquidity for healthcare providers
 - [ ] **Privacy Leadership**: New standard for medical privacy in Web3 healthcare
@@ -627,11 +627,11 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - **Multi-Role Registration**: Complete vlayer MailProof integration with role-based access control
 - **MailProof Architecture**: DKIM signature verification and domain authentication system
 - **Container Infrastructure**: Multi-service Docker setup for production deployment
-- **Local Development**: Mantle fork environment with Uniswap v4 integration preparation
+- **Local Development**: Mantle fork environment with Merchant Moe Liquidity Book integration preparation
 - **Context7 Integration**: Real-time documentation access for enhanced development workflows
 
 ### Current Implementation Phase 🚧
-- **Uniswap v4 Pool Integration**: Custom healthcare hooks for payment validation and yield distribution
+- **Merchant Moe Liquidity Book Pool Integration**: Custom healthcare hooks for payment validation and yield distribution
 - **Enhanced User Flows**: Complete registration and action workflows for all user roles
 - **MailProof Claims Processing**: End-to-end claim processing with email-based authorization
 - **Multi-Role Frontend**: Specialized dashboard interfaces for patients, hospitals, insurers, and admins
@@ -649,8 +649,8 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 ### Unique Value Propositions
 
 #### Technical Innovation Leadership
-- **Industry First**: Only healthcare platform with Uniswap v4 custom hooks for medical payments
-- **Proven Infrastructure**: Built on battle-tested Uniswap v4 and vlayer protocols
+- **Industry First**: Only healthcare platform with Merchant Moe Liquidity Book custom hooks for medical payments
+- **Proven Infrastructure**: Built on battle-tested Merchant Moe Liquidity Book and vlayer protocols
 - **Healthcare Specialization**: Custom hooks and logic specifically designed for medical payments
 - **Context7 Acceleration**: Real-time documentation access for rapid feature development
 
@@ -672,7 +672,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 |---------|----------------------|----------------|---------------|-------------------|
 | **User Onboarding** | Complex paperwork | Basic wallet connection | Simple registration | Multi-role MailProof verification |
 | **Payment Processing** | Weeks of manual processing | Basic automation | DeFi integration | Instant MailProof-triggered payouts |
-| **Fund Management** | 0% returns on idle funds | Basic staking mechanisms | Standard yield farming | Uniswap v4 with custom healthcare hooks |
+| **Fund Management** | 0% returns on idle funds | Basic staking mechanisms | Standard yield farming | Merchant Moe Liquidity Book with custom healthcare hooks |
 | **Privacy Protection** | Centralized data exposure | Limited privacy features | Basic encryption | Complete MailProof verification |
 | **Admin Governance** | Single administrator control | Basic permission systems | DAO voting mechanisms | Multi-admin with specialized healthcare roles |
 | **Development Speed** | Slow manual iterations | Standard documentation | Library integration | Real-time Context7 documentation access |
@@ -704,6 +704,6 @@ zkMed's architecture is founded on cutting-edge research in blockchain healthcar
 
 | Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
 |-----------|-------------------|---------------|------------------|-----------|-----------------|
-| **Unified thirdweb + MailProof** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pool | New MailProof email | Yes | Yes (3-5% APY for ALL users) |
+| **Unified thirdweb + MailProof** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Merchant Moe Liquidity Book pools | New MailProof email | Yes | Yes (3-5% APY for ALL users) |
 
-**zkMed represents the first practical implementation of universal yield-generating healthcare insurance through thirdweb's fiat-to-crypto infrastructure, enabling all patients to access DeFi benefits regardless of their Web3 knowledge. This revolutionary platform combines familiar payment methods with blockchain innovation, delivering research-validated benefits while maintaining regulatory compliance and user familiarity through unified premium collection and hybrid claim processing.** 🚀 
+**zkMed represents the first practical implementation of universal yield-generating healthcare insurance through thirdweb's fiat-to-crypto infrastructure, enabling all patients to access DeFi benefits regardless of their Web3 knowledge. This revolutionary platform combines familiar payment methods with blockchain innovation, delivering research-validated benefits while maintaining regulatory compliance and user familiarity through unified premium collection and hybrid claim processing.** 🚀

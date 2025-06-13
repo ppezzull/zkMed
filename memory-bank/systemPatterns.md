@@ -1,575 +1,444 @@
-# zkMed System Patterns - Comprehensive Healthcare Platform with Uniswap v4
+# zkMed System Patterns - Comprehensive Healthcare Platform with Merchant Moe Liquidity Book
 
-**Purpose**: Advanced architecture patterns enabling privacy-preserving healthcare with yield-generating Uniswap v4 pools, comprehensive vlayer MailProof verification, and multi-role user management for complete healthcare insurance automation.
+**Purpose**: Advanced architecture patterns enabling privacy-preserving healthcare with yield-generating Merchant Moe Liquidity Book pools, comprehensive vlayer MailProof verification, and multi-role user management for complete healthcare insurance automation.
 
 ---
 
-## 🏗️ Revolutionary Healthcare Insurance Architecture
+## 🎯 Architectural Foundation
 
-### Comprehensive Platform Pattern
+**Core Design Philosophy**: Hybrid Web2/Web3 architecture that maintains regulatory compliance while delivering revolutionary blockchain benefits through proven DeFi infrastructure and comprehensive user management.
 
-**Fundamental Innovation**: First healthcare platform integrating yield-generating Uniswap v4 pools with privacy-preserving MailProof claims processing and comprehensive multi-role user management.
+**Fundamental Innovation**: First healthcare platform integrating yield-generating Merchant Moe Liquidity Book pools with privacy-preserving MailProof claims processing and comprehensive multi-role user management.
+
+### Revolutionary System Integration
 
 ```mermaid
 graph TB
-    subgraph "User Registration Layer"
-        A[Patient: thirdweb Auth] --> D[RegistrationContract]
-        B[Hospital: MailProof Domain] --> D
-        C[Insurer: MailProof Domain] --> D
+    subgraph "Web2 Traditional Systems"
+        A[Insurer Claims Portal] --> B[Manual Claim Review]
+        B --> C[DKIM-Signed MailProof Generation]
     end
     
-    subgraph "MailProof Verification"
-        D --> E[EmailDomainProver]
-        E --> F[DKIM Validation]
-        F --> G[Domain Ownership]
+    subgraph "Web3 Blockchain Automation"
+        D[vlayer MailProof Verification] --> E[Smart Contract Execution]
+        E --> F[Merchant Moe Liquidity Book Payment]
+        F --> G[Automated Yield Distribution]
     end
     
-    subgraph "Uniswap v4 Pool System"
-        G --> H[PoolingContract]
-        H --> I[Custom Healthcare Hooks]
+    subgraph "Merchant Moe Liquidity Book Pool System"
+        H[Premium Collection] --> I[Discretized Liquidity Bins]
         I --> J[Yield Generation]
-        J --> K[Automated Distribution]
+        J --> K[Healthcare Hook Validation]
+        K --> L[Instant Claim Payouts]
     end
     
-    subgraph "Claim Processing"
-        L[MailProof Authorization] --> M[ClaimProcessingContract]
-        M --> N[Instant Payment Execution]
-        N --> O[Pool Withdrawal]
-    end
+    C --> D
+    L --> G
 ```
 
-#### Revolutionary Benefits Matrix
+### Competitive Architecture Analysis
 
-| Aspect | Traditional Healthcare | Other Blockchain Platforms | zkMed Comprehensive Platform |
-|--------|----------------------|----------------------------|----------------------------|
-| **User Onboarding** | Complex paperwork | Basic wallet connection | Multi-role authentication with MailProof |
-| **Payment Processing** | Weeks of manual processing | Basic automation | Instant MailProof-triggered payments |
-| **Fund Utilization** | 0% return on idle funds | Simple staking mechanisms | Uniswap v4 yield with custom hooks |
-| **Privacy Protection** | Centralized data exposure | Limited privacy features | Complete MailProof verification |
-| **Admin Management** | Single admin control | Basic permissions | Multi-admin governance framework |
-
----
-
-## 🎭 Multi-Role User Management Pattern
-
-### Comprehensive Registration Architecture
-
-**Innovation**: First healthcare platform offering role-specific registration workflows with MailProof verification for organizations and seamless authentication for patients.
-
-#### Unified Patient Registration Pattern with thirdweb Integration
-
-##### **Universal Pattern: thirdweb-Powered Flexible Premium Collection**
-*See detailed sequence diagram in activeContext.md*
-
-#### **Unified Web3 + MailProof Architecture with thirdweb Payment Integration**
-
-*See detailed unified architecture diagram in activeContext.md*
-
-**Unified Architecture Benefits**: *See detailed benefits in activeContext.md*
-
-
-
-**Universal Patient Registration Benefits**: *See comprehensive benefits in activeContext.md and projectbrief.md*
-
-#### Hospital Registration Pattern
-*See detailed hospital registration flow in projectbrief.md*
-
-**Hospital Registration Benefits**: *See detailed benefits in projectbrief.md*
-
-#### Insurance Company Registration & Patient Agreement Management Patterns
-
-*See detailed patterns and flows in projectbrief.md*
-
-**Comprehensive Insurance Company Benefits**: *See detailed benefits and smart contract interfaces in projectbrief.md*
+| **Feature** | **Traditional** | **Basic Blockchain** | **DeFi Integration** | **zkMed (Merchant Moe Integration)** |
+|-------------|----------------|---------------------|---------------------|-------------------------------------|
+| **Premium Processing** | Manual bank processing | Simple token transfers | Basic staking mechanisms | Merchant Moe discretized liquidity bins |
+| **Yield Generation** | 0% return | Limited staking rewards | Standard DeFi yields | 3-5% APY via custom healthcare hooks |
+| **Fund Utilization** | 0% return on idle funds | Simple staking mechanisms | Merchant Moe Liquidity Book yield with custom hooks |
+| **Claim Speed** | Weeks | Days | Hours | Instant via MailProof |
+| **Privacy Protection** | Centralized exposure | Basic encryption | Limited anonymity | Complete MailProof privacy |
+| **Regulatory Compliance** | Traditional only | Blockchain compliance risk | Partial compliance | Hybrid compliance framework |
 
 ---
 
-## 🔐 Enhanced MailProof Verification Architecture
+## 💰 Merchant Moe Liquidity Book Pool Integration Architecture
 
-*See comprehensive MailProof architecture and patterns in activeContext.md and projectbrief.md*
+### Advanced DeFi Healthcare Infrastructure
 
----
+**Strategic Innovation**: Leverage Merchant Moe Liquidity Book's advanced discretized liquidity system to implement healthcare-specific pool logic while maintaining proven DeFi infrastructure.
 
-## 💰 Uniswap v4 Pool Integration Architecture
-
-### Advanced Pool Management with Custom Healthcare Hooks
-
-**Strategic Innovation**: Leverage Uniswap v4's advanced hook system to implement healthcare-specific pool logic while maintaining proven DeFi infrastructure.
-
-#### Uniswap v4 Healthcare Pool Pattern
+#### Merchant Moe Liquidity Book Healthcare Pool Pattern
 ```mermaid
-graph TB
-    subgraph "Pool Initialization"
-        A[PoolingContract] --> B[Initialize mUSD/USDC Pool]
-        B --> C[Deploy Custom Healthcare Hook]
-        C --> D[Configure Fee Structure]
-    end
+sequenceDiagram
+    participant P as Patient
+    participant T as thirdweb
+    participant LB as LB Pool Manager
+    participant H as Healthcare Hook
+    participant R as LB Router
+
+    Note over P,R: Premium Payment and Pool Integration
+    P->>T: Monthly Premium (100 mUSD)
+    T->>LB: Add Liquidity to Healthcare Pool
+    LB->>H: beforeMint() - Validate Healthcare Premium
+    H->>H: Verify Patient Registration & Policy
+    H->>LB: Approval - Premium Validated
+    LB->>LB: Add to Discretized Liquidity Bins
+    LB->>P: LP Tokens (Healthcare Pool Shares)
     
-    subgraph "Custom Hook Implementation"
-        D --> E[beforeSwap Hook]
-        E --> F[Healthcare Validation Logic]
-        F --> G[afterSwap Hook]
-        G --> H[Yield Distribution Logic]
-    end
-    
-    subgraph "Pool Operations"
-        H --> I[Premium Deposits]
-        I --> J[Yield Generation]
-        J --> K[Claim Payouts]
-        K --> L[Automated Distribution]
-    end
+    Note over P,R: Claim Payment Processing
+    Note right of H: MailProof authorization received
+    H->>LB: beforeSwap() - Validate Claim Authorization
+    H->>H: Verify MailProof & Payment Instructions
+    H->>LB: Approval - Claim Validated
+    LB->>R: Execute Swap (Pool → Recipient)
+    R->>P: Instant mUSD Transfer
+    LB->>H: afterSwap() - Update Healthcare Records
+    H->>H: Distribute Yield (60/20/20)
 ```
 
-#### Healthcare-Specific Hook Implementation
+#### Healthcare Hook Implementation
 ```solidity
-contract HealthcarePoolHook is BaseHook {
-    using PoolIdLibrary for PoolKey;
-    
-    // Custom hook for healthcare payment validation
-    function beforeSwap(
+contract HealthcareHook is LBBaseHooks {
+    // Healthcare-specific validation
+    function beforeMint(
         address sender,
-        PoolKey calldata key,
-        IPoolManager.SwapParams calldata params,
+        LBPair.PoolKey calldata key,
+        ILBPair.MintParams calldata params,
         bytes calldata hookData
     ) external override returns (bytes4) {
-        // Validate healthcare payment authorization
-        require(validateMailProofPayment(hookData), "Invalid payment authorization");
-        
-        // Check patient coverage and pool liquidity
-        require(validatePatientCoverage(sender), "Insufficient coverage");
-        require(validatePoolLiquidity(params.amountSpecified), "Insufficient liquidity");
-        
-        return BaseHook.beforeSwap.selector;
+        // Validate patient registration and premium eligibility
+        _validateHealthcarePremium(sender, params.liquidityConfigs);
+        return LBBaseHooks.beforeMint.selector;
     }
     
-    // Custom hook for yield distribution
+    function beforeSwap(
+        address sender,
+        LBPair.PoolKey calldata key,
+        ILBPair.SwapParams calldata params,
+        bytes calldata hookData
+    ) external override returns (bytes4) {
+        // Validate MailProof and claim authorization
+        _validateClaimAuthorization(hookData);
+        return LBBaseHooks.beforeSwap.selector;
+    }
+    
     function afterSwap(
         address sender,
-        PoolKey calldata key,
-        IPoolManager.SwapParams calldata params,
+        LBPair.PoolKey calldata key,
+        ILBPair.SwapParams calldata params,
         BalanceDelta delta,
         bytes calldata hookData
     ) external override returns (bytes4) {
-        // Trigger automated yield distribution
-        distributeHealthcareYield(key, delta);
-        
-        // Update patient and insurer balances
-        updateStakeholderBalances(sender, params, delta);
-        
-        // Emit healthcare-specific events
-        emitHealthcarePaymentEvent(sender, params, delta);
-        
-        return BaseHook.afterSwap.selector;
-    }
-    
-    // Healthcare-specific yield distribution
-    function distributeHealthcareYield(PoolKey calldata key, BalanceDelta delta) internal {
-        uint256 yield = calculateYield(delta);
-        
-        // 60% to patients (premium cost reduction)
-        uint256 patientYield = (yield * 6000) / 10000;
-        distributeToPatients(key, patientYield);
-        
-        // 20% to insurers (operational returns)
-        uint256 insurerYield = (yield * 2000) / 10000;
-        distributeToInsurers(key, insurerYield);
-        
-        // 20% to protocol treasury
-        uint256 protocolYield = (yield * 2000) / 10000;
-        allocateToProtocol(key, protocolYield);
+        // Distribute healthcare yield and update records
+        _distributeHealthcareYield(delta);
+        return LBBaseHooks.afterSwap.selector;
     }
 }
 ```
 
-#### Pool Management Benefits
-- **Custom Healthcare Logic**: Specialized hooks for medical payment validation
-- **Automated Yield Distribution**: 60/20/20 split without manual intervention
-- **Instant Liquidity**: Proven Uniswap mechanisms ensure immediate claim payouts
-- **Gas Optimization**: Efficient hook implementations reduce transaction costs
-- **Proven Infrastructure**: Built on battle-tested Uniswap v4 architecture
+#### Pool Economic Benefits
+- **Capital Efficiency**: Discretized liquidity bins optimize capital deployment
+- **Instant Liquidity**: Proven Merchant Moe mechanisms ensure immediate claim payouts
+- **Risk Management**: Battle-tested protocols minimize loss exposure
+- **Proven Infrastructure**: Built on battle-tested Merchant Moe Liquidity Book architecture
+- **Healthcare Specialization**: Custom hooks designed for medical payment workflows
 
 ---
 
-## 🎯 Comprehensive User Action Patterns
+## 🏥 Multi-Role User Management Patterns
 
-### Multi-Role Workflow Architecture
+### Comprehensive Stakeholder Architecture
 
-**Innovation**: Complete user action frameworks supporting all healthcare stakeholder roles with specialized interfaces and workflows.
-
-#### Patient Action Flow Pattern
+#### **Patient Experience Pattern**
 ```mermaid
-graph TB
-    A[ThirdWeb Authentication] --> B[Insurance Company Selection]
-    B --> C[Premium Payment Setup]
-    C --> D[Coverage Activation]
-    D --> E[Claim Authorization Reception]
-    E --> F[MailProof Submission]
-    F --> G[Payment Confirmation]
-    G --> H[Yield Tracking]
+graph TD
+    A[Patient Registration] --> B{Payment Preference}
+    B -->|Fiat| C[thirdweb Credit Card Setup]
+    B -->|Crypto| D[Wallet Connection]
+    B -->|Hybrid| E[Both Options Available]
+    
+    C --> F[Automatic mUSD Conversion]
+    D --> F
+    E --> F
+    
+    F --> G[Pool Liquidity Provision]
+    G --> H[Yield Generation (3-5% APY)]
+    
+    I[Medical Service] --> J[Hospital Claim Submission]
+    J --> K[MailProof Authorization]
+    K --> L[Instant Payment to Hospital]
+    L --> M[Yield Distribution to Patient]
 ```
 
-**Patient Action Details**:
-- **Seamless Authentication**: One-click wallet connection via thirdweb
-- **Flexible Insurance Selection**: Browse insurers by pool performance
-- **Automated Premium Payments**: Set-and-forget monthly mUSD transfers
-- **Real-time Claim Tracking**: Live status updates for submitted claims
-- **Yield Monitoring**: Transparent tracking of premium cost reductions
-
-#### Hospital Action Flow Pattern
+#### **Hospital Integration Pattern**
 ```mermaid
-graph TB
-    A[Domain Verification] --> B[MailProof Registration]
-    B --> C[Payment Reception Setup]
-    C --> D[Claim Authorization Reception]
-    D --> E[MailProof Validation]
-    E --> F[Instant Payment Reception]
-    F --> G[Financial Dashboard Access]
+graph TD
+    A[Hospital Registration] --> B[Domain Verification via MailProof]
+    B --> C[Email Authentication Setup]
+    C --> D[Wallet Configuration for Payments]
+    D --> E[Integration Testing]
+    
+    F[Patient Treatment] --> G[Standard Claim Submission]
+    G --> H[Insurer Review Process]
+    H --> I[MailProof Authorization Email]
+    I --> J[Automatic Payment Reception]
+    J --> K[Real-time Settlement]
 ```
 
-**Hospital Action Details**:
-- **Domain Authentication**: Cryptographic proof of official email domain
-- **Instant Payment Setup**: Immediate access to MailProof-triggered payments
-- **Cash Flow Optimization**: Real-time payment reception upon claim approval
-- **Financial Tracking**: Comprehensive dashboard for payment monitoring
-- **Yield Participation**: Share in pool yield based on payment volume
-
-#### Insurer Action Flow Pattern
+#### **Insurance Company Pattern**
 ```mermaid
-graph TB
-    A[MailProof Domain Verification] --> B[Pool Initialization]
-    B --> C[Policy Management Setup]
-    C --> D[Off-Chain Claim Processing]
-    D --> E[MailProof Authorization Generation]
-    E --> F[Pool Performance Monitoring]
-    F --> G[Yield Distribution Management]
+graph TD
+    A[Insurer Registration] --> B[MailProof Domain Verification]
+    B --> C[Pool Creation] --> D[Custom Hook Setup]
+    D --> E[Patient Onboarding Integration]
+    
+    F[Claim Receipt] --> G[Traditional Review Process]
+    G --> H[Approval Decision]
+    H --> I[DKIM-Signed MailProof Generation]
+    I --> J[Automated Payment Execution]
+    J --> K[Pool Performance Monitoring]
 ```
 
-**Insurer Action Details**:
-- **Pool Creation**: Automatic Uniswap v4 pool setup with custom hooks
-- **Claim Processing**: Traditional off-chain review with on-chain automation
-- **MailProof Generation**: DKIM-signed payment authorization emails
-- **Performance Optimization**: Real-time pool management and optimization
-- **Competitive Positioning**: Pool performance as market differentiator
+### Advanced Registration Patterns
 
-#### Admin Action Flow Pattern
-```mermaid
-graph TB
-    A[Multi-Admin Deployment] --> B[User Registration Management]
-    B --> C[Pool Parameter Governance]
-    C --> D[Dispute Resolution]
-    D --> E[Protocol Upgrades]
-    E --> F[Emergency Response]
-```
-
-**Admin Action Details**:
-- **Distributed Administration**: Multiple admins with role-based permissions
-- **User Management**: Oversight of all registration and verification processes
-- **Pool Governance**: Parameter adjustment and performance optimization
-- **Emergency Controls**: Rapid response capabilities for critical situations
-- **Protocol Evolution**: Coordinated upgrades and feature enhancements
-
----
-
-## 🏆 Enhanced Smart Contract Architecture
-
-### Comprehensive Contract Integration Pattern
-
-**Innovation**: Complete smart contract suite with clear separation of concerns and enhanced integration capabilities.
-
-#### Contract Interaction Flow
-```mermaid
-graph TB
-    subgraph "Registration Layer"
-        A[RegistrationContract] --> B[EmailDomainProver]
-        B --> C[Multi-Role User Management]
-    end
-    
-    subgraph "Pool Management Layer"
-        C --> D[PoolingContract]
-        D --> E[Uniswap v4 Integration]
-        E --> F[Custom Healthcare Hooks]
-    end
-    
-    subgraph "Claim Processing Layer"
-        F --> G[ClaimProcessingContract]
-        G --> H[MailProof Validation]
-        H --> I[Instant Payment Execution]
-    end
-    
-    subgraph "Insurance Management Layer"
-        I --> J[InsuranceContract]
-        J --> K[Policy Administration]
-        K --> L[Premium Collection]
-    end
-```
-
-#### Enhanced Contract Interfaces
-
-**RegistrationContract.sol - Multi-Role Management**:
-```solidity
-interface IEnhancedRegistrationContract {
-    // Patient registration (simplified flow)
-    function registerPatient(address wallet) external;
-    function linkInsuranceCompany(address patient, address insurer) external;
-    
-    // Hospital registration (MailProof verification)
-    function registerHospitalWithMailProof(bytes calldata mailProof) external;
-    function validateHospitalDomain(string calldata domain) external view returns (bool);
-    
-    // Insurer registration (MailProof + Pool setup)
-    function registerInsurerWithMailProof(bytes calldata mailProof) external;
-    function initializeInsurerPool(address insurer, PoolParameters calldata params) external;
-    
-    // Multi-admin management
-    function addAdmin(address newAdmin, AdminRole role) external;
-    function removeAdmin(address admin) external;
-    function updateAdminPermissions(address admin, uint256 permissions) external;
-    
-    // Role verification
-    function getUserRole(address user) external view returns (UserRole);
-    function isVerifiedHospital(address hospital) external view returns (bool);
-    function isVerifiedInsurer(address insurer) external view returns (bool);
+#### **Universal Patient Registration (thirdweb-Enhanced)**
+```typescript
+interface IPatientRegistration {
+  // Unified registration supporting multiple payment methods
+  registerPatientUnified(
+    mailProof: bytes,
+    paymentPreference: PaymentMethod, // Fiat, Crypto, or Hybrid
+    thirdwebConfig: ThirdwebPaymentConfig,
+    insuranceDetails: InsurancePolicy
+  ): Promise<PatientRecord>;
+  
+  // Payment method switching
+  updatePaymentMethod(
+    patient: address,
+    newMethod: PaymentMethod,
+    authData: bytes
+  ): Promise<boolean>;
+  
+  // Yield tracking across payment methods
+  getPatientYieldHistory(patient: address): Promise<YieldRecord[]>;
 }
 ```
 
-**PoolingContract.sol - Uniswap v4 Healthcare Pools**:
-```solidity
-interface IHealthcarePoolingContract {
-    // Pool initialization with custom hooks
-    function initializeHealthcarePool(
-        address token0,
-        address token1,
-        uint24 fee,
-        int24 tickSpacing,
-        address hookContract
-    ) external returns (PoolId);
-    
-    // Premium and claim operations
-    function depositPremium(address patient, uint256 amount) external;
-    function processClaimPayout(
-        bytes calldata mailProof,
-    uint256 claimId, 
-        address recipient,
-    uint256 amount
-    ) external;
-    
-    // Yield management
-    function distributeYield(PoolId poolId) external;
-    function calculateStakeholderYield(address stakeholder) external view returns (uint256);
-    function claimYield(address stakeholder) external;
-    
-    // Pool monitoring
-    function getPoolLiquidity(PoolId poolId) external view returns (uint256);
-    function getPoolPerformance(PoolId poolId) external view returns (PoolMetrics memory);
-    function validatePaymentCapacity(PoolId poolId, uint256 amount) external view returns (bool);
+#### **Enhanced Hospital Registration (MailProof-Verified)**
+```typescript
+interface IHospitalRegistration {
+  // Domain-verified hospital registration
+  registerHospitalWithDomain(
+    mailProof: bytes,
+    hospitalDetails: HospitalInformation,
+    paymentWallet: address
+  ): Promise<HospitalRecord>;
+  
+  // Claim processing integration
+  setupClaimProcessing(
+    hospital: address,
+    systemIntegration: EHRIntegration
+  ): Promise<boolean>;
 }
 ```
 
-**ClaimProcessingContract.sol - MailProof Integration**:
-```solidity
-interface IClaimProcessingContract {
-    // Claim submission and validation
-    function submitClaim(
-        uint256 claimId,
-        bytes calldata mailProof,
-        ClaimData calldata claimData
-    ) external;
-    
-    // MailProof verification
-    function validateMailProof(bytes calldata mailProof) external view returns (bool);
-    function extractPaymentInstructions(bytes calldata mailProof) external pure returns (
-        address recipient,
-        uint256 amount,
-        address token,
-        uint256 deadline
-    );
-    
-    // Claim processing workflow
-    function processValidatedClaim(uint256 claimId) external;
-    function executePayout(uint256 claimId) external;
-    function getClaimStatus(uint256 claimId) external view returns (ClaimStatus);
-    
-    // Audit and compliance
-    function getClaimAuditTrail(uint256 claimId) external view returns (AuditEntry[] memory);
-    function generateComplianceReport(uint256 fromTime, uint256 toTime) external view returns (ComplianceReport memory);
+#### **Insurer Pool Management**
+```typescript
+interface IInsurerPoolManagement {
+  // Pool creation with custom healthcare hooks
+  createHealthcarePool(
+    insurer: address,
+    poolParams: PoolConfiguration,
+    hookConfig: HealthcareHookConfig
+  ): Promise<PoolId>;
+  
+  // Patient relationship management
+  addPatientToPool(
+    poolId: PoolId,
+    patient: address,
+    policyTerms: PolicyConfiguration
+  ): Promise<boolean>;
+  
+  // Performance monitoring
+  getPoolMetrics(poolId: PoolId): Promise<PoolPerformanceMetrics>;
 }
 ```
 
 ---
 
-## 🔄 Context7 Integration Patterns
+## 🔧 Advanced Development Patterns with Context7
 
-### Enhanced Development Workflow with Real-Time Documentation
+### Real-Time Documentation Integration
 
-**Innovation**: First healthcare platform integrating Context7 for real-time access to up-to-date library documentation and development best practices.
+**Context7 MCP Integration**: Enhanced development workflow with real-time access to latest Merchant Moe Liquidity Book, vlayer, and thirdweb documentation.
 
-#### Context7 Development Enhancement Pattern
+#### Enhanced Development Workflows
+
 ```mermaid
 graph TB
-    subgraph "Development Environment"
-        A[Context7 MCP Server] --> B[Real-Time Documentation]
-        B --> C[Library Resolution]
-        C --> D[Code Generation]
-    end
+    A[Development Task] --> B[Context7 Query]
+    B --> C{Documentation Type}
     
-    subgraph "Smart Contract Development"
-        D --> E[Uniswap v4 Hook Patterns]
-        E --> F[vlayer MailProof Integration]
-        F --> G[thirdweb Authentication]
-    end
+    C -->|Merchant Moe LB| D[Latest Hook Patterns]
+    C -->|vlayer| E[MailProof Best Practices]
+    C -->|thirdweb| F[Payment Integration Guides]
+    C -->|Next.js| G[Server Actions for Blockchain]
     
-    subgraph "Frontend Development"
-        G --> H[Next.js Server Actions]
-        H --> I[Real-Time Pool Monitoring]
-        I --> J[Multi-Role Dashboard]
-    end
+    D --> H[Implementation with Current Patterns]
+    E --> H
+    F --> H
+    G --> H
+    
+    H --> I[Testing & Validation]
+    I --> J[Production Deployment]
 ```
 
-#### Context7 Usage Patterns
+#### Context7-Enhanced Development Commands
 
-**Smart Contract Development Enhancement**:
+**Merchant Moe Liquidity Book Integration**:
 ```bash
-# Get latest Uniswap v4 hook implementation patterns
-use context7: "Implement Uniswap v4 beforeSwap and afterSwap hooks for healthcare payments"
+# Get latest LB hook implementation patterns
+use context7: "Implement Merchant Moe Liquidity Book beforeSwap and afterSwap hooks for healthcare payments"
 
-# vlayer MailProof integration best practices
-use context7: "Integrate vlayer MailProofs for DKIM email verification in Solidity contracts"
+# Pool management best practices
+use context7: "Create Merchant Moe Liquidity Book pool manager with custom healthcare logic and yield distribution"
 
-# Gas optimization techniques for healthcare transactions
-use context7: "Optimize Solidity gas usage for healthcare payment processing contracts"
+# Gas optimization for healthcare transactions
+use context7: "Optimize Merchant Moe Liquidity Book healthcare hook gas usage with efficient validation patterns"
 ```
 
-**Frontend Development Acceleration**:
+**Full-Stack Integration**:
 ```bash
-# Next.js 15 server actions with blockchain integration
-use context7: "Create Next.js server actions for Uniswap v4 pool management and monitoring"
+# Next.js server actions for blockchain interaction
+use context7: "Create Next.js 15 server actions for Merchant Moe Liquidity Book pool management and monitoring"
 
-# Real-time data fetching patterns
-use context7: "Implement React Query for real-time Uniswap v4 pool data with WebSocket updates"
+# Real-time dashboard development
+use context7: "Implement React Query for real-time Merchant Moe Liquidity Book pool data with WebSocket updates"
 
-# Multi-role authentication and authorization
-use context7: "Build role-based authentication system with thirdweb and Next.js middleware"
+# Container orchestration
+use context7: "Docker Compose setup for healthcare platform with Merchant Moe Liquidity Book and vlayer integration"
+
+# Monitoring and observability
+use context7: "Implement comprehensive monitoring for Merchant Moe Liquidity Book healthcare pools with alerting"
 ```
-
-**Infrastructure and Deployment**:
-```bash
-# Container orchestration for complex healthcare platform
-use context7: "Docker Compose setup for healthcare platform with Uniswap v4 and vlayer integration"
-
-# Monitoring and observability for DeFi healthcare platform
-use context7: "Implement comprehensive monitoring for Uniswap v4 healthcare pools with alerting"
-
-# Security best practices for healthcare blockchain applications
-use context7: "Healthcare blockchain security patterns with DKIM verification and audit trails"
-```
-
-#### Context7 Benefits for Healthcare Development
-- **Up-to-Date Documentation**: Always current information on rapidly evolving DeFi protocols
-- **Best Practice Integration**: Latest patterns and recommendations for secure development
-- **Rapid Prototyping**: Accelerated development with proven code patterns
-- **Security Enhancement**: Current security practices and vulnerability prevention
-- **Performance Optimization**: Latest optimization techniques for gas efficiency
 
 ---
 
-## 🎯 Advanced Integration Patterns
+## 🏗️ Production Architecture Patterns
 
-### Comprehensive System Integration Architecture
+### Container Orchestration for Healthcare Platform
 
-**Innovation**: Seamless integration of multiple advanced technologies creating unprecedented healthcare platform capabilities.
-
-#### Technology Integration Matrix
+#### **Multi-Service Architecture**
 ```mermaid
 graph TB
-    subgraph "Blockchain Layer"
-        A[Mantle Network] --> B[Native mUSD]
-        B --> C[Optimized Gas]
+    subgraph "Frontend Services"
+        A[Next.js Patient Portal]
+        B[Next.js Hospital Dashboard]
+        C[Next.js Insurer Management]
+        D[Next.js Admin Interface]
     end
     
-    subgraph "DeFi Integration"
-        C --> D[Uniswap v4]
-        D --> E[Custom Hooks]
-        E --> F[Yield Generation]
+    subgraph "Blockchain Services"
+        E[Mantle Fork Environment]
+        F[Smart Contract Deployment]
+        G[Merchant Moe LB Pool Management]
+        H[vlayer MailProof Services]
     end
     
-    subgraph "Privacy Layer"
-        F --> G[vlayer MailProofs]
-        G --> H[DKIM Verification]
-        H --> I[Zero Medical Data]
+    subgraph "Infrastructure Services"
+        I[Redis Session Management]
+        J[PostgreSQL Healthcare Data]
+        K[Monitoring & Analytics]
+        L[Load Balancer]
     end
     
-    subgraph "User Experience"
-        I --> J[thirdweb Auth]
-        J --> K[Multi-Role Support]
-        K --> L[Real-Time Updates]
-    end
+    A --> E
+    B --> F
+    C --> G
+    D --> H
+    
+    E --> I
+    F --> J
+    G --> K
+    H --> L
 ```
 
-#### Integration Benefits Matrix
+#### **Enhanced Container Configuration**
+```yaml
+# docker-compose.healthcare.yml
+version: '3.8'
+services:
+  healthcare-platform:
+    build: ./zkMed
+    environment:
+      - MERCHANT_MOE_LB_ENABLED=true
+      - MANTLE_NETWORK_URL=${MANTLE_RPC}
+      - VLAYER_MAILPROOF_ENDPOINT=${VLAYER_API}
+    volumes:
+      - blockchain-data:/app/blockchain
+      - mailproof-cache:/app/mailproofs
+    
+  merchant-moe-pools:
+    image: merchant-moe/liquidity-book:latest
+    environment:
+      - POOL_MANAGER_ADDRESS=${LB_POOL_MANAGER}
+      - HEALTHCARE_HOOK_ADDRESS=${HEALTHCARE_HOOK}
+    depends_on:
+      - healthcare-platform
+```
 
-| Technology | Healthcare Benefit | Integration Advantage | Competitive Edge |
-|------------|-------------------|----------------------|------------------|
-| **Uniswap v4** | Proven liquidity + custom healthcare logic | Custom hooks for specialized workflows | Only healthcare platform with advanced DeFi |
-| **vlayer MailProofs** | Secure verification without data exposure | DKIM-based authentication | Privacy-preserving automation |
-| **thirdweb** | Simplified user onboarding | Gas sponsorship for healthcare transactions | Seamless user experience |
-| **Context7** | Accelerated development | Real-time documentation access | Rapid feature development |
-| **Mantle Network** | Low-cost transactions | Native mUSD integration | Simplified financial operations |
+### Production Deployment Strategy
 
----
-
-## 🏆 Revolutionary Architecture Advantages
-
-### Competitive Superiority Framework
-
-**Comprehensive Innovation**: zkMed's architecture combines proven technologies in revolutionary ways to create unprecedented healthcare platform capabilities.
-
-#### Technical Superiority Matrix
-
-| Innovation Area | Traditional Healthcare | Basic Blockchain | Advanced DeFi | zkMed Comprehensive |
-|----------------|----------------------|----------------|---------------|-------------------|
-| **User Registration** | Manual paperwork | Basic wallet connect | Simple onboarding | Multi-role MailProof verification |
-| **Payment Processing** | Weeks of delays | Basic automation | DeFi integration | Instant MailProof-triggered payouts |
-| **Fund Management** | 0% returns | Basic staking | Standard yield | Uniswap v4 with custom healthcare hooks |
-| **Privacy Protection** | Centralized risk | Limited privacy | Basic encryption | Complete MailProof verification |
-| **Admin Governance** | Single control | Basic permissions | DAO voting | Multi-admin with specialized roles |
-| **Development Speed** | Slow iterations | Standard docs | Library integration | Real-time Context7 documentation |
-
-#### Architectural Innovation Benefits
-
-**System-Level Advantages**:
-- **Proven Infrastructure**: Built on battle-tested Uniswap v4 and vlayer protocols
-- **Healthcare Specialization**: Custom hooks and logic specifically for medical payments
-- **Privacy Leadership**: Advanced MailProof verification without data compromise
-- **User Experience Excellence**: thirdweb integration eliminates Web3 complexity
-- **Development Acceleration**: Context7 integration for rapid feature development
-- **Scalable Architecture**: Container-based deployment ready for global scale
-
-**Market Differentiation**:
-- **First-Mover Position**: Only comprehensive healthcare platform with advanced DeFi integration
-- **Technology Convergence**: Unique combination of proven technologies for healthcare innovation
-- **Complete Solution**: End-to-end platform supporting all healthcare stakeholder roles
-- **Regulatory Readiness**: MailProof audit trails support compliance requirements
-- **Competitive Moat**: Complex integration creates significant barriers to entry
+| **Component** | **Traditional** | **Basic Blockchain** | **DeFi Platform** | **zkMed (Merchant Moe)** |
+|---------------|----------------|---------------------|-------------------|--------------------------|
+| **Infrastructure** | Single server deployment | Basic node setup | Standard DeFi deployment | Multi-service healthcare architecture |
+| **Pool Management** | N/A | Simple staking pools | Basic AMM pools | Merchant Moe Liquidity Book with custom healthcare hooks |
+| **User Management** | Basic user roles | Single user type | Limited role differentiation | Comprehensive multi-role healthcare management |
+| **Monitoring** | Basic server monitoring | Node health only | Pool performance tracking | Complete healthcare platform observability |
+| **Compliance** | Traditional audit trail | Blockchain transparency | DeFi protocol compliance | GDPR/HIPAA + blockchain compliance framework |
 
 ---
 
-## 📚 Research Foundation & Academic Validation
+## 🔄 Integration Patterns Summary
 
-zkMed's system patterns are founded on cutting-edge research validating hybrid blockchain healthcare approaches:
+### Technology Stack Integration
 
-**Research-Validated Pattern Benefits**:
-- **Enhanced Transparency**: Blockchain's decentralized ledger improves fairness and operational efficiency (Shouri & Ramezani, 2025)
-- **Data Security**: Integration with EHR and insurance systems enhances security and interoperability (Implementation of Electronic Health Record, 2023)  
-- **Automated Settlement**: Decentralized models enable peer-to-peer risk sharing without intermediaries (MAPFRE, 2025)
-- **Fraud Reduction**: Real-time validation reduces fraudulent activities (Ncube et al., 2022)
-- **Capital Efficiency**: Uniswap v4's advanced features provide gas-efficient, customizable liquidity management
+```mermaid
+graph TB
+    subgraph "Layer 1: Blockchain Infrastructure"
+        A[Mantle Network]
+        B[mantleUSD Stablecoin]
+    end
+    
+    subgraph "Layer 2: DeFi Protocol"
+        C[Merchant Moe LB Factory]
+        D[LB Pool Manager]
+        E[Healthcare Custom Hooks]
+    end
+    
+    subgraph "Layer 3: Privacy & Verification"
+        F[vlayer MailProof]
+        G[DKIM Verification]
+        H[Domain Authentication]
+    end
+    
+    subgraph "Layer 4: User Experience"
+        I[thirdweb SDK]
+        J[Multi-Role Frontend]
+        K[Universal Payment Flow]
+    end
+    
+    A --> C
+    B --> D
+    C --> E
+    
+    F --> G
+    G --> H
+    
+    I --> J
+    J --> K
+    
+    E --> F
+    K --> E
+```
 
----
+### Comparative Analysis: zkMed vs Traditional Healthcare
 
-## 📊 Summary Table of Payment Flows
+| **Capability** | **Traditional Insurance** | **Basic Blockchain** | **DeFi Integration** | **zkMed (Merchant Moe LB)** |
+|----------------|---------------------------|---------------------|---------------------|----------------------------|
+| **Premium ROI** | 0% returns | Basic staking | Standard yield | 3-5% via custom hooks |
+| **Claim Speed** | 2-8 weeks | Days | Hours | Instant MailProof |
+| **Fund Management** | 0% returns on idle funds | Basic staking mechanisms | Standard yield farming | Merchant Moe Liquidity Book with custom healthcare hooks |
+| **User Experience** | Complex processes | Technical barriers | DeFi complexity | Universal thirdweb integration |
+| **Privacy** | Centralized data risk | Basic blockchain privacy | Limited anonymity | Complete MailProof privacy |
+| **Compliance** | Traditional frameworks | Compliance uncertainty | Limited regulatory support | Hybrid regulatory compliance |
 
-| Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
-|-----------|-------------------|---------------|------------------|-----------|-----------------|
-| **Unified thirdweb + MailProof + Pools** | Off-chain contract + DKIM email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pool | New MailProof email | Yes | Yes (3-5% APY for ALL users) |
-
-**zkMed's revolutionary system patterns establish the foundation for the first practical implementation of universal yield-generating healthcare insurance through thirdweb's fiat-to-crypto infrastructure. This unified premium collection approach combined with hybrid claim processing delivers research-validated benefits while maintaining regulatory compliance, enabling all patients to access DeFi yield regardless of their Web3 knowledge across all healthcare stakeholder roles.** 🚀 
+**zkMed represents the first comprehensive implementation of yield-generating healthcare insurance through Merchant Moe Liquidity Book integration, delivering measurable benefits while maintaining regulatory compliance through sophisticated hybrid architecture.** 🚀 

@@ -1,6 +1,6 @@
 # zkMed Active Context - Hybrid Blockchain Healthcare Platform with Unified Premium Payments
 
-**Current Status**: Revolutionary **hybrid blockchain-based healthcare insurance payment platform** that bridges traditional Web2 insurance workflows with Web3 smart contract automation, leveraging cryptographically verifiable MailProofs and Uniswap v4 liquidity pools for improved transparency, efficiency, and capital utilization.
+**Current Status**: Revolutionary **hybrid blockchain-based healthcare insurance payment platform** that bridges traditional Web2 insurance workflows with Web3 smart contract automation, leveraging cryptographically verifiable MailProofs and Merchant Moe Liquidity Book pools for improved transparency, efficiency, and capital utilization.
 
 **Last Updated**: December 2024  
 **Active Phase**: Unified Premium Payment Architecture with thirdweb Fiat-to-Crypto Integration
@@ -12,11 +12,31 @@
 zkMed implements a **unified premium payment system with thirdweb fiat-to-crypto integration**, while maintaining clear separation between Web2 and Web3 operations for claim processing. This approach balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency.
 
 ### ✅ Core Innovation: Unified Premium + Hybrid Claims Architecture
-- **Unified Premium Payments**: thirdweb fiat-to-crypto enables seamless payment flow to Uniswap v4 pools
+- **Unified Premium Payments**: thirdweb fiat-to-crypto enables seamless payment flow to Merchant Moe Liquidity Book pools
 - **Hybrid Claim Processing**: Clear Web2/Web3 separation for regulatory compliance  
 - **MailProof Bridge**: Cryptographically verifiable emails connecting both worlds
-- **Uniswap v4 Integration**: Capital-efficient liquidity pools with custom healthcare hooks
+- **Merchant Moe Integration**: Capital-efficient liquidity pools with custom healthcare hooks
 - **Research-Backed Design**: Based on latest blockchain healthcare research findings
+
+### Mantle Network & mantleUSD Foundation
+
+**Strategic Technical Advantages**:
+- **Mantle Layer-2 Efficiency**: Scalable, Ethereum-compatible blockchain optimized for on-chain finance and healthcare payments
+- **mantleUSD Stability**: Native stablecoin eliminates volatility risks critical for healthcare insurance applications
+- **Gas Cost Optimization**: Mantle's efficient environment reduces transaction costs for frequent premium deposits and claim payouts
+- **Cross-Chain Integration**: Enables seamless connection with existing insurer systems and future blockchain expansion
+
+**Healthcare-Specific Benefits**:
+- **Predictable Claim Values**: mantleUSD ensures stable payment amounts for medical procedures regardless of market volatility
+- **Instant Settlement**: Native stablecoin eliminates bridging delays and additional conversion costs for immediate claim payments
+- **Regulatory Compliance**: Supports evolving stablecoin regulatory frameworks in target European and US healthcare markets
+- **Operational Simplicity**: Native integration reduces complexity for healthcare providers and insurance companies
+
+**Competitive Positioning**:
+- **Industry Leadership**: First healthcare platform leveraging Mantle's advanced Layer-2 capabilities for medical insurance payments
+- **Technical Excellence**: Proven Ethereum compatibility with enhanced performance and efficiency for healthcare operations
+- **Market Readiness**: Architecture designed specifically for compliance with GDPR, HIPAA, and emerging blockchain healthcare regulations
+- **Future Scalability**: Cross-chain capabilities enable platform expansion across multiple healthcare blockchain networks
 
 ## 🏗️ Revolutionary Unified Premium Payment Architecture
 
@@ -31,7 +51,7 @@ graph TB
         C --> D[thirdweb-Powered Payment Setup]
         D --> E[Fiat or Crypto Payment Options]
         E --> F[Automatic Conversion to mUSD]
-        F --> G[Uniswap v4 Pool Deposit]
+        F --> G[Merchant Moe Liquidity Book Pool Deposit]
         G --> H[Yield Generation Begins]
     end
     
@@ -55,7 +75,7 @@ graph TB
 #### Revolutionary Innovation Enhancement
 ```
 Traditional Healthcare: Manual Premiums + Manual Claims → No Yield + Weeks of Delays
-zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Uniswap v4 Yield + Instant Claims
+zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Merchant Moe Liquidity Book Yield + Instant Claims
 ```
 
 ---
@@ -64,12 +84,11 @@ zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Uniswap v4 Yield + Ins
 
 ### Seamless Fiat-to-Crypto Premium Collection
 
-**Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables all patients to access yield-generating Uniswap v4 pools regardless of their Web3 experience, while maintaining familiar payment methods.
+**Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables all patients to access yield-generating Merchant Moe Liquidity Book pools regardless of their Web3 experience, while maintaining familiar payment methods.
 
 #### **Universal Patient Registration and Premium Flow**
 *See detailed sequence diagrams in systemPatterns.md*
-    Note over P,U: Seamless user experience regardless of payment method
-```
+    Note over P,LB: Seamless user experience regardless of payment method
 
 #### **thirdweb Integration Benefits**
 - **Universal Access**: Fiat payments via credit card, bank transfer, or digital wallets
@@ -94,7 +113,7 @@ zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Uniswap v4 Yield + Ins
 **Traditional User (Sarah)**:
 - Registers with credit card payment setup
 - thirdweb automatically converts monthly payments to mUSD
-- Deposits flow to Uniswap v4 pools for yield generation
+- Deposits flow to Merchant Moe Liquidity Book pools for yield generation
 - Enjoys cost reduction without learning Web3
 
 **Crypto User (Mike)**:
@@ -144,20 +163,20 @@ sequenceDiagram
     participant P as Patient/Hospital
     participant V as vlayer MailProof
     participant C as ClaimProcessingContract
-    participant U as Uniswap v4 Pool
+    participant LB as Merchant Moe Liquidity Book Pool
 
-    Note over Review,U: zkMed Blockchain Payment Automation (Web3)
+    Note over Review,LB: zkMed Blockchain Payment Automation (Web3)
     Review->>E: Generate DKIM-Signed MailProof Authorization Email
     E->>P: Deliver Payment Authorization to Patient/Hospital
     P->>V: Submit MailProof On-Chain for Verification
     V->>C: Validate DKIM Signature & Domain Ownership
-    C->>U: Execute Instant Payment via Custom Hook
-    U->>P: Transfer mUSD to Recipient Wallet
-    U->>U: Distribute Yield to All Stakeholders
+    C->>LB: Execute Instant Payment via Custom Hook
+    LB->>P: Transfer mUSD to Recipient Wallet
+    LB->>LB: Distribute Yield to All Stakeholders
     
     Note over Review,P: Cryptographic bridge between Web2 approval and Web3 payment
     Note over V,C: Privacy-preserving verification without medical data exposure
-    Note over U,P: Immediate liquidity from proven Uniswap v4 mechanisms
+    Note over LB,P: Immediate liquidity from proven Merchant Moe Liquidity Book mechanisms
 ```
 
 #### **Why Maintain Hybrid Claims Processing**
@@ -322,7 +341,7 @@ function PremiumPaymentInterface() {
 | **Medical Review** | Manual assessment | N/A | Regulatory compliance maintained |
 | **Payment Authorization** | MailProof email generation | MailProof verification | Cryptographic bridge |
 | **Payment Execution** | N/A | Instant mUSD transfer | Immediate settlement |
-| **Fund Source** | N/A | Unified Uniswap v4 pools | Universal yield benefits |
+| **Fund Source** | N/A | Unified Merchant Moe Liquidity Book pools | Universal yield benefits |
 
 ---
 
@@ -334,7 +353,7 @@ function PremiumPaymentInterface() {
 ```mermaid
 graph TB
     subgraph "Unified Premium Collection"
-        A[Fiat Payments via thirdweb] --> C[Uniswap v4 Pool]
+        A[Fiat Payments via thirdweb] --> C[Merchant Moe Liquidity Book Pool]
         B[Crypto Payments via thirdweb] --> C
         C --> D[Yield Generation 3-5% APY]
     end
@@ -357,7 +376,7 @@ graph TB
 - **Cost Reduction**: 3-5% APY reduces effective premium costs for all users
 - **Market Expansion**: Fiat payments dramatically increase addressable market
 - **Competitive Advantage**: Only platform offering yield to traditional payment users
-- **Risk Management**: Proven Uniswap v4 protocols protect all deposited funds
+- **Risk Management**: Proven Merchant Moe Liquidity Book protocols protect all deposited funds
 
 ---
 
@@ -409,4 +428,4 @@ zkMed's unified architecture is founded on cutting-edge research in blockchain h
 - **Enterprise Integration**: B2B APIs for healthcare system integration
 - **Regulatory Framework**: Collaboration with regulators for global compliance
 
-**zkMed represents the first practical implementation of unified fiat/crypto premium payments in healthcare insurance, delivering universal access to DeFi benefits while maintaining regulatory compliance and user familiarity. This revolutionary platform removes barriers to blockchain adoption while preserving the sophisticated hybrid architecture for claim processing.** 🚀 
+**zkMed represents the first practical implementation of unified fiat/crypto premium payments in healthcare insurance, delivering universal access to DeFi benefits while maintaining regulatory compliance and user familiarity. This revolutionary platform removes barriers to blockchain adoption while preserving the sophisticated hybrid architecture for claim processing.** 🚀
