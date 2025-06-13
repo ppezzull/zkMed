@@ -1,6 +1,6 @@
 # zkMed Technical Context - Comprehensive Healthcare Technology Stack with Merchant Moe Liquidity Book
 
-**Purpose**: Advanced technical overview of zkMed's revolutionary healthcare platform with yield-generating Merchant Moe Liquidity Book pools, comprehensive vlayer MailProof verification, multi-role user management, and Context7-enhanced development workflows.
+**Purpose**: Advanced technical overview of zkMed's revolutionary healthcare platform with yield-generating Merchant Moe Liquidity Book pools, comprehensive vlayer MailProof verification, and multi-role user management.
 
 ---
 
@@ -50,128 +50,17 @@
 
 ---
 
-## 📋 Context7 Integration for Enhanced Development
+## 🏗️ Healthcare Platform Architecture
 
-### Context7 MCP Server Configuration
-**Revolutionary Development Environment**: Context7 integration provides real-time access to up-to-date library documentation, enabling rapid development of complex healthcare platform features.
+### Development Environment Focus
+**Advanced Healthcare Development**: Streamlined development workflow focused on healthcare-specific requirements with comprehensive testing and deployment automation.
 
-#### Production Configuration
-```json
-{
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": "10000",
-        "CONTEXT7_CACHE_TTL": "3600"
-      }
-    }
-  }
-}
-```
-
-#### Alternative Configuration Options
-```json
-// High-performance bunx configuration
-{
-  "mcpServers": {
-    "context7": {
-      "command": "bunx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": "12000"
-      },
-      "timeout": 45000
-    }
-  }
-}
-
-// Remote Context7 server for production environments
-{
-  "mcpServers": {
-    "context7": {
-      "type": "streamable-http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CONTEXT7_API_KEY}",
-        "X-Context7-Project": "zkMed-Healthcare"
-      }
-    }
-  }
-}
-
-// Local Context7 server for air-gapped development
-{
-  "mcpServers": {
-    "context7": {
-      "command": "node",
-      "args": ["./local-context7-server.js"],
-      "env": {
-        "CONTEXT7_LOCAL_MODE": "true"
-      }
-    }
-  }
-}
-```
-
-#### Context7 Healthcare Development Workflows
-
-**Merchant Moe Liquidity Book Integration Development**:
-```bash
-# Get latest LB hook development patterns
-use context7: "Implement Merchant Moe Liquidity Book custom hooks for healthcare payment automation with beforeSwap validation"
-
-# Advanced pool management strategies
-use context7: "Create Merchant Moe Liquidity Book pool manager with custom healthcare logic and yield distribution"
-
-# Gas optimization for healthcare transactions
-use context7: "Optimize Merchant Moe Liquidity Book healthcare hook gas usage with efficient validation patterns"
-```
-
-**vlayer MailProof Integration**:
-```bash
-# DKIM signature verification in Solidity
-use context7: "Integrate vlayer MailProofs for DKIM email verification in healthcare smart contracts"
-
-# Domain ownership validation patterns
-use context7: "Implement secure domain verification using vlayer MailProofs for hospital registration"
-
-# Email-based payment authorization
-use context7: "Extract payment instructions from DKIM-signed emails using vlayer verification"
-```
-
-**Next.js Healthcare Platform Development**:
-```bash
-# Server actions for blockchain interaction
-use context7: "Create Next.js 15 server actions for Merchant Moe Liquidity Book pool management and MailProof verification"
-
-# Real-time healthcare dashboards
-use context7: "Build real-time multi-role healthcare dashboard with pool monitoring and claim tracking"
-
-# thirdweb authentication integration
-use context7: "Implement role-based authentication system with thirdweb and healthcare permissions"
-```
-
-**Container and Infrastructure**:
-```bash
-# Complex healthcare platform deployment
-use context7: "Docker compose setup for healthcare platform with Merchant Moe Liquidity Book, vlayer, and multi-service architecture"
-
-# Healthcare-specific monitoring
-use context7: "Implement comprehensive monitoring for healthcare DeFi platform with custom alerts"
-
-# Security patterns for medical data
-use context7: "Healthcare blockchain security patterns with privacy-preserving MailProof verification"
-```
-
-#### Context7 Development Benefits
-- **Real-Time Documentation**: Always current information on rapidly evolving DeFi and Web3 technologies
-- **Best Practice Integration**: Latest patterns and recommendations for secure healthcare development
-- **Rapid Prototyping**: Accelerated development with proven code patterns and implementations
-- **Security Enhancement**: Current security practices and vulnerability prevention strategies
-- **Performance Optimization**: Latest optimization techniques for gas efficiency and user experience
-- **Healthcare Specialization**: Domain-specific patterns for medical privacy and compliance
+#### Core Development Patterns
+- **Merchant Moe Liquidity Book Integration**: Custom hooks for healthcare payment automation
+- **vlayer MailProof Integration**: DKIM email verification for secure claim processing
+- **Multi-Role User Management**: Comprehensive role-based access control
+- **Privacy-First Design**: Complete medical data protection during all operations
+- **Container-First Deployment**: Production-ready scalable infrastructure
 
 ---
 
@@ -183,19 +72,19 @@ use context7: "Healthcare blockchain security patterns with privacy-preserving M
 - **vlayer Services**: Complete MailProof generation and verification stack
 - **Docker Containers**: Consistent development environment across teams
 - **Hot Reloading**: Instant feedback during smart contract development
-- **Context7 Integration**: Real-time documentation access for enhanced development velocity
+
 
 ### Enhanced Development Workflow
 ```bash
-# Environment Setup with Context7
-make dev-setup          # Initialize complete development environment with Context7
+# Environment Setup
+make dev-setup          # Initialize complete development environment
 make start-mantle-fork  # Launch persistent Mantle fork with demo data
 make deploy-contracts   # Deploy all contracts with demo configuration
 make setup-lb-pools     # Initialize Merchant Moe Liquidity Book pools with custom healthcare hooks
 make start-frontend     # Launch Next.js with multi-role dashboard
 make test-integration   # Run comprehensive integration tests
 make test-mailproof     # Test MailProof verification workflows
-make context7-docs      # Access real-time documentation for development
+
 ```
 
 ### Testing Infrastructure
@@ -451,4 +340,4 @@ const healthcareAnalytics = {
 - [ ] **Backup Strategy**: Data backup and recovery procedures tested
 - [ ] **Documentation**: Technical and user documentation complete
 
-**zkMed's technical architecture represents the first comprehensive implementation of yield-generating healthcare insurance through Merchant Moe Liquidity Book integration, delivering enterprise-grade security, compliance, and performance while maintaining the flexibility for rapid feature development through Context7 integration.** 🚀 
+**zkMed's technical architecture represents the first comprehensive implementation of yield-generating healthcare insurance through Merchant Moe Liquidity Book integration, delivering enterprise-grade security, compliance, and performance while maintaining the flexibility for rapid feature development.** 🚀 

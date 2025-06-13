@@ -87,7 +87,7 @@ zkMed Unified Platform: thirdweb Fiat/Crypto Premiums → Merchant Moe Liquidity
 **Core Innovation**: thirdweb's fiat-to-crypto infrastructure enables all patients to access yield-generating Merchant Moe Liquidity Book pools regardless of their Web3 experience, while maintaining familiar payment methods.
 
 #### **Universal Patient Registration and Premium Flow**
-*See detailed sequence diagrams in systemPatterns.md*
+
     Note over P,LB: Seamless user experience regardless of payment method
 
 #### **thirdweb Integration Benefits**

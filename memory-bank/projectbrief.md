@@ -2,11 +2,11 @@
 
 ## 🎯 Project Vision
 
-**zkMed** is the world's first privacy-preserving healthcare insurance payment platform that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment, zkMed transforms healthcare economics through comprehensive multi-role user management and Context7-enhanced development workflows.
+**zkMed** is the world's first privacy-preserving healthcare insurance payment platform that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment, zkMed transforms healthcare economics through comprehensive multi-role user management.
 
 **Core Innovation**: Healthcare funds earn yield in Merchant Moe Liquidity Book pools with custom healthcare-specific hooks until MailProof-authorized claims trigger instant mUSD payouts to hospitals - all while preserving complete medical privacy through advanced DKIM-based email verification.
 
-**Deployment Strategy**: Container-first production with persistent Mantle fork, multi-role demo accounts, live frontend accessible via custom domain with SSL, and real-time development acceleration through Context7 integration.
+**Deployment Strategy**: Container-first production with persistent Mantle fork, multi-role demo accounts, live frontend accessible via custom domain with SSL.
 
 ---
 
@@ -26,41 +26,26 @@
 - **Instant Payouts**: Pool-authorized claims trigger immediate mUSD transfers
 - **Native Processing**: Direct mUSD handling eliminates oracle dependencies
 - **Container Deployment**: Production-ready scalable infrastructure with live demo
-- **Context7 Integration**: Real-time documentation access for accelerated development
 
 ---
 
 ## 🏗️ Comprehensive User Flow Architecture
 
-### Patient Registration & Actions - Unified thirdweb-Powered Flow
+### Patient Registration & Payment Flow
 
-*Detailed flow available in activeContext.md and systemPatterns.md*
+```mermaid
+graph TD
+    A[Patient Registration] --> B{Payment Method}
+    B -->|Fiat| C[Credit Card via thirdweb]
+    B -->|Crypto| D[Wallet Connection]
+    B -->|Hybrid| E[Both Options]
     
-    alt Fiat Payment Preference
-        P->>T: Setup Credit Card/Bank via thirdweb
-        loop Monthly Payments
-            T->>T: Auto Convert Fiat to mUSD (100 mUSD)
-            T->>LB: Deposit to Healthcare Pool
-            LB->>P: Earn Yield (3-5% APY)
-        end
-    else Crypto Payment Preference
-        P->>T: Connect Wallet via thirdweb
-        loop Monthly Payments
-            P->>T: Transfer mUSD (100 mUSD)
-            T->>LB: Deposit to Healthcare Pool
-            LB->>P: Earn Yield (3-5% APY)
-        end
-    else Hybrid Payment Preference
-        P->>T: Setup Both Fiat and Crypto Options
-        loop Flexible Monthly Payments
-            T->>LB: Route Payment to Healthcare Pool
-            LB->>P: Earn Yield (3-5% APY)
-        end
-    end
+    C --> F[Auto Convert to mUSD]
+    D --> F
+    E --> F
     
-    Note over P,I: Premium: 100 mUSD every month via any payment method
-    Note over T,LB: Universal access to yield benefits via Merchant Moe
-    Note over LB,P: All patients earn 3-5% APY regardless of payment choice
+    F --> G[Merchant Moe Pool Deposit]
+    G --> H[Earn 3-5% APY]
 ```
 
 **Universal Registration Experience Benefits**:
@@ -81,81 +66,46 @@
 - **Cross-Platform Integration**: Works across all devices and platforms
 - **Gradual Web3 Adoption**: Educational pathway from fiat to crypto payments
 
-### Hospital Registration & Actions
-*Detailed flow available in systemPatterns.md*
+### Multi-Role System Architecture
 
-**Hospital Experience**:
-- **Domain Verification**: Cryptographic proof of official email domain control
-- **Payment Setup**: Immediate access to MailProof-triggered instant payments
-- **Cash Flow Optimization**: Real-time payment reception upon claim authorization
-- **Financial Tracking**: Comprehensive dashboard for payment and yield monitoring
-
-### Insurance Company Registration & Actions
-*Detailed flow available in systemPatterns.md*
-
-**Insurance Company Experience**:
-- **Pool Creation**: Automatic Merchant Moe Liquidity Book pool initialization with custom healthcare hooks
-- **Claim Management**: Traditional off-chain review with on-chain automation
-- **MailProof Authorization**: Send DKIM-signed payment authorization emails
-- **Performance Monitoring**: Real-time pool management and yield optimization
-
-### Admin & Governance Framework
 ```mermaid
-graph TB
-    A[Multi-Admin Deployment] --> B[User Registration Management]
-    B --> C[Pool Parameter Governance]
-    C --> D[Dispute Resolution]
-    D --> E[Protocol Upgrades]
-    E --> F[Emergency Response]
+graph TD
+    A[zkMed Platform] --> B[Patients]
+    A --> C[Hospitals]
+    A --> D[Insurers]
+    A --> E[Admins]
+    
+    B --> F[Pay Premiums via thirdweb]
+    B --> G[Earn Yield from Pools]
+    
+    C --> H[Verify Domain via MailProof]
+    C --> I[Receive Instant Payments]
+    
+    D --> J[Create Healthcare Pools]
+    D --> K[Send MailProof Authorization]
+    
+    E --> L[Manage Platform]
+    E --> M[Emergency Controls]
 ```
-
-**Admin Capabilities**:
-- **Distributed Administration**: Multiple admins with specialized role-based permissions
-- **User Management**: Oversight of all registration and verification processes
-- **Pool Governance**: Parameter adjustment and performance optimization
-- **Emergency Controls**: Rapid response capabilities for critical situations
 
 ---
 
-## 💰 Enhanced Claim Processing Flow
+## 💰 Hybrid Claim Processing Flow
 
-*See comprehensive hybrid claim processing patterns and detailed flows in activeContext.md and systemPatterns.md*
-
-#### **Web2 (Off-Chain) Traditional Insurance Processing**
 ```mermaid
-sequenceDiagram
-    participant P as Patient/Hospital
-    participant Portal as Insurer Portal/EHR
-    participant Review as Claims Review Team
-    participant Assessment as Assessment System
-
-    Note over P,Assessment: Standard Insurance Claim Processing (Web2)
-    P->>Portal: 1. Submit Claim Documents & Medical Bills
-    Portal->>Review: Route Claim for Manual Review
-    Review->>Assessment: 2. Verify Eligibility & Coverage
-    Assessment->>Review: Policy Terms & Coverage Validation
-    Review->>Review: 3. Claim Decision (Approve/Deny)
-    Review->>Review: 4. Calculate Payable Amount & Prepare MailProof
-```
-
-#### **Web3 (On-Chain) zkMed Payment Automation**
-```mermaid
-sequenceDiagram
-    participant Review as Claims Review Team
-    participant E as Email System
-    participant P as Patient/Hospital
-    participant V as vlayer MailProof
-    participant C as ClaimProcessingContract
-    participant LB as Merchant Moe Liquidity Book Pool
-
-    Note over Review,LB: zkMed Blockchain Payment Automation (Web3)
-    Review->>E: 5. Send DKIM-Signed MailProof Authorization Email
-    E->>P: 6. Deliver Payment Authorization to Patient/Hospital
-    P->>V: 7. Submit MailProof On-Chain for Verification
-    V->>C: Verify DKIM Signature & Domain Ownership
-    C->>LB: 8. Trigger Automated Payment via Custom Hook
-    LB->>P: Instant mUSD Transfer to Recipient Wallet
-         LB->>LB: 9. Distribute Yield (60% Patients, 20% Insurers, 20% Protocol)
+graph TD
+    A[Patient Treatment] --> B[Hospital Submits Claim]
+    B --> C[Insurer Reviews Claim]
+    C --> D{Approved?}
+    D -->|Yes| E[Generate DKIM-Signed MailProof]
+    D -->|No| F[Claim Rejected]
+    
+    E --> G[Send MailProof Email]
+    G --> H[Hospital Submits MailProof On-Chain]
+    H --> I[vlayer Verifies DKIM Signature]
+    I --> J[Smart Contract Validates]
+    J --> K[Merchant Moe Pool Pays Hospital]
+    K --> L[Yield Distributed to Stakeholders]
 ```
 
 ### Hybrid Approach: Why Web2 + Web3?
@@ -478,50 +428,7 @@ contract HealthcarePoolHook is BaseHook {
 - **Instant Liquidity**: Proven Merchant Moe Liquidity Book mechanisms ensure immediate claim payouts
 - **Gas Optimization**: Efficient hook implementations reduce transaction costs
 
----
 
-## 🏆 Context7 Integration for Enhanced Development
-
-### Revolutionary Development Acceleration
-
-**Innovation**: First healthcare platform integrating Context7 MCP for real-time access to up-to-date library documentation and development best practices.
-
-#### Context7 Configuration
-```json
-{
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"],
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": "12000",
-        "CONTEXT7_CACHE_TTL": "3600"
-      }
-    }
-  }
-}
-```
-
-#### Development Workflow Enhancement
-```bash
-# Merchant Moe Liquidity Book integration with real-time documentation
-use context7: "Implement Merchant Moe Liquidity Book custom hooks for healthcare payment automation"
-
-# vlayer MailProof best practices  
-use context7: "Integrate vlayer MailProofs for DKIM email verification in healthcare contracts"
-
-# Next.js healthcare dashboard development
-use context7: "Build multi-role healthcare dashboard with real-time pool monitoring"
-
-# Container orchestration for healthcare platform
-use context7: "Docker compose setup for healthcare platform with Merchant Moe Liquidity Book and vlayer"
-```
-
-#### Context7 Benefits
-- **Real-Time Documentation**: Always current information on rapidly evolving DeFi protocols
-- **Rapid Prototyping**: Accelerated development with proven code patterns
-- **Security Enhancement**: Current security practices and vulnerability prevention
-- **Healthcare Specialization**: Domain-specific patterns for medical privacy and compliance
 
 ---
 
@@ -577,7 +484,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - **Merchant Moe Liquidity Book Pool Management**: Custom hook integration and pool initialization
 - **vlayer MailProof Services**: DKIM verification and domain authentication
 - **Multi-Role Frontend**: Specialized interfaces for all user types
-- **Context7 Integration**: Real-time documentation server for development
+
 - **Monitoring Stack**: Comprehensive health monitoring and alerting
 
 #### Live Demo Workflows
@@ -592,7 +499,6 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - **thirdweb Partnership**: Official Cookathon sponsor integration for seamless UX
 - **Native mUSD Optimization**: Direct Mantle ecosystem integration eliminates complexity
 - **Production Readiness**: Containerized deployment with comprehensive live demo
-- **Prize Positioning**: Best DeFi Application, Most Innovative Healthcare Solution, Best Overall
 
 ---
 
@@ -617,7 +523,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - [ ] **User Experience**: Seamless multi-role registration and automated payment management
 - [ ] **Privacy Security**: Zero medical data exposure during MailProof verification
 - [ ] **System Reliability**: High uptime and transaction success rates across all services
-- [ ] **Development Velocity**: Accelerated feature development through Context7 integration
+
 
 ---
 
@@ -628,7 +534,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - **MailProof Architecture**: DKIM signature verification and domain authentication system
 - **Container Infrastructure**: Multi-service Docker setup for production deployment
 - **Local Development**: Mantle fork environment with Merchant Moe Liquidity Book integration preparation
-- **Context7 Integration**: Real-time documentation access for enhanced development workflows
+
 
 ### Current Implementation Phase 🚧
 - **Merchant Moe Liquidity Book Pool Integration**: Custom healthcare hooks for payment validation and yield distribution
@@ -652,7 +558,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 - **Industry First**: Only healthcare platform with Merchant Moe Liquidity Book custom hooks for medical payments
 - **Proven Infrastructure**: Built on battle-tested Merchant Moe Liquidity Book and vlayer protocols
 - **Healthcare Specialization**: Custom hooks and logic specifically designed for medical payments
-- **Context7 Acceleration**: Real-time documentation access for rapid feature development
+
 
 #### User Experience Excellence
 - **Multi-Role Architecture**: Comprehensive platform supporting all healthcare stakeholders
@@ -675,7 +581,7 @@ zkMed employs a **comprehensive container architecture** using Docker for scalab
 | **Fund Management** | 0% returns on idle funds | Basic staking mechanisms | Standard yield farming | Merchant Moe Liquidity Book with custom healthcare hooks |
 | **Privacy Protection** | Centralized data exposure | Limited privacy features | Basic encryption | Complete MailProof verification |
 | **Admin Governance** | Single administrator control | Basic permission systems | DAO voting mechanisms | Multi-admin with specialized healthcare roles |
-| **Development Speed** | Slow manual iterations | Standard documentation | Library integration | Real-time Context7 documentation access |
+| **Development Speed** | Slow manual iterations | Standard documentation | Library integration | Real-time documentation access |
 
 ---
 

@@ -1,6 +1,6 @@
-# zkMed Product Context - Revolutionary Healthcare Economics with Uniswap v4
+# zkMed Product Context - Revolutionary Healthcare Economics with Merchant Moe
 
-**Mission**: Transform healthcare payments through the world's first privacy-preserving platform with yield-generating Uniswap v4 pools, delivering unprecedented capital efficiency while maintaining complete medical privacy through advanced vlayer MailProof-based claim certification.
+**Mission**: Transform healthcare payments through the world's first privacy-preserving platform with yield-generating Merchant Moe Liquidity Book pools, delivering unprecedented capital efficiency while maintaining complete medical privacy through advanced vlayer MailProof-based claim certification.
 
 ---
 
@@ -20,9 +20,9 @@
 
 ## 💡 Revolutionary Solution
 
-### Uniswap v4 Healthcare Economics with vlayer MailProof Certification
+### Merchant Moe Healthcare Economics with vlayer MailProof Certification
 
-**Core Innovation**: zkMed enables healthcare funds to earn yield through proven Uniswap v4 protocols with custom healthcare hooks while maintaining instant liquidity for claims and complete medical privacy through vlayer MailProof-based verification workflows.
+**Core Innovation**: zkMed enables healthcare funds to earn yield through proven Merchant Moe Liquidity Book protocols with custom healthcare hooks while maintaining instant liquidity for claims and complete medical privacy through vlayer MailProof-based verification workflows.
 
 #### Traditional vs zkMed Model
 
@@ -33,7 +33,7 @@
 - High administrative overhead
 - Limited investigation capabilities
 
-**zkMed Uniswap v4 Healthcare System**:
+**zkMed Merchant Moe Healthcare System**:
 - Funds earn yield via custom healthcare hooks until claims
 - Instant payouts upon authorization
 - Complete medical privacy preservation
@@ -117,7 +117,7 @@
 2. **Standard Insurance Review**: Insurer performs traditional verification and approval process
 3. **MailProof Authorization Receipt**: Receive DKIM-signed payment authorization emails from approved claims
 4. **On-Chain Proof Submission**: Submit MailProof to zkMed smart contracts for validation
-5. **Instant Payment Execution**: Automatic mUSD transfer from Uniswap v4 pools upon verification
+5. **Instant Payment Execution**: Automatic mUSD transfer from Merchant Moe pools upon verification
 6. **Real-Time Yield Tracking**: Monitor pool performance and yield distribution
 7. **Comprehensive Audit Trail**: Complete Web2-to-Web3 documentation for compliance and dispute resolution
 
@@ -131,7 +131,7 @@
 
 #### Universal Path: thirdweb-Powered Registration
 ```
-Patient Signup → Choose Payment Method (Fiat/Crypto/Hybrid) → thirdweb Setup → Uniswap v4 Pool Access → Universal Yield Generation
+Patient Signup → Choose Payment Method (Fiat/Crypto/Hybrid) → thirdweb Setup → Merchant Moe Pool Access → Universal Yield Generation
 ```
 
 #### Payment Method Selection
@@ -150,7 +150,7 @@ Medical Procedure → Claim Submission (Portal/EHR) → Insurer Review & Assessm
 
 #### **zkMed Blockchain Automation (Web3)**
 ```
-DKIM-Signed MailProof Email → Patient/Hospital Receipt → On-Chain Proof Submission → MailProof Validation → Uniswap v4 Pool Authorization → Instant mUSD Payment → Yield Distribution
+DKIM-Signed MailProof Email → Patient/Hospital Receipt → On-Chain Proof Submission → MailProof Validation → Merchant Moe Pool Authorization → Instant mUSD Payment → Yield Distribution
 ```
 
 ### Enhanced Investigation Workflow
@@ -175,7 +175,7 @@ Claim Dispute → MailProof Audit Trail → Multi-Party DKIM Verification → In
 - **Immediate Cash Flow**: Instant payments upon claim authorization
 - **Reduced Admin Costs**: Streamlined processing reduces overhead
 - **Enhanced Security**: MailProof validation prevents fraud
-- **Predictable Revenue**: Uniswap v4 pool-enabled system provides reliability
+- **Predictable Revenue**: Merchant Moe pool-enabled system provides reliability
 - **Investigation Support**: Complete MailProof audit trails for dispute resolution
 
 #### For Insurers
@@ -202,7 +202,7 @@ Claim Dispute → MailProof Audit Trail → Multi-Party DKIM Verification → In
 1. **Privacy-Preserving**: MailProof validation without data exposure
 2. **Multi-Party Verification**: Hospital, patient, and insurer DKIM-signed email confirmations
 3. **Instant Validation**: Real-time verification through MailProof workflows
-4. **Automated Authorization**: Uniswap v4 pool withdrawal triggered by validation
+4. **Automated Authorization**: Merchant Moe pool withdrawal triggered by validation
 5. **Immediate Payment**: Hospital receives mUSD instantly
 6. **Complete Audit Trail**: Comprehensive MailProof-based evidence for investigation
 
@@ -307,7 +307,7 @@ zkMed's product development is grounded in cutting-edge blockchain healthcare re
 - **EHR Integration**: Blockchain integration with insurance systems improves data security and interoperability (Implementation of Electronic Health Record, 2023)
 - **Decentralized Insurance**: Peer-to-peer risk sharing and automated claims settlement without intermediaries (MAPFRE, 2025)
 - **Fraud Prevention**: Real-time claim validation reduces fraudulent activities (Ncube et al., 2022)
-- **Advanced DeFi**: Uniswap v4's hooks and flash accounting provide gas-efficient, customizable liquidity pools
+- **Advanced DeFi**: Merchant Moe's Liquidity Book with hooks provides gas-efficient, customizable liquidity pools
 
 ---
 
@@ -316,7 +316,7 @@ zkMed's product development is grounded in cutting-edge blockchain healthcare re
 | Flow Type | Agreement Formation | Payment Method | Change Management | On-Chain? | Yield Generation |
 |-----------|-------------------|---------------|------------------|-----------|-----------------|
 | **Pure Web2 + MailProof** | Off-chain contract + DKIM email | Bank transfer, SEPA, etc. | New MailProof email | No | No |
-| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Uniswap v4 pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
+| **Web3 + MailProof + Pools** | Off-chain contract + DKIM email | On-chain deposit to Merchant Moe pool | New MailProof + contract call | Yes | Yes (3-5% APY) |
 
 **zkMed's revolutionary product vision represents the first practical implementation of hybrid Web2/Web3 architecture in healthcare insurance, delivering research-validated benefits while maintaining regulatory compliance and user familiarity. This approach balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency, creating unprecedented value for all stakeholders.** 🚀 
 
@@ -326,7 +326,7 @@ zkMed's product development is grounded in cutting-edge blockchain healthcare re
 
 | Flow Type | How Agreement Is Made | How Payment Is Made | How Changes Are Handled | On-Chain? | Yield Generation |
 |-----------|----------------------|-------------------|------------------------|-----------|-----------------|
-| **Unified thirdweb + MailProof** | Off-chain negotiation + DKIM-signed email | thirdweb fiat-to-crypto OR direct crypto to Uniswap v4 pools | New MailProof email with updated terms | Yes | Yes (3-5% APY for ALL users) |
+| **Unified thirdweb + MailProof** | Off-chain negotiation + DKIM-signed email | thirdweb fiat-to-crypto OR direct crypto to Merchant Moe pools | New MailProof email with updated terms | Yes | Yes (3-5% APY for ALL users) |
 
 #### Universal Registration Benefits Matrix
 
