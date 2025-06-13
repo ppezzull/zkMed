@@ -108,7 +108,43 @@ graph TB
 - ✅ **Contract Interaction**: Basic greeting contract demonstration
 - ✅ **Network Information**: Chain details and account balances
 
-##  Getting Started
+---
+
+## 🔄 Hybrid Claim Processing Flow
+
+### Web2/Web3 Integration Architecture
+
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
+    
+    Note over P,I: Web2 Traditional Claim Processing
+    P->>H: 1. Receive Medical Treatment
+    H->>I: 2. Submit Claim via Portal/EHR
+    I->>I: 3. Review & Assess Claim (Manual Process)
+    I->>I: 4. Approve/Deny Decision
+    
+    Note over I,LB: Web3 Automated Payment Processing
+    I->>H: 5. Send DKIM-Signed MailProof Email
+    H->>V: 6. Submit MailProof for Verification
+    V->>LB: 7. Trigger Pool Payment via Smart Contract
+    LB->>H: 8. Instant mUSD Transfer to Hospital
+    LB->>LB: 9. Distribute Yield to Stakeholders (60/20/20)
+```
+
+### Why Hybrid Architecture?
+- **Regulatory Compliance**: Medical data stays in traditional systems (GDPR/HIPAA)
+- **Industry Integration**: Seamless adoption without disrupting existing workflows
+- **Privacy Protection**: Medical information never exposed on-chain
+- **Instant Settlement**: Blockchain automation for immediate payment execution
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - **Docker**: Version 20.10+ with Docker Compose
@@ -288,62 +324,6 @@ docker-compose restart zkmed-frontend
 - 💡 **Feature Suggestions**: Ideas for healthcare platform improvements
 - 🔧 **Technical Feedback**: Architecture and implementation suggestions
 - 📖 **Documentation**: Help improve setup and usage documentation
-
----
-
-## 🔄 Hybrid Claim Processing Flow
-
-### Web2/Web3 Integration Architecture
-
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant H as Hospital
-    participant I as Insurer (Web2)
-    participant V as vlayer
-    participant LB as Merchant Moe Pool
-    
-    Note over P,I: Web2 Traditional Claim Processing
-    P->>H: 1. Receive Medical Treatment
-    H->>I: 2. Submit Claim via Portal/EHR
-    I->>I: 3. Review & Assess Claim (Manual Process)
-    I->>I: 4. Approve/Deny Decision
-    
-    Note over I,LB: Web3 Automated Payment Processing
-    I->>H: 5. Send DKIM-Signed MailProof Email
-    H->>V: 6. Submit MailProof for Verification
-    V->>LB: 7. Trigger Pool Payment via Smart Contract
-    LB->>H: 8. Instant mUSD Transfer to Hospital
-    LB->>LB: 9. Distribute Yield to Stakeholders (60/20/20)
-```
-
-### Why Hybrid Architecture?
-- **Regulatory Compliance**: Medical data stays in traditional systems (GDPR/HIPAA)
-- **Industry Integration**: Seamless adoption without disrupting existing workflows
-- **Privacy Protection**: Medical information never exposed on-chain
-- **Instant Settlement**: Blockchain automation for immediate payment execution
-
----
-
-## 📚 Documentation & References
-
-### Core Technologies
-- **[Mantle Network](https://www.mantle.xyz/)**: Layer 2 blockchain with native mUSD
-- **[vlayer MailProofs](https://book.vlayer.xyz/features/email.html)**: DKIM-based email verification
-- **[Merchant Moe DEX](https://docs.merchantmoe.com/)**: Liquidity Book with custom hooks
-- **[thirdweb SDK](https://playground.thirdweb.com/)**: Web3 authentication and smart accounts
-
-### Hackathon Context
-- **Origin**: [ETHGlobal Prague](https://ethglobal.com/events/prague) - vlayer MailProof foundation
-- **Current**: [The Cookathon on Mantle](https://www.cookathon.dev/) - Mantle ecosystem integration
-- **Evolution**: From basic MailProof verification to comprehensive healthcare platform
-
-### Research Foundation
-zkMed's development is grounded in cutting-edge blockchain healthcare research:
-- **Blockchain Healthcare Models**: Enhanced transparency and operational efficiency
-- **Decentralized Insurance**: Peer-to-peer risk sharing and automated settlement
-- **Privacy-Preserving Systems**: Zero-knowledge architectures for medical data
-- **DeFi Integration**: Yield-generating liquidity pools for capital efficiency
 
 ---
 
