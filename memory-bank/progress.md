@@ -9,10 +9,14 @@
 
 ## 🏆 Project Evolution Summary
 
-### Strategic Transformation: Traditional Claims → Merchant Moe Healthcare Platform with vlayer MailProof Certification
+### Strategic Transformation: Traditional Claims → Web2/Web3 Hybrid Healthcare Platform
 
 **Previous Vision**: Standard healthcare claims processing with basic privacy features  
-**Current Innovation**: World's first Merchant Moe Liquidity Book healthcare pools with vlayer MailProof-based comprehensive verification and custom hooks
+**Current Innovation**: Hybrid platform where Web2 claim processing triggers Web3 Merchant Moe pool automation via MailProof verification
+
+**Key Architecture**: 
+- **Web2**: Patient registration, claim review, approval decisions (off-chain)
+- **Web3**: MailProof verification, pool payments, yield distribution (on-chain)
 
 #### Revolutionary Architecture Achievements
 - ✅ **Eliminated Oracle Dependencies**: Native mUSD processing removes complex price conversion

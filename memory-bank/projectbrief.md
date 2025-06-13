@@ -34,18 +34,20 @@
 ### Patient Registration & Payment Flow
 
 ```mermaid
-graph TD
-    A[Patient Registration] --> B{Payment Method}
-    B -->|Fiat| C[Credit Card via thirdweb]
-    B -->|Crypto| D[Wallet Connection]
-    B -->|Hybrid| E[Both Options]
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant T as thirdweb
+    participant LB as Merchant Moe Pool
     
-    C --> F[Auto Convert to mUSD]
-    D --> F
-    E --> F
+    Note over P,I: Web2 Registration Process
+    P->>I: 1. Submit Registration & KYC
+    I->>P: 2. Send Insurance Agreement via Email
     
-    F --> G[Merchant Moe Pool Deposit]
-    G --> H[Earn 3-5% APY]
+    Note over P,LB: Web3 Payment Setup
+    P->>T: 3. Setup Payment Method (Fiat/Crypto)
+    T->>LB: 4. Convert & Deposit to Pool (100 mUSD/month)
+    LB->>P: 5. Start Earning Yield (3-5% APY)
 ```
 
 **Universal Registration Experience Benefits**:
@@ -69,43 +71,52 @@ graph TD
 ### Multi-Role System Architecture
 
 ```mermaid
-graph TD
-    A[zkMed Platform] --> B[Patients]
-    A --> C[Hospitals]
-    A --> D[Insurers]
-    A --> E[Admins]
+graph TB
+    subgraph "Web2 Operations"
+        A[Patient Registration]
+        B[Hospital Domain Verification]
+        C[Insurer Claim Processing]
+        D[Admin Platform Management]
+    end
     
-    B --> F[Pay Premiums via thirdweb]
-    B --> G[Earn Yield from Pools]
+    subgraph "Web3 Operations"
+        E[thirdweb Premium Payments]
+        F[Merchant Moe Pool Yield]
+        G[MailProof Verification]
+        H[Instant Pool Payments]
+    end
     
-    C --> H[Verify Domain via MailProof]
-    C --> I[Receive Instant Payments]
-    
-    D --> J[Create Healthcare Pools]
-    D --> K[Send MailProof Authorization]
-    
-    E --> L[Manage Platform]
-    E --> M[Emergency Controls]
+    A --> E
+    B --> G
+    C --> G
+    G --> H
+    E --> F
 ```
 
 ---
 
-## 💰 Hybrid Claim Processing Flow
+## 💰 Web2/Web3 Hybrid Claim Processing Flow
 
 ```mermaid
-graph TD
-    A[Patient Treatment] --> B[Hospital Submits Claim]
-    B --> C[Insurer Reviews Claim]
-    C --> D{Approved?}
-    D -->|Yes| E[Generate DKIM-Signed MailProof]
-    D -->|No| F[Claim Rejected]
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
     
-    E --> G[Send MailProof Email]
-    G --> H[Hospital Submits MailProof On-Chain]
-    H --> I[vlayer Verifies DKIM Signature]
-    I --> J[Smart Contract Validates]
-    J --> K[Merchant Moe Pool Pays Hospital]
-    K --> L[Yield Distributed to Stakeholders]
+    Note over P,I: Web2 Traditional Claim Processing
+    P->>H: 1. Receive Medical Treatment
+    H->>I: 2. Submit Claim via Portal/EHR
+    I->>I: 3. Review & Assess Claim (Manual Process)
+    I->>I: 4. Approve/Deny Decision
+    
+    Note over I,LB: Web3 Automated Payment Processing  
+    I->>H: 5. Send DKIM-Signed MailProof Email
+    H->>V: 6. Submit MailProof for Verification
+    V->>LB: 7. Trigger Pool Payment via Smart Contract
+    LB->>H: 8. Instant mUSD Transfer
+    LB->>LB: 9. Distribute Yield to Stakeholders
 ```
 
 ### Hybrid Approach: Why Web2 + Web3?

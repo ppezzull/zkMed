@@ -44,32 +44,33 @@ zkMed implements a **unified premium payment system with thirdweb fiat-to-crypto
 zkMed leverages thirdweb's fiat-to-crypto capabilities to create a unified premium payment system that removes barriers while delivering yield generation benefits to all patients.
 
 ```mermaid
-graph TB
-    subgraph "Unified Premium Payment Flow"
-        A[Patient-Insurer Agreement] --> B[Identity Verification - KYC]
-        B --> C[MailProof Registration Email]
-        C --> D[thirdweb-Powered Payment Setup]
-        D --> E[Fiat or Crypto Payment Options]
-        E --> F[Automatic Conversion to mUSD]
-        F --> G[Merchant Moe Liquidity Book Pool Deposit]
-        G --> H[Yield Generation Begins]
-    end
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant T as thirdweb
+    participant LB as Merchant Moe Pool
+    participant H as Hospital
+    participant V as vlayer
     
-    subgraph "Web2/Web3 Claim Processing (Maintained Separation)"
-        I[Claim Submission via Portal] --> J[Manual Claim Review]
-        J --> K[Claim Approval Decision]
-        K --> L[DKIM-Signed MailProof]
-        L --> M[On-Chain Proof Submission]
-        M --> N[Instant Payment Execution]
-        N --> O[Automated Yield Distribution]
-    end
+    Note over P,I: Web2 Registration & Agreement
+    P->>I: 1. Submit KYC & Insurance Application
+    I->>P: 2. Send Agreement Email with MailProof
     
-    subgraph "Benefits Integration"
-        H --> P[Universal Yield Access]
-        O --> Q[Capital Efficiency]
-        O --> R[Transparency & Auditability]
-        O --> S[Privacy & Compliance]
-    end
+    Note over P,LB: Web3 Premium Setup  
+    P->>T: 3. Setup Payment (Fiat/Crypto)
+    T->>LB: 4. Convert & Deposit Monthly Premiums
+    LB->>P: 5. Generate Yield (3-5% APY)
+    
+    Note over P,I: Web2 Claim Processing
+    P->>H: 6. Receive Medical Treatment
+    H->>I: 7. Submit Claim via Traditional Portal
+    I->>I: 8. Manual Review & Approval Decision
+    
+    Note over I,LB: Web3 Automated Payment
+    I->>H: 9. Send Payment MailProof Email
+    H->>V: 10. Submit MailProof for Verification  
+    V->>LB: 11. Trigger Instant Pool Payment
+    LB->>H: 12. Transfer mUSD Instantly
 ```
 
 #### Revolutionary Innovation Enhancement

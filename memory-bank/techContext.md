@@ -133,25 +133,11 @@ services:
       - VLAYER_API_KEY=${VLAYER_API_KEY}
       - VLAYER_ENDPOINT=${VLAYER_PRODUCTION_ENDPOINT}
     
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=zkmed
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+  # No database services required
+  # All data stored on-chain or in MailProofs
 
 volumes:
-  redis-data:
-  postgres-data:
+  # Minimal volumes for blockchain and container data only
 ```
 
 ### Environment Variables
@@ -177,9 +163,8 @@ NEXT_PUBLIC_THIRDWEB_CLIENT_ID=${THIRDWEB_CLIENT_ID}
 THIRDWEB_SECRET_KEY=${THIRDWEB_SECRET}
 NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN=${DOMAIN}
 
-# Database Configuration
-DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/zkmed
-REDIS_URL=redis://redis:6379
+# Storage Configuration  
+# No database required - all data stored on-chain or in MailProofs
 
 # Security Configuration
 NEXTAUTH_SECRET=${NEXTAUTH_SECRET}

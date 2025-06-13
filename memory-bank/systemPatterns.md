@@ -59,29 +59,35 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant P as Patient
+    participant I as Insurer (Web2)
     participant T as thirdweb
     participant LB as LB Pool Manager
     participant H as Healthcare Hook
-    participant R as LB Router
+    participant HO as Hospital
+    participant V as vlayer
 
-    Note over P,R: Premium Payment and Pool Integration
-    P->>T: Monthly Premium (100 mUSD)
+    Note over P,T: Web3 Premium Payment Setup
+    P->>T: Setup Monthly Premium Payment (100 mUSD)
     T->>LB: Add Liquidity to Healthcare Pool
     LB->>H: beforeMint() - Validate Healthcare Premium
     H->>H: Verify Patient Registration & Policy
     H->>LB: Approval - Premium Validated
     LB->>LB: Add to Discretized Liquidity Bins
-    LB->>P: LP Tokens (Healthcare Pool Shares)
+    LB->>P: Start Earning Yield (3-5% APY)
     
-    Note over P,R: Claim Payment Processing
-    Note right of H: MailProof authorization received
-    H->>LB: beforeSwap() - Validate Claim Authorization
-    H->>H: Verify MailProof & Payment Instructions
+    Note over P,I: Web2 Claim Processing  
+    P->>HO: Receive Medical Treatment
+    HO->>I: Submit Claim via Traditional Portal
+    I->>I: Manual Review & Approval Decision
+    
+    Note over I,LB: Web3 Automated Payment
+    I->>HO: Send DKIM-Signed MailProof Email
+    HO->>V: Submit MailProof for Verification
+    V->>H: Trigger beforeSwap() - Validate MailProof
+    H->>H: Verify DKIM Signature & Payment Instructions
     H->>LB: Approval - Claim Validated
-    LB->>R: Execute Swap (Pool → Recipient)
-    R->>P: Instant mUSD Transfer
-    LB->>H: afterSwap() - Update Healthcare Records
-    H->>H: Distribute Yield (60/20/20)
+    LB->>HO: Execute Instant mUSD Transfer
+    LB->>H: afterSwap() - Distribute Yield (60/20/20)
 ```
 
 #### Healthcare Hook Implementation
@@ -139,52 +145,89 @@ contract HealthcareHook is LBBaseHooks {
 
 #### **Patient Experience Pattern**
 ```mermaid
-graph TD
-    A[Patient Registration] --> B{Payment Preference}
-    B -->|Fiat| C[thirdweb Credit Card Setup]
-    B -->|Crypto| D[Wallet Connection]
-    B -->|Hybrid| E[Both Options Available]
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant T as thirdweb
+    participant LB as Merchant Moe Pool
+    participant H as Hospital
+    participant V as vlayer
     
-    C --> F[Automatic mUSD Conversion]
-    D --> F
-    E --> F
+    Note over P,I: Web2 Registration Process
+    P->>I: 1. Submit Registration & Documents
+    I->>P: 2. Send Insurance Agreement Email
     
-    F --> G[Pool Liquidity Provision]
-    G --> H[Yield Generation (3-5% APY)]
+    Note over P,LB: Web3 Payment Setup
+    P->>T: 3. Choose Payment Method (Fiat/Crypto)
+    T->>LB: 4. Setup Recurring Premium Deposits
+    LB->>P: 5. Start Earning Yield (3-5% APY)
     
-    I[Medical Service] --> J[Hospital Claim Submission]
-    J --> K[MailProof Authorization]
-    K --> L[Instant Payment to Hospital]
-    L --> M[Yield Distribution to Patient]
+    Note over P,I: Web2 Claim Processing
+    P->>H: 6. Receive Medical Treatment  
+    H->>I: 7. Submit Claim Traditional Way
+    I->>I: 8. Review & Approve Claim
+    
+    Note over I,LB: Web3 Instant Payment
+    I->>H: 9. Send MailProof Authorization
+    H->>V: 10. Verify MailProof On-Chain
+    V->>LB: 11. Trigger Instant Payment
+    LB->>H: 12. Transfer mUSD to Hospital
 ```
 
 #### **Hospital Integration Pattern**
 ```mermaid
-graph TD
-    A[Hospital Registration] --> B[Domain Verification via MailProof]
-    B --> C[Email Authentication Setup]
-    C --> D[Wallet Configuration for Payments]
-    D --> E[Integration Testing]
+sequenceDiagram
+    participant H as Hospital
+    participant V as vlayer
+    participant I as Insurer (Web2)
+    participant P as Patient
+    participant LB as Merchant Moe Pool
     
-    F[Patient Treatment] --> G[Standard Claim Submission]
-    G --> H[Insurer Review Process]
-    H --> I[MailProof Authorization Email]
-    I --> J[Automatic Payment Reception]
-    J --> K[Real-time Settlement]
+    Note over H,V: Web2/Web3 Hospital Setup
+    H->>V: 1. Submit Domain Verification MailProof
+    V->>H: 2. Confirm Email Domain Ownership
+    H->>H: 3. Configure Payment Wallet
+    
+    Note over P,I: Web2 Treatment & Claim Process
+    P->>H: 4. Receive Medical Treatment
+    H->>I: 5. Submit Claim via Traditional Portal
+    I->>I: 6. Manual Review & Assessment
+    I->>I: 7. Approve/Deny Decision
+    
+    Note over I,LB: Web3 Automated Settlement
+    I->>H: 8. Send DKIM-Signed MailProof Email
+    H->>V: 9. Submit MailProof for Verification
+    V->>LB: 10. Trigger Smart Contract Payment
+    LB->>H: 11. Instant mUSD Transfer
 ```
 
 #### **Insurance Company Pattern**
 ```mermaid
-graph TD
-    A[Insurer Registration] --> B[MailProof Domain Verification]
-    B --> C[Pool Creation] --> D[Custom Hook Setup]
-    D --> E[Patient Onboarding Integration]
+sequenceDiagram
+    participant I as Insurer (Web2)
+    participant V as vlayer  
+    participant LB as Merchant Moe Pool
+    participant H as Hospital
+    participant P as Patient
     
-    F[Claim Receipt] --> G[Traditional Review Process]
-    G --> H[Approval Decision]
-    H --> I[DKIM-Signed MailProof Generation]
-    I --> J[Automated Payment Execution]
-    J --> K[Pool Performance Monitoring]
+    Note over I,LB: Web2/Web3 Insurer Setup
+    I->>V: 1. Submit Company Domain MailProof
+    V->>I: 2. Verify Corporate Email Domain
+    I->>LB: 3. Create Healthcare Pool with Custom Hooks
+    
+    Note over P,I: Web2 Claims Processing
+    P->>H: 4. Patient Receives Treatment
+    H->>I: 5. Submit Claim via Traditional Systems
+    I->>I: 6. Manual Review & Medical Assessment
+    I->>I: 7. Policy Coverage Verification
+    I->>I: 8. Approve/Deny Decision
+    
+    Note over I,LB: Web3 Payment Automation
+    I->>H: 9. Generate & Send DKIM-Signed MailProof
+    H->>V: 10. Submit MailProof for Verification
+    V->>LB: 11. Trigger Pool Payment via Hooks
+    LB->>H: 12. Execute Instant mUSD Transfer
+    LB->>LB: 13. Distribute Yield to Stakeholders
 ```
 
 ### Advanced Registration Patterns
@@ -307,8 +350,8 @@ graph TB
     end
     
     subgraph "Infrastructure Services"
-        I[Redis Session Management]
-        J[PostgreSQL Healthcare Data]
+        I[Session Management (On-Chain)]
+        J[Healthcare Data (MailProofs)]
         K[Monitoring & Analytics]
         L[Load Balancer]
     end

@@ -129,33 +129,62 @@
 
 ### Unified Registration Workflow with Payment Flexibility
 
-#### Universal Path: thirdweb-Powered Registration
-```
-Patient Signup → Choose Payment Method (Fiat/Crypto/Hybrid) → thirdweb Setup → Merchant Moe Pool Access → Universal Yield Generation
-```
-
-#### Payment Method Selection
-```
-Credit Card/Bank → Automatic Fiat-to-mUSD → Pool Deposit → Yield Earnings
-Crypto Wallet → Direct mUSD Transfer → Pool Deposit → Yield Earnings  
-Hybrid Setup → Flexible Payment Switching → Pool Deposit → Yield Earnings
+#### Universal Registration Flow
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant T as thirdweb
+    participant LB as Merchant Moe Pool
+    
+    Note over P,I: Web2 Registration Process
+    P->>I: 1. Submit Application & KYC
+    I->>P: 2. Send Agreement Email
+    
+    Note over P,LB: Web3 Payment Setup
+    P->>T: 3. Choose Payment Method (Fiat/Crypto/Hybrid)
+    T->>LB: 4. Setup Premium Deposits & Conversion
+    LB->>P: 5. Start Universal Yield Generation (3-5% APY)
 ```
 
 ### Comprehensive Web2/Web3 Hybrid Claims Processing Journey
 
-#### **Traditional Insurance Processing (Web2)**
-```
-Medical Procedure → Claim Submission (Portal/EHR) → Insurer Review & Assessment → Coverage Verification → Approval Decision → MailProof Email Preparation
-```
-
-#### **zkMed Blockchain Automation (Web3)**
-```
-DKIM-Signed MailProof Email → Patient/Hospital Receipt → On-Chain Proof Submission → MailProof Validation → Merchant Moe Pool Authorization → Instant mUSD Payment → Yield Distribution
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital  
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
+    
+    Note over P,I: Web2 Traditional Insurance Processing
+    P->>H: 1. Receive Medical Treatment
+    H->>I: 2. Submit Claim via Portal/EHR
+    I->>I: 3. Manual Review & Medical Assessment
+    I->>I: 4. Coverage Verification & Approval Decision
+    
+    Note over I,LB: Web3 zkMed Blockchain Automation
+    I->>H: 5. Send DKIM-Signed MailProof Email
+    H->>V: 6. Submit MailProof for On-Chain Validation
+    V->>LB: 7. Trigger Pool Authorization via Smart Contract
+    LB->>H: 8. Execute Instant mUSD Payment
+    LB->>LB: 9. Distribute Yield to All Stakeholders
 ```
 
 ### Enhanced Investigation Workflow
-```
-Claim Dispute → MailProof Audit Trail → Multi-Party DKIM Verification → Investigation Support → Resolution
+```mermaid
+sequenceDiagram
+    participant A as Admin/Auditor
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant LB as Merchant Moe Pool
+    
+    Note over A,LB: Investigation & Audit Process
+    A->>I: 1. Request Claim Dispute Investigation
+    I->>V: 2. Retrieve MailProof Audit Trail  
+    V->>V: 3. Verify Multi-Party DKIM Signatures
+    V->>A: 4. Provide Complete Investigation Evidence
+    A->>A: 5. Analysis & Resolution Decision
 ```
 
 ---
