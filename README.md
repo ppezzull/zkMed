@@ -11,7 +11,7 @@
 
 ---
 
-## 🎯 1. Project Vision
+## 🎯 Project Vision
 
 ### Overview
 zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and yield-generating liquidity pools built on **Merchant Moe Liquidity Book with custom hooks**. Built on Mantle Network with native mUSD integration and containerized production deployment.
@@ -30,7 +30,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 
 ---
 
-## 🏗️ 2. Technical Architecture
+## 🏗️ Technical Architecture
 
 ### Blockchain Infrastructure
 - **Primary Chain**: [Mantle Network](https://www.mantle.xyz/) (Ethereum L2)
@@ -58,7 +58,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 
 ---
 
-## 🚀 3. Current Implementation
+## 🚀 Current Implementation
 
 ### Development Environment
 **Status**: ✅ **Production-ready Docker container stack** with foundry + vlayer + anvil integration
@@ -108,40 +108,7 @@ graph TB
 - ✅ **Contract Interaction**: Basic greeting contract demonstration
 - ✅ **Network Information**: Chain details and account balances
 
----
-
-## 🐳 4. Docker Infrastructure
-
-### Container Setup
-**One-command deployment** with comprehensive service orchestration:
-
-```bash
-# Complete environment startup
-docker-compose up -d
-```
-
-### Key Containers
-
-#### Core Services
-- **`anvil-l2-mantle`**: Local Mantle blockchain environment (Chain ID 31339)
-- **`zkmed-contracts`**: Smart contract deployment with Foundry framework
-- **`zkmed-frontend`**: Next.js application with thirdweb integration
-
-#### vlayer Services
-- **`vlayer-call-server`**: MailProof verification service
-- **`notary-server`**: DKIM signature validation
-- **`vdns-server`**: Domain verification
-- **`websockify`**: WebSocket proxy for real-time updates
-
-#### Architecture Benefits
-- **Persistent State**: Blockchain data maintained across restarts
-- **Shared Volumes**: Contract artifacts automatically synchronized
-- **Health Checks**: Automated service monitoring and dependencies
-- **Network Isolation**: Secure inter-container communication
-
----
-
-## 🚀 5. Getting Started
+##  Getting Started
 
 ### Prerequisites
 - **Docker**: Version 20.10+ with Docker Compose
@@ -189,7 +156,7 @@ NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
 
 ---
 
-## 📋 6. Smart Contract Architecture
+## 📋 Smart Contract Architecture
 
 ### Core Contracts (Planned)
 
@@ -230,32 +197,27 @@ contract HealthcareHook is BaseHook {
 
 ---
 
-## 🗺️ 7. Development Roadmap
+## 🗺️ Development Roadmap
 
-### Current MVP (Hours Remaining)
+### Current MVP (Hackathon Submission)
 - ✅ **Docker Environment**: Complete container orchestration
 - ✅ **Wallet Integration**: Smart account interaction via thirdweb
 - ✅ **Contract Deployment**: Automated Foundry-based deployment
 - ✅ **Dev Interface**: Basic dashboard at `/dev` showing system status
 
-### Short-Term Goals (Next 2 weeks)
+### Next Week Goals (All Contracts Working)
 - 🚧 **Organization Registration**: Hospital domain verification with [vlayer MailProofs](https://book.vlayer.xyz/features/email.html)
 - 🚧 **Pool Integration**: [Merchant Moe Liquidity Book](https://docs.merchantmoe.com/) custom hooks
 - 🚧 **Enhanced Frontend**: Multi-role dashboard for patients, hospitals, insurers
 
-### Medium-Term Goals (Following 2 weeks)
-- 📋 **Patient Registration**: Premium payment setup with yield tracking
-- 📋 **Claim Processing**: End-to-end MailProof-based claim automation
-- 📋 **Yield Distribution**: Automated 60/20/20 stakeholder rewards
-
-### Long-Term Vision (Post-Hackathon)
-- 📋 **Full Implementation**: Complete Web2/Web3 hybrid claim processing
+### Post-Hackathon (Mainnet Deployment)
+- 📋 **Production Infrastructure**: Deploy to Mantle Mainnet with mUSD integration
 - 📋 **Regulatory Compliance**: GDPR/HIPAA compliance framework
-- 📋 **Production Deployment**: Live platform with real healthcare providers
+- 📋 **Real Healthcare Pilots**: Partner with healthcare providers for live testing
 
 ---
 
-## 🧪 8. Testing the Environment
+## 🧪 Testing the Environment
 
 ### Verification Steps
 
@@ -304,7 +266,7 @@ docker-compose restart zkmed-frontend
 
 ---
 
-## 👨‍💻 9. Solo Development Notes
+## 👨‍💻 Solo Development Notes
 
 ### Project Status
 **Solo Development Project** - Currently developed by a single developer with focus on:
@@ -329,7 +291,7 @@ docker-compose restart zkmed-frontend
 
 ---
 
-## 🔄 10. Hybrid Claim Processing Flow
+## 🔄 Hybrid Claim Processing Flow
 
 ### Web2/Web3 Integration Architecture
 
@@ -363,7 +325,7 @@ sequenceDiagram
 
 ---
 
-## 📚 11. Documentation & References
+## 📚 Documentation & References
 
 ### Core Technologies
 - **[Mantle Network](https://www.mantle.xyz/)**: Layer 2 blockchain with native mUSD
@@ -385,7 +347,7 @@ zkMed's development is grounded in cutting-edge blockchain healthcare research:
 
 ---
 
-## 🎯 12. Economic Model
+## 🎯 Economic Model
 
 ### Stakeholder Benefits
 
@@ -416,33 +378,6 @@ Total Yield Generated: 100%
 ├── 20% → Insurer Operations  
 └── 20% → Protocol Treasury
 ```
-
----
-
-## 🚀 13. Getting Involved
-
-### For Developers
-```bash
-# Fork the repository
-git clone <your-fork>
-cd zkMed
-
-# Set up development environment
-make dev-setup
-
-# Start contributing
-make all
-```
-
-### For Healthcare Professionals
-- **Feedback**: Share insights on healthcare workflow integration
-- **Testing**: Help validate real-world use cases and requirements
-- **Partnerships**: Explore pilot program opportunities
-
-### For Investors & Partners
-- **Technical Due Diligence**: Review architecture and implementation
-- **Market Validation**: Assess healthcare industry fit and adoption potential
-- **Strategic Partnerships**: Explore integration opportunities
 
 ---
 
