@@ -58,6 +58,52 @@ zkMed is a **privacy-preserving healthcare insurance payment platform** that aut
 
 ---
 
+## 🔐 MailProof Technology
+
+### Purpose in zkMed
+MailProofs enable **automated payment verification** by proving that claim approval emails come from legitimate insurance companies, eliminating manual verification while maintaining complete privacy of medical data.
+
+### How DKIM Verification Works
+**DKIM (DomainKeys Identified Mail)** provides cryptographic proof that emails are authentic:
+
+1. **Email Signing**: Insurance company's SMTP server signs emails with a private key
+2. **DNS Publication**: The corresponding public key is published in DNS records
+3. **Signature Verification**: vlayer verifies the DKIM signature against the DNS public key
+4. **Domain Authentication**: Proves the email truly originated from the claimed domain
+
+### zkMed Implementation Flow
+```mermaid
+sequenceDiagram
+    participant I as Insurance Company
+    participant H as Hospital
+    participant V as vlayer Prover
+    participant DNS as DNS Notary
+    participant SC as Smart Contract
+    
+    I->>H: Send DKIM-signed claim approval email
+    H->>V: Submit email for MailProof generation
+    V->>DNS: Fetch public key from DNS records
+    DNS->>V: Return verified DNS record + signature
+    V->>V: Verify DKIM signature authenticity
+    V->>SC: Generate proof of domain + claim details
+    SC->>H: Trigger automatic mUSD payment
+```
+
+### Security Benefits
+- **Domain Verification**: Cryptographically proves emails come from legitimate insurers
+- **Privacy Preservation**: Only proves domain authenticity, never exposes medical content
+- **Fraud Prevention**: Impossible to forge emails from verified insurance domains
+- **Regulatory Compliance**: Maintains audit trails while protecting sensitive data
+
+### Technical Requirements
+For zkMed MailProofs to work, insurance company emails must:
+- ✅ Be signed with DKIM-Signature header
+- ✅ Have matching sender domain in DKIM `d=` tag and `From:` header  
+- ✅ Use supported email providers (major providers like Gmail, Outlook)
+- ✅ Include claim approval details in structured format
+
+---
+
 ## 🚀 Current Implementation
 
 ### Development Environment
@@ -155,19 +201,28 @@ make health
 ```
 
 ### Environment Variables
-Basic configuration is pre-configured for development:
+Complete development configuration:
 
 ```bash
-# Blockchain Configuration
+# Next.js Configuration
+NODE_ENV=development
 NEXT_PUBLIC_CHAIN_ID=31339
 NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
-
-# vlayer Services
-PROVER_URL=http://vlayer-call-server:3000
-NOTARY_URL=http://notary-server:7047
-
-# thirdweb Integration
 NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
+NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=${NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS:-}
+NEXT_TELEMETRY_DISABLED=1
+
+# vlayer Environment
+VLAYER_ENV=dev
+CHAIN_NAME=anvil
+PROVER_URL=http://vlayer-call-server:3000
+JSON_RPC_URL=http://anvil-l2-mantle:8545
+EXAMPLES_TEST_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+NOTARY_URL=http://notary-server:7047
+WS_PROXY_URL=ws://localhost:3003
+
+# Smart Wallet Configuration
+SMART_WALLET_FACTORY_MANTLE=0x06224c9387a352a953d6224bfff134c3dd247313
 ```
 
 ### Local Access
@@ -279,4 +334,4 @@ Total Yield Generated: 100%
 
 ---
 
-*Built with ❤️ for the future of healthcare finance*
+*Cooked with passion for revolutionizing healthcare finance at The Cookathon! 👨‍🍳🏥*
