@@ -7,9 +7,35 @@
 
 ---
 
-## 🎯 Current Development Focus: Unified Hybrid Architecture
+## 🎯 Current Development Focus: Backend Implementation - vlayer to Merchant Moe Evolution
 
-zkMed implements a **unified premium payment system with thirdweb fiat-to-crypto integration**, while maintaining clear separation between Web2 and Web3 operations for claim processing. This approach balances regulatory compliance, privacy, and user experience with blockchain-enabled automation, transparency, and capital efficiency.
+zkMed is transitioning from foundational vlayer MailProof verification to full Merchant Moe Liquidity Book pool integration. The current Docker stack provides the perfect foundation for implementing the complete healthcare platform.
+
+### **Current Backend Infrastructure Status** ✅
+
+Your production-ready container architecture includes:
+- **anvil-l2-mantle**: Mantle fork (Chain ID 31339) with real mainnet state
+- **vlayer Services**: Complete MailProof verification stack (call-server, notary-server, vdns-server)
+- **Foundry Framework**: Smart contract development and deployment via zkmed-contracts
+- **Next.js Frontend**: Server actions architecture via zkmed-frontend
+
+### **Implementation Evolution Path**
+
+**Phase 1: Healthcare MailProof Foundation** (Current)
+- Replace simple `Greeting.sol` with `HealthcareMailProof.sol` for claim verification
+- Integrate vlayer DKIM signature validation for hospital domain verification
+- Implement patient/hospital registration with MailProof authentication
+
+**Phase 2: Merchant Moe Pool Integration** (Next 2 weeks)
+- Add Liquidity Book dependencies to foundry.toml
+- Deploy `HealthcarePoolManager.sol` for mUSD/USDC pool management
+- Implement custom `HealthcareHook.sol` for pool validation logic
+- Enable 60/20/20 yield distribution automation
+
+**Phase 3: Full Platform Integration** (Following 2 weeks)
+- Frontend dashboard for pool metrics and claim tracking
+- End-to-end claim processing from MailProof to instant pool payments
+- Production deployment with monitoring and health checks
 
 ### ✅ Core Innovation: Unified Premium + Hybrid Claims Architecture
 - **Unified Premium Payments**: thirdweb fiat-to-crypto enables seamless payment flow to Merchant Moe Liquidity Book pools

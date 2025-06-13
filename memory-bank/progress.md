@@ -45,74 +45,113 @@
 - Comprehensive investigation support through documented communication
 
 #### 3. Container Infrastructure (✅ PRODUCTION ARCHITECTURE)
-**Status**: Multi-service Docker deployment with persistent data
+**Status**: Production-ready Docker container stack with foundry + vlayer + anvil integration
 
-**Container Achievements**:
-- **Persistent Mantle Fork**: Long-running blockchain with Chain ID 31339
-- **Demo Account Configuration**: Pre-configured insurer, hospital, patient accounts
-- **Multi-Service Orchestration**: Coordinated container deployment
-- **Health Monitoring**: Automated restart and status checking
-- **Volume Management**: Persistent blockchain state across restarts
-- **vlayer MailProof Services**: vlayer DKIM-based email verification infrastructure
+**Container Architecture Achievements**:
+- **anvil-l2-mantle**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
+- **zkmed-contracts**: Automated smart contract deployment service with foundry framework
+- **zkmed-frontend**: Next.js application with vlayer integration and live contract access
+- **vlayer Services**: Complete MailProof infrastructure (call-server, notary-server, vdns-server)
+- **Shared Volumes**: Contract artifacts automatically shared between deployer and frontend
+- **Network Orchestration**: Coordinated service dependencies with health checks
+
+**Foundry + vlayer Integration**:
+```yaml
+# Current Production Architecture
+anvil-l2-mantle:
+  image: ghcr.io/foundry-rs/foundry:latest
+  command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
+  ports: ["127.0.0.1:8547:8545"]
+
+zkmed-contracts:
+  build: ./srcs/foundry/Dockerfile.deployer
+  environment:
+    - RPC_URL=http://anvil-l2-mantle:8545
+    - CHAIN_ID=31339
+  volumes: [contract-artifacts:/app/out:rw]
+
+zkmed-frontend:
+  build: ./srcs/nextjs/Dockerfile.dev
+  ports: ["3001:3000"]
+  environment:
+    - PROVER_URL=http://vlayer-call-server:3000
+    - NOTARY_URL=http://notary-server:7047
+  volumes: [contract-artifacts:/app/contracts:ro]
+```
 
 **Production Benefits**:
-- One-command deployment with automated setup
-- Custom domain access with SSL termination
-- Scalable architecture for production workloads
-- Real-time monitoring and alerting capabilities
-- Disaster recovery with automated backups
+- **One-Command Deployment**: `docker-compose up -d` starts complete infrastructure
+- **Automatic Contract Deployment**: Foundry deployer with idempotent deployment checks
+- **Live Development**: Hot reload with persistent blockchain state and contract artifacts
+- **vlayer Integration**: Seamless MailProof verification with dedicated services
+- **Production Ready**: 85% complete infrastructure ready for scaling
 
 #### 4. Local Development Environment (✅ ENTERPRISE GRADE)
-**Status**: Complete Mantle fork environment with Aave V3 access
+**Status**: Complete foundry-based development stack with Mantle fork and vlayer integration
 
 **Development Infrastructure**:
-- **Foundry Framework**: Complete smart contract development suite
-- **Local Fork Testing**: Zero-cost testing with real mainnet state
-- **Comprehensive Testing**: Unit, integration, and E2E test coverage  
-- **CI/CD Pipeline**: Automated testing and deployment workflows
-- **Documentation**: Complete technical and user guides
+- **Foundry Framework**: Complete smart contract development suite with solidity ^0.8.20
+- **Mantle Fork Environment**: Real mainnet state at Chain ID 31339 via anvil container
+- **vlayer Integration**: Local MailProof verification services for DKIM testing
+- **Automated Deployment**: `deploy.sh` script with contract artifact generation
+- **Container Orchestration**: Docker-based development with persistent state
 
 **Developer Experience**:
-- Hot reloading for rapid iteration
-- Gas optimization analysis and reporting
-- Automated contract verification and deployment
-- Real-time blockchain interaction and monitoring
-- Integrated vlayer services for MailProof testing
+```bash
+# Complete Development Workflow
+docker-compose up -d              # Start all services
+docker logs anvil-l2-mantle       # Monitor Mantle fork
+docker logs zkmed-contracts       # Check contract deployment
+docker logs zkmed-frontend        # Monitor frontend
+```
+
+**Key Development Features**:
+- **foundry.toml**: Configured with vlayer, OpenZeppelin, and risc0-ethereum dependencies
+- **Idempotent Deployment**: Checks for existing contracts to avoid redeployment
+- **Contract Artifacts**: Automatic JSON generation for frontend consumption
+- **Live Hot Reload**: Frontend updates with persistent blockchain state
+- **Health Checks**: Automated service monitoring and restart capabilities
 
 ---
 
 ## 🚧 ACTIVE DEVELOPMENT PHASE
 
-### Phase Status: EmailProof-Based Claims Implementation → Essential Services Integration
+### Phase Status: Backend Implementation - vlayer MailProof → Merchant Moe Pool Integration
 
-#### 1. Essential Container Stack [85% COMPLETE]
-**Status**: 🚧 Simplified two-container architecture with vlayer and EmailProof integration
+#### 1. Container Infrastructure Foundation [✅ COMPLETE]
+**Status**: ✅ Production-ready Docker stack with vlayer services and Foundry deployment
 
 **Completed Architecture Elements**:
-- ✅ **Container Simplification**: Reduced from 5 services to 2 essential containers
-- ✅ **vlayer Integration**: Direct connection to existing anvil-l2-mantle (port 8547)
-- ✅ **EmailProof Infrastructure**: vlayer email verification services operational
-- ✅ **Server Actions**: Replaced all API endpoints with server actions
-- ✅ **Host Network Mode**: Direct container communication with vlayer infrastructure
-- ✅ **Demo Account Setup**: Using vlayer's pre-funded deterministic accounts
+- ✅ **anvil-l2-mantle**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
+- ✅ **vlayer Services**: Complete MailProof infrastructure (call-server, notary-server, vdns-server)
+- ✅ **zkmed-contracts**: Foundry-based smart contract deployment with artifact sharing
+- ✅ **zkmed-frontend**: Next.js with server actions and vlayer integration
+- ✅ **Container Orchestration**: Health checks, service dependencies, and networking
+- ✅ **Development Workflow**: Automated deployment with `make all` command
 
 **Current Implementation Focus**:
 ```yaml
-# Essential Container Stack with EmailProof Support
+# Production-Ready Container Stack with Foundry + vlayer
 services:
-  contract-deployer:    # One-time Greeting contract deployment
-    network_mode: "host"
+  anvil-l2-mantle:      # Persistent Mantle fork using official Foundry image
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
+    ports: ["127.0.0.1:8547:8545"]
+    
+  zkmed-contracts:      # Foundry-based contract deployment
+    build: ./srcs/foundry/Dockerfile.deployer
     environment:
-      - RPC_URL=http://host.docker.internal:8547
+      - RPC_URL=http://anvil-l2-mantle:8545
       - CHAIN_ID=31339
-      - EMAILPROOF_ENABLED=true
+    volumes: [contract-artifacts:/app/out:rw]
       
-  zkmed-frontend:       # Next.js with server actions and EmailProof integration
-    ports: ["3000:3000"]
-    depends_on: [contract-deployer]
+  zkmed-frontend:       # Next.js with vlayer and contract integration
+    ports: ["3001:3000"]
     environment:
-      - NEXT_PUBLIC_EMAILPROOF_ENABLED=true
-      - NEXT_PUBLIC_VLAYER_PROVER_URL=http://localhost:3000
+      - PROVER_URL=http://vlayer-call-server:3000
+      - NOTARY_URL=http://notary-server:7047
+      - JSON_RPC_URL=http://anvil-l2-mantle:8545
+    volumes: [contract-artifacts:/app/contracts:ro]
 ```
 
 **Simplification Benefits**:
@@ -122,15 +161,15 @@ services:
 - Faster deployment and debugging with minimal moving parts
 - Better alignment with Dockploy deployment requirements
 
-#### 2. Frontend Server Actions Migration [70% COMPLETE]
-**Status**: 🚧 Replacing API endpoints with server actions for better SSR compatibility and EmailProof integration
+#### 2. Smart Contract Evolution [30% COMPLETE] 
+**Status**: 🚧 Transitioning from simple Greeting.sol to comprehensive healthcare contracts
 
-**Server Actions Implementation**:
-- ✅ **Contract Interaction**: Direct blockchain calls via server actions
-- ✅ **Demo Account Management**: Pre-configured vlayer account integration
-- ✅ **EmailProof Integration**: Server actions for email verification workflows
-- 🚧 **Component Architecture**: SSR-compatible component design
-- 🚧 **State Management**: Simplified state with server action patterns
+**Healthcare Contract Development**:
+- 📋 **HealthcareMailProof.sol**: vlayer DKIM verification for claims (replace Greeting.sol)
+- 📋 **HealthcarePoolManager.sol**: Merchant Moe Liquidity Book pool management
+- 📋 **HealthcareHook.sol**: Custom hooks for healthcare-specific pool logic
+- 📋 **Hospital Registration**: Domain verification and wallet linking
+- 📋 **Patient Management**: Premium deposits and yield tracking
 
 **EmailProof-Enhanced Components**:
 - ✅ **Chain Stats**: Network information via server actions
@@ -147,15 +186,15 @@ services:
 - `submitEmailProofClaim()`: EmailProof-based claim submission
 - `getEmailProofAuditTrail()`: Complete email verification history
 
-#### 3. Build System Stabilization [60% COMPLETE]
-**Status**: 🚧 Resolving SSR/TypeScript compatibility issues for production builds
+#### 3. Merchant Moe Pool Integration [15% COMPLETE]
+**Status**: 🚧 Adding Liquidity Book dependencies and pool management contracts
 
-**Build System Progress**:
-- ✅ **Bun Integration**: Migrated from npm to bun for faster builds
-- ✅ **Dynamic Imports**: SSR-safe component loading patterns
-- ✅ **EmailProof Types**: TypeScript interfaces for email verification
-- 🚧 **TypeScript Fixes**: Resolving contract type compatibility
-- 🚧 **thirdweb SSR**: Client-side only hook execution patterns
+**Pool Integration Progress**:
+- 📋 **foundry.toml Dependencies**: Add `liquidity-book = { git = "https://github.com/traderjoe-xyz/joe-v2.git" }`
+- 📋 **Mantle LB Factory**: Integration with `0xa6630671775c4EA2743840F9A5016dCf2A104054`
+- 📋 **mUSD/USDC Pool**: Create healthcare-specific liquidity pool
+- 📋 **Custom Hooks**: Implement `HealthcareHook.sol` for validation logic
+- 📋 **Yield Distribution**: 60/20/20 automated yield allocation system
 
 **Container Build Elements**:
 - ✅ **Multi-stage Dockerfile**: Optimized production build process
