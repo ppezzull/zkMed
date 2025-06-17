@@ -64,6 +64,7 @@ services:
       - EXAMPLES_TEST_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
       - NOTARY_URL=http://notary-server:7047
       - WS_PROXY_URL=ws://localhost:3003
+      - EMAIL_SERVICE_URL=https://email-example-inbox.s3.us-east-2.amazonaws.com
       # smart wallet factory
       - SMART_WALLET_FACTORY_MANTLE=0x06224c9387a352a953d6224bfff134c3dd247313
     restart: always
