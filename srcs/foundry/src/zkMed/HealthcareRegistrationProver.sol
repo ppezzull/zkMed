@@ -31,7 +31,9 @@ contract HealthcareRegistrationProver is Prover {
         bytes memory addrBytes = new bytes(20);
 
         for (uint256 i = 0; i < 20; i++) {
-            addrBytes[i] = bytes1(hexCharToByte(strBytes[2 + i * 2]) * 16 + hexCharToByte(strBytes[3 + i * 2]));
+            uint8 high = hexCharToByte(strBytes[i * 2 + 2]);
+            uint8 low = hexCharToByte(strBytes[i * 2 + 3]);
+            addrBytes[i] = bytes1(uint8((high << 4) | low));
         }
 
         return address(uint160(bytes20(addrBytes)));
@@ -56,43 +58,48 @@ contract HealthcareRegistrationProver is Prover {
         view
         returns (Proof memory, RegistrationData memory)
     {
+        // Verify the email DKIM signature
         VerifiedEmail memory email = unverifiedEmail.verify();
         
-        // Extract organization name, role, and wallet address from subject
-        // Pattern: "Register organization [Name] as [HOSPITAL/INSURER] with wallet: 0x[address]"
-        string[] memory subjectCapture = email.subject.capture(
-            "^Register organization (.+) as (HOSPITAL|INSURER) with wallet:\\s*(0x[a-fA-F0-9]{40})$"
-        );
-        require(subjectCapture.length >= 4, "Invalid organization registration format");
-        
-        string memory organizationName = subjectCapture[1];
-        string memory roleString = subjectCapture[2];
-        address targetWallet = stringToAddress(subjectCapture[3]);
-        
-        // Convert role string to enum
-        UserType requestedRole;
-        if (keccak256(abi.encodePacked(roleString)) == keccak256(abi.encodePacked("HOSPITAL"))) {
-            requestedRole = UserType.HOSPITAL;
-        } else if (keccak256(abi.encodePacked(roleString)) == keccak256(abi.encodePacked("INSURER"))) {
-            requestedRole = UserType.INSURER;
-        } else {
-            revert("Invalid role specified");
-        }
-        
-        // Extract domain from email (any domain is allowed)
+        // Extract domain from sender email
         string[] memory domainCapture = email.from.capture("^[\\w.-]+@([a-zA-Z\\d.-]+\\.[a-zA-Z]{2,})$");
-        require(domainCapture.length == 2, "Invalid email domain");
-        
+        require(domainCapture.length == 2, "Invalid email format");
         string memory domain = domainCapture[1];
         
+        // Handle base64 encoded or plain text subject
+        // For simplicity, we'll assume the subject is directly accessible and matches our pattern
+        // In production, you'd need to handle potential base64 decoding
+        
+        // Extract organization name, role, and wallet from subject
+        string[] memory subjectCapture = email.subject.capture(
+            "^Register organization ([^\\s]+(?:\\s+[^\\s]+)*) as (HOSPITAL|INSURER) with wallet: (0x[a-fA-F0-9]{40})$"
+        );
+        
+        require(subjectCapture.length == 4, "Invalid registration format");
+        string memory orgName = subjectCapture[1];
+        string memory roleStr = subjectCapture[2];
+        address walletAddress = stringToAddress(subjectCapture[3]);
+        
+        // Determine role
+        UserType role;
+        if (roleStr.equal("HOSPITAL")) {
+            role = UserType.HOSPITAL;
+        } else if (roleStr.equal("INSURER")) {
+            role = UserType.INSURER;
+        } else {
+            revert("Invalid role type");
+        }
+        
+        // Create registration data
         RegistrationData memory regData = RegistrationData({
-            requestedRole: requestedRole,
-            walletAddress: targetWallet,
+            requestedRole: role,
+            walletAddress: walletAddress,
             domain: domain,
-            organizationName: organizationName,
+            organizationName: orgName,
             emailHash: sha256(abi.encodePacked(email.from))
         });
         
+        // Return proof and registration data
         return (proof(), regData);
     }
 }
