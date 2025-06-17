@@ -1,44 +1,88 @@
-Return-Path: <dev@onlyfive.it>
-Received: from mail.onlyfive.it (mail.onlyfive.it [62.149.128.151])
-    by mx.google.com with ESMTPS id h28si15736435pll.127.2023
-    for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>;
-    Tue, 17 Jun 2025 05:36:51 +0200 (CEST)
-Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.128.151 as permitted sender) client-ip=62.149.128.151; envelope-from=dev@onlyfive.it; helo=mail.onlyfive.it;
-Authentication-Results: mx.google.com;
-    spf=pass (google.com: domain of dev@onlyfive.it designates 62.149.128.151 as permitted sender) smtp.mailfrom=dev@onlyfive.it;
-    dkim=pass header.i=@onlyfive.it header.s=a1 header.b=ExampleHash;
-    dmarc=pass (p=none sp=none dis=none) header.from=onlyfive.it
+Return-Path: <verification@mediclaims.io>
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+ by inbound-smtp.us-east-2.amazonaws.com with SMTP id vm1p3c6jenrgbr944rtf0ljraeb7ndp19pgsht01
+ for 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz;
+ Thu, 21 Feb 2025 13:42:04 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of mediclaims.io designates 209.85.167.197 as permitted sender) client-ip=209.85.167.197; envelope-from=verification@mediclaims.io; helo=mail-oi1-f197.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of mediclaims.io designates 209.85.167.197 as permitted sender) client-ip=209.85.167.197; envelope-from=verification@mediclaims.io; helo=mail-oi1-f197.google.com;
+ dkim=pass header.i=@mediclaims.io;
+ dmarc=pass header.from=mediclaims.io;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGMXNOUldBMU96UGRiYk03NmlXWE5pTVZEVUhlQktPdGV0UFFHeHZ6YzJnVmtwWjJINFZGTUN1cTZhRTBoakM5bVBhd012UFNta3ViWDVVK3d4aldEdmJpZmIyRlpHVUZuZFNET0JxNmFEallSZXYyMDhodmlMa0xIUTR6TGczdy8xNldqeDZXc0o2cWpNWFlVMFRSZlc5c1gzaDJReW8zRVF0NnJGYVZpZDZ4WCt4SjFzVDlmWGxqc214UjIrdVJYRUp1S1MrTjhaWmhPR3J4ZWdiMjRnZExST2RwZFMrWCt1bWRadVp6RGx4bGNOcW45QWgvWW9GZ2lRK2FrUXhUN0JTdEpuQnBEblN2V21MTVAxcUErMzl5N01LU1R1Y2FkdzFFN2t5Y3c4c0E9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=WemofLXoBxooRxJsFIbzg3ZPygWckEycRik2bNwcE7JT+gXw5rIYkudJMEZoV7NgYpQpJw28R81GTxbmYriPM+p4Ql+5XLVSB52FUboCyqlXz4B6O/lFK3B39OOH4SecbHrac8XgxDMf6MDX6/dtlMlu2B0D8PPhWNma36Y4blQ=; c=relaxed/simple; s=xplzuhjr4seloozmmorg6obznvt7ijlt; d=amazonses.com; t=1740142924; v=1; bh=J8KdpLzPcvAHrMiYXLlm0CgLQF95Y8X9Zn17XhSuDbw=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-oi1-f197.google.com with SMTP id 5b1f17b1804b1-43994ef3872so7761475e9.2
+        for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>; Thu, 21 Feb 2025 05:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-    d=onlyfive.it; s=a1; t=1750131411;
-    h=from:to:subject:date:message-id:mime-version;
-    bh=J8KdpLzPcvAHrMiYXLlm0CgLQF95Y8X9Zn17XhSuDbw=;
-    b=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoOhAWzBuKQYXU6E3E9efq+DPvtkkvWPg3EtB+BT2cTrMGh6Xy00mXfPi/EzubRpbhHpv3b3k1d65Vyhmpp5O3HzTQyzIqYMMF5iF5y05D5aEux3pj/i1g5LkAOFE0Xdf+wnI8zppP2jP7IV4bwKPr1OnBqOjs8hfBWSEGaCSFD/aVbOdNldHiwSalzDL38E+IcT0KQB+BdutC2T9B5idcSPaBY57sC4hq31wpBlgNcYpIMDxOQN+E9E+TbgnlJYCOYsD5S0amYFivcJObjSGpdstMBfaM1ox5iEQVpEhLz5cwgohjrMst2us7G9eHZ6p2jR7X+/yTP8ryAAywzMJ5wIDAQAB
-Date: Tue, 17 Jun 2025 05:36:51 +0200
-Message-Id: <SXZE1F$65BD5B1752BC8AA49950284F9BC78447@onlyfive.it>
-Subject: =?utf-8?b?UmVnaXN0ZXIgb3JnYW5pemF0aW9uIENpdHkgR2VuZXJhbCBIb3NwaXRh?=
-	=?utf-8?b?bCBhcyBIT1NQSVRBTCB3aXRoIHdhbGxldDogMHg4QjZENWYxMkQyN0E4?=
-	=?utf-8?b?ODcwZjlhYjQzN0M2RjkxMzVhQjhlZTNEYjg3?=
+        d=mediclaims.io; s=google; t=1740142920; x=1740747720; darn=proving.vlayer.xyz;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J8KdpLzPcvAHrMiYXLlm0CgLQF95Y8X9Zn17XhSuDbw=;
+        b=F2W/iBAmmSZA+OncqRutYON6srl97A0apK9Ixc0AfXNllhEE7uzJk5+pl0EAKfeAgp
+         fLbOWX9nHdr2TjT2wE1Wge27imZWrJ8d6PIdTNnrIgY7dBMtXLRpT6Swu8/hfq7fa2O3
+         rYH9R80IZSFf5fGPmVxbLReV8BweMgdpr5lp4Sf/JUTaRYr+IlwYJCPvxIVDAmPEm6Un
+         +hMC9JHoPYDK0Y5cPHKMnUfNQUMTNxOLj2urhe7ahG64SF9DgYOsbO75Lug5FfcYxON3
+         4P0VwXGSM9Mow3AI3z89TqCaytCINNoTpNf/BhxkQDbpcspPxbfw9LUuFddhi5Hrz2n8
+         tSBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740142920; x=1740747720;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J8KdpLzPcvAHrMiYXLlm0CgLQF95Y8X9Zn17XhSuDbw=;
+        b=HFX9W/ZmRkd/dLQccWYVAguoHloeyI1fJ9Otogjd4+FaWGJfxHpWGsL5R6j19saUao
+         wHf5Ye08aOSc3+1UIQF4ZFWdD9T+BnYklRIoR8KGs2ml7niZXm1GpKcM0WD5maVKj/Cm
+         3h/lgIItVtVsZHFfuvRoSa36+kpEXxq7fbV5UFXZg9bEtxP+7FGII3pmhwMaWjSrsjq4
+         Q1VH9CTxm8SVCQxCSUAnzq7UNJa+dCUhbhLFWsAEGnVQTkjFtQm+4xEvUyd/fOEwFdMC
+         QupqnCgeIOxomqzu4JaOKdwfr8srpPK0MIW6Kf6R8SyYCb9uALI5WenaAqjPznRHoLxS
+         ASTg==
+X-Gm-Message-State: AOJu0YyvM78PoZb6ldEnSwNQ1KHUnMSLX0tytQTk+pSOL0Sc8wYozkdx
+    FI1+rMBvTLmenu88RhbFcx/Lvoz3Z8NZKKqLdlsxnMbFWJrSCbqmYM/cgonMdPqbBozbx/6S54A
+    Iu9B3JqJ+Hema75Tzz5DIgjV6WHRUw1xEm2Oo0wdNau+npHb7CYTvdA==
+X-Gm-Gg: ASbGncuy2tUTRgqEuJY+mIsIWaCg7mgo/SigktBV6gTOMGioW2jfT5PQLU3z9GcnDoh
+    3pA1aZMMHNZNeHaUogQWZIqmDz5x25iLV1W5eUWkFj+Dkc8zeLRmm4xONO60+JnZG5hIp4Rp6Ir
+    DhlaahJFAdE4qFtCzcDhdi0EpOXboXJQ==
+X-Google-Smtp-Source: AGHT+IEEgA1Fl4tabVJsNPfV4EoC/lokBL1ZbJ/n0/yjgv+DCe/QnJqH/b3Adqg6ujkPoyKHdyrUASDkTSKh5ThtfVQ=
+X-Received: by 2002:a05:6512:30c4:b0:439:9828:c44b with SMTP id
+ 5b1f17b1804b1-4399828c601mr94739135e9.14.1740142920034; Thu, 21 Feb 2025
+ 05:42:00 -0800 (PST)
 MIME-Version: 1.0
-X-Sensitivity: 3
-Content-Type: multipart/alternative;
-	boundary="_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832"
-Reply-To: dev@onlyfive.it
-From: "dev" <dev@onlyfive.it>
+From: Michael Johnson <verification@mediclaims.io>
+Date: Thu, 21 Feb 2025 14:41:48 +0100
+Message-ID: <CAGp8hgAkJ5KoHVmLHUxuyrCGKAvmcigt5pYqmHi6t56udzAbcD@mail.gmail.com>
+Subject: Register organization MediClaims Insurance Group as INSURER with wallet: 0x19dE91Af973F404EDF5B4c093983a7c6E3EC8ccE
 To: 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz
-X-XaM3-API-Version: V4(R2)
-X-TipoRicevuta: completa
-X-type: 0
-X-SenderIP: 101.56.30.60
+Content-Type: multipart/alternative; boundary="00000000000016fe39062e9225dc"
 
+--00000000000016fe39062e9225dc
+Content-Type: text/plain; charset="UTF-8"
 
---_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-=0A=0A=0A
---_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+I am requesting registration for MediClaims Insurance Group on the zkMed 
+platform. Our company provides comprehensive healthcare coverage for over 
+2 million customers nationwide.
 
+This email serves as our domain verification for the registration process.
 
---_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832--
+Best regards,
+Michael Johnson
+Head of Digital Operations
+MediClaims Insurance Group
+
+--00000000000016fe39062e9225dc
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">
+<p>Hello,</p>
+<p>I am requesting registration for MediClaims Insurance Group on the zkMed 
+platform. Our company provides comprehensive healthcare coverage for over 
+2 million customers nationwide.</p>
+<p>This email serves as our domain verification for the registration process.</p>
+<p>Best regards,<br>
+Michael Johnson<br>
+Head of Digital Operations<br>
+MediClaims Insurance Group</p>
+</div>
+
+--00000000000016fe39062e9225dc--

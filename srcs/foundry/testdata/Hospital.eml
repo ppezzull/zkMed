@@ -1,44 +1,88 @@
-Return-Path: <dev@onlyfive.it>
-Received: from mail.onlyfive.it (mail.onlyfive.it [62.149.128.151])
-    by mx.google.com with ESMTPS id h28si15736435pll.127.2023
-    for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>;
-    Tue, 17 Jun 2025 05:38:59 +0200 (CEST)
-Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.128.151 as permitted sender) client-ip=62.149.128.151; envelope-from=dev@onlyfive.it; helo=mail.onlyfive.it;
-Authentication-Results: mx.google.com;
-    spf=pass (google.com: domain of dev@onlyfive.it designates 62.149.128.151 as permitted sender) smtp.mailfrom=dev@onlyfive.it;
-    dkim=pass header.i=@onlyfive.it header.s=a1 header.b=ExampleHash;
-    dmarc=pass (p=none sp=none dis=none) header.from=onlyfive.it
+Return-Path: <admin@cityhospital.org>
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+ by inbound-smtp.us-east-2.amazonaws.com with SMTP id vm1p3c6jenrgbr944rtf0ljraep1ndp19hbclt01
+ for 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz;
+ Thu, 21 Feb 2025 12:38:04 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of cityhospital.org designates 209.85.221.48 as permitted sender) client-ip=209.85.221.48; envelope-from=admin@cityhospital.org; helo=mail-wr1-f48.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of cityhospital.org designates 209.85.221.48 as permitted sender) client-ip=209.85.221.48; envelope-from=admin@cityhospital.org; helo=mail-wr1-f48.google.com;
+ dkim=pass header.i=@cityhospital.org;
+ dmarc=pass header.from=cityhospital.org;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGMXNOUldBMU96UGRiYk03NmlXWE5pTVZEVUhlQktPdGV0UFFHeHZ6YzJnVmtwWjJINFZGTUN1cTZhRTBoakM5bVBhd012UFNta3ViWDVVK3d4aldEdmJpZmIyRlpHVUZuZFNET0JxNmFEallSZXYyMDhodmlMa0xIUTR6TGczdy8xNldqeDZXc0o2cWpNWFlVMFRSZlc5c1gzaDJReW8zRVF0NnJGYVZpZDZ4WCt4SjFzVDlmWGxqc214UjIrdVJYRUp1S1MrTjhaWmhPR3J4ZWdiMjRnZExST2RwZFMrWCt1bWRadVp6RGx4bGNOcW45QWgvWW9GZ2lRK2FrUXhUN0JTdEpuQnBEblN2V21MTVAxcUErMzl5N01LU1R1Y2FkdzFFN2t5Y3c4c0E9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=WemofLXoBxooRxJsFIbzg3ZPygWckEycRik2bNwcE7JT+gXw5rIYkudJMEZoV7NgYpQpJw28R81GTxbmYriPM+p4Ql+5XLVSB52FUboCyqlXz4B6O/lFK3B39OOH4SecbHrac8XgxDMf6MDX6/dtlMlu2B0D8PPhWNma36Y4blQ=; c=relaxed/simple; s=xplzuhjr4seloozmmorg6obznvt7ijlt; d=amazonses.com; t=1740141485; v=1; bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-wr1-f48.google.com with SMTP id 5b1f17b1804b1-43994ef3872so7761475e9.2
+        for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>; Thu, 21 Feb 2025 04:38:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-    d=onlyfive.it; s=a1; t=1750131539;
-    h=from:to:subject:date:message-id:mime-version;
-    bh=H9FDsBn4Kz+QeJ3KxUvhG6FeaH5VK0q1Dkr6JsV9A8U=;
-    b=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoOhAWzBuKQYXU6E3E9efq+DPvtkkvWPg3EtB+BT2cTrMGh6Xy00mXfPi/EzubRpbhHpv3b3k1d65Vyhmpp5O3HzTQyzIqYMMF5iF5y05D5aEux3pj/i1g5LkAOFE0Xdf+wnI8zppP2jP7IV4bwKPr1OnBqOjs8hfBWSEGaCSFD/aVbOdNldHiwSalzDL38E+IcT0KQB+BdutC2T9B5idcSPaBY57sC4hq31wpBlgNcYpIMDxOQN+E9E+TbgnlJYCOYsD5S0amYFivcJObjSGpdstMBfaM1ox5iEQVpEhLz5cwgohjrMst2us7G9eHZ6p2jR7X+/yTP8ryAAywzMJ5wIDAQAB
-Date: Tue, 17 Jun 2025 05:38:59 +0200
-Message-Id: <SXZE4Z$5CB246A233B9400AF19FFCD12A95EA0C@onlyfive.it>
-Subject: =?utf-8?b?IFJlZ2lzdGVyIG9yZ2FuaXphdGlvbiBNZWRpQ2xhaW1zIEluc3VyYW5j?=
-	=?utf-8?b?ZSBHcm91cCBhcyBJTlNVUkVSIHdpdGggd2FsbGV0OiAweDE5ZEU5MUFm?=
-	=?utf-8?b?OTczRjQwNEVERjVCNGMwOTM5ODNhN2M2RTNFQzhjY0U=?=
+        d=cityhospital.org; s=google; t=1740141482; x=1740746282; darn=proving.vlayer.xyz;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=;
+        b=F2W/iBAmmSZA+OncqRutYON6srl97A0apK9Ixc0AfXNllhEE7uzJk5+pl0EAKfeAgp
+         fLbOWX9nHdr2TjT2wE1Wge27imZWrJ8d6PIdTNnrIgY7dBMtXLRpT6Swu8/hfq7fa2O3
+         rYH9R80IZSFf5fGPmVxbLReV8BweMgdpr5lp4Sf/JUTaRYr+IlwYJCPvxIVDAmPEm6Un
+         +hMC9JHoPYDK0Y5cPHKMnUfNQUMTNxOLj2urhe7ahG64SF9DgYOsbO75Lug5FfcYxON3
+         4P0VwXGSM9Mow3AI3z89TqCaytCINNoTpNf/BhxkQDbpcspPxbfw9LUuFddhi5Hrz2n8
+         tSBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740141482; x=1740746282;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=;
+        b=HFX9W/ZmRkd/dLQccWYVAguoHloeyI1fJ9Otogjd4+FaWGJfxHpWGsL5R6j19saUao
+         wHf5Ye08aOSc3+1UIQF4ZFWdD9T+BnYklRIoR8KGs2ml7niZXm1GpKcM0WD5maVKj/Cm
+         3h/lgIItVtVsZHFfuvRoSa36+kpEXxq7fbV5UFXZg9bEtxP+7FGII3pmhwMaWjSrsjq4
+         Q1VH9CTxm8SVCQxCSUAnzq7UNJa+dCUhbhLFWsAEGnVQTkjFtQm+4xEvUyd/fOEwFdMC
+         QupqnCgeIOxomqzu4JaOKdwfr8srpPK0MIW6Kf6R8SyYCb9uALI5WenaAqjPznRHoLxS
+         ASTg==
+X-Gm-Message-State: AOJu0YyvM78PoZb6ldEnSwNQ1KHUnMSLX0tytQTk+pSOL0Sc8wYozkdx
+    FI1+rMBvTLmenu88RhbFcx/Lvoz3Z8NZKKqLdlsxnMbFWJrSCbqmYM/cgonMdPqbBozbx/6S54A
+    Iu9B3JqJ+Hema75Tzz5DIgjV6WHRUw1xEm2Oo0wdNau+npHb7CYTvdA==
+X-Gm-Gg: ASbGncuy2tUTRgqEuJY+mIsIWaCg7mgo/SigktBV6gTOMGioW2jfT5PQLU3z9GcnDoh
+    3pA1aZMMHNZNeHaUogQWZIqmDz5x25iLV1W5eUWkFj+Dkc8zeLRmm4xONO60+JnZG5hIp4Rp6Ir
+    DhlaahJFAdE4qFtCzcDhdi0EpOXboXJQ==
+X-Google-Smtp-Source: AGHT+IEEgA1Fl4tabVJsNPfV4EoC/lokBL1ZbJ/n0/yjgv+DCe/QnJqH/b3Adqg6ujkPoyKHdyrUASDkTSKh5ThtfVQ=
+X-Received: by 2002:a05:600c:1c83:b0:439:9828:c44b with SMTP id
+ 5b1f17b1804b1-4399828c601mr94739135e9.14.1740141482620; Thu, 21 Feb 2025
+ 04:38:02 -0800 (PST)
 MIME-Version: 1.0
-X-Sensitivity: 3
-Content-Type: multipart/alternative;
-	boundary="_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749"
-Reply-To: dev@onlyfive.it
-From: "dev" <dev@onlyfive.it>
+From: Hospital Administrator <admin@cityhospital.org>
+Date: Thu, 21 Feb 2025 13:37:50 +0100
+Message-ID: <CAGp8hgAkJ5KoHVmLHUxuyrCGKAvmcigt5pYqmHi6t56udzRuEg@mail.gmail.com>
+Subject: Register organization City General Hospital as HOSPITAL with wallet: 0x8B6D5f12D27A8870f9ab437C6F9135aB8ee3Db87
 To: 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz
-X-XaM3-API-Version: V4(R2)
-X-TipoRicevuta: completa
-X-type: 0
-X-SenderIP: 101.56.30.60
+Content-Type: multipart/alternative; boundary="00000000000016fe39062e9225db"
 
+--00000000000016fe39062e9225db
+Content-Type: text/plain; charset="UTF-8"
 
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-=0A=0A=0A
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+I would like to register our hospital with the zkMed platform. We are a 
+250-bed medical center in the downtown area specializing in emergency services
+and cardiology.
 
+Please process our registration using our domain verification.
 
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749--
+Regards,
+Dr. Jane Smith
+Chief Technology Officer
+City General Hospital
+
+--00000000000016fe39062e9225db
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">
+<p>Hello,</p>
+<p>I would like to register our hospital with the zkMed platform. We are a 
+250-bed medical center in the downtown area specializing in emergency services
+and cardiology.</p>
+<p>Please process our registration using our domain verification.</p>
+<p>Regards,<br>
+Dr. Jane Smith<br>
+Chief Technology Officer<br>
+City General Hospital</p>
+</div>
+
+--00000000000016fe39062e9225db--
