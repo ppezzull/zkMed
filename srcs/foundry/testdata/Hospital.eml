@@ -1,88 +1,41 @@
-Return-Path: <admin@cityhospital.org>
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
- by inbound-smtp.us-east-2.amazonaws.com with SMTP id vm1p3c6jenrgbr944rtf0ljraep1ndp19hbclt01
- for 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz;
- Thu, 21 Feb 2025 12:38:04 +0000 (UTC)
+Return-Path: <dev@onlyfive.it>
+Received: from smtpcmd0757.aruba.it (smtpcmd0757.aruba.it [62.149.156.57])
+ by inbound-smtp.us-east-2.amazonaws.com with SMTP id r2k33mifmt1sn7gdbnivpkkp5j6md5lj9f6l2ro1
+ for 52d30dc9-8cf8-4f54-b75b-765608f9b3d8@proving.vlayer.xyz;
+ Tue, 17 Jun 2025 22:07:33 +0000 (UTC)
 X-SES-Spam-Verdict: PASS
 X-SES-Virus-Verdict: PASS
-Received-SPF: pass (spfCheck: domain of cityhospital.org designates 209.85.221.48 as permitted sender) client-ip=209.85.221.48; envelope-from=admin@cityhospital.org; helo=mail-wr1-f48.google.com;
+Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@onlyfive.it; helo=smtpcmd0757.aruba.it;
 Authentication-Results: amazonses.com;
- spf=pass (spfCheck: domain of cityhospital.org designates 209.85.221.48 as permitted sender) client-ip=209.85.221.48; envelope-from=admin@cityhospital.org; helo=mail-wr1-f48.google.com;
- dkim=pass header.i=@cityhospital.org;
- dmarc=pass header.from=cityhospital.org;
-X-SES-RECEIPT: AEFBQUFBQUFBQUFGMXNOUldBMU96UGRiYk03NmlXWE5pTVZEVUhlQktPdGV0UFFHeHZ6YzJnVmtwWjJINFZGTUN1cTZhRTBoakM5bVBhd012UFNta3ViWDVVK3d4aldEdmJpZmIyRlpHVUZuZFNET0JxNmFEallSZXYyMDhodmlMa0xIUTR6TGczdy8xNldqeDZXc0o2cWpNWFlVMFRSZlc5c1gzaDJReW8zRVF0NnJGYVZpZDZ4WCt4SjFzVDlmWGxqc214UjIrdVJYRUp1S1MrTjhaWmhPR3J4ZWdiMjRnZExST2RwZFMrWCt1bWRadVp6RGx4bGNOcW45QWgvWW9GZ2lRK2FrUXhUN0JTdEpuQnBEblN2V21MTVAxcUErMzl5N01LU1R1Y2FkdzFFN2t5Y3c4c0E9PQ==
-X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=WemofLXoBxooRxJsFIbzg3ZPygWckEycRik2bNwcE7JT+gXw5rIYkudJMEZoV7NgYpQpJw28R81GTxbmYriPM+p4Ql+5XLVSB52FUboCyqlXz4B6O/lFK3B39OOH4SecbHrac8XgxDMf6MDX6/dtlMlu2B0D8PPhWNma36Y4blQ=; c=relaxed/simple; s=xplzuhjr4seloozmmorg6obznvt7ijlt; d=amazonses.com; t=1740141485; v=1; bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
-Received: by mail-wr1-f48.google.com with SMTP id 5b1f17b1804b1-43994ef3872so7761475e9.2
-        for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>; Thu, 21 Feb 2025 04:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cityhospital.org; s=google; t=1740141482; x=1740746282; darn=proving.vlayer.xyz;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=;
-        b=F2W/iBAmmSZA+OncqRutYON6srl97A0apK9Ixc0AfXNllhEE7uzJk5+pl0EAKfeAgp
-         fLbOWX9nHdr2TjT2wE1Wge27imZWrJ8d6PIdTNnrIgY7dBMtXLRpT6Swu8/hfq7fa2O3
-         rYH9R80IZSFf5fGPmVxbLReV8BweMgdpr5lp4Sf/JUTaRYr+IlwYJCPvxIVDAmPEm6Un
-         +hMC9JHoPYDK0Y5cPHKMnUfNQUMTNxOLj2urhe7ahG64SF9DgYOsbO75Lug5FfcYxON3
-         4P0VwXGSM9Mow3AI3z89TqCaytCINNoTpNf/BhxkQDbpcspPxbfw9LUuFddhi5Hrz2n8
-         tSBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740141482; x=1740746282;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=;
-        b=HFX9W/ZmRkd/dLQccWYVAguoHloeyI1fJ9Otogjd4+FaWGJfxHpWGsL5R6j19saUao
-         wHf5Ye08aOSc3+1UIQF4ZFWdD9T+BnYklRIoR8KGs2ml7niZXm1GpKcM0WD5maVKj/Cm
-         3h/lgIItVtVsZHFfuvRoSa36+kpEXxq7fbV5UFXZg9bEtxP+7FGII3pmhwMaWjSrsjq4
-         Q1VH9CTxm8SVCQxCSUAnzq7UNJa+dCUhbhLFWsAEGnVQTkjFtQm+4xEvUyd/fOEwFdMC
-         QupqnCgeIOxomqzu4JaOKdwfr8srpPK0MIW6Kf6R8SyYCb9uALI5WenaAqjPznRHoLxS
-         ASTg==
-X-Gm-Message-State: AOJu0YyvM78PoZb6ldEnSwNQ1KHUnMSLX0tytQTk+pSOL0Sc8wYozkdx
-    FI1+rMBvTLmenu88RhbFcx/Lvoz3Z8NZKKqLdlsxnMbFWJrSCbqmYM/cgonMdPqbBozbx/6S54A
-    Iu9B3JqJ+Hema75Tzz5DIgjV6WHRUw1xEm2Oo0wdNau+npHb7CYTvdA==
-X-Gm-Gg: ASbGncuy2tUTRgqEuJY+mIsIWaCg7mgo/SigktBV6gTOMGioW2jfT5PQLU3z9GcnDoh
-    3pA1aZMMHNZNeHaUogQWZIqmDz5x25iLV1W5eUWkFj+Dkc8zeLRmm4xONO60+JnZG5hIp4Rp6Ir
-    DhlaahJFAdE4qFtCzcDhdi0EpOXboXJQ==
-X-Google-Smtp-Source: AGHT+IEEgA1Fl4tabVJsNPfV4EoC/lokBL1ZbJ/n0/yjgv+DCe/QnJqH/b3Adqg6ujkPoyKHdyrUASDkTSKh5ThtfVQ=
-X-Received: by 2002:a05:600c:1c83:b0:439:9828:c44b with SMTP id
- 5b1f17b1804b1-4399828c601mr94739135e9.14.1740141482620; Thu, 21 Feb 2025
- 04:38:02 -0800 (PST)
+ spf=pass (spfCheck: domain of onlyfive.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@onlyfive.it; helo=smtpcmd0757.aruba.it;
+ dkim=pass header.i=@onlyfive.it;
+ dmarc=pass header.from=onlyfive.it;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFFK0lzL3dpZUgxRzVyWm9vRXBuaHBnKzhmdlhJYW1IVGhCd1g0R3JzdDJmM3BRNEZPaXZMZjRZanpDYmIxUWZ6b1hsUndpc3ByMkgwbDVubk9icUh4eGdVdi9qZnhITFVPQW1tYWtuQUhuWlNYSDR0Z1VteitEbDBZNE8xMFYzQ1FpZXI1MEhTMXUrL01SNWQwVENGcG10RkNIZzlqcmJmK0FNcElZeDU0UjVYdXNTZXZmR2pEbGhZMlIrT2VkT3JBREM0SDRIMm1CQ2hlNXBreDJKeTZ2WHRlZkFHOWVQa2g5eTNvNFFFcmg5ZkhnZ2orK2UrNlVVTjVycGh0SDQxa3dwOWR2QlhXSWhRZUViV1lYYnUyRTYxdFE2SlRQSStlOG1heE9xY3JvRFE9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=wqiENocUCLtCTCgrTR45hwsc1y6KZsNE01OLzx+zCT/2Zec9lWpDiTY7AG7X0tEGFxpL9GY/FqKXdNl7q+QoZD+9vSfwHab/ZCHqxUddhYFD2P8APeCYmkXoSXqAcO2SrisheSGRs7dJTiGYEWvi/FgfRmQT4N15JxmSjPPE5Mc=; c=relaxed/simple; s=ndjes4mrtuzus6qxu3frw3ubo3gpjndv; d=amazonses.com; t=1750198053; v=1; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: from [192.168.0.30] ([101.56.30.60])
+	by Aruba SMTP with ESMTPSA
+	id ReSpux7Gtt6p9ReSpuMkp2; Wed, 18 Jun 2025 00:07:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlyfive.it; s=a1;
+	t=1750198051; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
+	h=Date:MIME-Version:To:From:Subject:Content-Type;
+	b=MIoFYzV5GUXLG5jUmUZAgaH+CpZJrctIn4C+FRYkxSlzdx6B2ItFjbc9I1ZDUbeVl
+	 e+D6l0kU+887Gq40wrZwIv+Z3cq8Qm1Vj5opQ1h1BoPTsgNMATnzchnwD+edh/MF2d
+	 qccBGHRer1q0krOjsPU9x9tjvzEruMUI/3w16td713moKjc+Qa9NvbafGGJ7EWXaNp
+	 J9ThzWiTCCnu3OMd6DtFWO/1sqVHArM2wF84O8LZHUWOIfjvOXg07QDtq8E8IhOfeM
+	 PTvc6x5QAkt1S4PVs/eLMQWDHoW5lZPzb6nNGhcNlgaghg/t84VmsUUzJouoSAgGDx
+	 3LwR99URt/cFA==
+Message-ID: <04e9b80b-7352-4cbf-99ce-78311bae3617@onlyfive.it>
+Date: Wed, 18 Jun 2025 00:07:31 +0200
 MIME-Version: 1.0
-From: Hospital Administrator <admin@cityhospital.org>
-Date: Thu, 21 Feb 2025 13:37:50 +0100
-Message-ID: <CAGp8hgAkJ5KoHVmLHUxuyrCGKAvmcigt5pYqmHi6t56udzRuEg@mail.gmail.com>
-Subject: Register organization City General Hospital as HOSPITAL with wallet: 0x8B6D5f12D27A8870f9ab437C6F9135aB8ee3Db87
-To: 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz
-Content-Type: multipart/alternative; boundary="00000000000016fe39062e9225db"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: 52d30dc9-8cf8-4f54-b75b-765608f9b3d8@proving.vlayer.xyz
+From: dev <dev@onlyfive.it>
+Subject: Register organization City General Hospital as HOSPITAL with wallet:
+ 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfKixmeRFLNldHSXvKbdGASiyJPOxlBcoQHYe+n8AWQh0dt62uDPvLsVylTEfLmrFnsTifawJYQ3nl+dyToRDVZAOxxjYq/Ps3S8oHR0Qs1OUomCRen7t
+ hzHqXMFR3oud6DRrbYUANOtINyDNKYZqAwHH8zG19/DbdJ/N3nP3rN7NnoTuhVcjM+ZplIPRNYrNPLiwjNyQtjkzVQg6ENy8jDi4Rt+UWSjc7+z7SWYeLThS
 
---00000000000016fe39062e9225db
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-
-I would like to register our hospital with the zkMed platform. We are a 
-250-bed medical center in the downtown area specializing in emergency services
-and cardiology.
-
-Please process our registration using our domain verification.
-
-Regards,
-Dr. Jane Smith
-Chief Technology Officer
-City General Hospital
-
---00000000000016fe39062e9225db
-Content-Type: text/html; charset="UTF-8"
-
-<div dir="ltr">
-<p>Hello,</p>
-<p>I would like to register our hospital with the zkMed platform. We are a 
-250-bed medical center in the downtown area specializing in emergency services
-and cardiology.</p>
-<p>Please process our registration using our domain verification.</p>
-<p>Regards,<br>
-Dr. Jane Smith<br>
-Chief Technology Officer<br>
-City General Hospital</p>
-</div>
-
---00000000000016fe39062e9225db--
