@@ -1,41 +1,41 @@
-Return-Path: <dev@onlyfive.it>
+Return-Path: <dev@nexthoop.it>
 Received: from smtpcmd0757.aruba.it (smtpcmd0757.aruba.it [62.149.156.57])
- by inbound-smtp.us-east-2.amazonaws.com with SMTP id ecfo4hdg914j7da3ai60o4g0h9ls0c0eht1dto01
- for b91775bc-1986-4bfa-9f6e-0e43ccfcd34c@proving.vlayer.xyz;
- Tue, 17 Jun 2025 22:14:49 +0000 (UTC)
+ by inbound-smtp.us-east-2.amazonaws.com with SMTP id pdbdfv5sqhdrhesnsl1inifs0fh4ihmvkgva5701
+ for 723ce8e2-5435-4dc8-b162-caa649c1831d@proving.vlayer.xyz;
+ Tue, 17 Jun 2025 23:56:14 +0000 (UTC)
 X-SES-Spam-Verdict: PASS
 X-SES-Virus-Verdict: PASS
-Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@onlyfive.it; helo=smtpcmd0757.aruba.it;
+Received-SPF: pass (spfCheck: domain of nexthoop.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@nexthoop.it; helo=smtpcmd0757.aruba.it;
 Authentication-Results: amazonses.com;
- spf=pass (spfCheck: domain of onlyfive.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@onlyfive.it; helo=smtpcmd0757.aruba.it;
- dkim=pass header.i=@onlyfive.it;
- dmarc=pass header.from=onlyfive.it;
-X-SES-RECEIPT: AEFBQUFBQUFBQUFFQ2NaTDhGdGFRdVlFOWRKMUlPRjhvNHZDdUdPNHBVSTJZcFNaMk5VK0Q0U3BVUUJud25JcGsvVDY5NGZHY3VZMzhkYTRpUFhRbGhhYW5yeE5HbkVvMitCRGJoNXVmRTVvUmpQYW5iZmxlRmtLcWlUR2NIc2RUVDFsZFZRc0Nnb2dOUlBIZlFvUmE4SHJReWRsQ1JPMWZzVWZJNVNwbE4xUnYyMUlBenhEWmhiY052NlhtMFgrT0NSb0d0M1ZpdG56aFlVOC9aUnh0S05ZSlBjQzA0NHB2SkhCTXN5OEFuN1ZwNkJEQ0pQdjlvcUluSkNycmhQQno1SFZtZEJZOUNwZnZOWmhNMkNZRGZ0NW5tMk9IZ2dwamg0Rm5CN2dvUTdUVXlUc2VtaGtXM3c9PQ==
-X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=V8EZ0FRG1dBqhWW1IslUllYDAEAOoYxoUF7BhgYiXDW7ejvQ4AICr8bMwbWIgXcLUjussEHooqRsfXGnYdhLY+UtWDS1YahqPIpG0EgPRzDEdQtsY25ar9Me5hqZyCH7QOR0VEP1+fb58uJXL9Yxajlpi0PkRTEViFOFBfPPEXQ=; c=relaxed/simple; s=ndjes4mrtuzus6qxu3frw3ubo3gpjndv; d=amazonses.com; t=1750198492; v=1; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+ spf=pass (spfCheck: domain of nexthoop.it designates 62.149.156.57 as permitted sender) client-ip=62.149.156.57; envelope-from=dev@nexthoop.it; helo=smtpcmd0757.aruba.it;
+ dkim=pass header.i=@nexthoop.it;
+ dmarc=pass header.from=nexthoop.it;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFIb2pWSkcySzJOK09kZk4zMzVkSkhoMnBhaXZGbEZEWmJ1dk5yUHhWemhFZGprU0ZFKzMxSG5xNGdydjdJNkVLbHB6RDRpaC9ndXgvN1c1Zzkxa0s3MiswVURjQUMxMWxiVVlYeEpON1BJWXVDNXM2ZG1LdjBIQTZtenZOQ01rbG02dktocWpqVXZLMzF3VjVIWm1YbUdhV3pZZGV3bHlwZ2xQcUFkNTU2QVJXQlVJQWpaVWYwdVk5WFQ1VENKSWVCczNDZk5naDdMN0NTOEZuTnY0TkdnZUtMSVYzTDlKemt1UDB6V05nNVBPMWROVEtYT29hL0RIMDAzb0xWWC9qWUNnYklHYjk3YjhTdXMrTk5NL0lFK0JiQlJkOHE3T0JCY3F1eXRwMkRZYWc9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=YTvtPhhNJuhyrUGL99GeqYR1m+DT5npQTXa6Tu94sjXl+niZDUCX54xxmBwFRg43ttCwNgtRVwWrkJy9WU62WFmDZ+w3j5frf9j3P/Gl44ioaMSuFiHXFQdmUdP5ratNdlPUs8Uldot1+pwloKB6gvRZVbX5M/DFsRmIN788mXU=; c=relaxed/simple; s=ndjes4mrtuzus6qxu3frw3ubo3gpjndv; d=amazonses.com; t=1750204577; v=1; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
 Received: from [192.168.0.30] ([101.56.30.60])
 	by Aruba SMTP with ESMTPSA
-	id ReZruxBWlt6p9ReZruMmKg; Wed, 18 Jun 2025 00:14:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlyfive.it; s=a1;
-	t=1750198487; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
+	id RgA0uyK58t6p9RgA0uNFuk; Wed, 18 Jun 2025 01:56:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nexthoop.it; s=a1;
+	t=1750204572; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
 	h=Date:MIME-Version:To:From:Subject:Content-Type;
-	b=I51Vh5VCO3CZfLNN/CebIXnns8aQPGPSm7wK7OSIFMsM7piLwtQQ3eNW1kc/W9zQ8
-	 7wBrx7w6TqXz8WC38wXZuC69jCGVos+MSqPIm7nKqINrMjTsmB9cMHaR9QaucmMwa1
-	 gffGfkMsRex1ckAAeT8q+isAP2LRzlbzXPaDuSrSS/cb37GLXIkf6NmztnXeCzsep9
-	 qmFKQTqcSLGtFXwtB/5Msoug3JSz05ilaljWjf7mVloBCdcGdLFtcM/2cwlORjOQgW
-	 s0nA7Da7ecrTVT6n9ndlFs1JrEDshNkZxNct5icTkCwHMQLxDcVRjphC5GDVnByIo+
-	 DXGI+qntMasKg==
-Message-ID: <9a98d41d-4927-4691-af36-589a65b92db4@onlyfive.it>
-Date: Wed, 18 Jun 2025 00:14:47 +0200
+	b=aK1IMesWme8XsA5xXVSEWfLNrLd28YsI85dtj2rSjfgY6THx/RMgKsYUKgYXNi4WV
+	 6PnH5Z0K0/FJ5hOUeWqyxvdhBRvLuqGIeJ34GKwjX+Sz5vZXl4f5rEIJzhJW7mhMfC
+	 pi3iru/VqQFwyxMB0u4UTTjTPvFEIuaLkJKVZcrop7ss0O2q4pQiKvn6M1txQIMefe
+	 oXgjOF8yOvF3NTi05nkrURs+d8FKx6sZq9ojFCokavNUkj0gMmZN3F3iMwvaKVHqQe
+	 X7/8bDK4B44bjXFz1r1esf4+33qSFU7vCPjphZaPubw9Ev8IAuBMdgx5dx4p/1lTIn
+	 +oLudh8pc0ARA==
+Message-ID: <0d91aafb-4828-4ecc-abb6-9ca74a44ff13@nexthoop.it>
+Date: Wed, 18 Jun 2025 01:56:12 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
-To: b91775bc-1986-4bfa-9f6e-0e43ccfcd34c@proving.vlayer.xyz
-From: dev <dev@onlyfive.it>
+To: 723ce8e2-5435-4dc8-b162-caa649c1831d@proving.vlayer.xyz
+From: Pietro Pezzullo <dev@nexthoop.it>
 Subject: Register organization MediClaims Insurance Group as INSURER with
- wallet: 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955
+ wallet: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfOuZdtTcGfvXzlWMqj52ZcajSa8bBBDT7KNL3ryLK9kJupLJIgAH4mIMy0/aHP4zTG8rFNWjALtuRnSb9nXBH31iS3GQN0JW/E2dBKECP/PcOeVzL7CA
- I5iIkF0v/LkeKKuA6qRz2eb1HhATDq1utZ7MmRqspWs8ZKUMzJzAX8y9KAdkbtzIVCLE9PI94V0Kz0w+i+44kiMgkDrfZu8VuJhFmnnJ+E12QQ0TKPIyamr1
+X-CMAE-Envelope: MS4xfH/wyZjKtTMHVGpPeXXsF56SelZYNjo2oAUzwNs+Gcej4b45kb/SNptXwpUsz3rHtWem+CxC5KsUlGwYnKsbSeScWJJKc0hfXGCe9UETzOOa4CvcAeJm
+ XnQn7LhMKoQFbuv3ZCO0Ciqq1GbhI8j56TmxoEnV4O3MqXLrIvbQpeDLa7MN4azl6d4cKa+P2mPAq7Bxp0xu8NnmsJXj9v9vsBUvk9EiARzMa1+ewmC4j/80
 
 
