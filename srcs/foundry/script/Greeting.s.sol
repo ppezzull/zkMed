@@ -2,7 +2,7 @@
 pragma solidity ^0.8.21;
 
 import "forge-std/Script.sol";
-import "../src/Greeting.sol";
+import "../src/examples/Greeting.sol";
 
 contract DeployGreeting is Script {
     function run() external {
@@ -19,4 +19,4 @@ contract DeployGreeting is Script {
 
         vm.stopBroadcast();
     }
-} 
+}

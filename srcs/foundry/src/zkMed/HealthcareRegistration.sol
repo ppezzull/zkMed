@@ -27,7 +27,6 @@ contract HealthcareRegistration is Verifier, Ownable {
         uint256 registrationTime;
         bool isActive;
     }
-    
     struct Admin {
         bool isActive;
         AdminRole role;

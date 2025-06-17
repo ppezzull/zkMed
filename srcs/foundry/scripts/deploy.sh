@@ -52,7 +52,7 @@ echo "🔧 Running forge script command..."
 DEPLOY_OUTPUT="/tmp/deploy_output.txt"
 
 # Use forge script for deployment - capture all output
-if forge script script/DeployGreeting.s.sol:DeployGreeting \
+if forge script script/Greeting.s.sol:DeployGreeting \
     --rpc-url ${RPC_URL:-http://host.docker.internal:8547} \
     --broadcast  > "$DEPLOY_OUTPUT" 2>&1; then
     
