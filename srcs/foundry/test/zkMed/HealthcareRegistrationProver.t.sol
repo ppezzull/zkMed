@@ -24,9 +24,7 @@ contract HealthcareRegistrationProverTest is VTest {
         // Create test instances
         EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
         HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
-        
-        // Get hospital email - note: using the correct Hospital.eml file for hospital registration
-        UnverifiedEmail memory email = getTestEmail("testdata/Insurance.eml"); // Fix this path if needed
+        UnverifiedEmail memory email = getTestEmail("testdata/Hospital.eml"); // Fix this path if needed
         VerifiedEmail memory verifiedEmail = wrapper.verify(email);
         
         // Call the prover
@@ -35,7 +33,7 @@ contract HealthcareRegistrationProverTest is VTest {
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.HOSPITAL));
-        assertEq(regData.walletAddress, 0x8B6D5F12D27A8870f9ab437c6f9135ab8EE3DB87);
+        assertEq(regData.walletAddress, 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955);
         assertEq(regData.domain, "onlyfive.it");
         assertEq(regData.organizationName, "City General Hospital");
         assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
@@ -45,9 +43,7 @@ contract HealthcareRegistrationProverTest is VTest {
         // Create test instances
         EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
         HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
-        
-        // Get insurer email - note: using the correct Insurance.eml file for insurer registration
-        UnverifiedEmail memory email = getTestEmail("testdata/Hospital.eml"); // Fix this path if needed
+        UnverifiedEmail memory email = getTestEmail("testdata/Insurance.eml"); // Fix this path if needed
         VerifiedEmail memory verifiedEmail = wrapper.verify(email);
         
         // Call the prover
@@ -56,7 +52,7 @@ contract HealthcareRegistrationProverTest is VTest {
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.INSURER));
-        assertEq(regData.walletAddress, 0x19dE91Af973F404EDF5B4c093983a7c6E3EC8ccE);
+        assertEq(regData.walletAddress, 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955);
         assertEq(regData.domain, "onlyfive.it");
         assertEq(regData.organizationName, "MediClaims Insurance Group");
         assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
