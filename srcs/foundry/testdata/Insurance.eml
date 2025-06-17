@@ -1,42 +1,44 @@
-Message-Id: <SXZE4Z$5CB246A233B9400AF19FFCD12A95EA0C@onlyfive.it>
-Subject: =?utf-8?b?IFJlZ2lzdGVyIG9yZ2FuaXphdGlvbiBNZWRpQ2xhaW1zIEluc3VyYW5j?=
-	=?utf-8?b?ZSBHcm91cCBhcyBJTlNVUkVSIHdpdGggd2FsbGV0OiAweDE5ZEU5MUFm?=
-	=?utf-8?b?OTczRjQwNEVERjVCNGMwOTM5ODNhN2M2RTNFQzhjY0U=?=
+Return-Path: <dev@onlyfive.it>
+Received: from mail.onlyfive.it (mail.onlyfive.it [62.149.128.151])
+    by mx.google.com with ESMTPS id h28si15736435pll.127.2023
+    for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>;
+    Tue, 17 Jun 2025 05:36:51 +0200 (CEST)
+Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.128.151 as permitted sender) client-ip=62.149.128.151; envelope-from=dev@onlyfive.it; helo=mail.onlyfive.it;
+Authentication-Results: mx.google.com;
+    spf=pass (google.com: domain of dev@onlyfive.it designates 62.149.128.151 as permitted sender) smtp.mailfrom=dev@onlyfive.it;
+    dkim=pass header.i=@onlyfive.it header.s=a1 header.b=ExampleHash;
+    dmarc=pass (p=none sp=none dis=none) header.from=onlyfive.it
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+    d=onlyfive.it; s=a1; t=1750131411;
+    h=from:to:subject:date:message-id:mime-version;
+    bh=J8KdpLzPcvAHrMiYXLlm0CgLQF95Y8X9Zn17XhSuDbw=;
+    b=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoOhAWzBuKQYXU6E3E9efq+DPvtkkvWPg3EtB+BT2cTrMGh6Xy00mXfPi/EzubRpbhHpv3b3k1d65Vyhmpp5O3HzTQyzIqYMMF5iF5y05D5aEux3pj/i1g5LkAOFE0Xdf+wnI8zppP2jP7IV4bwKPr1OnBqOjs8hfBWSEGaCSFD/aVbOdNldHiwSalzDL38E+IcT0KQB+BdutC2T9B5idcSPaBY57sC4hq31wpBlgNcYpIMDxOQN+E9E+TbgnlJYCOYsD5S0amYFivcJObjSGpdstMBfaM1ox5iEQVpEhLz5cwgohjrMst2us7G9eHZ6p2jR7X+/yTP8ryAAywzMJ5wIDAQAB
+Date: Tue, 17 Jun 2025 05:36:51 +0200
+Message-Id: <SXZE1F$65BD5B1752BC8AA49950284F9BC78447@onlyfive.it>
+Subject: =?utf-8?b?UmVnaXN0ZXIgb3JnYW5pemF0aW9uIENpdHkgR2VuZXJhbCBIb3NwaXRh?=
+	=?utf-8?b?bCBhcyBIT1NQSVRBTCB3aXRoIHdhbGxldDogMHg4QjZENWYxMkQyN0E4?=
+	=?utf-8?b?ODcwZjlhYjQzN0M2RjkxMzVhQjhlZTNEYjg3?=
 MIME-Version: 1.0
 X-Sensitivity: 3
 Content-Type: multipart/alternative;
-	boundary="_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749"
+	boundary="_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832"
 Reply-To: dev@onlyfive.it
 From: "dev" <dev@onlyfive.it>
-Return-Path: <dev@onlyfive.it>
-Received: from mail.onlyfive.it (mail.onlyfive.it [62.149.128.151])
-    by mx.google.com with ESMTPS id abc123
-    for <7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz>;
-    Tue, 17 Jun 2025 05:38:59 +0200 (CEST)
-Received-SPF: pass (spfCheck: domain of onlyfive.it designates 62.149.128.151 as permitted sender) client-ip=62.149.128.151; envelope-from=dev@onlyfive.it; helo=mail.onlyfive.it;
-Authentication-Results: mx.google.com;
-    spf=pass (spfCheck: domain of onlyfive.it designates 62.149.128.151 as permitted sender) smtp.mailfrom=dev@onlyfive.it;
-    dkim=pass header.i=@onlyfive.it;
-    dmarc=pass header.from=onlyfive.it;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-    d=onlyfive.it; s=a1; t=1740055082; h=from:to:subject:date:message-id:mime-version;
-    bh=ZhcNAhpOtSJL6zWNKLSprRJZeloGBBrDShzfzlBgc0M=;
-    b=EXAMPLEPLACEHOLDERFORREALDKIMSIGNATURE==
-Date: Tue, 17 Jun 2025 05:38:59 +0200
+To: 7921e0d1-e3e1-4422-9636-70dd8cb95245@proving.vlayer.xyz
 X-XaM3-API-Version: V4(R2)
 X-TipoRicevuta: completa
 X-type: 0
 X-SenderIP: 101.56.30.60
 
 
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749
+--_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 =0A=0A=0A
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749
+--_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 
---_=__=_XaM3_.1750131539.2A.891250.42.4816.52.42.007.1038856749--
+--_=__=_XaM3_.1750131411.2A.986276.42.46744.52.42.007.343208832--
