@@ -51,7 +51,7 @@ contract HealthcareRegistrationProver is Prover {
 
     /// @notice Prove organization registration with domain ownership
     /// @dev Email format: "Register organization [Name] as [HOSPITAL/INSURER] with wallet: 0x..."
-    function proveOrganizationRegistration(UnverifiedEmail calldata unverifiedEmail)
+    function main(UnverifiedEmail calldata unverifiedEmail)
         public
         view
         returns (Proof memory, RegistrationData memory)
