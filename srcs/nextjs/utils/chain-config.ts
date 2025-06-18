@@ -5,7 +5,7 @@ const BASE_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.inte
 
 // Define the local Mantle fork chain with a stable RPC initially
 export const mantleFork = defineChain({
-  id: 31339,
+  id: 31337,
   name: "Anvil Mantle Fork",
   nativeCurrency: {
     name: "Mantle",

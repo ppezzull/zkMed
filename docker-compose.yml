@@ -51,7 +51,7 @@ services:
       - /app/.next
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_CHAIN_ID=31339
+      - NEXT_PUBLIC_CHAIN_ID=31337
       - NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
       - NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
       - NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=${NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS:-}

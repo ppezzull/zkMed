@@ -34,7 +34,7 @@ if [ ! -z "$ADDRESSES_FILE" ] && [ -s "$ADDRESSES_FILE" ]; then
         echo "   HealthcareRegistration: $EXISTING_HEALTHCARE"
         echo "⏭️ Skipping deployment - using existing contracts"
         echo "🎉 Deployment check completed successfully!"
-        echo "Chain ID: $(jq -r '.chainId // 31339' "$ADDRESSES_FILE" 2>/dev/null)"
+        echo "Chain ID: $(jq -r '.chainId // 31337' "$ADDRESSES_FILE" 2>/dev/null)"
         echo "RPC URL: $(jq -r '.rpcUrl // "http://host.docker.internal:8547"' "$ADDRESSES_FILE" 2>/dev/null)"
         echo "📄 Using existing contract data"
         exit 0
@@ -109,7 +109,7 @@ echo "📄 Creating contract addresses files..."
 echo "GREETING_ADDRESS=$GREETING_ADDRESS" > out/addresses.txt
 echo "HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS" >> out/addresses.txt
 echo "HEALTHCARE_REGISTRATION_PROVER_ADDRESS=$PROVER_ADDRESS" >> out/addresses.txt
-echo "CHAIN_ID=${CHAIN_ID:-31339}" >> out/addresses.txt
+echo "CHAIN_ID=${CHAIN_ID:-31337}" >> out/addresses.txt
 echo "RPC_URL=${RPC_URL:-http://host.docker.internal:8547}" >> out/addresses.txt
 echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
 
@@ -117,7 +117,7 @@ echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
 echo "📝 Creating contracts JSON file..."
 cat > out/addresses.json << EOF
 {
-  "chainId": ${CHAIN_ID:-31339},
+  "chainId": ${CHAIN_ID:-31337},
   "rpcUrl": "${RPC_URL:-http://host.docker.internal:8547}",
   "contracts": {
     "Greeting": {
@@ -146,7 +146,7 @@ cat > out/contracts.env << EOF
 NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=$GREETING_ADDRESS
 NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS
 NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS=$PROVER_ADDRESS
-DEPLOYED_CHAIN_ID=${CHAIN_ID:-31339}
+DEPLOYED_CHAIN_ID=${CHAIN_ID:-31337}
 DEPLOYED_RPC_URL=${RPC_URL:-http://host.docker.internal:8547}
 DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
@@ -156,6 +156,6 @@ echo "📋 Contract Addresses:"
 echo "   Greeting: $GREETING_ADDRESS"
 echo "   HealthcareRegistration: $HEALTHCARE_ADDRESS"
 echo "   HealthcareRegistrationProver: $PROVER_ADDRESS"
-echo "Chain ID: ${CHAIN_ID:-31339}"
+echo "Chain ID: ${CHAIN_ID:-31337}"
 echo "RPC URL: ${RPC_URL:-http://host.docker.internal:8547}"
 echo "📄 Contract data exported to Docker volume" 

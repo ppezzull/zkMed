@@ -17,11 +17,19 @@ export async function GET() {
 
     // Fallback configuration
     const response = {
-      chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || '31339'),
+      chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || '31337'),
       rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || 'http://host.docker.internal:8547',
       contracts: contractData?.contracts || {
         Greeting: {
           address: process.env.NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS || '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe',
+          deployer: 'default'
+        },
+        HealthcareRegistration: {
+          address: process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || '0x0000000000000000000000000000000000000000',
+          deployer: 'default'
+        },
+        HealthcareRegistrationProver: {
+          address: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || '0x0000000000000000000000000000000000000000',
           deployer: 'default'
         }
       },

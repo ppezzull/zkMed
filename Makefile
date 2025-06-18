@@ -140,7 +140,7 @@ check-env: ## Check environment variables configuration
 	@echo "=========================================="
 	@echo "🔗 Blockchain Configuration:"
 	@echo "  NEXT_PUBLIC_RPC_URL: http://host.docker.internal:8547"
-	@echo "  NEXT_PUBLIC_CHAIN_ID: 31339"
+	@echo "  NEXT_PUBLIC_CHAIN_ID: 31337"
 	@echo ""
 	@echo "🔑 thirdweb Configuration:"
 	@echo "  NEXT_PUBLIC_THIRDWEB_CLIENT_ID: b928ddd875d3769c8652f348e29a52c5"
