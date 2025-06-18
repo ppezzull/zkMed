@@ -23,13 +23,17 @@ if [ -f "out/addresses.json" ] && [ -s "out/addresses.json" ]; then
 fi
 
 if [ ! -z "$ADDRESSES_FILE" ] && [ -s "$ADDRESSES_FILE" ]; then
-    # Check if the JSON file has a valid contract address
-    EXISTING_ADDRESS=$(jq -r '.contracts.Greeting.address // empty' "$ADDRESSES_FILE" 2>/dev/null)
-    if [ ! -z "$EXISTING_ADDRESS" ] && [ "$EXISTING_ADDRESS" != "null" ]; then
-        echo "✅ Contract already deployed at: $EXISTING_ADDRESS"
-        echo "⏭️ Skipping deployment - using existing contract"
+    # Check if the JSON file has valid contract addresses
+    EXISTING_GREETING=$(jq -r '.contracts.Greeting.address // empty' "$ADDRESSES_FILE" 2>/dev/null)
+    EXISTING_HEALTHCARE=$(jq -r '.contracts.HealthcareRegistration.address // empty' "$ADDRESSES_FILE" 2>/dev/null)
+    
+    if [ ! -z "$EXISTING_GREETING" ] && [ "$EXISTING_GREETING" != "null" ] && \
+       [ ! -z "$EXISTING_HEALTHCARE" ] && [ "$EXISTING_HEALTHCARE" != "null" ]; then
+        echo "✅ Contracts already deployed:"
+        echo "   Greeting: $EXISTING_GREETING"
+        echo "   HealthcareRegistration: $EXISTING_HEALTHCARE"
+        echo "⏭️ Skipping deployment - using existing contracts"
         echo "🎉 Deployment check completed successfully!"
-        echo "Contract Address: $EXISTING_ADDRESS"
         echo "Chain ID: $(jq -r '.chainId // 31339' "$ADDRESSES_FILE" 2>/dev/null)"
         echo "RPC URL: $(jq -r '.rpcUrl // "http://host.docker.internal:8547"' "$ADDRESSES_FILE" 2>/dev/null)"
         echo "📄 Using existing contract data"
@@ -37,55 +41,74 @@ if [ ! -z "$ADDRESSES_FILE" ] && [ -s "$ADDRESSES_FILE" ]; then
     fi
 fi
 
-echo "📝 No existing contract found - proceeding with new deployment..."
+echo "📝 No existing contracts found - proceeding with new deployment..."
 
 # Build contracts
 echo "🔨 Building contracts..."
 forge soldeer install
 forge build
 
-# Deploy Greeting contract using forge script (simplified version)
-echo "📝 Deploying Greeting contract using forge script..."
-echo "🔧 Running forge script command..."
+# Deploy Greeting contract using forge script
+echo "📝 Deploying Greeting contract..."
+GREETING_OUTPUT="/tmp/greeting_deploy.txt"
 
-# Create a simple deployment script output file
-DEPLOY_OUTPUT="/tmp/deploy_output.txt"
-
-# Use forge script for deployment - capture all output
 if forge script script/Greeting.s.sol:DeployGreeting \
     --rpc-url ${RPC_URL:-http://host.docker.internal:8547} \
-    --broadcast  > "$DEPLOY_OUTPUT" 2>&1; then
+    --broadcast > "$GREETING_OUTPUT" 2>&1; then
     
-    echo "✅ Forge script completed successfully!"
-    echo "📄 Deployment output:"
-    cat "$DEPLOY_OUTPUT"
-    
-    # Try to extract the contract address from the logs
-    GREETING_ADDRESS=$(grep -E "(deployed to:|Greeting contract deployed to:)" "$DEPLOY_OUTPUT" | grep -oE "0x[a-fA-F0-9]{40}" | head -1)
+    echo "✅ Greeting contract deployment completed!"
+    GREETING_ADDRESS=$(grep -E "Greeting contract deployed to:" "$GREETING_OUTPUT" | grep -oE "0x[a-fA-F0-9]{40}" | head -1)
     
     if [ -z "$GREETING_ADDRESS" ]; then
-        echo "⚠️ Could not extract contract address, trying alternative method..."
-        # Look for any 40-character hex address in the output
-        GREETING_ADDRESS=$(grep -oE "0x[a-fA-F0-9]{40}" "$DEPLOY_OUTPUT" | head -1)
+        GREETING_ADDRESS=$(grep -oE "0x[a-fA-F0-9]{40}" "$GREETING_OUTPUT" | head -1)
     fi
     
+    if [ ! -z "$GREETING_ADDRESS" ]; then
+        echo "✅ Greeting contract deployed at: $GREETING_ADDRESS"
+    else
+        echo "❌ Failed to extract Greeting contract address"
+        exit 1
+    fi
 else
-    echo "❌ Forge script failed!"
-    echo "📄 Error output:"
-    cat "$DEPLOY_OUTPUT"
+    echo "❌ Greeting contract deployment failed!"
+    cat "$GREETING_OUTPUT"
     exit 1
 fi
 
-if [ -z "$GREETING_ADDRESS" ]; then
-    echo "❌ Failed to extract contract address from deployment output"
+# Deploy HealthcareRegistration contracts using forge script
+echo "📝 Deploying HealthcareRegistration contracts..."
+HEALTHCARE_OUTPUT="/tmp/healthcare_deploy.txt"
+
+if forge script script/HealthcareRegistration.s.sol:DeployHealthcareRegistration \
+    --rpc-url ${RPC_URL:-http://host.docker.internal:8547} \
+    --broadcast > "$HEALTHCARE_OUTPUT" 2>&1; then
+    
+    echo "✅ HealthcareRegistration deployment completed!"
+    
+    # Extract contract addresses from logs
+    PROVER_ADDRESS=$(grep -E "HealthcareRegistrationProver deployed to:" "$HEALTHCARE_OUTPUT" | grep -oE "0x[a-fA-F0-9]{40}" | head -1)
+    HEALTHCARE_ADDRESS=$(grep -E "HealthcareRegistration contract deployed to:" "$HEALTHCARE_OUTPUT" | grep -oE "0x[a-fA-F0-9]{40}" | head -1)
+    
+    if [ ! -z "$PROVER_ADDRESS" ] && [ ! -z "$HEALTHCARE_ADDRESS" ]; then
+        echo "✅ HealthcareRegistrationProver deployed at: $PROVER_ADDRESS"
+        echo "✅ HealthcareRegistration deployed at: $HEALTHCARE_ADDRESS"
+    else
+        echo "❌ Failed to extract HealthcareRegistration contract addresses"
+        echo "📄 Deployment output:"
+        cat "$HEALTHCARE_OUTPUT"
+        exit 1
+    fi
+else
+    echo "❌ HealthcareRegistration deployment failed!"
+    cat "$HEALTHCARE_OUTPUT"
     exit 1
 fi
-
-echo "✅ Greeting contract deployed at: $GREETING_ADDRESS"
 
 # Create a simple addresses file without JSON
-echo "📄 Creating simple contract addresses file..."
+echo "📄 Creating contract addresses files..."
 echo "GREETING_ADDRESS=$GREETING_ADDRESS" > out/addresses.txt
+echo "HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS" >> out/addresses.txt
+echo "HEALTHCARE_REGISTRATION_PROVER_ADDRESS=$PROVER_ADDRESS" >> out/addresses.txt
 echo "CHAIN_ID=${CHAIN_ID:-31339}" >> out/addresses.txt
 echo "RPC_URL=${RPC_URL:-http://host.docker.internal:8547}" >> out/addresses.txt
 echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
@@ -100,6 +123,14 @@ cat > out/addresses.json << EOF
     "Greeting": {
       "address": "$GREETING_ADDRESS",
       "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    },
+    "HealthcareRegistration": {
+      "address": "$HEALTHCARE_ADDRESS",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    },
+    "HealthcareRegistrationProver": {
+      "address": "$PROVER_ADDRESS",
+      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
     }
   },
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -113,13 +144,18 @@ echo "Contract addresses saved to out/addresses.json"
 echo "📝 Creating environment variables..."
 cat > out/contracts.env << EOF
 NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS=$GREETING_ADDRESS
+NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS
+NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS=$PROVER_ADDRESS
 DEPLOYED_CHAIN_ID=${CHAIN_ID:-31339}
 DEPLOYED_RPC_URL=${RPC_URL:-http://host.docker.internal:8547}
 DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 
 echo "🎉 Deployment completed successfully!"
-echo "Contract Address: $GREETING_ADDRESS"
+echo "📋 Contract Addresses:"
+echo "   Greeting: $GREETING_ADDRESS"
+echo "   HealthcareRegistration: $HEALTHCARE_ADDRESS"
+echo "   HealthcareRegistrationProver: $PROVER_ADDRESS"
 echo "Chain ID: ${CHAIN_ID:-31339}"
 echo "RPC URL: ${RPC_URL:-http://host.docker.internal:8547}"
 echo "📄 Contract data exported to Docker volume" 
