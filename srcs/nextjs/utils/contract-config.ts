@@ -10,6 +10,8 @@ interface ContractsResponse {
   rpcUrl: string;
   contracts: {
     Greeting: ContractInfo;
+    HealthcareRegistration: ContractInfo;
+    HealthcareRegistrationProver: ContractInfo;
   };
   timestamp: string;
   status: 'deployed' | 'fallback';
@@ -53,6 +55,14 @@ export async function fetchContractAddresses(): Promise<ContractsResponse> {
         Greeting: {
           address: process.env.NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS || '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe',
           deployer: 'fallback'
+        },
+        HealthcareRegistration: {
+          address: process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || '0x0000000000000000000000000000000000000000',
+          deployer: 'fallback'
+        },
+        HealthcareRegistrationProver: {
+          address: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || '0x0000000000000000000000000000000000000000',
+          deployer: 'fallback'
         }
       },
       timestamp: new Date().toISOString(),
@@ -67,6 +77,22 @@ export async function fetchContractAddresses(): Promise<ContractsResponse> {
 export async function getGreetingContractAddress(): Promise<string> {
   const contracts = await fetchContractAddresses();
   return contracts.contracts.Greeting.address;
+}
+
+/**
+ * Get the HealthcareRegistration contract address dynamically
+ */
+export async function getHealthcareRegistrationContractAddress(): Promise<string> {
+  const contracts = await fetchContractAddresses();
+  return contracts.contracts.HealthcareRegistration.address;
+}
+
+/**
+ * Get the HealthcareRegistrationProver contract address dynamically
+ */
+export async function getHealthcareRegistrationProverContractAddress(): Promise<string> {
+  const contracts = await fetchContractAddresses();
+  return contracts.contracts.HealthcareRegistrationProver.address;
 }
 
 /**
@@ -85,4 +111,4 @@ export function clearContractCache(): void {
   cacheTimestamp = 0;
 }
 
-export type { ContractsResponse, ContractInfo }; 
+export type { ContractsResponse, ContractInfo };

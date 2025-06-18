@@ -7,7 +7,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
-    "typechain": "typechain --target ethers-v6 --out-dir ./utils/types/contracts '../foundry/out/Greeting.sol/Greeting.json'",
+    "typechain-examples": "typechain --target ethers-v6 --out-dir ./utils/types/examples '../foundry/out/Greeting.sol/Greeting.json'",
+    "typechain-healthcare-registration": "typechain --target ethers-v6 --out-dir ./utils/types/zkMed/HealthcareRegistration '../foundry/out/HealthcareRegistration.sol/HealthcareRegistration.json'",
+    "typechain-healthcare-prover": "typechain --target ethers-v6 --out-dir ./utils/types/zkMed/HealthcareRegistrationProver '../foundry/out/HealthcareRegistrationProver.sol/HealthcareRegistrationProver.json'",
+    "typechain-zkMed": "bun run typechain-healthcare-registration && bun run typechain-healthcare-prover",
+    "typechain": "bun run typechain-examples && bun run typechain-zkMed",
     "build:standalone": "NEXT_OUTPUT=standalone next build",
     "container:build": "docker build -t zkmed-frontend .",
     "container:run": "docker run -p 3000:3000 zkmed-frontend"
