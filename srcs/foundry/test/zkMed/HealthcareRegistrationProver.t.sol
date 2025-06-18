@@ -15,6 +15,11 @@ contract EmailProofLibWrapper {
 }
 
 contract HealthcareRegistrationProverTest is VTest {
+    // anvil default wallet 7 for Hospital.eml
+    address public hospitalWallet = 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955; 
+    // anvil default wallet 2 for Insurance.eml
+    address public insurerWallet = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8; 
+
     function getTestEmail(string memory path) public view returns (UnverifiedEmail memory) {
         string memory mime = vm.readFile(path);
         return preverifyEmail(mime);
@@ -33,7 +38,7 @@ contract HealthcareRegistrationProverTest is VTest {
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.HOSPITAL));
-        assertEq(regData.walletAddress, 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955);
+        assertEq(regData.walletAddress, hospitalWallet);
         assertEq(regData.domain, "onlyfive.it");
         assertEq(regData.organizationName, "City General Hospital");
         assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
@@ -52,23 +57,23 @@ contract HealthcareRegistrationProverTest is VTest {
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.INSURER));
-        assertEq(regData.walletAddress, 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955);
-        assertEq(regData.domain, "onlyfive.it");
+        assertEq(regData.walletAddress, insurerWallet);
+        assertEq(regData.domain, "nexthoop.it");
         assertEq(regData.organizationName, "MediClaims Insurance Group");
         assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
     }
 
     function test_stringToAddress() public {
         HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
-        address expected = 0x8B6D5F12D27A8870f9ab437c6f9135ab8EE3DB87;
-        address result = prover.stringToAddress("0x8B6D5f12D27A8870f9ab437C6F9135aB8ee3Db87");
+        address expected = hospitalWallet;
+        address result = prover.stringToAddress("0x14dC79964da2C08b23698B3D3cc7Ca32193d9955");
         assertEq(result, expected);
     }
 
     function test_stringToAddressInsurer() public {
         HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
-        address expected = 0x19dE91Af973F404EDF5B4c093983a7c6E3EC8ccE;
-        address result = prover.stringToAddress("0x19dE91Af973F404EDF5B4c093983a7c6E3EC8ccE");
+        address expected = insurerWallet;
+        address result = prover.stringToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
         assertEq(result, expected);
     }
 
