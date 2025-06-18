@@ -1,7 +1,7 @@
 'use client';
 
 import { useActiveAccount } from 'thirdweb/react';
-import { mantleFork } from '@/utils/chain-config';
+import { mantleFork } from '@/utils/configs/chain-config';
 
 export default function ChainStats() {
   const account = useActiveAccount();

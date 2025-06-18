@@ -5,8 +5,8 @@ import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
 import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
 import { Greeting__factory } from '@/utils/types/examples/factories/Greeting__factory';
-import { getClientChain } from '@/utils/chain-config';
-import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
+import { getClientChain } from '@/utils/configs/chain-config';
+import { getGreetingContractAddress, getContractStatus } from '@/utils/configs/contract-config';
 import { client } from '../components/providers/thirdweb-providers';
 
 // Contract ABI

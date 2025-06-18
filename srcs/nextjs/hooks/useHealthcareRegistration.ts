@@ -8,7 +8,7 @@ import { UserType, UserRecord } from '@/utils/types/healthcare';
 import { getHealthcareRegistrationAddress, getHealthcareRegistrationProverAddress } from '@/utils/actions/healthcare-registration';
 import { HealthcareRegistration__factory } from '@/utils/types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
-import { getClientChain } from '@/utils/chain-config';
+import { getClientChain } from '@/utils/configs/chain-config';
 import { client } from '@/components/providers/thirdweb-providers';
 
 // Registration step enum

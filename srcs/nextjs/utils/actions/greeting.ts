@@ -3,7 +3,7 @@
 import { readContract } from "thirdweb";
 import { createThirdwebClient } from "thirdweb";
 import { Greeting__factory } from "../types/examples/factories/Greeting__factory";
-import { mantleFork } from "../chain-config";
+import { mantleFork } from "../configs/chain-config";
 import fs from 'fs/promises';
 import path from 'path';
 

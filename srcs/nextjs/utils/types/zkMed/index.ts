@@ -18,7 +18,7 @@ export {
   clearContractCache,
   type ContractsResponse,
   type ContractInfo
-} from '../../contract-config';
+} from '../../configs/contract-config';
 
 // Contract types for easier imports
 export type HealthcareRegistrationContract = import('./HealthcareRegistration/HealthcareRegistration').HealthcareRegistration;

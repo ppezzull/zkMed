@@ -2,6 +2,8 @@
 
 import { ProofProvider } from "@vlayer/react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { wagmiConfig } from '@/utils/configs/wagmi-config';
+import { WagmiProvider } from 'wagmi';
 
 // Create query client
 const queryClient = new QueryClient();
@@ -18,10 +20,12 @@ interface VlayerProvidersProps {
 
 export function VlayerProviders({ children }: VlayerProvidersProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ProofProvider config={proverConfig}>
-        {children}
-      </ProofProvider>
-    </QueryClientProvider>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <ProofProvider config={proverConfig}>
+          {children}
+        </ProofProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 } 

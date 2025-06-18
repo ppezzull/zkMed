@@ -9,7 +9,7 @@ import {
 } from 'thirdweb';
 import { privateKeyToAccount } from 'thirdweb/wallets';
 import { toEther, toWei } from 'thirdweb/utils';
-import { getClientChain } from '@/utils/chain-config';
+import { getClientChain } from '@/utils/configs/chain-config';
 import { client } from '../providers/thirdweb-providers';
 
 export default function WalletFunding() {

@@ -2,7 +2,7 @@
 
 import { ThirdwebProvider } from 'thirdweb/react';
 import { createThirdwebClient } from 'thirdweb';
-import { mantleFork, getClientChain } from '@/utils/chain-config';
+import { mantleFork, getClientChain } from '@/utils/configs/chain-config';
 import { VlayerProviders } from './vlayer-provider';
 
 // Create the thirdweb client

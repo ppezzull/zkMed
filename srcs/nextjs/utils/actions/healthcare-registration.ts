@@ -4,9 +4,9 @@ import { readContract, createThirdwebClient } from "thirdweb";
 import { 
   getHealthcareRegistrationContractAddress,
   getHealthcareRegistrationProverContractAddress 
-} from '../contract-config';
+} from '../configs/contract-config';
 import { HealthcareRegistration__factory } from '../types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { mantleFork } from '../chain-config';
+import { mantleFork } from '../configs/chain-config';
 
 import { 
   UserType, 
