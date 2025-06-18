@@ -6,33 +6,13 @@ import {
   getHealthcareRegistrationProverContractAddress 
 } from '../contract-config';
 import { HealthcareRegistration__factory } from '../types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { HealthcareRegistrationProver__factory } from '../types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { mantleFork } from '../chain-config';
 
-// User role enum to match contract values
-enum UserType {
-  PATIENT = 0,
-  HOSPITAL = 1,
-  INSURER = 2
-}
-
-// Type aliases using contract-generated types
-type UserRecord = {
-  userType: UserType;
-  walletAddress: string;
-  domain: string;
-  organizationName: string;
-  emailHash: string;
-  registrationTime: bigint;
-  isActive: boolean;
-};
-
-type RegistrationStats = {
-  totalUsers: bigint;
-  patients: bigint;
-  hospitals: bigint;
-  insurers: bigint;
-};
+import { 
+  UserType, 
+  UserRecord, 
+  RegistrationStats 
+} from '@/utils/types/healthcare';
 
 // Create client for server-side calls
 const client = createThirdwebClient({

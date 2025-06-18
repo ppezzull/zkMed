@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
-import { UserType } from '@/utils/actions/healthcare-registration';
+import { UserType } from '@/utils/types/healthcare';
 import { RoleSelectionDialog } from './RoleSelectionDialog';
 import { OrganizationNameDialog } from './OrganizationNameDialog';
 import { SendEmailDialog } from './SendEmailDialog';

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ConnectButton, useActiveAccount } from 'thirdweb/react';
 import { client } from '@/components/providers/thirdweb-providers';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
-import { UserType } from '@/utils/actions/healthcare-registration';
+import { UserType } from '@/utils/types/healthcare';
 import { RegistrationFlow } from '@/components/registration/RegistrationFlow';
 
 export function Header() {
