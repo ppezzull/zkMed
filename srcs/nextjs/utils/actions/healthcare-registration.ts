@@ -9,23 +9,15 @@ import { HealthcareRegistration__factory } from '../types/zkMed/HealthcareRegist
 import { HealthcareRegistrationProver__factory } from '../types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { mantleFork } from '../chain-config';
 
-// Create client for server-side calls
-const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "your-client-id-here"
-});
-
-// Contract ABIs
-const HEALTHCARE_REGISTRATION_ABI = HealthcareRegistration__factory.abi;
-const HEALTHCARE_REGISTRATION_PROVER_ABI = HealthcareRegistrationProver__factory.abi;
-
-// Types for user roles and registration data
-export enum UserType {
+// User role enum to match contract values
+enum UserType {
   PATIENT = 0,
   HOSPITAL = 1,
   INSURER = 2
 }
 
-export interface UserRecord {
+// Type aliases using contract-generated types
+type UserRecord = {
   userType: UserType;
   walletAddress: string;
   domain: string;
@@ -33,14 +25,22 @@ export interface UserRecord {
   emailHash: string;
   registrationTime: bigint;
   isActive: boolean;
-}
+};
 
-export interface RegistrationStats {
+type RegistrationStats = {
   totalUsers: bigint;
   patients: bigint;
   hospitals: bigint;
   insurers: bigint;
-}
+};
+
+// Create client for server-side calls
+const client = createThirdwebClient({
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "your-client-id-here"
+});
+
+// Contract ABI
+const HEALTHCARE_REGISTRATION_ABI = HealthcareRegistration__factory.abi;
 
 /**
  * Check if a user is registered and get their role

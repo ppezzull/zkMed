@@ -3,7 +3,8 @@ import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
 import { preverifyEmail } from '@vlayer/sdk';
 import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
-import { getUserRole, UserType, UserRecord } from '@/utils/actions/healthcare-registration';
+import { getUserRole } from '@/utils/actions/healthcare-registration';
+import { UserType, UserRecord } from '@/utils/types/healthcare';
 import { getHealthcareRegistrationAddress, getHealthcareRegistrationProverAddress } from '@/utils/actions/healthcare-registration';
 import { HealthcareRegistration__factory } from '@/utils/types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
@@ -88,7 +89,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     error: proverError,
   } = useCallProver({
     address: proverAddress as `0x${string}`,
-    abi: HealthcareRegistrationProver__factory.abi,
+    proverAbi: HealthcareRegistrationProver__factory.abi,
     functionName: "main",
     chainId: chain.id,
   });
