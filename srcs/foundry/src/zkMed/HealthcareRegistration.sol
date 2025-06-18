@@ -245,6 +245,33 @@ contract HealthcareRegistration is Verifier, Ownable {
         require(admins[admin].isActive, "Not an admin");
         admins[admin].permissions = permissions;
     }
+
+    /**
+     * @dev Deactivate a user (admin only)
+     * @param user Address of the user to deactivate
+     */
+    function deactivateUser(address user) external onlyAdmin {
+        require(registeredUsers[user].isActive, "User not registered");
+        
+        // Deactivate the user
+        registeredUsers[user].isActive = false;
+        
+        // Update user type mappings
+        if (isPatient[user]) {
+            isPatient[user] = false;
+            totalPatients--;
+        } else if (isHospital[user]) {
+            isHospital[user] = false;
+            totalHospitals--;
+        } else if (isInsurer[user]) {
+            isInsurer[user] = false;
+            totalInsurers--;
+        }
+        
+        totalRegisteredUsers--;
+        
+        emit UserDeactivated(user);
+    }
     
     // ======== Domain Validation ========
     
