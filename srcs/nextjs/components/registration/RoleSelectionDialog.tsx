@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { UserType } from '@/utils/actions/healthcare-registration';
+import { UserType } from '@/utils/types/healthcare';
 
 interface RoleSelectionDialogProps {
   isOpen: boolean;

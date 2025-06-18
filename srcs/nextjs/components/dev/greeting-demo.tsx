@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { useGreetingContract } from '@/hooks/getGreetingContract';
+import { useGreetingContract } from '@/hooks/useGreetingContract';
 
 export default function GreetingDemo() {
   const account = useActiveAccount();

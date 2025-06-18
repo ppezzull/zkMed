@@ -9,16 +9,8 @@ export { HealthcareRegistration__factory } from './HealthcareRegistration/factor
 export * as HealthcareRegistrationProverTypes from './HealthcareRegistrationProver/index';
 export { HealthcareRegistrationProver__factory } from './HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 
-// Contract configuration utilities
-export {
-  fetchContractAddresses,
-  getHealthcareRegistrationContractAddress,
-  getHealthcareRegistrationProverContractAddress,
-  getContractStatus,
-  clearContractCache,
-  type ContractsResponse,
-  type ContractInfo
-} from '../../configs/contract-config';
+// Contract configuration utilities - now using client-side hooks
+export type { ContractsResponse, ContractInfo } from '../../../hooks/useContracts';
 
 // Contract types for easier imports
 export type HealthcareRegistrationContract = import('./HealthcareRegistration/HealthcareRegistration').HealthcareRegistration;

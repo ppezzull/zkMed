@@ -2,11 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
-import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
+import { prepareContractCall, getContract, sendAndConfirmTransaction, readContract } from 'thirdweb';
 import { Greeting__factory } from '@/utils/types/examples/factories/Greeting__factory';
 import { getClientChain } from '@/utils/configs/chain-config';
-import { getGreetingContractAddress, getContractStatus } from '@/utils/configs/contract-config';
+import { useContracts } from './useContracts';
 import { client } from '../components/providers/thirdweb-providers';
 
 // Contract ABI
@@ -32,6 +31,7 @@ export interface GreetingContractActions {
 export function useGreetingContract(): GreetingContractState & GreetingContractActions {
   const account = useActiveAccount();
   const mantleFork = getClientChain();
+  const { getGreetingAddress, getStatus } = useContracts();
   
   // State
   const [greeting, setGreetingState] = useState<string>('');
@@ -46,16 +46,14 @@ export function useGreetingContract(): GreetingContractState & GreetingContractA
   // Load contract address dynamically
   const loadContractInfo = useCallback(async () => {
     try {
-      const [address, status] = await Promise.all([
-        getGreetingContractAddress(),
-        getContractStatus()
-      ]);
+      const address = getGreetingAddress();
+      const status = getStatus();
       setContractAddress(address);
       setContractStatus(status);
     } catch (error) {
       console.error('Error loading contract info:', error);
     }
-  }, []);
+  }, [getGreetingAddress, getStatus]);
 
   // Fetch contract data
   const fetchData = useCallback(async () => {
@@ -63,37 +61,50 @@ export function useGreetingContract(): GreetingContractState & GreetingContractA
     
     setLoading(true);
     try {
+      const contract = getContract({
+        client,
+        chain: mantleFork,
+        address: contractAddress as `0x${string}`,
+        abi: GREETING_ABI,
+      });
+
       const [greetingResult, totalResult] = await Promise.all([
-        getGreeting(),
-        getTotalGreetings(),
+        readContract({
+          contract,
+          method: "getGreeting",
+        }),
+        readContract({
+          contract, 
+          method: "totalGreetings",
+        }),
       ]);
 
-      if (greetingResult.success) {
-        setGreetingState(greetingResult.data as string);
-      }
-      if (totalResult.success) {
-        setTotalGreetings(totalResult.data as bigint);
-      }
+      setGreetingState(greetingResult as string);
+      setTotalGreetings(totalResult as bigint);
 
       if (account?.address) {
         const [userGreetingResult, userCountResult] = await Promise.all([
-          getUserGreeting(account.address),
-          getUserGreetingCount(account.address),
+          readContract({
+            contract,
+            method: "getUserGreeting",
+            params: [account.address as `0x${string}`],
+          }),
+          readContract({
+            contract,
+            method: "getUserGreetingCount", 
+            params: [account.address as `0x${string}`],
+          }),
         ]);
 
-        if (userGreetingResult.success) {
-          setUserGreeting(userGreetingResult.data as string);
-        }
-        if (userCountResult.success) {
-          setUserGreetingCount(userCountResult.data as bigint);
-        }
+        setUserGreeting(userGreetingResult as string);
+        setUserGreetingCount(userCountResult as bigint);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
-  }, [contractAddress, account?.address]);
+  }, [contractAddress, account?.address, mantleFork]);
 
   // Set greeting transaction
   const setGreeting = useCallback(async (newGreeting: string) => {

@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
+import { prepareContractCall, getContract, sendAndConfirmTransaction, readContract } from 'thirdweb';
 import { preverifyEmail } from '@vlayer/sdk';
 import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
-import { getUserRole } from '@/utils/actions/healthcare-registration';
 import { UserType, UserRecord } from '@/utils/types/healthcare';
-import { getHealthcareRegistrationAddress, getHealthcareRegistrationProverAddress } from '@/utils/actions/healthcare-registration';
+import { useContracts } from './useContracts';
 import { HealthcareRegistration__factory } from '@/utils/types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { getClientChain } from '@/utils/configs/chain-config';
@@ -54,6 +53,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
   // Thirdweb account
   const account = useActiveAccount();
   const chain = getClientChain();
+  const { getHealthcareRegistrationAddress, getHealthcareRegistrationProverAddress } = useContracts();
 
   // State
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(RegistrationStep.IDLE);
@@ -73,14 +73,14 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
   useEffect(() => {
     const loadProverAddress = async () => {
       try {
-        const address = await getHealthcareRegistrationProverAddress();
+        const address = getHealthcareRegistrationProverAddress();
         setProverAddress(address);
       } catch (err) {
         console.error('Error loading prover address:', err);
       }
     };
     loadProverAddress();
-  }, []);
+  }, [getHealthcareRegistrationProverAddress]);
 
   // Vlayer prover hooks
   const {
@@ -102,17 +102,44 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     
     setLoading(true);
     try {
-      const roleData = await getUserRole(account.address);
-      setIsRegistered(roleData.isRegistered);
-      setUserRole(roleData.userType || null);
-      setUserRecord(roleData.record || null);
+      const contractAddress = getHealthcareRegistrationAddress();
+      
+      const contract = getContract({
+        client,
+        chain,
+        address: contractAddress as `0x${string}`,
+        abi: HealthcareRegistration__factory.abi,
+      });
+
+      const isRegistered = await readContract({
+        contract,
+        method: "isUserRegistered",
+        params: [account.address as `0x${string}`]
+      });
+
+      setIsRegistered(isRegistered as boolean);
+
+      if (isRegistered) {
+        const recordResult = await readContract({
+          contract,
+          method: "getUserRecord",
+          params: [account.address as `0x${string}`]
+        });
+
+        const record = recordResult as UserRecord;
+        setUserRole(record.userType);
+        setUserRecord(record);
+      } else {
+        setUserRole(null);
+        setUserRecord(null);
+      }
     } catch (err) {
       console.error('Error checking user role:', err);
       setError('Failed to check user role');
     } finally {
       setLoading(false);
     }
-  }, [account?.address]);
+  }, [account?.address, getHealthcareRegistrationAddress, chain]);
 
   // Register patient
   const registerPatient = useCallback(async () => {
@@ -126,12 +153,12 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setTxLoading(true);
       setError(null);
 
-      const contractAddress = await getHealthcareRegistrationAddress();
+      const contractAddress = getHealthcareRegistrationAddress();
       
       const contract = getContract({
         client,
         chain,
-        address: contractAddress,
+        address: contractAddress as `0x${string}`,
         abi: HealthcareRegistration__factory.abi,
       });
 
@@ -159,7 +186,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     } finally {
       setTxLoading(false);
     }
-  }, [account, chain, checkUserRole]);
+  }, [account, chain, checkUserRole, getHealthcareRegistrationAddress]);
 
   // Generate unique email for organization registration
   const generateUniqueEmail = useCallback(() => {
@@ -210,7 +237,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setCurrentStep(RegistrationStep.ORG_REGISTERING);
       setTxLoading(true);
       
-      const contractAddress = await getHealthcareRegistrationAddress();
+      const contractAddress = getHealthcareRegistrationAddress();
       const functionName = organizationType === 'HOSPITAL' 
         ? 'registerHospitalWithMailProof' 
         : 'registerInsurerWithMailProof';
@@ -251,7 +278,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     } finally {
       setTxLoading(false);
     }
-  }, [proof, account, organizationType, chain, checkUserRole]);
+  }, [proof, account, organizationType, chain, checkUserRole, getHealthcareRegistrationAddress]);
 
   // Reset state
   const reset = useCallback(() => {

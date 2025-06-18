@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
-import { UserType } from '@/utils/actions/healthcare-registration';
+import { UserType } from '@/utils/types/healthcare';
 
 export default function OrganizationPage() {
   const account = useActiveAccount();
