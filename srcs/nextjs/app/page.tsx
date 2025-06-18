@@ -6,7 +6,7 @@ import TechnologyPartners from '@/components/home/technology-partners';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main>
       <HeroSection />
       <ValueProposition />
       <InsurerSection />

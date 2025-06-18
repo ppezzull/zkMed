@@ -1,193 +1,153 @@
 'use client';
 
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useActiveAccount } from 'thirdweb/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import WalletConnect from '@/components/wallet-connect';
-import { useRouter } from 'next/navigation';
-import { useWallet } from '@/hooks/useWallet';
+import { ConnectButton, useActiveAccount } from 'thirdweb/react';
+import { client } from '@/components/providers/thirdweb-providers';
+import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
+import { UserType } from '@/utils/actions/healthcare-registration';
+import { RegistrationFlow } from '@/components/registration/RegistrationFlow';
 
-export default function Header() {
+export function Header() {
   const account = useActiveAccount();
-  const router = useRouter();
-  const [currentAPY, setCurrentAPY] = useState(4.2);
-  const [tvl, setTvl] = useState(12.7);
-  const [claims, setClaims] = useState(15847);
-  const { disconnect } = useWallet();
+  const registration = useHealthcareRegistration();
+  const [showRegistrationFlow, setShowRegistrationFlow] = useState(false);
 
+  // Check user role when wallet connects
   useEffect(() => {
-    // Simulate live data updates
-    const interval = setInterval(() => {
-      setCurrentAPY(prev => +(prev + (Math.random() * 0.1 - 0.05)).toFixed(2));
-      setTvl(prev => +(prev + (Math.random() * 0.2 - 0.1)).toFixed(1));
-      setClaims(prev => prev + (Math.random() > 0.8 ? 1 : 0));
-    }, 8000);
+    if (account?.address && !registration.loading) {
+      registration.checkUserRole();
+    }
+  }, [account?.address]);
 
-    return () => clearInterval(interval);
-  }, []);
+  // Show registration flow if user is connected but not registered
+  useEffect(() => {
+    if (account?.address && !registration.isRegistered && !registration.loading && !showRegistrationFlow) {
+      setShowRegistrationFlow(true);
+    }
+  }, [account?.address, registration.isRegistered, registration.loading]);
+
+  const handleRegistrationComplete = (userRole: UserType) => {
+    setShowRegistrationFlow(false);
+    // You could show a success message or update UI state here
+  };
+
+  const getUserRoleDisplay = () => {
+    if (!registration.userRole) return null;
+    
+    const roleNames = {
+      [UserType.PATIENT]: 'Patient',
+      [UserType.HOSPITAL]: 'Hospital',
+      [UserType.INSURER]: 'Insurance Company'
+    };
+    
+    return roleNames[registration.userRole];
+  };
+
+  const getUserDisplayName = () => {
+    if (!registration.userRecord) return null;
+    
+    if (registration.userRole === UserType.PATIENT) {
+      return `${account?.address?.slice(0, 6)}...${account?.address?.slice(-4)}`;
+    } else {
+      return registration.userRecord.organizationName || registration.userRecord.domain;
+    }
+  };
 
   return (
-    <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Left: Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white text-lg font-bold">⚕️</span>
-                </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">✓</span>
-                </div>
+    <>
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <div className="text-2xl font-bold text-blue-600">
+                zkMed
               </div>
-              <div>
-                <div className="text-2xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                  <span className="text-indigo-600">zk</span>Med
-                </div>
-                <div className="text-xs text-slate-500 -mt-1">Global Healthcare Platform</div>
-              </div>
-            </Link>
-          </div>
+            </div>
 
-          {/* Center: Navigation + Live Stats */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Navigation */}
-            <nav className="flex items-center space-x-6 mr-6">
-              <Link href="/" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors">
-                Platform
-              </Link>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="text-slate-700 hover:text-indigo-600 font-medium transition-colors flex items-center space-x-1">
-                  <span>Solutions</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>👥 For Patients</DropdownMenuItem>
-                  <DropdownMenuItem>🏥 For Hospitals</DropdownMenuItem>
-                  <DropdownMenuItem>🏢 For Insurers</DropdownMenuItem>
-                  <DropdownMenuItem>⚙️ For Administrators</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Link href="/privacy" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors">
-                Privacy
-              </Link>
-              <Link href="/docs" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors">
-                Docs
-              </Link>
+            {/* Navigation (you can expand this) */}
+            <nav className="hidden md:flex space-x-8">
+              <a 
+                href="/" 
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Home
+              </a>
+              {registration.isRegistered && (
+                <>
+                  {registration.userRole === UserType.PATIENT && (
+                    <a 
+                      href="/patient" 
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      My Records
+                    </a>
+                  )}
+                  {(registration.userRole === UserType.HOSPITAL || registration.userRole === UserType.INSURER) && (
+                    <a 
+                      href="/organization" 
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      Dashboard
+                    </a>
+                  )}
+                </>
+              )}
             </nav>
 
-            {/* Live Stats Pill */}
-            <div className="bg-slate-100 rounded-full px-4 py-2 flex items-center space-x-4 text-sm">
-              <span className="text-slate-600">
-                TVL: <span className="font-semibold text-slate-900">${tvl}M</span>
-              </span>
-              <span className="h-4 w-px bg-slate-300"></span>
-              <span className="text-slate-600">
-                APY: <span className="font-semibold text-emerald-600">{currentAPY}%</span>
-              </span>
-              <span className="h-4 w-px bg-slate-300"></span>
-              <span className="text-slate-600">
-                Claims: <span className="font-semibold text-indigo-600">{claims.toLocaleString()}</span>
-              </span>
-              <span className="h-4 w-px bg-slate-300"></span>
-              <span className="text-slate-600">
-                <span className="font-semibold text-orange-600">Testnet</span>
-              </span>
-            </div>
-          </div>
+            {/* Right side - Wallet connection and user info */}
+            <div className="flex items-center space-x-4">
+              {/* User role badge */}
+              {registration.isRegistered && getUserRoleDisplay() && (
+                <div className="hidden md:flex items-center space-x-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    registration.userRole === UserType.PATIENT 
+                      ? 'bg-blue-100 text-blue-800'
+                      : registration.userRole === UserType.HOSPITAL
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-purple-100 text-purple-800'
+                  }`}>
+                    {getUserRoleDisplay()}
+                  </span>
+                  {getUserDisplayName() && (
+                    <span className="text-sm text-gray-600">
+                      {getUserDisplayName()}
+                    </span>
+                  )}
+                </div>
+              )}
 
-          {/* Right: Wallet Connect + Profile */}
-          <div className="flex items-center space-x-3">
-            {!account ? (
-              <WalletConnect variant="header" />
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Badge className="bg-orange-100 text-orange-700 text-xs px-2 py-1">
-                  🧪 Testnet Active
-                </Badge>
-                
-                {/* Profile Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full bg-slate-100 hover:bg-slate-200">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                        <span className="text-white text-lg">👤</span>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex flex-col space-y-1 p-2">
-                      <p className="text-sm font-medium leading-none">Connected Wallet</p>
-                      <p className="text-xs leading-none text-slate-600">
-                        {account.address.slice(0, 6)}...{account.address.slice(-4)}
-                      </p>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => router.push('/dashboard')}>
-                      📊 Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push('/claims')}>
-                      🏥 My Claims
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push('/pool')}>
-                      💰 Pool Analytics
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push('/dev')}>
-                      🛠️ Developer Tools
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={disconnect} className="text-red-600">
-                      🚪 Disconnect
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className="md:hidden pb-4">
-          <nav className="flex flex-wrap justify-center gap-4">
-            <Link href="/" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors text-sm">
-              Platform
-            </Link>
-            <Link href="/solutions" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors text-sm">
-              Solutions
-            </Link>
-            <Link href="/privacy" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors text-sm">
-              Privacy
-            </Link>
-            <Link href="/docs" className="text-slate-700 hover:text-indigo-600 font-medium transition-colors text-sm">
-              Docs
-            </Link>
-          </nav>
-          
-          {/* Mobile Stats */}
-          <div className="mt-3 flex justify-center">
-            <div className="bg-slate-100 rounded-full px-3 py-1 flex items-center space-x-3 text-xs">
-              <span className="text-slate-600">
-                TVL: <span className="font-semibold">${tvl}M</span>
-              </span>
-              <span className="text-slate-600">
-                APY: <span className="font-semibold text-emerald-600">{currentAPY}%</span>
-              </span>
-              <span className="text-slate-600">
-                Claims: <span className="font-semibold text-indigo-600">{claims.toLocaleString()}</span>
-              </span>
-              <span className="text-slate-600">
-                <span className="font-semibold text-orange-600">Testnet</span>
-              </span>
+              {/* Connect wallet button */}
+              <ConnectButton 
+                client={client}
+                theme="light"
+                connectModal={{
+                  size: "compact",
+                  title: "Connect to zkMed",
+                  titleIcon: "https://via.placeholder.com/32x32.png?text=🏥"
+                }}
+              />
             </div>
           </div>
         </div>
-      </div>
-    </header>
+
+        {/* Loading indicator when checking registration */}
+        {account?.address && registration.loading && (
+          <div className="bg-blue-50 border-b border-blue-200 px-4 py-2">
+            <div className="max-w-7xl mx-auto flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+              <span className="text-sm text-blue-700">Checking registration status...</span>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Registration Flow */}
+      <RegistrationFlow
+        isOpen={showRegistrationFlow}
+        onClose={() => setShowRegistrationFlow(false)}
+        onRegistrationComplete={handleRegistrationComplete}
+      />
+    </>
   );
 } 

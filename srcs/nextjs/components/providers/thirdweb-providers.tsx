@@ -3,6 +3,7 @@
 import { ThirdwebProvider } from 'thirdweb/react';
 import { createThirdwebClient } from 'thirdweb';
 import { mantleFork, getClientChain } from '@/utils/chain-config';
+import { VlayerProviders } from './vlayer-provider';
 
 // Create the thirdweb client
 const client = createThirdwebClient({
@@ -12,7 +13,9 @@ const client = createThirdwebClient({
 export default function ThirdwebProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThirdwebProvider>
-      {children}
+      <VlayerProviders>
+        {children}
+      </VlayerProviders>
     </ThirdwebProvider>
   );
 }
