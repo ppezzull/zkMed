@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction } from 'thirdweb';
 import { getGreeting, getTotalGreetings, getUserGreeting, getUserGreetingCount } from '@/utils/actions/greeting';
-import { Greeting__factory } from '@/utils/types/contracts/factories/Greeting__factory';
+import { Greeting__factory } from '@/utils/types/examples/factories/Greeting__factory';
 import { getClientChain } from '@/utils/chain-config';
 import { getGreetingContractAddress, getContractStatus } from '@/utils/contract-config';
 import { client } from '../components/providers/thirdweb-providers';
