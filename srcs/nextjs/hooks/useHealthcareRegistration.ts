@@ -4,8 +4,8 @@ import { prepareContractCall, getContract, sendAndConfirmTransaction, readContra
 import { preverifyEmail } from '@vlayer/sdk';
 import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
 import { UserType, UserRecord } from '@/utils/types/healthcare';
-import { HealthcareRegistration__factory } from '@/utils/types/zkMed/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { HealthcareRegistrationProver__factory } from '@/utils/types/zkMed/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
+import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
+import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { getClientChain } from '@/utils/configs/chain-config';
 import { client } from '@/components/providers/thirdweb-providers';
 

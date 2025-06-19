@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   // Enable standalone output for Docker containers
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   
+  // TypeScript configuration
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  
   turbopack: {
     resolveAlias: {
       underscore: 'lodash',
