@@ -8,6 +8,7 @@ import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistr
 import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { getClientChain } from '@/utils/configs/chain-config';
 import { client } from '@/components/providers/thirdweb-providers';
+import { getContractAddresses } from '@/utils/contracts/addresses';
 
 // Registration step enum
 enum RegistrationStep {
@@ -52,8 +53,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
   // Thirdweb account
   const account = useActiveAccount();
   const chain = getClientChain();
-  const healthcareRegistrationAddress = process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || '';
-  const healthcareRegistrationProverAddress = process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || '';
+  const { healthcareRegistration: healthcareRegistrationAddress, healthcareRegistrationProver: healthcareRegistrationProverAddress } = getContractAddresses();
 
   // State`
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(RegistrationStep.IDLE);

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "bun run fetch-contracts && next dev --turbopack",
+    "build": "bun run fetch-contracts && next build --turbopack",
     "start": "next start",
     "lint": "next lint",
+    "fetch-contracts": "node scripts/fetch-contract-addresses.js",
     "typechain-healthcare-registration": "typechain --target ethers-v6 --out-dir ./utils/types/zkMed/HealthcareRegistration '../foundry/out/HealthcareRegistration.sol/HealthcareRegistration.json'",
     "typechain-healthcare-prover": "typechain --target ethers-v6 --out-dir ./utils/types/zkMed/HealthcareRegistrationProver '../foundry/out/HealthcareRegistrationProver.sol/HealthcareRegistrationProver.json'",
     "typechain-zkMed": "bun run typechain-healthcare-registration && bun run typechain-healthcare-prover",

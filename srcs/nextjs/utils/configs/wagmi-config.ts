@@ -2,7 +2,7 @@ import { Chain } from "wagmi/chains";
 import { createAppKit } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
-const appKitProjectId = `b928ddd875d3769c8652f348e29a52c5`; // Using the thirdweb client ID
+const appKitProjectId = `282d43f90370c66486dcc9172b9576f7`; // Using the thirdweb client ID
 
 // Define the mantle fork chain for development
 const mantleFork: Chain = {

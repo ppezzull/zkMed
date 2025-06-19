@@ -96,6 +96,8 @@ export default function DevPage() {
                   This page is for development and testing purposes. All transactions use testnet tokens 
                   and smart contracts are deployed on Anvil local network.
                 </p>
+                <div>daje roma: {process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS}</div>
+                <div>daje il porcode: {process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS}</div>
               </div>
             </div>
           </div>
