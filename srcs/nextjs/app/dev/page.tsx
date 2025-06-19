@@ -1,8 +1,41 @@
-import ChainStats from "@/components/dev/chain-stats";
-import WalletConnect from "@/components/wallet-connect";
-import WalletFunding from "@/components/dev/wallet-funding";
+'use client';
+
+import { useWallet } from '@/hooks/useWallet';
+import DevClient from '@/components/dev/dev-client';
 
 export default function DevPage() {
+  const {
+    // Wallet state
+    isConnected,
+    address,
+    shortAddress,
+    balance,
+    isLoading,
+    isFunding,
+    isReady,
+    
+    // Wallet functions
+    refreshBalance,
+    fundWallet,
+  } = useWallet();
+
+  // Show loading state while hook is initializing
+  if (!isReady) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0066CC] mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Loading Development Dashboard...
+          </h2>
+          <p className="text-gray-600">
+            Initializing wallet connection and blockchain data
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,92 +49,17 @@ export default function DevPage() {
           </p>
         </div>
 
-        <div className="space-y-8">
-          {/* Network Stats */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              🌐 Network Information
-            </h2>
-            <ChainStats />
-          </div>
-          
-          {/* Wallet Authentication */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              👛 Wallet Connection
-            </h2>
-            <WalletConnect />
-          </div>
-
-          {/* Wallet Funding (Local Development) */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              💰 Local Development Funding
-            </h2>
-            <WalletFunding />
-          </div>
-
-          {/* Development Resources */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              📚 Development Resources
-            </h2>
-            <div className="bg-white rounded-xl p-6 shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">🚀 Quick Start Resources</h3>
-              <p className="text-gray-600 mb-6">
-                Essential documentation and tools for zkMed platform development
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <a
-                  href="https://portal.thirdweb.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
-                >
-                  <div className="text-2xl">📚</div>
-                  <div>
-                    <h4 className="font-medium text-blue-800">thirdweb Docs</h4>
-                    <p className="text-sm text-blue-600">Smart wallet integration</p>
-                  </div>
-                </a>
-                <a
-                  href="https://docs.vlayer.xyz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors"
-                >
-                  <div className="text-2xl">🔍</div>
-                  <div>
-                    <h4 className="font-medium text-purple-800">vlayer Docs</h4>
-                    <p className="text-sm text-purple-600">Zero-knowledge proofs</p>
-                  </div>
-                </a>
-                <a
-                  href="https://docs.mantle.xyz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors"
-                >
-                  <div className="text-2xl">⛓️</div>
-                  <div>
-                    <h4 className="font-medium text-green-800">Mantle Docs</h4>
-                    <p className="text-sm text-green-600">L2 blockchain network</p>
-                  </div>
-                </a>
-              </div>
-              
-              <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <h4 className="font-medium text-yellow-800 mb-2">⚠️ Development Mode</h4>
-                <p className="text-sm text-yellow-700">
-                  This page is for development and testing purposes. All transactions use testnet tokens 
-                  and smart contracts are deployed on Anvil local network.
-                </p>
-                <div>daje roma: {process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS}</div>
-                <div>daje il porcode: {process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS}</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Dev Client Component with all data passed as props */}
+        <DevClient
+          isConnected={isConnected}
+          address={address}
+          shortAddress={shortAddress}
+          balance={balance}
+          isLoading={isLoading}
+          isFunding={isFunding}
+          refreshBalance={refreshBalance}
+          fundWallet={fundWallet}
+        />
       </div>
     </div>
   );
