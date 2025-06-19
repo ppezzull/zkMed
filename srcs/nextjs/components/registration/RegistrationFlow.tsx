@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActiveAccount } from 'thirdweb/react';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
 import { UserType } from '@/utils/types/healthcare';
 import { RoleSelectionDialog } from './RoleSelectionDialog';
@@ -22,6 +23,7 @@ export function RegistrationFlow({
 }: RegistrationFlowProps) {
   const router = useRouter();
   const registration = useHealthcareRegistration();
+  const account = useActiveAccount();
   
   // Local dialog state
   const [showRoleSelection, setShowRoleSelection] = useState(false);
@@ -29,12 +31,22 @@ export function RegistrationFlow({
   const [showSendEmail, setShowSendEmail] = useState(false);
   const [showCollectEmail, setShowCollectEmail] = useState(false);
 
-  // Open role selection when the flow starts
+  // Only show dialogs when the flow is explicitly opened, user is connected, and user needs to register
   useEffect(() => {
-    if (isOpen && !registration.isRegistered) {
-      setShowRoleSelection(true);
+    if (isOpen && account?.address) {
+      // Only show role selection if user is confirmed to not be registered
+      // and we're not still loading the registration status  
+      if (!registration.loading && registration.isRegistered === false) {
+        setShowRoleSelection(true);
+      }
+    } else {
+      // If the flow is closed or user not connected, make sure all dialogs are closed
+      setShowRoleSelection(false);
+      setShowOrganizationName(false);
+      setShowSendEmail(false);
+      setShowCollectEmail(false);
     }
-  }, [isOpen, registration.isRegistered]);
+  }, [isOpen, account?.address, registration.isRegistered, registration.loading]);
 
   // Handle registration success
   useEffect(() => {
@@ -97,9 +109,9 @@ export function RegistrationFlow({
     // Keep the collect email dialog open to show progress
   };
 
-  // Error handling
+  // Error handling - don't show alerts for role checking errors (background checks)
   useEffect(() => {
-    if (registration.error) {
+    if (registration.error && registration.error !== 'Failed to check user role') {
       alert(`Registration Error: ${registration.error}`);
       registration.reset();
     }

@@ -1,7 +1,6 @@
 import ChainStats from "@/components/dev/chain-stats";
 import WalletConnect from "@/components/wallet-connect";
 import WalletFunding from "@/components/dev/wallet-funding";
-import GreetingDemo from "@/components/dev/greeting-demo";
 
 export default function DevPage() {
   return (
@@ -40,14 +39,6 @@ export default function DevPage() {
               💰 Local Development Funding
             </h2>
             <WalletFunding />
-          </div>
-
-          {/* Greeting Contract Demo */}
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              📝 Smart Contract Interaction
-            </h2>
-            <GreetingDemo />
           </div>
 
           {/* Development Resources */}

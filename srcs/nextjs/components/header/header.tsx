@@ -20,27 +20,28 @@ export default function Header() {
   const [claims, setClaims] = useState(15847);
   
   // Healthcare registration functionality
-  const registration = useHealthcareRegistration();
-  const [showRegistrationFlow, setShowRegistrationFlow] = useState(false);
+  // const registration = useHealthcareRegistration();
+  // const [showRegistrationFlow, setShowRegistrationFlow] = useState(false);
 
-  // Check user role when wallet connects
-  useEffect(() => {
-    if (account?.address && !registration.loading) {
-      registration.checkUserRole();
-    }
-  }, [account?.address]);
+  // // Check user role when wallet connects
+  // useEffect(() => {
+  //   if (account?.address && !registration.loading) {
+  //     registration.checkUserRole();
+  //   }
+  // }, [account?.address]);
 
   // Show registration flow if user is connected but not registered
-  useEffect(() => {
-    if (account?.address && !registration.isRegistered && !registration.loading && !showRegistrationFlow) {
-      setShowRegistrationFlow(true);
-    }
-  }, [account?.address, registration.isRegistered, registration.loading]);
+  // TODO: Temporarily disabled - don't auto-open registration dialog on wallet connect
+  // useEffect(() => {
+  //   if (account?.address && !registration.isRegistered && !registration.loading && !showRegistrationFlow) {
+  //     setShowRegistrationFlow(true);
+  //   }
+  // }, [account?.address, registration.isRegistered, registration.loading]);
 
-  const handleRegistrationComplete = (userRole: UserType) => {
-    setShowRegistrationFlow(false);
-    // You could show a success message or update UI state here
-  };
+  // const handleRegistrationComplete = (userRole: UserType) => {
+  //   setShowRegistrationFlow(false);
+  //   // You could show a success message or update UI state here
+  // };
 
   useEffect(() => {
     // Simulate live data updates
@@ -75,7 +76,7 @@ export default function Header() {
 
             {/* Right: User Profile */}
             <div className="flex items-center space-x-3">
-              <UserProfile onShowRegistration={() => setShowRegistrationFlow(true)} />
+              {/* <UserProfile onShowRegistration={() => setShowRegistrationFlow(true)} /> */}
             </div>
           </div>
 
@@ -88,15 +89,15 @@ export default function Header() {
         </div>
 
         {/* Registration Status Loading */}
-        <RegistrationStatus loading={registration.loading} />
+        {/* <RegistrationStatus loading={registration.loading} /> */}
       </header>
 
-      {/* Registration Flow */}
+      {/* Registration Flow
       <RegistrationFlow
         isOpen={showRegistrationFlow}
         onClose={() => setShowRegistrationFlow(false)}
         onRegistrationComplete={handleRegistrationComplete}
-      />
+      /> */}
     </>
   );
 }
