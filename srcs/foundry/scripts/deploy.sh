@@ -16,22 +16,19 @@ echo "✅ Anvil is ready!"
 
 # Check if contracts are already deployed
 echo "🔍 Checking for existing contract deployment..."
-# Check both the local out directory and the volume mount location (which is /app/out)
 ADDRESSES_FILE=""
 if [ -f "out/addresses.json" ] && [ -s "out/addresses.json" ]; then
     ADDRESSES_FILE="out/addresses.json"
 fi
 
 if [ ! -z "$ADDRESSES_FILE" ] && [ -s "$ADDRESSES_FILE" ]; then
-    # Check if the JSON file has valid contract addresses
     EXISTING_HEALTHCARE=$(jq -r '.contracts.HealthcareRegistration.address // empty' "$ADDRESSES_FILE" 2>/dev/null)
-    
-    if [ ! -z "$EXISTING_HEALTHCARE" ] && [ "$EXISTING_HEALTHCARE" != "null" ]; then
+    if [ ! -z "$EXISTING_HEALTHCARE" ] && [ "$EXISTING_HEALTHCARE" != "null" ] && [ "$EXISTING_HEALTHCARE" != "0x0000000000000000000000000000000000000000" ]; then
         echo "✅ HealthcareRegistration contract already deployed: $EXISTING_HEALTHCARE"
         echo "⏭️ Skipping deployment - using existing contract"
         echo "🎉 Deployment check completed successfully!"
         echo "Chain ID: $(jq -r '.chainId // 31337' "$ADDRESSES_FILE" 2>/dev/null)"
-        echo "RPC URL: $(jq -r '.rpcUrl // "http://host.docker.internal:8547"' "$ADDRESSES_FILE" 2>/dev/null)"
+        echo "RPC URL: $(jq -r '.rpcUrl // \"http://host.docker.internal:8547\"' "$ADDRESSES_FILE" 2>/dev/null)"
         echo "📄 Using existing contract data"
         exit 0
     fi
@@ -61,57 +58,40 @@ if forge script script/HealthcareRegistration.s.sol:DeployHealthcareRegistration
     if [ ! -z "$PROVER_ADDRESS" ] && [ ! -z "$HEALTHCARE_ADDRESS" ]; then
         echo "✅ HealthcareRegistrationProver deployed at: $PROVER_ADDRESS"
         echo "✅ HealthcareRegistration deployed at: $HEALTHCARE_ADDRESS"
+        echo "🔍 DEBUG: Proceeding to create JSON file..."
     else
         echo "❌ Failed to extract HealthcareRegistration contract addresses"
-        echo "📄 Deployment output:"
+        echo "🔍 DEBUG: PROVER_ADDRESS=$PROVER_ADDRESS"
+        echo "� DEBUG: HEALTHCARE_ADDRESS=$HEALTHCARE_ADDRESS"
+        echo "�📄 Deployment output:"
         cat "$HEALTHCARE_OUTPUT"
         exit 1
     fi
 else
     echo "❌ HealthcareRegistration deployment failed!"
+    echo "📄 Forge script output:"
     cat "$HEALTHCARE_OUTPUT"
     exit 1
 fi
 
-# Create a simple addresses file without JSON
-echo "📄 Creating contract addresses files..."
-echo "HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS" > out/addresses.txt
-echo "HEALTHCARE_REGISTRATION_PROVER_ADDRESS=$PROVER_ADDRESS" >> out/addresses.txt
-echo "CHAIN_ID=${CHAIN_ID:-31337}" >> out/addresses.txt
-echo "RPC_URL=${RPC_URL:-http://host.docker.internal:8547}" >> out/addresses.txt
-echo "DEPLOYMENT_TIME=$(date)" >> out/addresses.txt
-
-# Create JSON file for frontend API
-echo "📝 Creating contracts JSON file..."
-cat > out/addresses.json << EOF
+# Create a JSON addresses file
+echo "📄 Creating contract addresses JSON file..."
+cat > out/addresses.json <<EOF
 {
   "chainId": ${CHAIN_ID:-31337},
   "rpcUrl": "${RPC_URL:-http://host.docker.internal:8547}",
   "contracts": {
     "HealthcareRegistration": {
       "address": "$HEALTHCARE_ADDRESS",
-      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      "deployer": "default"
     },
     "HealthcareRegistrationProver": {
       "address": "$PROVER_ADDRESS",
-      "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+      "deployer": "default"
     }
   },
-  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "status": "deployed"
+  "timestamp": "$(date -Iseconds)"
 }
-EOF
-
-echo "Contract addresses saved to out/addresses.json"
-
-# Also create environment file for compatibility
-echo "📝 Creating environment variables..."
-cat > out/contracts.env << EOF
-NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS=$HEALTHCARE_ADDRESS
-NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS=$PROVER_ADDRESS
-DEPLOYED_CHAIN_ID=${CHAIN_ID:-31337}
-DEPLOYED_RPC_URL=${RPC_URL:-http://host.docker.internal:8547}
-DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 
 echo "🎉 Deployment completed successfully!"

@@ -15,25 +15,7 @@ export async function GET() {
       console.log('Contract addresses file not found, using defaults')
     }
 
-    // Fallback configuration
-    const response = {
-      chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || '31337'),
-      rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || 'http://host.docker.internal:8547',
-      contracts: contractData?.contracts || {
-        HealthcareRegistration: {
-          address: process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || '0x0000000000000000000000000000000000000000',
-          deployer: 'default'
-        },
-        HealthcareRegistrationProver: {
-          address: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || '0x0000000000000000000000000000000000000000',
-          deployer: 'default'
-        }
-      },
-      timestamp: contractData?.timestamp || new Date().toISOString(),
-      status: contractData ? 'deployed' : 'fallback'
-    }
-
-    return NextResponse.json(response)
+    return NextResponse.json(contractData || "{}")
   } catch (error) {
     console.error('Error reading contract data:', error)
     return NextResponse.json(
@@ -41,4 +23,4 @@ export async function GET() {
       { status: 500 }
     )
   }
-} 
+}
