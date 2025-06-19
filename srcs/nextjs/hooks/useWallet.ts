@@ -1,7 +1,7 @@
 'use client';
 
 import { useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
-import { client, getClientChain } from '../components/providers/thirdweb-providers';
+import { getClientChain } from '@/utils/configs/chain-config';
 import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
 import { useCallback, useState, useEffect } from 'react';
 import { 
@@ -10,7 +10,8 @@ import {
   getRpcClient
 } from 'thirdweb';
 import { privateKeyToAccount } from 'thirdweb/wallets';
-import { toEther, toWei } from 'thirdweb/utils';
+import { toWei } from 'thirdweb/utils';
+import client from '@/utils/thirdwebClient';
 
 // Get the appropriate chain for client-side operations
 const clientChain = getClientChain();

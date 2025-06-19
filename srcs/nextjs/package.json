@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "bun run fetch-contracts && next dev --turbopack",
-    "build": "bun run fetch-contracts && next build --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "fetch-contracts": "node scripts/fetch-contract-addresses.js",

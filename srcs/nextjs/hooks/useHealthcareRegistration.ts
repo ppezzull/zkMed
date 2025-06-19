@@ -7,7 +7,7 @@ import { UserType, UserRecord } from '@/utils/types/healthcare';
 import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 import { getClientChain } from '@/utils/configs/chain-config';
-import { client } from '@/components/providers/thirdweb-providers';
+import client from '@/utils/thirdwebClient';
 import { getContractAddresses } from '@/utils/contracts/addresses';
 
 // Registration step enum
