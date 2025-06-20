@@ -14,11 +14,11 @@ const proverConfig = {
   token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN,
 };
 
-interface VlayerProvidersProps {
+interface VlayerProviderProps {
   children: React.ReactNode;
 }
 
-export function VlayerProviders({ children }: VlayerProvidersProps) {
+export default function VlayerProvider({ children }: VlayerProviderProps) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>

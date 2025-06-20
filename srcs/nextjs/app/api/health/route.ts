@@ -12,6 +12,11 @@ export async function GET() {
       chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
       rpcUrl: process.env.NEXT_PUBLIC_RPC_URL ? 'configured' : 'not configured'
     },
+    contracts: {
+      healthcareRegistrationAddress: process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || 'not configured',
+      healthcareProverAddress: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || 'not configured',
+      configured: !!(process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS && process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS)
+    },
     uptime: process.uptime(),
     memory: process.memoryUsage(),
   }
