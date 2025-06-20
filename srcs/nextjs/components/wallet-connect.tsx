@@ -33,7 +33,6 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
           }}
           connectModal={{
             title: "Connect to zkMed",
-            titleIcon: "🏥",
           }}
         />
       );
@@ -81,7 +80,6 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
             }}
             connectModal={{
               title: "Connect to zkMed",
-              titleIcon: "🏥",
             }}
           />
           

@@ -33,7 +33,7 @@ services:
   zkmed-frontend:
     build:
       context: ./srcs/nextjs
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: zkmed-frontend
     ports:
       - "3001:3000"
