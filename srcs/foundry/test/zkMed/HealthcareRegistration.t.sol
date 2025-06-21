@@ -15,12 +15,22 @@ contract HealthcareRegistrationTest is Test {
     address public hospital1;
     address public insurer1;
     
+    // Sample email hashes for testing
+    bytes32 public emailHash1;
+    bytes32 public emailHash2;
+    bytes32 public emailHash3;
+    
     function setUp() public {
         admin = address(this);
         patient1 = vm.addr(1);
         patient2 = vm.addr(2);
         hospital1 = vm.addr(3);
         insurer1 = vm.addr(4);
+        
+        // Generate sample email hashes
+        emailHash1 = keccak256(abi.encodePacked("patient1@example.com"));
+        emailHash2 = keccak256(abi.encodePacked("patient2@example.com"));
+        emailHash3 = keccak256(abi.encodePacked("patient3@example.com"));
         
         prover = new HealthcareRegistrationProver();
         registration = new HealthcareRegistration(address(prover));
@@ -29,11 +39,15 @@ contract HealthcareRegistrationTest is Test {
     // ======== Patient Registration Tests ========
 
     function test_registerPatient() public {
-        registration.registerPatient(patient1);
+        registration.registerPatient(patient1, emailHash1);
         
         assertTrue(registration.isPatient(patient1));
         assertTrue(registration.isUserRegistered(patient1));
         assertEq(uint256(registration.getUserType(patient1)), uint256(HealthcareRegistration.UserType.PATIENT));
+        
+        // Verify email hash is stored
+        HealthcareRegistration.UserRecord memory record = registration.getUserRecord(patient1);
+        assertEq(record.emailHash, emailHash1);
         
         (uint256 totalUsers, uint256 patients, uint256 hospitals, uint256 insurers) = registration.getRegistrationStats();
         assertEq(totalUsers, 1);
@@ -43,8 +57,8 @@ contract HealthcareRegistrationTest is Test {
     }
 
     function test_registerMultiplePatients() public {
-        registration.registerPatient(patient1);
-        registration.registerPatient(patient2);
+        registration.registerPatient(patient1, emailHash1);
+        registration.registerPatient(patient2, emailHash2);
         
         assertTrue(registration.isPatient(patient1));
         assertTrue(registration.isPatient(patient2));
@@ -59,24 +73,30 @@ contract HealthcareRegistrationTest is Test {
     }
 
     function test_revertPatientAlreadyRegistered() public {
-        registration.registerPatient(patient1);
+        registration.registerPatient(patient1, emailHash1);
         vm.expectRevert("Patient already registered");
-        registration.registerPatient(patient1);
+        registration.registerPatient(patient1, emailHash2);
+    }
+
+    function test_revertEmailAlreadyUsed() public {
+        registration.registerPatient(patient1, emailHash1);
+        vm.expectRevert("Email already used");
+        registration.registerPatient(patient2, emailHash1);
     }
 
     function test_revertInvalidPatientAddress() public {
         vm.expectRevert("Invalid patient address");
-        registration.registerPatient(address(0));
+        registration.registerPatient(address(0), emailHash1);
     }
 
     function test_revertRegisterPatientNotAdmin() public {
         vm.prank(patient1);
         vm.expectRevert("Not an admin");
-        registration.registerPatient(patient2);
+        registration.registerPatient(patient2, emailHash1);
     }
 
     function test_deactivatePatient() public {
-        registration.registerPatient(patient1);
+        registration.registerPatient(patient1, emailHash1);
         
         // Verify patient is registered and active
         assertTrue(registration.isUserRegistered(patient1));
@@ -196,5 +216,27 @@ contract HealthcareRegistrationTest is Test {
         // Test very short domain
         assertFalse(registration.validateHospitalDomain("abc"));
         assertFalse(registration.validateInsurerDomain("xyz"));
+    }
+
+    // ======== Email Hash Validation Tests ========
+
+    function test_emailHashUniqueness() public {
+        // Test that each email hash can only be used once
+        registration.registerPatient(patient1, emailHash1);
+        
+        // Try to register another patient with the same email hash
+        vm.expectRevert("Email already used");
+        registration.registerPatient(patient2, emailHash1);
+    }
+
+    function test_emailHashStored() public {
+        registration.registerPatient(patient1, emailHash1);
+        
+        HealthcareRegistration.UserRecord memory record = registration.getUserRecord(patient1);
+        assertEq(record.emailHash, emailHash1);
+        assertEq(record.walletAddress, patient1);
+        assertEq(uint256(record.userType), uint256(HealthcareRegistration.UserType.PATIENT));
+        assertTrue(record.isActive);
+        assertGt(record.registrationTime, 0);
     }
 }

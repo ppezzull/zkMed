@@ -3,6 +3,10 @@
 import { ConnectButton } from 'thirdweb/react';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/hooks/useWallet';
+import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
+import { UserType } from '@/utils/types/healthcare';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface WalletConnectProps {
   variant?: 'header' | 'full';
@@ -18,6 +22,46 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
     client, 
     chain 
   } = useWallet();
+  
+  const registration = useHealthcareRegistration();
+  const router = useRouter();
+  const [hasCheckedRegistration, setHasCheckedRegistration] = useState(false);
+
+  // Check user role when wallet connects
+  useEffect(() => {
+    if (isConnected && account?.address && !registration.loading && !hasCheckedRegistration) {
+      registration.checkUserRole().then(() => {
+        setHasCheckedRegistration(true);
+      });
+    }
+  }, [isConnected, account?.address, registration.loading, hasCheckedRegistration]);
+
+  // Handle user redirection based on role
+  useEffect(() => {
+    if (hasCheckedRegistration && isConnected) {
+      if (registration.isRegistered && registration.userRole !== null) {
+        // Redirect to role-specific page
+        if (registration.userRole === UserType.PATIENT) {
+          router.push(`/patient/${account?.address}`);
+        } else if (registration.userRole === UserType.HOSPITAL) {
+          router.push(`/hospital/${account?.address}`);
+        } else if (registration.userRole === UserType.INSURER) {
+          router.push(`/insurance/${account?.address}`);
+        }
+        // TODO: Add admin check and redirect to /admin
+      } else if (registration.isRegistered === false) {
+        // User is not registered, redirect to registration page
+        router.push('/register/role-selection');
+      }
+    }
+  }, [hasCheckedRegistration, isConnected, registration.isRegistered, registration.userRole, account?.address, router]);
+
+  // Reset check when wallet disconnects
+  useEffect(() => {
+    if (!isConnected) {
+      setHasCheckedRegistration(false);
+    }
+  }, [isConnected]);
 
   // Header variant - compact for navigation
   if (variant === 'header') {
@@ -104,15 +148,30 @@ export default function WalletConnect({ variant = 'full' }: WalletConnectProps) 
         </div>
       ) : (
         <div className="text-center w-full">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
-            <p className="text-emerald-700 font-medium mb-2">✅ Successfully Connected</p>
-            <p className="text-sm text-emerald-600 mb-2">
-              Address: <span className="font-mono">{account?.address.slice(0, 8)}...{account?.address.slice(-6)}</span>
-            </p>
-            <p className="text-xs text-emerald-600">
-              🚀 Smart wallet enabled - Enjoy gasless healthcare transactions!
-            </p>
-          </div>
+          {/* Show loading state while checking registration */}
+          {registration.loading || !hasCheckedRegistration ? (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-center space-x-3">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                <p className="text-blue-700 font-medium">Checking registration status...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+              <p className="text-emerald-700 font-medium mb-2">✅ Successfully Connected</p>
+              <p className="text-sm text-emerald-600 mb-2">
+                Address: <span className="font-mono">{account?.address.slice(0, 8)}...{account?.address.slice(-6)}</span>
+              </p>
+              <p className="text-xs text-emerald-600">
+                🚀 Smart wallet enabled - Enjoy gasless healthcare transactions!
+              </p>
+              {hasCheckedRegistration && (
+                <p className="text-xs text-emerald-600 mt-1">
+                  {registration.isRegistered ? '🏥 Redirecting to your dashboard...' : '📝 Redirecting to registration...'}
+                </p>
+              )}
+            </div>
+          )}
           
           <Button
             onClick={disconnect}

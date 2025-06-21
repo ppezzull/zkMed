@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import { prepareContractCall, getContract, sendAndConfirmTransaction, readContract } from 'thirdweb';
 import { preverifyEmail } from '@vlayer/sdk';
@@ -9,10 +9,12 @@ import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareR
 import { getClientChain } from '@/utils/configs/chain-config';
 import client from '@/utils/thirdwebClient';
 import { getContractAddresses } from '@/utils/contracts/addresses';
+import { keccak256, toBytes } from 'viem';
 
 // Registration step enum
 enum RegistrationStep {
   IDLE = "Choose your role",
+  PATIENT_EMAIL_COLLECT = "Enter your email address",
   PATIENT_REGISTERING = "Registering patient...",
   ORG_SEND_EMAIL = "Send verification email",
   ORG_EMAIL_SENT = "Email sent, check inbox",
@@ -37,15 +39,17 @@ export interface RegistrationState {
   organizationName: string;
   walletAddress: string;
   uniqueEmail: string;
+  patientEmail: string;
 }
 
 export interface RegistrationActions {
   checkUserRole: () => Promise<void>;
-  registerPatient: () => Promise<void>;
+  registerPatient: (email?: string) => Promise<void>;
   setOrganizationType: (type: 'HOSPITAL' | 'INSURER') => void;
   setOrganizationName: (name: string) => void;
   generateUniqueEmail: () => void;
   startOrganizationRegistration: (emlContent: string) => Promise<void>;
+  setPatientEmail: (email: string) => void;
   reset: () => void;
 }
 
@@ -53,9 +57,12 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
   // Thirdweb account
   const account = useActiveAccount();
   const chain = getClientChain();
-  const { healthcareRegistration: healthcareRegistrationAddress, healthcareRegistrationProver: healthcareRegistrationProverAddress } = getContractAddresses();
+  const { 
+    healthcareRegistration: healthcareRegistrationAddress, 
+    healthcareRegistrationProver: healthcareRegistrationProverAddress 
+  } = getContractAddresses();
 
-  // State`
+  // State
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(RegistrationStep.IDLE);
   const [userRole, setUserRole] = useState<UserType | null>(null);
   const [userRecord, setUserRecord] = useState<UserRecord | null>(null);
@@ -67,6 +74,10 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
   const [organizationType, setOrganizationType] = useState<'HOSPITAL' | 'INSURER' | null>(null);
   const [organizationName, setOrganizationName] = useState('');
   const [uniqueEmail, setUniqueEmail] = useState('');
+  const [patientEmail, setPatientEmail] = useState('');
+
+  // Ref to prevent duplicate calls
+  const isCheckingRole = useRef(false);
 
   // Vlayer prover hooks
   const {
@@ -84,8 +95,9 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
 
   // Check user role
   const checkUserRole = useCallback(async () => {
-    if (!account?.address) return;
+    if (!account?.address || isCheckingRole.current) return;
     
+    isCheckingRole.current = true;
     setLoading(true);
     try {      
       const contract = getContract({
@@ -122,13 +134,25 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setError('Failed to check user role');
     } finally {
       setLoading(false);
+      isCheckingRole.current = false;
     }
-  }, [account?.address, chain]);
+  }, [account?.address, chain, healthcareRegistrationAddress]);
+
+  // Helper function to hash email
+  const hashEmail = useCallback((email: string): `0x${string}` => {
+    return keccak256(toBytes(email.toLowerCase().trim()));
+  }, []);
 
   // Register patient
-  const registerPatient = useCallback(async () => {
+  const registerPatient = useCallback(async (email?: string) => {
     if (!account?.address) {
       setError('No wallet connected');
+      return;
+    }
+
+    const emailToUse = email || patientEmail;
+    if (!emailToUse) {
+      setError('Email address is required');
       return;
     }
 
@@ -137,17 +161,34 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setTxLoading(true);
       setError(null);
       
+      // Create contract with manual ABI to work around type mismatch
+      const manualAbi = [
+        {
+          "type": "function",
+          "name": "registerPatient",
+          "inputs": [
+            {"name": "patientWallet", "type": "address"},
+            {"name": "patientEmailHash", "type": "bytes32"}
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ] as const;
+
       const contract = getContract({
         client,
         chain,
         address: healthcareRegistrationAddress as `0x${string}`,
-        abi: HealthcareRegistration__factory.abi,
+        abi: manualAbi,
       });
+
+      // Hash the email address
+      const emailHash = hashEmail(emailToUse);
 
       const transaction = prepareContractCall({
         contract,
         method: "registerPatient",
-        params: [account.address],
+        params: [account.address as `0x${string}`, emailHash],
       });
 
       const result = await sendAndConfirmTransaction({
@@ -158,8 +199,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setTxHash(result.transactionHash);
       setCurrentStep(RegistrationStep.SUCCESS);
       
-      // Refresh data after successful transaction
-      setTimeout(checkUserRole, 2000);
+      // Refresh data after successful transaction - removed setTimeout to prevent infinite loops
 
     } catch (err) {
       console.error('Error registering patient:', err);
@@ -168,7 +208,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     } finally {
       setTxLoading(false);
     }
-  }, [account, chain, checkUserRole]);
+  }, [account, chain, healthcareRegistrationAddress, patientEmail, hashEmail]);
 
   // Generate unique email for organization registration
   const generateUniqueEmail = useCallback(() => {
@@ -248,8 +288,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setCurrentStep(RegistrationStep.SUCCESS);
       setLoading(false);
       
-      // Refresh data after successful transaction
-      setTimeout(checkUserRole, 2000);
+      // Refresh data after successful transaction - removed setTimeout to prevent infinite loops
 
     } catch (err) {
       console.error('Error registering organization:', err);
@@ -259,7 +298,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     } finally {
       setTxLoading(false);
     }
-  }, [proof, account, organizationType, chain, checkUserRole]);
+  }, [proof, account, organizationType, chain, healthcareRegistrationAddress]);
 
   // Reset state
   const reset = useCallback(() => {
@@ -274,6 +313,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     setOrganizationType(null);
     setOrganizationName('');
     setUniqueEmail('');
+    setPatientEmail('');
   }, []);
 
   // Effects
@@ -281,7 +321,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     if (account?.address) {
       checkUserRole();
     }
-  }, [account?.address, checkUserRole]);
+  }, [account?.address, healthcareRegistrationAddress, chain.id]);
 
   useEffect(() => {
     if (proof && currentStep === RegistrationStep.ORG_WAITING_PROOF) {
@@ -305,6 +345,16 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     }
   }, [provingError]);
 
+  // Refresh user data after successful registration
+  useEffect(() => {
+    if (currentStep === RegistrationStep.SUCCESS && account?.address) {
+      const timer = setTimeout(() => {
+        checkUserRole();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, account?.address]);
+
   // Generate subject line for email
   const getEmailSubject = () => {
     if (!organizationType || !organizationName || !account?.address) return '';
@@ -325,6 +375,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     organizationName,
     walletAddress: account?.address || '',
     uniqueEmail,
+    patientEmail,
     
     // Actions
     checkUserRole,
@@ -333,6 +384,7 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
     setOrganizationName,
     generateUniqueEmail,
     startOrganizationRegistration,
+    setPatientEmail,
     reset,
   };
 } 

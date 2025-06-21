@@ -99,22 +99,25 @@ contract HealthcareRegistration is Verifier, Ownable {
     /**
      * @dev Register a patient with simple wallet connection (thirdweb integration)
      * @param patientWallet Address of the patient to register
+     * @param patientEmailHash Hash of the patient's email address
      */
-    function registerPatient(address patientWallet) external onlyAdmin {
+    function registerPatient(address patientWallet, bytes32 patientEmailHash) external notRegistered {
         require(patientWallet != address(0), "Invalid patient address");
         require(!registeredUsers[patientWallet].isActive, "Patient already registered");
+        require(!usedEmailHashes[patientEmailHash], "Email already used");
         
         registeredUsers[patientWallet] = UserRecord({
             userType: UserType.PATIENT,
             walletAddress: patientWallet,
             domain: "",
             organizationName: "",
-            emailHash: bytes32(0),
+            emailHash: patientEmailHash,
             registrationTime: block.timestamp,
             isActive: true
         });
         
         isPatient[patientWallet] = true;
+        usedEmailHashes[patientEmailHash] = true;
         totalRegisteredUsers++;
         totalPatients++;
         

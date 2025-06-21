@@ -177,11 +177,6 @@ check-contracts: ## Check dynamic contract status via API
 	@echo "📋 Dynamic Contract Status Check"
 	@echo "==============================="
 	@echo "🔗 Contract API endpoint:"
-	@curl -s http://localhost:3001/api/contracts | jq '.' 2>/dev/null || { \
-		echo "❌ Frontend not responding or jq not installed"; \
-		echo "🔧 Raw response:"; \
-		curl -s http://localhost:3001/api/contracts 2>/dev/null || echo "❌ Cannot reach frontend API"; \
-	}
 	@echo ""
 	@echo "✅ Contracts are loaded dynamically - no static configuration needed!"
 

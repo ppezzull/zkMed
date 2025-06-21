@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
 import { UserType } from '@/utils/types/healthcare';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function PatientPage() {
+  const params = useParams();
+  const router = useRouter();
   const account = useActiveAccount();
   const registration = useHealthcareRegistration();
   const [loading, setLoading] = useState(true);
@@ -16,16 +19,26 @@ export default function PatientPage() {
     }
   }, [account?.address]);
 
+  // Security check: ensure user can only access their own page
+  useEffect(() => {
+    if (account?.address && params.address && account.address !== params.address) {
+      router.push('/');
+      return;
+    }
+  }, [account?.address, params.address, router]);
+
   // Redirect if not a patient
   useEffect(() => {
     if (!loading && registration.isRegistered && registration.userRole !== UserType.PATIENT) {
-      if (registration.userRole === UserType.HOSPITAL || registration.userRole === UserType.INSURER) {
-        window.location.href = '/organization';
+      if (registration.userRole === UserType.HOSPITAL) {
+        router.push(`/hospital/${account?.address}`);
+      } else if (registration.userRole === UserType.INSURER) {
+        router.push(`/insurance/${account?.address}`);
       } else {
-        window.location.href = '/';
+        router.push('/');
       }
     }
-  }, [loading, registration.isRegistered, registration.userRole]);
+  }, [loading, registration.isRegistered, registration.userRole, account?.address, router]);
 
   if (loading) {
     return (
@@ -103,6 +116,12 @@ export default function PatientPage() {
                 </p>
               </div>
               <div>
+                <span className="text-sm text-gray-500">Email Hash:</span>
+                <p className="font-mono text-xs break-all">
+                  {registration.userRecord?.emailHash || 'N/A'}
+                </p>
+              </div>
+              <div>
                 <span className="text-sm text-gray-500">Status:</span>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2">
                   Active Patient
@@ -139,6 +158,16 @@ export default function PatientPage() {
             </div>
           </div>
         </div>
+
+        {/* User Record Details */}
+        {registration.userRecord && (
+          <div className="bg-white rounded-lg shadow p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Full User Record</h3>
+            <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-auto">
+              {JSON.stringify(registration.userRecord, null, 2)}
+            </pre>
+          </div>
+        )}
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

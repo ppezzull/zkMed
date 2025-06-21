@@ -104,6 +104,7 @@ export default function TechnologyPartners() {
                     width={32} 
                     height={32}
                     className="w-8 h-8 rounded"
+                    unoptimized
                   />
                 </div>
                 <div className="mb-2">
