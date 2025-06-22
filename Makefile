@@ -1,9 +1,33 @@
 # zkMed - Docker Deployment
-.PHONY: help all deploy stop restart logs health validate up down check-anvil deploy-contracts extract-env clean clean-all dev-setup status quick-start reset check-contracts
+.PHONY: help all deploy stop restart logs health validate up down check-anvil deploy-contracts extract-env clean clean-all dev-setup status quick-start reset check-contracts backend frontend dev export-to-frontend
 
 # Default target
-all: ## Complete development setup with vlayer + zkMed (validate + deploy + status)
-	@echo "🚀 zkMed Complete Development Setup (vlayer + zkMed)"
+all: ## Complete development setup with vlayer + zkMed (validate + deploy +frontend: ## Start zkMed frontend development server
+	@echo "🚀 Starting zkMed Frontend Development"
+	@echo "======================================"
+	@echo "🔄 Exporting contracts to local environment..."
+	@node srcs/nextjs/scripts/export-to-frontend.js
+	@echo ""
+	@echo "🧹 Cleaning up build cache..."
+	@rm -rf srcs/nextjs/.next 2>/dev/null || true
+	@echo ""
+	@echo "📦 Installing dependencies..."
+	@cd srcs/nextjs && bun install
+	@echo ""
+	@echo "🎯 Starting development server on port 3001..."
+	@cd srcs/nextjs && PORT=3001 bun dev
+
+dev: backend frontend ## Start both backend services and frontend development server
+	@echo "🎉 zkMed Development Environment Ready!"
+	@echo "======================================"
+	@echo "✅ Backend services running"
+	@echo "✅ Frontend development server starting"
+	@echo ""
+	@echo "🔗 Available services:"
+	@echo "   Frontend: http://localhost:3001"
+	@echo "   Anvil L2 Mantle: http://localhost:8547"
+	@echo "   vlayer Prover: http://localhost:3000"
+	@echo "   Notary Server: http://localhost:7047"echo "🚀 zkMed Complete Development Setup (vlayer + zkMed)"
 	@echo "================================================="
 	@echo "1️⃣ Validating environment..."
 	@$(MAKE) validate
@@ -40,6 +64,11 @@ help: ## Show this help message
 	@echo "  health               Check health of main deployment"
 	@echo "  validate             Validate main deployment setup"
 	@echo ""
+	@echo "🔧 BACKEND/FRONTEND COMMANDS:"
+	@echo "  backend              Start vlayer backend services (devnet containers)"
+	@echo "  frontend             Start zkMed frontend development server"
+	@echo "  dev                  Start both backend and frontend (complete development environment)"
+	@echo ""
 
 	@echo ""
 
@@ -48,6 +77,7 @@ help: ## Show this help message
 	@echo "  check-anvil          Check if Anvil is running on port 8547"
 	@echo "  check-env            Check environment variables configuration"
 	@echo "  check-contracts      Check dynamic contract status via API"
+	@echo "  export-to-frontend   Export contracts to local frontend environment"
 	@echo "  redeploy-contracts   Force redeploy contracts (clear existing and deploy new)"
 	@echo "  clear-contracts      Clear deployed contract artifacts"
 	@echo "  extract-env          Extract contract environment from deployment"
@@ -108,8 +138,7 @@ health: ## Check health of unified vlayer + zkMed deployment
 	@echo "🏥 zkMed Application:"
 	@echo "Frontend Health:"
 	@curl -s http://localhost:3001/api/health >/dev/null && echo "✅ Frontend responding" || echo "❌ Frontend not responding"
-	@echo "Contract Status:"
-	@curl -s http://localhost:3001/api/contracts | jq -r '.status // "error"' 2>/dev/null || echo "❌ Contracts API not responding"
+
 
 validate: ## Validate main deployment setup
 	@echo "🔍 zkMed Deployment Setup Validation"
@@ -276,4 +305,51 @@ reset: ## Clean everything and redeploy from scratch
 	@echo "🔧 Dev Page: http://localhost:3001/dev"
 	@echo "🔗 vlayer Services: http://localhost:3000 (prover), http://localhost:7047 (notary)"
 
- 
+# ==================================================================================
+# 🔧 BACKEND/FRONTEND COMMANDS
+# ==================================================================================
+
+backend: ## Start all backend services from docker-compose.yml (excludes zkmed-frontend)
+	@echo "🔧 Starting zkMed Backend Services"
+	@echo "=================================="
+	@echo "🛑 Stopping any existing backend containers..."
+	@docker compose down 2>/dev/null || true
+	@echo "📁 Starting all backend containers (excluding frontend)..."
+	@docker compose up -d --scale zkmed-frontend=0
+	@echo ""
+	@echo "⏳ Waiting for services to initialize..."
+	@sleep 8
+	@echo ""
+	@echo "🏥 Backend Health Check:"
+	@echo "Anvil L2 Mantle (port 8547):"
+	@curl -s -X POST -H "Content-Type: application/json" \
+		--data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+		http://localhost:8547 >/dev/null && echo "✅ Anvil L2 Mantle responding" || echo "❌ Anvil L2 Mantle not responding"
+	@echo "vlayer Call Server (port 3000):"
+	@curl -s http://localhost:3000/health >/dev/null && echo "✅ vlayer Call Server responding" || echo "❌ vlayer Call Server not responding"
+	@echo "Notary Server (port 7047):"
+	@curl -s http://localhost:7047 >/dev/null && echo "✅ Notary Server responding" || echo "❌ Notary Server not responding"
+	@echo ""
+	@echo "📋 Contract Deployment Status:"
+	@docker logs zkmed-contracts --tail=10 2>/dev/null || echo "⚠️  Contract deployment in progress..."
+	@echo ""
+	@echo "✅ zkMed Backend services are running!"
+	@echo "🔗 Available services:"
+	@echo "   Anvil L2 Mantle: http://localhost:8547"
+	@echo "   vlayer Prover: http://localhost:3000"
+	@echo "   Notary Server: http://localhost:7047"
+	@echo "   Contract Deployer: zkmed-contracts (check logs with 'docker logs zkmed-contracts')"
+
+frontend: ## Start zkMed frontend development server
+	@echo "� Starting zkMed Frontend Development"
+	@echo "======================================"
+	@echo "🔄 Exporting contracts to local environment..."
+	@node srcs/nextjs/scripts/export-to-frontend.js
+	@echo ""
+	@echo "📦 Installing dependencies..."
+	@cd srcs/nextjs && bun install
+	@echo ""
+	@echo "🎯 Starting development server..."
+	@cd srcs/nextjs && bun dev
+
+	

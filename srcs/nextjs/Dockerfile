@@ -23,4 +23,4 @@ RUN bun install
 EXPOSE 3000
 
 # Start development server with hot reloading
-CMD ["bun", "run", "dev", "--hostname", "0.0.0.0"]
+CMD ["bun", "run", "dev:docker", "--hostname", "0.0.0.0"]
