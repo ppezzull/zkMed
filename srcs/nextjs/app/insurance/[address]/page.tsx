@@ -5,17 +5,24 @@ import { useActiveAccount } from 'thirdweb/react';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
 import { UserType } from '@/utils/types/healthcare';
 import { useParams, useRouter } from 'next/navigation';
+import { safeStringify } from '@/utils/serialization';
 
 export default function InsurancePage() {
   const params = useParams();
   const router = useRouter();
   const account = useActiveAccount();
   const registration = useHealthcareRegistration();
-  const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
 
   useEffect(() => {
     if (account?.address) {
-      registration.checkUserRole().finally(() => setLoading(false));
+      registration.checkUserRole().then(() => {
+        setDataFetched(true);
+      }).catch(() => {
+        setDataFetched(true); // Set to true even on error so we can show error state
+      });
+    } else {
+      setDataFetched(true); // No account, can show "connect wallet" message
     }
   }, [account?.address]);
 
@@ -27,9 +34,9 @@ export default function InsurancePage() {
     }
   }, [account?.address, params.address, router]);
 
-  // Redirect if not an insurer
+  // Redirect if not an insurer (only after data is fetched)
   useEffect(() => {
-    if (!loading && registration.isRegistered && registration.userRole !== UserType.INSURER) {
+    if (dataFetched && registration.isRegistered && registration.userRole !== UserType.INSURER) {
       if (registration.userRole === UserType.PATIENT) {
         router.push(`/patient/${account?.address}`);
       } else if (registration.userRole === UserType.HOSPITAL) {
@@ -38,13 +45,15 @@ export default function InsurancePage() {
         router.push('/');
       }
     }
-  }, [loading, registration.isRegistered, registration.userRole, account?.address, router]);
+  }, [dataFetched, registration.isRegistered, registration.userRole, account?.address, router]);
 
-  if (loading) {
+  // Show loading spinner until data is fetched
+  if (!dataFetched || registration.loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <span className="ml-4 text-gray-600">Loading insurance data...</span>
         </div>
       </div>
     );
@@ -172,7 +181,7 @@ export default function InsurancePage() {
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Full User Record</h3>
             <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-auto">
-              {JSON.stringify(registration.userRecord, null, 2)}
+              {safeStringify(registration.userRecord, 2)}
             </pre>
           </div>
         )}

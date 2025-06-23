@@ -9,9 +9,9 @@ import UserProfile from './user-profile';
 import MobileMenu from './mobile-menu';
 
 export default function Header() {
-  const [currentAPY, setCurrentAPY] = useState(4.2);
-  const [tvl, setTvl] = useState(12.7);
-  const [claims, setClaims] = useState(15847);
+  const apy = 4.2; // Example APY value
+  const tvl = 12.7; // Example TVL value
+  const claims = 15847; // Example claims value
 
   return (
     <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200 shadow-sm">
@@ -27,7 +27,7 @@ export default function Header() {
             <Navigation />
             <LiveStats 
               initialTvl={tvl}
-              initialAPY={currentAPY}
+              initialAPY={apy}
               initialClaims={claims}
             />
           </div>
@@ -41,7 +41,7 @@ export default function Header() {
         {/* Mobile Menu */}
         <MobileMenu 
           tvl={tvl}
-          currentAPY={currentAPY}
+          currentAPY={apy}
           claims={claims}
         />
       </div>

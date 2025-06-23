@@ -116,16 +116,22 @@ export function useHealthcareRegistration(): RegistrationState & RegistrationAct
       setIsRegistered(isRegistered as boolean);
 
       if (isRegistered) {
+        console.log('User is registered, fetching user record...');
         const recordResult = await readContract({
           contract,
           method: "getUserRecord",
           params: [account.address as `0x${string}`]
         });
 
+        console.log('Raw record result:', recordResult);
         const record = recordResult as UserRecord;
+        console.log('Parsed record:', record);
+        console.log('User type from record:', record.userType);
+        
         setUserRole(record.userType);
         setUserRecord(record);
       } else {
+        console.log('User is not registered');
         setUserRole(null);
         setUserRecord(null);
       }

@@ -5,17 +5,24 @@ import { useActiveAccount } from 'thirdweb/react';
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
 import { UserType } from '@/utils/types/healthcare';
 import { useParams, useRouter } from 'next/navigation';
+import { safeStringify } from '@/utils/serialization';
 
 export default function PatientPage() {
   const params = useParams();
   const router = useRouter();
   const account = useActiveAccount();
   const registration = useHealthcareRegistration();
-  const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
 
   useEffect(() => {
     if (account?.address) {
-      registration.checkUserRole().finally(() => setLoading(false));
+      registration.checkUserRole().then(() => {
+        setDataFetched(true);
+      }).catch(() => {
+        setDataFetched(true); // Set to true even on error so we can show error state
+      });
+    } else {
+      setDataFetched(true); // No account, can show "connect wallet" message
     }
   }, [account?.address]);
 
@@ -27,9 +34,9 @@ export default function PatientPage() {
     }
   }, [account?.address, params.address, router]);
 
-  // Redirect if not a patient
+  // Redirect if not a patient (only after data is fetched)
   useEffect(() => {
-    if (!loading && registration.isRegistered && registration.userRole !== UserType.PATIENT) {
+    if (dataFetched && registration.isRegistered && registration.userRole !== UserType.PATIENT) {
       if (registration.userRole === UserType.HOSPITAL) {
         router.push(`/hospital/${account?.address}`);
       } else if (registration.userRole === UserType.INSURER) {
@@ -38,13 +45,15 @@ export default function PatientPage() {
         router.push('/');
       }
     }
-  }, [loading, registration.isRegistered, registration.userRole, account?.address, router]);
+  }, [dataFetched, registration.isRegistered, registration.userRole, account?.address, router]);
 
-  if (loading) {
+  // Show loading spinner until data is fetched
+  if (!dataFetched || registration.loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <span className="ml-4 text-gray-600">Loading patient data...</span>
         </div>
       </div>
     );
@@ -78,6 +87,16 @@ export default function PatientPage() {
             <p className="text-gray-600">
               You need to be registered as a patient to access this page.
             </p>
+            {/* Debug info for development */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-4 p-4 bg-gray-100 rounded text-left text-sm">
+                <p><strong>Debug Info:</strong></p>
+                <p>Is Registered: {String(registration.isRegistered)}</p>
+                <p>User Role: {registration.userRole}</p>
+                <p>Expected Role: {UserType.PATIENT}</p>
+                <p>User Record: {registration.userRecord ? 'Present' : 'Null'}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -164,7 +183,7 @@ export default function PatientPage() {
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Full User Record</h3>
             <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-auto">
-              {JSON.stringify(registration.userRecord, null, 2)}
+              {safeStringify(registration.userRecord, 2)}
             </pre>
           </div>
         )}
