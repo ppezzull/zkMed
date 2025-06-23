@@ -36,7 +36,7 @@ contract HealthcareRegistrationProverTest is VTest {
         
         // Call the prover
         callProver();
-        (, HealthcareRegistrationProver.RegistrationData memory regData) = prover.main(email);
+        (, HealthcareRegistrationProver.RegistrationData memory regData) = prover.proveOrganizationDomain(email);
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.HOSPITAL));
@@ -55,13 +55,29 @@ contract HealthcareRegistrationProverTest is VTest {
         
         // Call the prover
         callProver();
-        (, HealthcareRegistrationProver.RegistrationData memory regData) = prover.main(email);
+        (, HealthcareRegistrationProver.RegistrationData memory regData) = prover.proveOrganizationDomain(email);
 
         // Verify the extracted data matches expected values
         assertEq(uint256(regData.requestedRole), uint256(HealthcareRegistrationProver.UserType.INSURER));
         assertEq(regData.walletAddress, insurerWallet);
         assertEq(regData.domain, "nexthoop.it");
         assertEq(regData.organizationName, "MediClaims Insurance Group");
+        assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
+    }
+
+    function test_verifyPatientRegistration() public {
+        // Create test instances
+        EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
+        HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
+        UnverifiedEmail memory email = getTestEmail("testdata/Patient.eml");
+        VerifiedEmail memory verifiedEmail = wrapper.verify(email);
+        
+        // Call the prover
+        callProver();
+        (, HealthcareRegistrationProver.RegistrationData memory regData) = prover.provePatientEmail(email);
+
+        // Verify the extracted data matches expected values
+        assertEq(regData.walletAddress, patientWallet);
         assertEq(regData.emailHash, sha256(abi.encodePacked(verifiedEmail.from)));
     }
 

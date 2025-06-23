@@ -36,29 +36,7 @@ contract DeployHealthcareRegistration is Script {
         console.log("Deployer admin role (2=SUPER_ADMIN):", uint256(role));
         console.log("Deployer permissions:", permissions);
 
-        // Example: Register a demo patient to test the new function
-        address demoPatient = vm.addr(1); // First test account
-        bytes32 demoEmailHash = keccak256(abi.encodePacked("demo.patient@zkmed.com"));
-        
-        console.log("Registering demo patient:", demoPatient);
-        console.log("Demo patient email hash:", vm.toString(demoEmailHash));
-        
-        healthcareRegistration.registerPatient(demoPatient, demoEmailHash);
-        console.log("Demo patient registered successfully!");
-        
-        // Verify registration
-        bool isRegistered = healthcareRegistration.isUserRegistered(demoPatient);
-        bool isPatient = healthcareRegistration.isPatient(demoPatient);
-        console.log("Demo patient is registered:", isRegistered);
-        console.log("Demo patient is patient type:", isPatient);
-        
-        // Log updated statistics
-        (totalUsers, patients, hospitals, insurers) = healthcareRegistration.getRegistrationStats();
-        console.log("Updated stats - Total users:", totalUsers);
-        console.log("Updated stats - Patients:", patients);
-        console.log("Updated stats - Hospitals:", hospitals);
-        console.log("Updated stats - Insurers:", insurers);
-
+        console.log("Deployment complete. You can now interact with the HealthcareRegistration contract.");
         vm.stopBroadcast();
     }
 }

@@ -97,31 +97,44 @@ contract HealthcareRegistration is Verifier, Ownable {
     // ======== Patient Registration ========
     
     /**
-     * @dev Register a patient with simple wallet connection (thirdweb integration)
-     * @param patientWallet Address of the patient to register
-     * @param patientEmailHash Hash of the patient's email address
+     * @dev Register a patient with email verification proof
+     * @param registrationData Data structure containing registration information
      */
-    function registerPatient(address patientWallet, bytes32 patientEmailHash) external notRegistered {
-        require(patientWallet != address(0), "Invalid patient address");
-        require(!registeredUsers[patientWallet].isActive, "Patient already registered");
-        require(!usedEmailHashes[patientEmailHash], "Email already used");
-        
-        registeredUsers[patientWallet] = UserRecord({
+    function registerPatient(
+        HealthcareRegistrationProver.RegistrationData calldata registrationData,
+        Proof calldata
+    ) 
+        external 
+        notRegistered
+        onlyVerified(
+            emailDomainProver, 
+            HealthcareRegistrationProver.provePatientEmail.selector
+        )
+    {
+        // Validate registration data
+        require(registrationData.walletAddress != address(0), "Invalid patient address");
+        require(!usedEmailHashes[registrationData.emailHash], "Email already used");
+        require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.PATIENT, 
+                "Not a patient registration");
+
+        // Create patient record
+        registeredUsers[msg.sender] = UserRecord({
             userType: UserType.PATIENT,
-            walletAddress: patientWallet,
+            walletAddress: msg.sender,
             domain: "",
             organizationName: "",
-            emailHash: patientEmailHash,
+            emailHash: registrationData.emailHash,
             registrationTime: block.timestamp,
             isActive: true
         });
         
-        isPatient[patientWallet] = true;
-        usedEmailHashes[patientEmailHash] = true;
+        // Update mappings
+        isPatient[msg.sender] = true;
+        usedEmailHashes[registrationData.emailHash] = true;
         totalRegisteredUsers++;
         totalPatients++;
-        
-        emit PatientRegistered(patientWallet);
+
+        emit PatientRegistered(msg.sender);
     }
     
     // ======== Hospital Registration with MailProof ========
@@ -130,13 +143,16 @@ contract HealthcareRegistration is Verifier, Ownable {
      * @dev Register a hospital using MailProof domain verification
      * @param registrationData Data structure containing registration information
      */
-    function registerHospitalWithMailProof(
+    function registerHospital(
         HealthcareRegistrationProver.RegistrationData calldata registrationData,
         Proof calldata 
     ) 
         external 
         notRegistered
-        onlyVerified(emailDomainProver, HealthcareRegistrationProver.main.selector)
+        onlyVerified(
+            emailDomainProver, 
+            HealthcareRegistrationProver.proveOrganizationDomain.selector
+        )
     {
         // Verify this is a hospital registration
         require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.HOSPITAL, 
@@ -175,13 +191,16 @@ contract HealthcareRegistration is Verifier, Ownable {
      * @dev Register an insurance company using MailProof domain verification
      * @param registrationData Data structure containing registration information
      */
-    function registerInsurerWithMailProof(
+    function registerInsurer(
         HealthcareRegistrationProver.RegistrationData calldata registrationData,
         Proof calldata
     ) 
         external 
         notRegistered
-        onlyVerified(emailDomainProver, HealthcareRegistrationProver.main.selector)
+        onlyVerified(
+            emailDomainProver, 
+            HealthcareRegistrationProver.proveOrganizationDomain.selector
+        )
     {
         // Verify this is an insurer registration
         require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.INSURER, 
