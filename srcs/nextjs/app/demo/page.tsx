@@ -58,7 +58,7 @@ export default function DemoPage() {
               <p className="text-gray-600 mb-6">
                 Connect your wallet to see the registration hook in action
               </p>
-              <WalletConnect variant="full" />
+              <WalletConnect/>
             </div>
           </div>
         ) : (

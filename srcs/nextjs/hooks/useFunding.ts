@@ -1,7 +1,7 @@
 'use client';
 
 import { useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
-import { getClientChain } from '@/utils/configs/chain-config';
+import { getClientChain } from '@/lib/configs/chain-config';
 import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
 import { useCallback, useState, useEffect } from 'react';
 import { 

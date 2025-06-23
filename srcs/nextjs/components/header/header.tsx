@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-
 import Logo from './logo';
 import Navigation from './navigation';
 import LiveStats from './live-stats';
-import UserProfile from './user-profile';
 import MobileMenu from './mobile-menu';
+import WalletConnect from '../wallet-connect';
 
 export default function Header() {
   const apy = 4.2; // Example APY value
@@ -34,7 +32,7 @@ export default function Header() {
 
           {/* Right: User Profile */}
           <div className="flex items-center space-x-3">
-            <UserProfile />
+            <WalletConnect />
           </div>
         </div>
 

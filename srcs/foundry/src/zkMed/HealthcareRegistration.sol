@@ -355,7 +355,17 @@ contract HealthcareRegistration is Verifier, Ownable {
         require(registeredUsers[user].isActive, "User not registered");
         return registeredUsers[user].userType;
     }
-    
+
+    /**
+     * @dev Get user type
+     * @param user User address
+     * @return AdminRole enum value
+     */
+    function getAdminType(address user) external view returns (AdminRole) {
+        require(admins[user].isActive, "Admin not registered");
+        return admins[user].role;
+    }
+
     /**
      * @dev Check if domain is already taken
      * @param domain Domain to check

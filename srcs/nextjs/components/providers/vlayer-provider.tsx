@@ -2,7 +2,7 @@
 
 import { ProofProvider } from "@vlayer/react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { wagmiConfig } from '@/utils/configs/wagmi-config';
+import { wagmiConfig } from '@/lib/configs/wagmi-config';
 import { WagmiProvider } from 'wagmi';
 
 // Create query client

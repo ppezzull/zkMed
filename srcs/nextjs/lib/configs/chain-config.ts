@@ -28,9 +28,3 @@ export const getClientChain = () => {
     rpc: `${window.location.origin}/api/rpc`,
   });
 };
-
-// For display purposes
-export const DISPLAY_RPC_URL = BASE_RPC_URL;
-
-// Contract configuration - will be updated after deployment
-export const GREETING_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_GREETING_CONTRACT_ADDRESS || '0x922D6956C99E12DFeB3224DEA977D0939758A1Fe'; 

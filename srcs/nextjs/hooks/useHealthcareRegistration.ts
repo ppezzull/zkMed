@@ -6,9 +6,9 @@ import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
 import { UserType, UserRecord } from '@/utils/types/healthcare';
 import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
-import { getClientChain } from '@/utils/configs/chain-config';
+import { getClientChain } from '@/lib/configs/chain-config';
 import client from '@/utils/thirdwebClient';
-import { getContractAddresses } from '@/utils/contracts/addresses';
+import { getContractAddresses } from '@/lib/contracts/addresses';
 import { keccak256, toBytes } from 'viem';
 
 // Registration step enum
