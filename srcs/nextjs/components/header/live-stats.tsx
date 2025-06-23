@@ -41,10 +41,6 @@ export default function LiveStats({
       <span className="text-slate-600">
         Claims: <span className="font-semibold text-indigo-600">{claims.toLocaleString()}</span>
       </span>
-      <span className="h-4 w-px bg-slate-300"></span>
-      <span className="text-slate-600">
-        <span className="font-semibold text-orange-600">Testnet</span>
-      </span>
     </div>
   );
 }

@@ -1,0 +1,58 @@
+Return-Path: <pezzullopietro04@gmail.com>
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+ by inbound-smtp.us-east-2.amazonaws.com with SMTP id 4jkth1k854chko647jmpa1rmsk2avf1tgmpiu481
+ for a3b52f42-ad39-4e7d-a9f9-d87997f1998d@proving.vlayer.xyz;
+ Mon, 23 Jun 2025 10:17:07 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.217.41 as permitted sender) client-ip=209.85.217.41; envelope-from=pezzullopietro04@gmail.com; helo=mail-vs1-f41.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.217.41 as permitted sender) client-ip=209.85.217.41; envelope-from=pezzullopietro04@gmail.com; helo=mail-vs1-f41.google.com;
+ dkim=fail header.i=@gmail.com;
+ dmarc=pass header.from=gmail.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFFM1lkRWZCdTZIUFVuMElyemtIajNoVEl4d3N4R2JjSXFZTFduVWFlQlBPUUMyUVRueElOQWlVeVpheWJWWXhFTE9VYXBlck1TWk9yRnhTdXJrNnZNNmF4VDUwTE1DTTdVRnZUci84cXdIbnhjTUM4dE9mdHBGVlZtWUJzMEFJdk84SHFQOHU0STZyTXdLZHBpVUF6cDNEb1grRWFacE4zaHhiY0N6azN2Vld6NUdZdUlyeGM2SjZrdnJhZVVVSE5PTCtlcnh1eXd3UktUYnhxQ3RLaW04b2V5WFhLM0dkNXhBRDBrNzVwVDA2Yy84Zi9RVXQ2bG02N0xGN2xvTk1VTVluR0RreDMwOVFqdnZwbHBWSGcySEFzOHBmZkFJZXN6eThJTXRGM2ZnL0E9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=1hMGHORNpm6BoWGKKBwT+V6G3qlrXaWqEXYGHrG9GtIOmNiyenVMqfAtxFaaNtLsf+xHL3N9MZ7lPj8AQikeiVMOEx7UIM2OqkZIhwiOEuzIuPnEeBbHxK4/qXGXMQcab3jeGuzLcXZno+94GW1ACmO2egsKM+9Py1SL8z2tUl4=; c=relaxed/simple; s=ndjes4mrtuzus6qxu3frw3ubo3gpjndv; d=amazonses.com; t=1750673828; v=1; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e77d1333aeso1251509137.0
+        for <a3b52f42-ad39-4e7d-a9f9-d87997f1998d@proving.vlayer.xyz>; Mon, 23 Jun 2025 03:17:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750673827; x=1751278627; darn=proving.vlayer.xyz;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=h5vCujXlMBSKfF2yhS6BNEdC2VB2YxP5xbveNVYTsX2pwbTgxzCZWXoKWRXOSP/y52
+         X4BY1J9VeOYu+RyrzNU2b/fz659L/Ep0yafytsAtvgHhZkHGJ3J4H0M/u3JQ1fDoHxpy
+         9aRVlkJ0TR0vFeh+NGrSlwDdJ2H7KfpO3g6ibammLrgzJBwKWIA59TEoN1G6HRQI6qcB
+         CMYZx2Ul9aLZimoqPwYGyrYsUOwB92FI+bXzHPpkOt+C8UImr3DYaEI09VXFtlmm7VO+
+         6oGxSWhGqPYlgigsS7PWtq1lZhZRlz5f35O86Gu/1Qb53MPwldutwFei5jnBYOVobD0X
+         0tqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750673827; x=1751278627;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=J2NT8l5MkIoTdvSi3Ha9RXKkhzvWffaaHYZ1JYFFhe3hPhTFmX0ewEIJNM8wkDoLG9
+         hk9ODtdWrmDHhy/Zi438qVUDAaHP1iSYzTrHGDepCPjUMo65ZMDs2h5dvyd5IqldI6K0
+         ExQWCg+9T7jU7XZO5zQhMv7XfjeO22GClz4l0Mi5FyygmFLfZyb3wVW3nTbv2TfOpwrt
+         yX3QGpvLEcwvl5YHOm6ZzM8KEaFiE3PH3NhQH0hGfiWPZAzAPS3rX3fxQdJTDOka0f5u
+         Rp/yRRcdUS6e34jyJIRtUZ1ObZJF9YzA7EuWRacnc+E9Z0RAWjFBiQg21R7YT7HxdS5S
+         fKDw==
+X-Gm-Message-State: AOJu0YzNIAO4onXMqBDesgMQqZKxs1Rw4HMwKXqBUm+UDPdMuIsDczoe
+	S291cpFzxQWcv88XVqZJ8WTQdsCvhTvUgzA0xqbw5oL+gMghMddDYEjNUypqz6sWSJdHpWbvIFP
+	UpPDOn2wiPyyEbNW9PT2MxgpRbrIA6vql4zYp
+X-Gm-Gg: ASbGncsHRAK/IhR6UK+TWz0xHyllbDx/F/uDBTNS/SvPrhKthVWHmmiK7e/9A5N3Bvu
+	OFDMtW1QkNDdVTHQmR2PoU3VsJiCzYr2tG2/j77pOuhQxxZq4y1wiM4A++0/ueoh3cdxZwUqxiW
+	PfqrRZRF+zR8965tuAMNJDhvlbUbqz+FAu9P78PZiKKPsOViALAn2+7Q==
+X-Google-Smtp-Source: AGHT+IHXPoapGVVvksPMElPMCI/x0ZlTrNnr15zjyM5fWFEnKaR9MLgmGXneKi7ZZHYxH1/zo3XVuUopnP/W1mw3+fg=
+X-Received: by 2002:a05:6102:5988:b0:4e5:963b:738a with SMTP id
+ ada2fe7eead31-4e9c2e8d8c7mr5747499137.16.1750673827135; Mon, 23 Jun 2025
+ 03:17:07 -0700 (PDT)
+MIME-Version: 1.0
+From: ppezz <pezzullopietro04@gmail.com>
+Date: Mon, 23 Jun 2025 12:16:54 +0200
+X-Gm-Features: Ac12FXylw3U1cHWhAFb-iz9m5ZGA9ztN9gh9_uAuVbcmNg-kq8ezrYWu15aB62Y
+Message-ID: <CAOhwxm5915ufRsXMYQ-kKw3sdARDpidZzUCyq7nod-pN1mC0Jg@mail.gmail.com>
+Subject: Register patient with wallet: 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720
+To: a3b52f42-ad39-4e7d-a9f9-d87997f1998d@proving.vlayer.xyz
+Content-Type: text/plain; charset="UTF-8"
+
+

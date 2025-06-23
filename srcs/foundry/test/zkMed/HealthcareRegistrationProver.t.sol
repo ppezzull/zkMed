@@ -19,6 +19,8 @@ contract HealthcareRegistrationProverTest is VTest {
     address public hospitalWallet = 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955; 
     // anvil default wallet 2 for Insurance.eml
     address public insurerWallet = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8; 
+    // anvil default wallet 9 for Patient.eml
+    address public patientWallet = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720; 
 
     function getTestEmail(string memory path) public view returns (UnverifiedEmail memory) {
         string memory mime = vm.readFile(path);
