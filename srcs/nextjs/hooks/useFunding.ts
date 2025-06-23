@@ -1,8 +1,7 @@
 'use client';
 
-import { useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react';
+import { useActiveAccount } from 'thirdweb/react';
 import { getClientChain } from '@/lib/configs/chain-config';
-import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
 import { useCallback, useState, useEffect } from 'react';
 import { 
   prepareTransaction, 
@@ -11,74 +10,41 @@ import {
 } from 'thirdweb';
 import { privateKeyToAccount } from 'thirdweb/wallets';
 import { toWei } from 'thirdweb/utils';
-import client from '@/utils/thirdwebClient';
-
+import { client } from '@/utils/thirdweb/client';
 // Get the appropriate chain for client-side operations
 const clientChain = getClientChain();
 
 // Anvil's default pre-funded account private key
 const ANVIL_DEFAULT_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 
-// Configure wallets with smart wallet for gas abstraction
-const smartWalletOptions = smartWallet({
-  chain: clientChain,
-  factoryAddress: process.env.NEXT_PUBLIC_SMART_WALLET_FACTORY_ADDRESS,
-  gasless: true,
-});
-
-const wallets = [
-  smartWalletOptions,
-  inAppWallet({
-    auth: {
-      options: ["email", "google", "apple", "facebook"],
-    },
-  }),
-  createWallet("io.metamask"),
-  createWallet("com.coinbase.wallet"),
-  createWallet("me.rainbow"),
-];
-
-export interface WalletState {
-  account: ReturnType<typeof useActiveAccount>;
-  wallet: ReturnType<typeof useActiveWallet>;
-  isConnected: boolean;
-  address: string | null;
-  shortAddress: string | null;
+export interface FundingState {
   balance: bigint;
   isLoading: boolean;
   isFunding: boolean;
   isReady: boolean;
+  error: string | null;
 }
 
-export interface WalletActions {
-  disconnect: () => Promise<void>;
+export interface FundingActions {
   fetchBalance: () => Promise<void>;
   fundWallet: (amount: string) => Promise<void>;
   refreshBalance: () => Promise<void>;
 }
 
-export interface UseWalletReturn extends WalletState, WalletActions {
-  wallets: typeof wallets;
+export interface UseFundingReturn extends FundingState, FundingActions {
   client: typeof client;
   chain: typeof clientChain;
 }
 
-export function useWallet(): UseWalletReturn {
+export function useFunding(): UseFundingReturn {
   const account = useActiveAccount();
-  const wallet = useActiveWallet();
-  const { disconnect: thirdwebDisconnect } = useDisconnect();
 
   // State management
   const [balance, setBalance] = useState<bigint>(BigInt(0));
   const [isLoading, setIsLoading] = useState(false);
   const [isFunding, setIsFunding] = useState(false);
   const [isReady, setIsReady] = useState(false);
-
-  const isConnected = !!account;
-  const address = account?.address || null;
-  const shortAddress = address 
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
-    : null;
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch wallet balance
   const fetchBalance = useCallback(async () => {
@@ -89,6 +55,7 @@ export function useWallet(): UseWalletReturn {
     }
 
     setIsLoading(true);
+    setError(null);
     try {
       const rpc = getRpcClient({ client, chain: clientChain });
       const balanceHex = await rpc({
@@ -98,6 +65,7 @@ export function useWallet(): UseWalletReturn {
       setBalance(BigInt(balanceHex));
     } catch (error) {
       console.error('Error fetching balance:', error);
+      setError('Failed to fetch balance');
       setBalance(BigInt(0));
     } finally {
       setIsLoading(false);
@@ -107,9 +75,13 @@ export function useWallet(): UseWalletReturn {
 
   // Fund wallet with specified amount
   const fundWallet = useCallback(async (amount: string) => {
-    if (!account?.address) return;
+    if (!account?.address) {
+      setError('No wallet connected');
+      return;
+    }
 
     setIsFunding(true);
+    setError(null);
     try {
       // Create account from Anvil's default private key
       const fundingAccount = privateKeyToAccount({ 
@@ -137,6 +109,7 @@ export function useWallet(): UseWalletReturn {
       setTimeout(fetchBalance, 2000);
     } catch (error) {
       console.error('Funding failed:', error);
+      setError(`Funding failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     } finally {
       setIsFunding(false);
@@ -148,41 +121,27 @@ export function useWallet(): UseWalletReturn {
     await fetchBalance();
   }, [fetchBalance]);
 
-  // Disconnect wallet
-  const disconnect = useCallback(async () => {
-    if (wallet) {
-      await thirdwebDisconnect(wallet);
-      setBalance(BigInt(0));
-      setIsReady(false);
-    }
-  }, [wallet, thirdwebDisconnect]);
-
   // Effect to fetch balance when account changes
   useEffect(() => {
     setIsReady(false);
+    setError(null);
     fetchBalance();
   }, [fetchBalance]);
 
   return {
     // State
-    account,
-    wallet,
-    isConnected,
-    address,
-    shortAddress,
     balance,
     isLoading,
     isFunding,
     isReady,
+    error,
     
     // Actions
-    disconnect,
     fetchBalance,
     fundWallet,
     refreshBalance,
     
     // Configuration
-    wallets,
     client,
     chain: clientChain,
   };

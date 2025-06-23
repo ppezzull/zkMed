@@ -1,15 +1,18 @@
 'use client';
 
 import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
+import { useFunding } from '@/hooks/useFunding';
 import { useActiveAccount } from 'thirdweb/react';
 import { UserType } from '@/utils/types/healthcare';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet-connect';
+import { formatEther } from 'viem';
 
 export default function DemoPage() {
   const account = useActiveAccount();
   const registration = useHealthcareRegistration();
+  const funding = useFunding();
 
   const getUserTypeLabel = (userType: UserType | null) => {
     switch (userType) {
@@ -37,6 +40,14 @@ export default function DemoPage() {
     return 'bg-yellow-100 text-yellow-800';
   };
 
+  const handleFundWallet = async (amount: string) => {
+    try {
+      await funding.fundWallet(amount);
+    } catch (error) {
+      console.error('Funding failed:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
@@ -46,7 +57,7 @@ export default function DemoPage() {
             🧪 zkMed Registration Hook Demo
           </h1>
           <p className="text-gray-600">
-            Live demonstration of the useHealthcareRegistration hook functionality
+            Live demonstration of the useHealthcareRegistration hook functionality and wallet funding
           </p>
         </div>
 
@@ -70,6 +81,56 @@ export default function DemoPage() {
                 <p className="font-mono text-sm text-gray-700">
                   {account.address}
                 </p>
+              </div>
+            </div>
+
+            {/* Wallet Balance & Funding */}
+            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-4">💰 Wallet Balance & Funding</h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Balance:</span>
+                  <Badge className={funding.balance > BigInt(0) ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                    {funding.isLoading ? '🔄 Loading...' : `${formatEther(funding.balance)} ETH`}
+                  </Badge>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Status:</span>
+                  <Badge className={funding.isReady ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}>
+                    {funding.isReady ? '✅ Ready' : '🔄 Loading'}
+                  </Badge>
+                </div>
+
+                {funding.error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-red-700 text-sm">{funding.error}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => handleFundWallet('1')}
+                    disabled={funding.isFunding}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {funding.isFunding ? '🔄 Funding...' : '💳 Fund 1 ETH'}
+                  </Button>
+                  <Button 
+                    onClick={() => handleFundWallet('0.1')}
+                    disabled={funding.isFunding}
+                    variant="outline"
+                  >
+                    {funding.isFunding ? '🔄 Funding...' : '💳 Fund 0.1 ETH'}
+                  </Button>
+                  <Button 
+                    onClick={funding.refreshBalance}
+                    disabled={funding.isLoading}
+                    variant="outline"
+                  >
+                    🔄 Refresh
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -245,18 +306,29 @@ export default function DemoPage() {
               <div className="bg-gray-900 rounded-lg p-4 overflow-auto">
                 <pre className="text-green-400 text-sm">
                   {JSON.stringify({
-                    currentStep: registration.currentStep,
-                    userRole: registration.userRole,
-                    isRegistered: registration.isRegistered,
-                    loading: registration.loading,
-                    txLoading: registration.txLoading,
-                    error: registration.error,
-                    txHash: registration.txHash,
-                    organizationType: registration.organizationType,
-                    organizationName: registration.organizationName,
-                    uniqueEmail: registration.uniqueEmail,
-                    patientEmail: registration.patientEmail,
-                    walletAddress: registration.walletAddress
+                    // Registration State
+                    registration: {
+                      currentStep: registration.currentStep,
+                      userRole: registration.userRole,
+                      isRegistered: registration.isRegistered,
+                      loading: registration.loading,
+                      txLoading: registration.txLoading,
+                      error: registration.error,
+                      txHash: registration.txHash,
+                      organizationType: registration.organizationType,
+                      organizationName: registration.organizationName,
+                      uniqueEmail: registration.uniqueEmail,
+                      patientEmail: registration.patientEmail,
+                      walletAddress: registration.walletAddress
+                    },
+                    // Funding State
+                    funding: {
+                      balance: funding.balance.toString(),
+                      isLoading: funding.isLoading,
+                      isFunding: funding.isFunding,
+                      isReady: funding.isReady,
+                      error: funding.error
+                    }
                   }, null, 2)}
                 </pre>
               </div>
