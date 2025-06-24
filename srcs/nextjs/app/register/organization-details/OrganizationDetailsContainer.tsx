@@ -1,38 +1,59 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveAccount } from 'thirdweb/react';
-import { useHealthcareRegistration } from '@/hooks/useHealthcareRegistration';
+import { useHospital } from '@/hooks/useHospital';
+import { useInsurance } from '@/hooks/useInsurance';
 import { UserType } from '@/utils/types/healthcare';
 import { OrganizationDetailsPresentational } from './OrganizationDetailsPresentational';
 
 export const OrganizationDetailsContainer = () => {
   const router = useRouter();
-  const registration = useHealthcareRegistration();
   const account = useActiveAccount();
   const [organizationName, setOrganizationName] = useState('');
   const [organizationType, setOrganizationType] = useState<'HOSPITAL' | 'INSURER' | null>(null);
+
+  // Use appropriate hook based on organization type
+  const hospital = useHospital();
+  const insurance = useInsurance();
+  
+  const registration = organizationType === 'HOSPITAL' ? hospital : insurance;
 
   // Get organization type from localStorage
   useEffect(() => {
     const savedType = localStorage.getItem('selectedOrganizationType') as 'HOSPITAL' | 'INSURER' | null;
     if (savedType) {
       setOrganizationType(savedType);
-      registration.setOrganizationType(savedType);
     }
-  }, [registration]);
+  }, []);
 
-  // Redirect if user is already registered
+  // Check if user is already registered
   useEffect(() => {
-    if (registration.isRegistered && registration.userRole !== null) {
-      if (registration.userRole === UserType.PATIENT) {
-        router.push(`/patient/${account?.address}`);
-      } else if (registration.userRole === UserType.HOSPITAL) {
-        router.push(`/hospital/${account?.address}`);
-      } else if (registration.userRole === UserType.INSURER) {
-        router.push(`/insurance/${account?.address}`);
+    const checkRegistration = async () => {
+      if (account?.address && registration) {
+        try {
+          const verification = await registration.fetchUserVerification(account.address);
+          if (verification?.isRegistered) {
+            // Redirect based on user type
+            if (verification.userType === UserType.PATIENT) {
+              router.push(`/patient/${account.address}`);
+            } else if (verification.userType === UserType.HOSPITAL) {
+              router.push(`/hospital/${account.address}`);
+            } else if (verification.userType === UserType.INSURER) {
+              router.push(`/insurance/${account.address}`);
+            }
+          }
+        } catch (error) {
+          console.error('Error checking registration:', error);
+        }
       }
+    };
+
+    if (registration) {
+      checkRegistration();
     }
-  }, [registration.isRegistered, registration.userRole, account?.address, router]);
+  }, [account?.address, registration, router]);
 
   // Redirect if user is not connected
   useEffect(() => {
@@ -43,8 +64,8 @@ export const OrganizationDetailsContainer = () => {
 
   const handleSubmit = (name: string) => {
     setOrganizationName(name);
-    registration.setOrganizationName(name);
-    registration.generateUniqueEmail();
+    // Save organization name to localStorage for use in later steps
+    localStorage.setItem('organizationName', name);
     router.push('/register/send-email');
   };
 
@@ -61,7 +82,7 @@ export const OrganizationDetailsContainer = () => {
     <OrganizationDetailsPresentational 
       organizationName={organizationName}
       setOrganizationName={setOrganizationName}
-      organizationType={organizationType || registration.organizationType}
+      organizationType={organizationType}
       onSubmit={handleSubmit}
       onBack={handleBack}
     />

@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { useActiveAccount } from 'thirdweb/react';
 import { useEffect } from 'react';
