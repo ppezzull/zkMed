@@ -29,12 +29,22 @@ contract DeployHealthcareRegistration is Script {
         console.log("Initial stats - Hospitals:", hospitals);
         console.log("Initial stats - Insurers:", insurers);
 
-        // Verify the deployer is set as super admin
-        (bool isActive, HealthcareRegistration.AdminRole role, uint256 permissions) = 
-            healthcareRegistration.admins(vm.addr(deployerPrivateKey));
-        console.log("Deployer admin status - Active:", isActive);
-        console.log("Deployer admin role (2=SUPER_ADMIN):", uint256(role));
-        console.log("Deployer permissions:", permissions);
+        // Get admin record for deployer
+        address deployer = vm.addr(deployerPrivateKey);
+        
+        // Use getAdminType() function to check if deployer is an admin
+        try healthcareRegistration.getAdminType(deployer) returns (HealthcareRegistration.AdminRole role) {
+            console.log("Deployer admin role (2=SUPER_ADMIN):", uint256(role));
+            console.log("Deployer is a registered admin");
+        } catch {
+            console.log("Deployer is not registered as an admin");
+        }
+
+        // Check if deployer address has super admin permissions
+        // Note: We don't directly access the AdminRecord struct anymore
+        bool isDeployerSuperAdmin = (healthcareRegistration.getAdminType(deployer) == 
+                                     HealthcareRegistration.AdminRole.SUPER_ADMIN);
+        console.log("Deployer is super admin:", isDeployerSuperAdmin);
 
         console.log("Deployment complete. You can now interact with the HealthcareRegistration contract.");
         vm.stopBroadcast();
