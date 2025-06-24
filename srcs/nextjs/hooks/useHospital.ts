@@ -14,6 +14,7 @@ import {
   BaseRecord
 } from '@/utils/types/healthcare';
 import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
+import { getHealthcareRegistrationAddress } from '@/lib/addresses';
 import { useProver } from './useProver';
 import { useVerifier } from './useVerifier';
 
@@ -40,9 +41,9 @@ interface UseHospitalReturn extends UseHospitalState {
 }
 
 const getHealthcareContract = () => {
-  const contractAddress = process.env.NEXT_PUBLIC_HEALTHCARE_CONTRACT_ADDRESS;
+  const contractAddress = getHealthcareRegistrationAddress();
   if (!contractAddress) {
-    throw new Error('Healthcare contract address not found');
+    throw new Error('Healthcare contract address not configured');
   }
 
   return getContract({

@@ -127,7 +127,7 @@ export default function DemoClient() {
     }
   };
 
-  const isAnyHookLoading = patient.isLoading || hospital.isLoading || insurance.isLoading || admin.loading;
+  const isAnyHookLoading = patient.isLoading || hospital.isLoading || insurance.isLoading || admin.isLoading;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -301,9 +301,9 @@ export default function DemoClient() {
                 <div className="border rounded-lg p-4">
                   <h3 className="font-semibold text-sm mb-2">⚖️ Admin Hook</h3>
                   <div className="space-y-1 text-xs">
-                    <div>Is Admin: {admin.isAdmin ? '✅' : '❌'}</div>
-                    <div>Loading: {admin.loading ? '🔄' : '✅'}</div>
-                    <div>Requests: {admin.pendingRequests?.length || 0}</div>
+                    <div>Loading: {admin.isLoading ? '🔄' : '✅'}</div>
+                    <div>Requesting: {admin.isRequestingAccess ? '🔄' : '❌'}</div>
+                    <div>Error: {admin.error ? '❌' : '✅'}</div>
                   </div>
                 </div>
               </div>
@@ -348,15 +348,13 @@ export default function DemoClient() {
                   </Button>
                 )}
                 
-                {admin.isAdmin && (
-                  <Button 
-                    onClick={() => window.location.href = '/admin'}
-                    variant="outline"
-                    className="border-green-600 text-green-600 hover:bg-green-50"
-                  >
-                    ⚖️ Admin Dashboard
-                  </Button>
-                )}
+                <Button 
+                  onClick={() => window.location.href = '/admin'}
+                  variant="outline"
+                  className="border-green-600 text-green-600 hover:bg-green-50"
+                >
+                  ⚖️ Admin Panel
+                </Button>
               </div>
             </div>
           </>

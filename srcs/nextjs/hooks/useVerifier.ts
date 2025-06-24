@@ -7,6 +7,7 @@ import { client } from '@/utils/thirdweb/client';
 import { getClientChain } from '@/lib/configs/chain-config';
 import { RegistrationData, UserType } from '@/utils/types/healthcare';
 import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
+import { getHealthcareRegistrationAddress } from '@/lib/addresses';
 
 interface UseVerifierState {
   isLoading: boolean;
@@ -30,9 +31,9 @@ interface UseVerifierReturn extends UseVerifierState {
 }
 
 const getHealthcareContract = () => {
-  const contractAddress = process.env.NEXT_PUBLIC_HEALTHCARE_CONTRACT_ADDRESS;
+  const contractAddress = getHealthcareRegistrationAddress();
   if (!contractAddress) {
-    throw new Error('Healthcare contract address not found');
+    throw new Error('Healthcare contract address not configured');
   }
 
   return getContract({

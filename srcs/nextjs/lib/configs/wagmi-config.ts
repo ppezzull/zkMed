@@ -15,7 +15,7 @@ const mantleFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["http://anvil-l2-mantle:8545"],
+      http: [process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.internal:8547"],
     },
   },
   blockExplorers: {

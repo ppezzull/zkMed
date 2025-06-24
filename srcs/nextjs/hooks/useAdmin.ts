@@ -13,6 +13,7 @@ import {
   BaseRequest
 } from '@/utils/types/healthcare';
 import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
+import { getHealthcareRegistrationAddress } from '@/lib/addresses';
 
 interface UseAdminState {
   isLoading: boolean;
@@ -38,9 +39,9 @@ interface UseAdminReturn extends UseAdminState {
 }
 
 const getHealthcareContract = () => {
-  const contractAddress = process.env.NEXT_PUBLIC_HEALTHCARE_CONTRACT_ADDRESS;
+  const contractAddress = getHealthcareRegistrationAddress();
   if (!contractAddress) {
-    throw new Error('Healthcare contract address not found');
+    throw new Error('Healthcare contract address not configured');
   }
 
   return getContract({
@@ -108,7 +109,7 @@ export function useAdmin(): UseAdminReturn {
         method: 'approveRequest',
         params: [requestId]
       });
-      
+
       await sendTransaction({
         transaction,
         account,
@@ -140,7 +141,7 @@ export function useAdmin(): UseAdminReturn {
         method: 'rejectRequest',
         params: [requestId, reason]
       });
-      
+
       await sendTransaction({
         transaction,
         account,

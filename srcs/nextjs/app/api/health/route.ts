@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
+import { getContractAddresses, isContractsConfigured } from '@/lib/addresses'
 
 export async function GET() {
+  const contractAddresses = getContractAddresses();
+
   const healthCheck = {
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -13,9 +16,9 @@ export async function GET() {
       rpcUrl: process.env.NEXT_PUBLIC_RPC_URL ? 'configured' : 'not configured'
     },
     contracts: {
-      healthcareRegistrationAddress: process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS || 'not configured',
-      healthcareProverAddress: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS || 'not configured',
-      configured: !!(process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS && process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS)
+      healthcareRegistrationAddress: contractAddresses.healthcareRegistration !== '0x0000000000000000000000000000000000000000' ? contractAddresses.healthcareRegistration : 'not configured',
+      healthcareProverAddress: contractAddresses.healthcareRegistrationProver !== '0x0000000000000000000000000000000000000000' ? contractAddresses.healthcareRegistrationProver : 'not configured',
+      configured: isContractsConfigured()
     },
     uptime: process.uptime(),
     memory: process.memoryUsage(),

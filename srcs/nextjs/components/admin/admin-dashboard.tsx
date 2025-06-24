@@ -101,7 +101,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{initialData.registrationStats.totalUsers.toString()}</div>
+            <div className="text-2xl font-bold">{initialData.registrationStats.totalRegisteredUsers.toString()}</div>
           </CardContent>
         </Card>
         

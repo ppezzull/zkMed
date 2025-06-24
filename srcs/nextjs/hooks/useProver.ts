@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
 import type { RegistrationData } from '@/utils/types/healthcare';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
+import { getHealthcareRegistrationProverAddress } from '@/lib/addresses';
 
 interface UseProverState {
   isLoading: boolean;
@@ -45,7 +46,7 @@ export function useProver(): UseProverReturn {
     error: patientCallError,
     data: patientProofHash
   } = useCallProver({
-    address: process.env.NEXT_PUBLIC_PROVER_ADDRESS as `0x${string}`,
+    address: getHealthcareRegistrationProverAddress() as `0x${string}`,
     proverAbi: HealthcareRegistrationProver__factory.abi,
     functionName: 'provePatientEmail',
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
@@ -58,7 +59,7 @@ export function useProver(): UseProverReturn {
     error: orgCallError,
     data: orgProofHash
   } = useCallProver({
-    address: process.env.NEXT_PUBLIC_PROVER_ADDRESS as `0x${string}`,
+    address: getHealthcareRegistrationProverAddress() as `0x${string}`,
     proverAbi: HealthcareRegistrationProver__factory.abi,
     functionName: 'proveOrganizationDomain',
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
