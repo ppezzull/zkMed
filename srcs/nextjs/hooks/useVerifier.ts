@@ -2,12 +2,9 @@
 
 import { useCallback, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { prepareContractCall, sendTransaction, getContract } from 'thirdweb';
-import { client } from '@/utils/thirdweb/client';
-import { getClientChain } from '@/lib/configs/chain-config';
+import { prepareContractCall, sendTransaction } from 'thirdweb';
+import { getHealthcareContract } from '@/lib/utils';
 import { RegistrationData, UserType } from '@/utils/types/healthcare';
-import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { getHealthcareRegistrationAddress } from '@/lib/addresses';
 
 interface UseVerifierState {
   isLoading: boolean;
@@ -29,20 +26,6 @@ interface UseVerifierReturn extends UseVerifierState {
   // State management
   resetVerificationState: () => void;
 }
-
-const getHealthcareContract = () => {
-  const contractAddress = getHealthcareRegistrationAddress();
-  if (!contractAddress) {
-    throw new Error('Healthcare contract address not configured');
-  }
-
-  return getContract({
-    client,
-    chain: getClientChain(),
-    address: contractAddress as `0x${string}`,
-    abi: HealthcareRegistration__factory.abi,
-  });
-};
 
 // Helper function to convert RegistrationData to contract-compatible format
 const toContractRegistrationData = (data: RegistrationData) => ({

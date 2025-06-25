@@ -101,7 +101,7 @@ export interface RegistrationStats {
 
 // User verification data
 export interface UserVerificationData {
-  userType: UserType;
+  userType: UserType | null;
   isActive: boolean;
   isAdmin: boolean;
   adminRole?: AdminRole;

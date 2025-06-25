@@ -1,17 +1,8 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
-import { prepareContractCall, sendTransaction, getContract, readContract } from 'thirdweb';
-import { client } from '@/utils/thirdweb/client';
-import { getClientChain } from '@/lib/configs/chain-config';
-import { 
-  PatientRecord, 
-  BaseRecord
-} from '@/utils/types/healthcare';
-import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { getHealthcareRegistrationAddress } from '@/lib/addresses';
+import { getHealthcareContract } from '@/lib/utils';
 import { useProver } from './useProver';
 import { useVerifier } from './useVerifier';
 
@@ -29,25 +20,7 @@ interface UsePatientState {
 interface UsePatientReturn extends UsePatientState {
   // Registration
   registerPatient: (emlContent: string, walletAddress: string) => Promise<void>;
-  
-  // Data fetching
-  fetchPatientRecord: (address: string) => Promise<PatientRecord | null>;
-  fetchUserVerification: (address: string) => Promise<any>;
 }
-
-const getHealthcareContract = () => {
-  const contractAddress = getHealthcareRegistrationAddress();
-  if (!contractAddress) {
-    throw new Error('Healthcare contract address not configured');
-  }
-
-  return getContract({
-    client,
-    chain: getClientChain(),
-    address: contractAddress as `0x${string}`,
-    abi: HealthcareRegistration__factory.abi,
-  });
-};
 
 export function usePatient(): UsePatientReturn {
   const account = useActiveAccount();
@@ -114,54 +87,6 @@ export function usePatient(): UsePatientReturn {
     }
   }, [account, prover, verifier]);
 
-  const fetchPatientRecord = useCallback(async (address: string): Promise<PatientRecord | null> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      // Use the patientRecords mapping directly
-      const result = await readContract({
-        contract,
-        method: 'patientRecords',
-        params: [address]
-      });
-      
-      // Parse the contract return (BaseRecord) into PatientRecord interface
-      const baseRecord = result as BaseRecord;
-      
-      return {
-        base: baseRecord
-      };
-    } catch (error) {
-      console.error('Error fetching patient record:', error);
-      return null;
-    }
-  }, []);
-
-  const fetchUserVerification = useCallback(async (address: string): Promise<any> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      // Use userTypes mapping to get user type
-      const userType = await readContract({
-        contract,
-        method: 'userTypes',
-        params: [address]
-      });
-      
-      // Check if user is registered and active
-      const isRegistered = await readContract({
-        contract,
-        method: 'isUserRegistered',
-        params: [address]
-      });
-      
-      return { userType, isRegistered };
-    } catch (error) {
-      console.error('Error fetching user verification:', error);
-      return null;
-    }
-  }, []);
-
   // Update loading states based on sub-hooks
   const isLoading = state.isLoading || prover.isLoading || verifier.isLoading;
   const isGeneratingProof = state.isGeneratingProof || prover.isGeneratingProof;
@@ -173,7 +98,5 @@ export function usePatient(): UsePatientReturn {
     isGeneratingProof,
     error,
     registerPatient,
-    fetchPatientRecord,
-    fetchUserVerification,
   };
-} 
+}

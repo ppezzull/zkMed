@@ -2,18 +2,9 @@
 
 import { useCallback, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { getContract, prepareContractCall, sendTransaction, readContract } from 'thirdweb';
-import { client } from '@/utils/thirdweb/client';
-import { getClientChain } from '@/lib/configs/chain-config';
-import { 
-  AdminRole, 
-  AdminRecord, 
-  AdminAccessRequest,
-  RequestType,
-  BaseRequest
-} from '@/utils/types/healthcare';
-import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
-import { getHealthcareRegistrationAddress } from '@/lib/addresses';
+import { prepareContractCall, sendTransaction } from 'thirdweb';
+import { getHealthcareContract } from '@/lib/utils';
+import { AdminRole } from '@/utils/types/healthcare';
 
 interface UseAdminState {
   isLoading: boolean;
@@ -30,27 +21,7 @@ interface UseAdminReturn extends UseAdminState {
   addAdmin: (adminAddress: string, role: AdminRole) => Promise<void>;
   updateAdminPermissions: (adminAddress: string, permissions: bigint) => Promise<void>;
   deactivateUser: (userAddress: string) => Promise<void>;
-  
-  // Data fetching
-  fetchAdminRecord: (address: string) => Promise<AdminRecord | null>;
-  fetchPendingAdminRequests: () => Promise<bigint[]>;
-  fetchAdminRequest: (requestId: bigint) => Promise<AdminAccessRequest | null>;
-  fetchRequestBase: (requestId: bigint) => Promise<BaseRequest | null>;
 }
-
-const getHealthcareContract = () => {
-  const contractAddress = getHealthcareRegistrationAddress();
-  if (!contractAddress) {
-    throw new Error('Healthcare contract address not configured');
-  }
-
-  return getContract({
-    client,
-    chain: getClientChain(),
-    address: contractAddress as `0x${string}`,
-    abi: HealthcareRegistration__factory.abi,
-  });
-};
 
 export function useAdmin(): UseAdminReturn {
   const account = useActiveAccount();
@@ -253,81 +224,6 @@ export function useAdmin(): UseAdminReturn {
     }
   }, [account]);
 
-  const fetchAdminRecord = useCallback(async (address: string): Promise<AdminRecord | null> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      const result = await readContract({
-        contract,
-        method: 'admins',
-        params: [address]
-      });
-      
-      const [isActive, role, permissions, adminSince] = result as [boolean, number, bigint, bigint];
-      
-      return {
-        isActive,
-        role: role as any,
-        permissions,
-        adminSince
-      };
-    } catch (error) {
-      console.error('Error fetching admin record:', error);
-      return null;
-    }
-  }, []);
-
-  const fetchPendingAdminRequests = useCallback(async (): Promise<bigint[]> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      const result = await readContract({
-        contract,
-        method: 'getPendingRequestsByType',
-        params: [2] // RequestType.ADMIN_ACCESS = 2
-      });
-      
-      return result as bigint[];
-    } catch (error) {
-      console.error('Error fetching pending admin requests:', error);
-      return [];
-    }
-  }, []);
-
-  const fetchAdminRequest = useCallback(async (requestId: bigint): Promise<AdminAccessRequest | null> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      const result = await readContract({
-        contract,
-        method: 'getAdminRequest',
-        params: [requestId]
-      });
-      
-      return result as AdminAccessRequest;
-    } catch (error) {
-      console.error('Error fetching admin request:', error);
-      return null;
-    }
-  }, []);
-
-  const fetchRequestBase = useCallback(async (requestId: bigint): Promise<BaseRequest | null> => {
-    try {
-      const contract = getHealthcareContract();
-      
-      const result = await readContract({
-        contract,
-        method: 'getRequestBase',
-        params: [requestId]
-      });
-      
-      return result as BaseRequest;
-    } catch (error) {
-      console.error('Error fetching request base:', error);
-      return null;
-    }
-  }, []);
-
   return {
     ...state,
     requestAdminAccess,
@@ -336,9 +232,5 @@ export function useAdmin(): UseAdminReturn {
     addAdmin,
     updateAdminPermissions,
     deactivateUser,
-    fetchAdminRecord,
-    fetchPendingAdminRequests,
-    fetchAdminRequest,
-    fetchRequestBase,
   };
 } 
