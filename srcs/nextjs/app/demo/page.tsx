@@ -1,18 +1,8 @@
 import { Suspense } from 'react';
-import { getCurrentUserRole, getUserRecord } from '@/lib/actions/healthcare';
 import DemoClient from '@/components/demo/demo-client';
 
-interface DemoPageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-export default async function DemoPage({ searchParams }: DemoPageProps) {
-  const resolvedParams = await searchParams;
-  
+export default async function DemoPage() {  
   try {
-    // No need to fetch data server-side for demo page since it's wallet-dependent
-    // The client component will handle wallet connection and data fetching
-    
     return (
       <Suspense fallback={
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">

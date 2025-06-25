@@ -26,49 +26,35 @@ export default function DemoClient() {
   const insurance = useInsurance();
   const funding = useFunding();
 
-  // Check user registration status
+  // Check user registration status using server actions
   useEffect(() => {
     const checkRegistration = async () => {
       if (!account?.address) return;
       
       setCheckingRegistration(true);
       try {
-        // Try patient first
-        const patientVerification = await patient.fetchUserVerification(account.address);
-        if (patientVerification?.isRegistered) {
-          setCurrentUserType(patientVerification.userType);
+        // Import and use the new user server action
+        const { getUserVerificationData } = await import('@/lib/actions/user');
+        const userVerification = await getUserVerificationData(account.address);
+        
+        if (userVerification?.isActive && userVerification.userType !== null) {
+          setCurrentUserType(userVerification.userType);
           setIsRegistered(true);
-          return;
+        } else {
+          setIsRegistered(false);
+          setCurrentUserType(null);
         }
-
-        // Try hospital
-        const hospitalVerification = await hospital.fetchUserVerification(account.address);
-        if (hospitalVerification?.isRegistered) {
-          setCurrentUserType(hospitalVerification.userType);
-          setIsRegistered(true);
-          return;
-        }
-
-        // Try insurance
-        const insuranceVerification = await insurance.fetchUserVerification(account.address);
-        if (insuranceVerification?.isRegistered) {
-          setCurrentUserType(insuranceVerification.userType);
-          setIsRegistered(true);
-          return;
-        }
-
-        // Not registered
-        setIsRegistered(false);
-        setCurrentUserType(null);
       } catch (error) {
         console.error('Error checking registration:', error);
+        setIsRegistered(false);
+        setCurrentUserType(null);
       } finally {
         setCheckingRegistration(false);
       }
     };
 
     checkRegistration();
-  }, [account?.address, patient, hospital, insurance]);
+  }, [account?.address]);
 
   const getUserTypeLabel = (userType: UserType | null) => {
     switch (userType) {
@@ -362,4 +348,4 @@ export default function DemoClient() {
       </div>
     </div>
   );
-} 
+}
