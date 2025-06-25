@@ -1,10 +1,10 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { getContract } from "thirdweb";
+import { server } from "@/utils/thirdweb/server";
 import { client } from "@/utils/thirdweb/client";
 import { getClientChain } from "@/lib/configs/chain-config";
 import { HealthcareRegistration__factory } from "@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory";
-import { getHealthcareRegistrationAddress } from "@/lib/addresses";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,13 +12,16 @@ export function cn(...inputs: ClassValue[]) {
 
 // Get the healthcare contract instance
 export const getHealthcareContract = () => {
-  const contractAddress = getHealthcareRegistrationAddress();
+  const contractAddress = process.env.NEXT_PUBLIC_HEALTHCARE_REGISTRATION_ADDRESS;
   if (!contractAddress) {
     throw new Error("Healthcare contract address not configured");
   }
 
+  // Only use server client when explicitly on server and not during initial page load
+  const useClient = typeof window !== 'undefined';
+  
   return getContract({
-    client,
+    client: useClient ? client : server,
     chain: getClientChain(),
     address: contractAddress as `0x${string}`,
     abi: HealthcareRegistration__factory.abi,

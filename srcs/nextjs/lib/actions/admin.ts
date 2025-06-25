@@ -134,13 +134,20 @@ export async function getPendingRequestsByType(requestType: RequestType): Promis
 
 export async function getRegistrationStats(): Promise<RegistrationStats> {
   try {
+    console.log('🔍 Starting to fetch registration stats...');
+    console.log('RPC URL:', process.env.NEXT_PUBLIC_RPC_URL);
+    console.log('Chain ID:', process.env.NEXT_PUBLIC_CHAIN_ID);
+    
     const contract = getHealthcareContract();
+    console.log('✅ Contract instance created');
     
     const result = await readContract({
       contract,
       method: 'getRegistrationStats',
       params: []
     });
+    
+    console.log('✅ Successfully fetched registration stats:', result);
     
     return {
       totalRegisteredUsers: BigInt(result[0]),
@@ -149,7 +156,20 @@ export async function getRegistrationStats(): Promise<RegistrationStats> {
       totalInsurers: BigInt(result[3])
     };
   } catch (error) {
-    console.error('Error fetching registration stats:', error);
+    console.error('❌ Error fetching registration stats:', error);
+    
+    // Provide more specific error information
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
+      if (error.message.includes('404') || error.message.includes('Not Found')) {
+        console.error('🔴 RPC endpoint not found - check if Anvil is running on the correct port');
+        console.error('Expected RPC URL:', process.env.NEXT_PUBLIC_RPC_URL);
+      }
+    }
+    
+    // Return zero stats instead of throwing
     return {
       totalRegisteredUsers: BigInt(0),
       totalPatients: BigInt(0),

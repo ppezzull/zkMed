@@ -15,7 +15,7 @@ const mantleFork: Chain = {
   },
   rpcUrls: {
     default: {
-      http: [process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.internal:8547"],
+      http: [process.env.NEXT_PUBLIC_RPC_URL || ""],
     },
   },
   blockExplorers: {

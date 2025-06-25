@@ -179,7 +179,6 @@ check-env: ## Check environment variables configuration
 	@echo "  VLAYER_ENV: dev"
 	@echo "  CHAIN_NAME: anvil"
 	@echo "  PROVER_URL: http://host.docker.internal:3000"
-	@echo "  JSON_RPC_URL: http://host.docker.internal:8547"
 	@echo "  NOTARY_URL: http://host.docker.internal:7047"
 	@echo "  WS_PROXY_URL: ws://host.docker.internal:3003"
 	@echo ""

@@ -7,8 +7,8 @@ async function exportContractsToFrontend() {
   try {
     console.log('🔄 Exporting zkMed contracts to local frontend environment...');
     
-    // Path to local frontend environment (from zkMed/ to srcs/nextjs/)
-    const frontendEnvPath = path.join(process.cwd(), 'srcs', 'nextjs', '.env.local');
+    // Path to local frontend environment - go up from scripts dir to nextjs root
+    const frontendEnvPath = path.join(__dirname, '..', '.env.local');
     
     let contractData = null;
     
@@ -27,11 +27,12 @@ async function exportContractsToFrontend() {
       } catch (dockerError) {
         console.log('⚠️  Could not read from Docker volume, checking local paths...');
         
-        // Fallback: Try local paths (relative to zkMed/)
+        // Fallback: Try local paths (relative to zkMed root)
+        const zkMedRoot = path.join(__dirname, '..', '..', '..');
         const localPaths = [
-          path.join(process.cwd(), 'srcs', 'foundry', 'out', 'addresses.json'),
-          path.join(process.cwd(), 'contracts', 'addresses.json'),
-          path.join(process.cwd(), 'out', 'addresses.json')
+          path.join(zkMedRoot, 'srcs', 'foundry', 'out', 'addresses.json'),
+          path.join(zkMedRoot, 'contracts', 'addresses.json'),
+          path.join(zkMedRoot, 'out', 'addresses.json')
         ];
         
         for (const localPath of localPaths) {

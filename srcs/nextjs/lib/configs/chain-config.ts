@@ -1,7 +1,7 @@
 import { defineChain } from 'thirdweb/chains';
 
 // Base RPC URL for server-side and fallback
-const BASE_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "http://host.docker.internal:8547";
+const BASE_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://localhost:8547';
 
 // Define the local Mantle fork chain with a stable RPC initially
 export const mantleFork = defineChain({
@@ -12,7 +12,7 @@ export const mantleFork = defineChain({
     symbol: "MNT", 
     decimals: 18,
   },
-  rpc: BASE_RPC_URL, // This will be overridden on the client-side by Thirdweb
+  rpc: BASE_RPC_URL,
   testnet: true,
   blockExplorers: [],
 });
@@ -20,9 +20,14 @@ export const mantleFork = defineChain({
 // Create a client-side version that uses the proxy
 export const getClientChain = () => {
   if (typeof window === 'undefined') {
-    return mantleFork;
+    // Server-side: always use the direct RPC URL
+    return defineChain({
+      ...mantleFork,
+      rpc: BASE_RPC_URL,
+    });
   }
   
+  // Client-side: use the RPC proxy
   return defineChain({
     ...mantleFork,
     rpc: `${window.location.origin}/api/rpc`,

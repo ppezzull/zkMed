@@ -7,17 +7,22 @@ import { useHospital } from '@/hooks/useHospital';
 import { useInsurance } from '@/hooks/useInsurance';
 import { useFunding } from '@/hooks/useFunding';
 import { useActiveAccount } from 'thirdweb/react';
-import { UserType } from '@/utils/types/healthcare';
+import { UserType, RegistrationStats, UserVerificationData } from '@/utils/types/healthcare';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import WalletConnect from '@/components/wallet-connect';
 import { formatEther } from 'viem';
 
-export default function DemoClient() {
+interface DemoClientProps {
+  registrationStats: RegistrationStats;
+}
+
+export default function DemoClient({ registrationStats }: DemoClientProps) {
   const account = useActiveAccount();
   const [currentUserType, setCurrentUserType] = useState<UserType | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [checkingRegistration, setCheckingRegistration] = useState(false);
+  const [userVerificationData, setUserVerificationData] = useState<UserVerificationData | null>(null);
   
   // Use all specialized hooks
   const admin = useAdmin();
@@ -29,13 +34,21 @@ export default function DemoClient() {
   // Check user registration status using server actions
   useEffect(() => {
     const checkRegistration = async () => {
-      if (!account?.address) return;
+      if (!account?.address) {
+        // Reset state when no account
+        setCurrentUserType(null);
+        setIsRegistered(false);
+        setUserVerificationData(null);
+        return;
+      }
       
       setCheckingRegistration(true);
       try {
         // Import and use the new user server action
         const { getUserVerificationData } = await import('@/lib/actions/user');
         const userVerification = await getUserVerificationData(account.address);
+        
+        setUserVerificationData(userVerification);
         
         if (userVerification?.isActive && userVerification.userType !== null) {
           setCurrentUserType(userVerification.userType);
@@ -48,6 +61,7 @@ export default function DemoClient() {
         console.error('Error checking registration:', error);
         setIsRegistered(false);
         setCurrentUserType(null);
+        setUserVerificationData(null);
       } finally {
         setCheckingRegistration(false);
       }
@@ -113,11 +127,42 @@ export default function DemoClient() {
     }
   };
 
-  const isAnyHookLoading = patient.isLoading || hospital.isLoading || insurance.isLoading || admin.isLoading;
+  const isAnyHookLoading = patient.isLoading || hospital.isLoading || insurance.isLoading || admin.isLoading || funding.isLoading;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
+        {/* SSR Registration Stats Overview */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 Registration Statistics (Server-Side)</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg text-center">
+              <p className="text-3xl font-bold text-blue-600">
+                {registrationStats.totalRegisteredUsers.toString()}
+              </p>
+              <p className="text-sm text-blue-600 font-medium">Total Users</p>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg text-center">
+              <p className="text-3xl font-bold text-green-600">
+                {registrationStats.totalPatients.toString()}
+              </p>
+              <p className="text-sm text-green-600 font-medium">Patients</p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg text-center">
+              <p className="text-3xl font-bold text-purple-600">
+                {registrationStats.totalHospitals.toString()}
+              </p>
+              <p className="text-sm text-purple-600 font-medium">Hospitals</p>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg text-center">
+              <p className="text-3xl font-bold text-orange-600">
+                {registrationStats.totalInsurers.toString()}
+              </p>
+              <p className="text-sm text-orange-600 font-medium">Insurers</p>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -220,6 +265,36 @@ export default function DemoClient() {
                       {getUserTypeLabel(currentUserType).icon} {getUserTypeLabel(currentUserType).label}
                     </Badge>
                   </div>
+
+                  {userVerificationData?.isAdmin && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Admin Status:</span>
+                      <Badge className="bg-yellow-100 text-yellow-800">
+                        ⚖️ Admin ({userVerificationData.adminRole !== undefined ? 
+                          userVerificationData.adminRole === 0 ? 'Basic' :
+                          userVerificationData.adminRole === 1 ? 'Moderator' : 'Super Admin'
+                          : 'Unknown'})
+                      </Badge>
+                    </div>
+                  )}
+
+                  {userVerificationData?.organizationName && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Organization:</span>
+                      <Badge className="bg-gray-100 text-gray-800">
+                        🏢 {userVerificationData.organizationName}
+                      </Badge>
+                    </div>
+                  )}
+
+                  {userVerificationData?.domain && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Domain:</span>
+                      <Badge className="bg-gray-100 text-gray-800">
+                        🌐 {userVerificationData.domain}
+                      </Badge>
+                    </div>
+                  )}
                   
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Loading:</span>
@@ -253,10 +328,54 @@ export default function DemoClient() {
               </div>
             </div>
 
+            {/* SSR vs CSR Data Comparison */}
+            <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-4">🔄 SSR vs CSR Data Flow</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border rounded-lg p-4 bg-blue-50">
+                  <h3 className="font-semibold text-sm mb-3 text-blue-800">📈 Server-Side Data (SSR)</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Registration Stats:</span>
+                      <Badge className="bg-blue-100 text-blue-800">✅ Available</Badge>
+                    </div>
+                    <div className="text-xs text-blue-600">
+                      • Fetched at build/request time
+                      • No client-side loading states
+                      • SEO friendly & fast initial load
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-green-50">
+                  <h3 className="font-semibold text-sm mb-3 text-green-800">⚡ Client-Side Data (CSR)</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>User Verification:</span>
+                      <Badge className={userVerificationData ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                        {checkingRegistration ? '🔄 Loading' : userVerificationData ? '✅ Loaded' : '❌ No Data'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Wallet Balance:</span>
+                      <Badge className={funding.isReady ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                        {funding.isLoading ? '🔄 Loading' : funding.isReady ? '✅ Ready' : '❌ Not Ready'}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-green-600">
+                      • Dynamic wallet-based data
+                      • Real-time updates
+                      • Interactive state management
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Hook States Overview */}
             <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
               <h2 className="text-xl font-semibold mb-4">🔧 Hooks State Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="border rounded-lg p-4">
                   <h3 className="font-semibold text-sm mb-2">👤 Patient Hook</h3>
                   <div className="space-y-1 text-xs">
@@ -290,6 +409,17 @@ export default function DemoClient() {
                     <div>Loading: {admin.isLoading ? '🔄' : '✅'}</div>
                     <div>Requesting: {admin.isRequestingAccess ? '🔄' : '❌'}</div>
                     <div>Error: {admin.error ? '❌' : '✅'}</div>
+                  </div>
+                </div>
+
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold text-sm mb-2">💰 Funding Hook</h3>
+                  <div className="space-y-1 text-xs">
+                    <div>Loading: {funding.isLoading ? '🔄' : '✅'}</div>
+                    <div>Funding: {funding.isFunding ? '🔄' : '❌'}</div>
+                    <div>Ready: {funding.isReady ? '✅' : '❌'}</div>
+                    <div>Balance: {formatEther(funding.balance).slice(0, 6)} ETH</div>
+                    <div>Error: {funding.error ? '❌' : '✅'}</div>
                   </div>
                 </div>
               </div>
