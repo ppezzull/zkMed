@@ -6,6 +6,7 @@ import { usePatient } from "@/hooks/usePatient";
 import { useHospital } from "@/hooks/useHospital";
 import { useInsurance } from "@/hooks/useInsurance";
 import { useFunding } from "@/hooks/useFunding";
+import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
 import { useActiveAccount } from "thirdweb/react";
 import {
   UserType,
@@ -36,44 +37,16 @@ export default function DemoClient({ registrationStats }: DemoClientProps) {
   const insurance = useInsurance();
   const funding = useFunding();
 
-  // Check user registration status using server actions
+  // Use centralized registration status hook
+  const registrationStatus = useRegistrationStatus();
+
+  // Update local state based on registration status
   useEffect(() => {
-    const checkRegistration = async () => {
-      if (!account?.address) {
-        // Reset state when no account
-        setCurrentUserType(null);
-        setIsRegistered(false);
-        setUserVerificationData(null);
-        return;
-      }
-
-      setCheckingRegistration(true);
-      try {
-        // Import and use the new user server action
-        const { getUserVerificationData } = await import("@/lib/actions/user");
-        const userVerification = await getUserVerificationData(account.address);
-
-        setUserVerificationData(userVerification);
-
-        if (userVerification?.isActive && userVerification.userType !== null) {
-          setCurrentUserType(userVerification.userType);
-          setIsRegistered(true);
-        } else {
-          setIsRegistered(false);
-          setCurrentUserType(null);
-        }
-      } catch (error) {
-        console.error("Error checking registration:", error);
-        setIsRegistered(false);
-        setCurrentUserType(null);
-        setUserVerificationData(null);
-      } finally {
-        setCheckingRegistration(false);
-      }
-    };
-
-    checkRegistration();
-  }, [account?.address]);
+    setCurrentUserType(registrationStatus.userType);
+    setIsRegistered(registrationStatus.isRegistered);
+    setUserVerificationData(registrationStatus.verificationData);
+    setCheckingRegistration(registrationStatus.isLoading);
+  }, [registrationStatus]);
 
   const getUserTypeLabel = (userType: UserType | null) => {
     switch (userType) {

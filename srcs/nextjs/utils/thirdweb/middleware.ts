@@ -11,7 +11,7 @@ export const protectedRoutes = {
   '/patient': { requireUserType: UserType.PATIENT },
   '/hospital': { requireUserType: UserType.HOSPITAL },
   '/insurance': { requireUserType: UserType.INSURER },
-  '/register': { requireWallet: true, blockRegistered: false }, // Allow access but will redirect if already registered
+  '/register': { requireWallet: true, blockRegistered: true }, // Block registered users from accessing registration
 } as const;
 
 export type RouteConfig = {
@@ -24,9 +24,16 @@ export type RouteConfig = {
 
 export async function checkUserPermissions(
   walletAddress: string | null,
-  config: RouteConfig
+  config: RouteConfig,
+  pathname: string
 ): Promise<{ allowed: boolean; redirectTo?: string; reason?: string }> {
-  if (!walletAddress && config.requireWallet) {
+  // No wallet required routes (like home page)
+  if (!config.requireWallet && !config.requireUserType && !config.requireAdmin) {
+    return { allowed: true };
+  }
+
+  // No wallet connected but route requires one
+  if (!walletAddress && (config.requireWallet || config.requireUserType || config.requireAdmin)) {
     return {
       allowed: false,
       redirectTo: '/',
@@ -35,74 +42,74 @@ export async function checkUserPermissions(
   }
 
   if (!walletAddress) {
-    return { allowed: true }; // No restrictions for non-wallet routes
+    return { allowed: true }; // Allow if no wallet required
   }
 
   try {
-    // First, do a quick check if user is registered at all
-    const isRegistered = await isUserRegistered(walletAddress);
-
-    // If user is not registered
-    if (!isRegistered) {
-      if (config.requireUserType !== undefined || config.requireAdmin) {
+    // Get user verification data
+    const userVerification = await getUserVerificationData(walletAddress);
+    
+    // Handle registration routes
+    if (pathname.startsWith('/register') && config.blockRegistered) {
+      if (userVerification?.isActive && userVerification.userType !== null) {
+        // User is already registered, redirect to their dashboard
+        const dashboardPath = getUserDashboardPath(userVerification.userType, userVerification.isAdmin, walletAddress);
         return {
           allowed: false,
-          redirectTo: '/register',
-          reason: 'Registration required'
+          redirectTo: dashboardPath,
+          reason: 'Already registered'
         };
       }
+      // Allow access to registration for unregistered users
       return { allowed: true };
     }
 
-    // If route blocks registered users (like registration page)
-    if (config.blockRegistered) {
-      // Need full user data to determine redirect path
-      const userVerification = await getUserVerificationData(walletAddress);
-      return {
-        allowed: false,
-        redirectTo: getUserDashboardPath(userVerification?.userType || null, userVerification?.isAdmin || false),
-        reason: 'Already registered'
-      };
-    }
-
-    // For other checks, we need full verification data
-    const userVerification = await getUserVerificationData(walletAddress);
-    
-    if (!userVerification) {
-      return {
-        allowed: false,
-        redirectTo: '/register',
-        reason: 'User verification failed'
-      };
-    }
-
-    // Check user type requirement
-    if (config.requireUserType !== undefined && userVerification.userType !== config.requireUserType) {
-      return {
-        allowed: false,
-        redirectTo: getUserDashboardPath(userVerification.userType || UserType.PATIENT, userVerification.isAdmin),
-        reason: `Access denied: requires ${getUserTypeName(config.requireUserType)} role`
-      };
-    }
-
-    // Check admin requirement
-    if (config.requireAdmin && !userVerification.isAdmin) {
-      return {
-        allowed: false,
-        redirectTo: getUserDashboardPath(userVerification.userType || UserType.PATIENT, userVerification.isAdmin),
-        reason: 'Admin access required'
-      };
-    }
-
-    // Check minimum admin role requirement
-    if (config.minRole !== undefined && userVerification.adminRole !== undefined) {
-      if (userVerification.adminRole < config.minRole) {
+    // Handle admin routes
+    if (config.requireAdmin) {
+      if (!userVerification?.isAdmin) {
         return {
           allowed: false,
-          redirectTo: '/admin',
-          reason: `Insufficient admin privileges: requires ${getAdminRoleName(config.minRole)}`
+          redirectTo: '/',
+          reason: 'Admin access required'
         };
       }
+
+      if (config.minRole && userVerification.adminRole !== undefined) {
+        if (userVerification.adminRole < config.minRole) {
+          return {
+            allowed: false,
+            redirectTo: '/admin',
+            reason: 'Insufficient admin privileges'
+          };
+        }
+      }
+
+      return { allowed: true };
+    }
+
+    // Handle user type specific routes
+    if (config.requireUserType) {
+      if (!userVerification?.isActive || userVerification.userType !== config.requireUserType) {
+        return {
+          allowed: false,
+          redirectTo: '/register',
+          reason: 'User not registered or wrong user type'
+        };
+      }
+
+      // Check if accessing correct user dashboard
+      if (pathname.includes('/patient/') || pathname.includes('/hospital/') || pathname.includes('/insurance/')) {
+        const addressFromPath = pathname.split('/').pop();
+        if (addressFromPath && addressFromPath.toLowerCase() !== walletAddress.toLowerCase()) {
+          return {
+            allowed: false,
+            redirectTo: getUserDashboardPath(userVerification.userType, userVerification.isAdmin, walletAddress),
+            reason: 'Accessing wrong user dashboard'
+          };
+        }
+      }
+
+      return { allowed: true };
     }
 
     return { allowed: true };
@@ -111,23 +118,26 @@ export async function checkUserPermissions(
     return {
       allowed: false,
       redirectTo: '/',
-      reason: 'Permission check failed'
+      reason: 'Error checking permissions'
     };
   }
 }
 
-export function getUserDashboardPath(userType: UserType | null, isAdmin: boolean): string {
+export function getUserDashboardPath(userType: UserType | null, isAdmin: boolean, walletAddress?: string): string {
   if (isAdmin) {
     return '/admin';
   }
 
+  // Use provided wallet address or fall back to generic paths
+  const addressPart = walletAddress || '[address]';
+
   switch (userType) {
     case UserType.PATIENT:
-      return '/patient';
+      return `/patient/${addressPart}`;
     case UserType.HOSPITAL:
-      return '/hospital';
+      return `/hospital/${addressPart}`;
     case UserType.INSURER:
-      return '/insurance';
+      return `/insurance/${addressPart}`;
     default:
       return '/'; // Fallback for null or unknown user types
   }
@@ -175,8 +185,17 @@ export function extractWalletAddress(request: NextRequest): string | null {
     return walletCookie.value;
   }
 
-  // 3. From URL parameters (not recommended for production)
+  // 3. From URL parameters (for dashboard routes)
   const url = new URL(request.url);
+  const { pathname } = url;
+  
+  // Extract wallet address from dashboard routes like /patient/0x123...
+  const dashboardMatch = pathname.match(/\/(patient|hospital|insurance)\/([a-fA-F0-9x]+)/);
+  if (dashboardMatch && dashboardMatch[2]) {
+    return dashboardMatch[2];
+  }
+
+  // 4. From URL parameters (not recommended for production)
   const walletParam = url.searchParams.get('wallet');
   if (walletParam) {
     return walletParam;
@@ -211,7 +230,7 @@ export async function createAuthMiddleware(request: NextRequest) {
   const walletAddress = extractWalletAddress(request);
 
   // Check permissions
-  const permissionCheck = await checkUserPermissions(walletAddress, config);
+  const permissionCheck = await checkUserPermissions(walletAddress, config, pathname);
 
   if (!permissionCheck.allowed) {
     const redirectUrl = new URL(permissionCheck.redirectTo || '/', request.url);
@@ -230,4 +249,28 @@ export async function createAuthMiddleware(request: NextRequest) {
   }
 
   return NextResponse.next();
+}
+
+// Helper function to check registration status for client components
+export async function checkUserRegistrationStatus(walletAddress: string) {
+  try {
+    const userVerification = await getUserVerificationData(walletAddress);
+    
+    return {
+      isRegistered: userVerification?.isActive || false,
+      userType: userVerification?.userType || null,
+      isAdmin: userVerification?.isAdmin || false,
+      dashboardPath: userVerification?.isActive 
+        ? getUserDashboardPath(userVerification.userType, userVerification.isAdmin, walletAddress)
+        : null
+    };
+  } catch (error) {
+    console.error('Error checking user registration status:', error);
+    return {
+      isRegistered: false,
+      userType: null,
+      isAdmin: false,
+      dashboardPath: null
+    };
+  }
 }

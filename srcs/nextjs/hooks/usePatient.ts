@@ -4,6 +4,8 @@ import { useCallback, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
 import { useProver } from './useProver';
 import { useVerifier } from './useVerifier';
+import { useRegistrationStatus } from './useRegistrationStatus';
+import { RegistrationData, UserType } from '@/utils/types/healthcare';
 
 // Import the prover specs (will need to be updated with actual imports)
 // import proverSpec from '@/contracts/HealthcareRegistrationProver.json';
@@ -19,12 +21,16 @@ interface UsePatientState {
 interface UsePatientReturn extends UsePatientState {
   // Registration
   registerPatient: (emlContent: string, walletAddress: string) => Promise<void>;
+  
+  // Registration status from centralized hook
+  registrationStatus: ReturnType<typeof useRegistrationStatus>;
 }
 
 export function usePatient(): UsePatientReturn {
   const account = useActiveAccount();
   const prover = useProver();
   const verifier = useVerifier();
+  const registrationStatus = useRegistrationStatus();
   
   const [state, setState] = useState<UsePatientState>({
     isLoading: false,
@@ -35,8 +41,8 @@ export function usePatient(): UsePatientReturn {
   });
 
   const registerPatient = useCallback(async (emlContent: string, walletAddress: string) => {
-    if (!account) {
-      setState(prev => ({ ...prev, error: 'Wallet not connected' }));
+    if (!account || account.address.toLowerCase() !== walletAddress.toLowerCase()) {
+      setState(prev => ({ ...prev, error: 'Wallet address mismatch' }));
       return;
     }
 
@@ -48,7 +54,7 @@ export function usePatient(): UsePatientReturn {
     }));
 
     try {
-      // Generate patient proof
+      // 1. Generate patient proof using vlayer
       setState(prev => ({ ...prev, registrationStep: 'Generating email proof...' }));
       const proofResult = await prover.generatePatientProof(emlContent);
       
@@ -56,19 +62,31 @@ export function usePatient(): UsePatientReturn {
         throw new Error('Invalid proof generated');
       }
 
-      // Get registration data
+      // 2. Extract registration data from proof
       const registrationData = prover.previewRegistrationData(proofResult);
       if (!registrationData) {
         throw new Error('Could not extract registration data from proof');
       }
 
-      // Verify proof
+      // 3. Validate registration data matches smart contract requirements
+      if (registrationData.requestedRole !== UserType.PATIENT) {
+        throw new Error('Invalid role for patient registration');
+      }
+
+      if (registrationData.walletAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+        throw new Error('Wallet address in proof does not match connected wallet');
+      }
+
+      // 4. Submit proof to smart contract for verification and registration
       setState(prev => ({ ...prev, registrationStep: 'Verifying proof on-chain...' }));
       const verificationResult = await verifier.verifyPatientProof(proofResult, registrationData);
       
       if (!verificationResult) {
         throw new Error('Proof verification failed');
       }
+
+      // 5. Refresh registration status
+      await registrationStatus.checkRegistration();
 
       setState(prev => ({ 
         ...prev, 
@@ -84,12 +102,12 @@ export function usePatient(): UsePatientReturn {
         registrationStep: ''
       }));
     }
-  }, [account, prover, verifier]);
+  }, [account, prover, verifier, registrationStatus]);
 
   // Update loading states based on sub-hooks
-  const isLoading = state.isLoading || prover.isLoading || verifier.isLoading;
+  const isLoading = state.isLoading || prover.isLoading || verifier.isLoading || registrationStatus.isLoading;
   const isGeneratingProof = state.isGeneratingProof || prover.isGeneratingProof;
-  const error = state.error || prover.error || verifier.error;
+  const error = state.error || prover.error || verifier.error || registrationStatus.error;
 
   return {
     ...state,
@@ -97,5 +115,6 @@ export function usePatient(): UsePatientReturn {
     isGeneratingProof,
     error,
     registerPatient,
+    registrationStatus,
   };
 }

@@ -46,32 +46,7 @@ export const SendEmailContainer = () => {
     }
   }, [organizationType, organizationName, account?.address]);
 
-  // Check if user is already registered
-  useEffect(() => {
-    const checkRegistration = async () => {
-      if (account?.address && registration) {
-        try {
-          const verification = await registration.fetchUserVerification(account.address);
-          if (verification?.isRegistered) {
-            // Redirect based on user type
-            if (verification.userType === UserType.PATIENT) {
-              router.push(`/patient/${account.address}`);
-            } else if (verification.userType === UserType.HOSPITAL) {
-              router.push(`/hospital/${account.address}`);
-            } else if (verification.userType === UserType.INSURER) {
-              router.push(`/insurance/${account.address}`);
-            }
-          }
-        } catch (error) {
-          console.error('Error checking registration:', error);
-        }
-      }
-    };
-
-    if (registration) {
-      checkRegistration();
-    }
-  }, [account?.address, registration, router]);
+  // Registration checks are now handled by middleware
 
   // Redirect if user is not connected
   useEffect(() => {

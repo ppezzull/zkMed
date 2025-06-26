@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useActiveAccount } from 'thirdweb/react';
 import { usePatient } from '@/hooks/usePatient';
-import { UserType } from '@/utils/types/healthcare';
 import { PatientEmailPresentational } from './PatientEmailPresentational';
 
 export const PatientEmailContainer = () => {
@@ -14,30 +13,15 @@ export const PatientEmailContainer = () => {
   const [email, setEmail] = useState('');
   const [isRegistrationComplete, setIsRegistrationComplete] = useState(false);
 
-  // Check if user is already registered
-  useEffect(() => {
-    const checkRegistration = async () => {
-      if (account?.address) {
-        try {
-          const verification = await patient.fetchUserVerification(account.address);
-          if (verification?.isRegistered) {
-            // Redirect based on user type
-            if (verification.userType === UserType.PATIENT) {
-              router.push(`/patient/${account.address}`);
-            } else if (verification.userType === UserType.HOSPITAL) {
-              router.push(`/hospital/${account.address}`);
-            } else if (verification.userType === UserType.INSURER) {
-              router.push(`/insurance/${account.address}`);
-            }
-          }
-        } catch (error) {
-          console.error('Error checking registration:', error);
-        }
-      }
-    };
+  // Use centralized registration status
+  const { registrationStatus } = patient;
 
-    checkRegistration();
-  }, [account?.address, patient, router]);
+  // Redirect if user is already registered (handled by middleware now, but keep for immediate feedback)
+  useEffect(() => {
+    if (registrationStatus.isRegistered && account?.address) {
+      registrationStatus.redirectToDashboard();
+    }
+  }, [registrationStatus.isRegistered, account?.address, registrationStatus]);
 
   // Redirect if user is not connected
   useEffect(() => {
@@ -108,6 +92,7 @@ export const PatientEmailContainer = () => {
       setEmail={setEmail}
       onSubmit={handleEmailSubmit}
       onBack={handleBack}
+      isLoading={patient.isLoading}
       error={patient.error}
     />
   );

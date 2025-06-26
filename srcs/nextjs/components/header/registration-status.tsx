@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { usePatient } from '@/hooks/usePatient';
-import { useHospital } from '@/hooks/useHospital';
-import { useInsurance } from '@/hooks/useInsurance';
+import { useRegistrationStatus } from '@/hooks/useRegistrationStatus';
 import { UserType } from '@/utils/types/healthcare';
+import { getUserDashboardPath } from '@/utils/thirdweb/middleware';
 
 interface RegistrationStatusProps {
   loading: boolean;
@@ -13,64 +11,13 @@ interface RegistrationStatusProps {
 
 export default function RegistrationStatus({ loading }: RegistrationStatusProps) {
   const account = useActiveAccount();
-  const [currentUserType, setCurrentUserType] = useState<UserType | null>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [checkingRegistration, setCheckingRegistration] = useState(false);
-  
-  // Use all specialized hooks
-  const patient = usePatient();
-  const hospital = useHospital();
-  const insurance = useInsurance();
-
-  // Check user registration status
-  useEffect(() => {
-    const checkRegistration = async () => {
-      if (!account?.address) return;
-      
-      setCheckingRegistration(true);
-      try {
-        // Try patient first
-        const patientVerification = await patient.fetchUserVerification(account.address);
-        if (patientVerification?.isRegistered) {
-          setCurrentUserType(patientVerification.userType);
-          setIsRegistered(true);
-          return;
-        }
-
-        // Try hospital
-        const hospitalVerification = await hospital.fetchUserVerification(account.address);
-        if (hospitalVerification?.isRegistered) {
-          setCurrentUserType(hospitalVerification.userType);
-          setIsRegistered(true);
-          return;
-        }
-
-        // Try insurance
-        const insuranceVerification = await insurance.fetchUserVerification(account.address);
-        if (insuranceVerification?.isRegistered) {
-          setCurrentUserType(insuranceVerification.userType);
-          setIsRegistered(true);
-          return;
-        }
-
-        // Not registered
-        setIsRegistered(false);
-        setCurrentUserType(null);
-      } catch (error) {
-        console.error('Error checking registration:', error);
-      } finally {
-        setCheckingRegistration(false);
-      }
-    };
-
-    checkRegistration();
-  }, [account?.address, patient, hospital, insurance]);
+  const registrationStatus = useRegistrationStatus();
 
   if (!account?.address) {
     return null;
   }
 
-  if (loading || checkingRegistration || patient.isLoading || hospital.isLoading || insurance.isLoading) {
+  if (loading || registrationStatus.isLoading) {
     return (
       <div className="flex items-center space-x-2">
         <div className="animate-spin h-4 w-4 border-2 border-blue-600 rounded-full border-t-transparent"></div>
@@ -79,15 +26,16 @@ export default function RegistrationStatus({ loading }: RegistrationStatusProps)
     );
   }
 
-  if (isRegistered && currentUserType !== null) {
-    const dashboardPath = currentUserType === UserType.PATIENT ? `/patient/${account.address}` :
-                         currentUserType === UserType.HOSPITAL ? `/hospital/${account.address}` :
-                         currentUserType === UserType.INSURER ? `/insurance/${account.address}` :
-                         '/register';
+  if (registrationStatus.isRegistered && registrationStatus.userType !== null) {
+    const dashboardPath = getUserDashboardPath(
+      registrationStatus.userType, 
+      registrationStatus.verificationData?.isAdmin || false, 
+      account.address
+    );
 
-    const roleDisplay = currentUserType === UserType.PATIENT ? 'Patient' :
-                       currentUserType === UserType.HOSPITAL ? 'Hospital' :
-                       currentUserType === UserType.INSURER ? 'Insurance' :
+    const roleDisplay = registrationStatus.userType === UserType.PATIENT ? 'Patient' :
+                       registrationStatus.userType === UserType.HOSPITAL ? 'Hospital' :
+                       registrationStatus.userType === UserType.INSURER ? 'Insurance' :
                        'Unknown';
 
     return (

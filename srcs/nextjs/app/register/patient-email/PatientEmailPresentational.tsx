@@ -4,6 +4,7 @@ interface PatientEmailProps {
   onSubmit: (email: string) => void;
   onBack: () => void;
   error: string | null;
+  isLoading?: boolean;
 }
 
 export const PatientEmailPresentational = ({ 
@@ -11,7 +12,8 @@ export const PatientEmailPresentational = ({
   setEmail, 
   onSubmit, 
   onBack, 
-  error 
+  error,
+  isLoading = false
 }: PatientEmailProps) => {
   const handleSubmit = () => {
     if (email.trim()) {
@@ -109,14 +111,21 @@ export const PatientEmailPresentational = ({
               
               <button
                 onClick={handleSubmit}
-                disabled={!email.trim()}
+                disabled={!email.trim() || isLoading}
                 className={`px-6 py-2 rounded-lg transition-colors ${
-                  email.trim()
+                  email.trim() && !isLoading
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                Register as Patient
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                    <span>Processing...</span>
+                  </div>
+                ) : (
+                  'Register as Patient'
+                )}
               </button>
             </div>
           </div>
