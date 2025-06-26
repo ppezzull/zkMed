@@ -4,9 +4,9 @@ import { ConnectButton } from 'thirdweb/react';
 import { Button } from '@/components/ui/button';
 import { client } from '@/utils/thirdweb/client';
 import { createWallet, inAppWallet, smartWallet } from 'thirdweb/wallets';
-import { mantleFork } from '@/lib/configs/chain-config';
 import { useActiveAccount } from 'thirdweb/react';
 import { useState, useEffect } from 'react';
+import { mantleFork } from '@/lib/configs/chain-config';
 
 import {
   generatePayload,

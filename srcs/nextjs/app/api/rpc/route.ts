@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://host.docker.internal:8547';
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'http://localhost:8547';
 
 export async function POST(request: NextRequest) {
   try {

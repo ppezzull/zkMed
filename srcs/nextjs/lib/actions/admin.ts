@@ -7,8 +7,11 @@ import {
   RequestType,
   RegistrationStats
 } from '@/utils/types/healthcare';
-import { readContract } from 'thirdweb';
+import { getContract, readContract } from 'thirdweb';
 import { getHealthcareContract } from '@/lib/utils';
+import { HealthcareRegistration__factory } from '@/utils/types/HealthcareRegistration/factories/HealthcareRegistration__factory';
+import { client } from '@/utils/thirdweb/client';
+import { mantleFork } from '../configs/chain-config';
 
 // ======== Admin Record Functions ========
 
@@ -25,7 +28,7 @@ export async function getAdminRecord(address: string): Promise<AdminRecord | nul
     
     // Parse the contract return tuple into AdminRecord interface
     // Contract returns: [bool isActive, AdminRole role, uint256 permissions, uint256 adminSince]
-    const [isActive, role, permissions, adminSince] = result as [boolean, number, bigint, bigint];
+    const [isActive, role, permissions, adminSince] = result as readonly [boolean, number, bigint, bigint];
     
     return {
       isActive,
@@ -134,20 +137,13 @@ export async function getPendingRequestsByType(requestType: RequestType): Promis
 
 export async function getRegistrationStats(): Promise<RegistrationStats> {
   try {
-    console.log('🔍 Starting to fetch registration stats...');
-    console.log('RPC URL:', process.env.NEXT_PUBLIC_RPC_URL);
-    console.log('Chain ID:', process.env.NEXT_PUBLIC_CHAIN_ID);
-    
     const contract = getHealthcareContract();
-    console.log('✅ Contract instance created');
     
     const result = await readContract({
       contract,
       method: 'getRegistrationStats',
       params: []
     });
-    
-    console.log('✅ Successfully fetched registration stats:', result);
     
     return {
       totalRegisteredUsers: BigInt(result[0]),
@@ -156,18 +152,7 @@ export async function getRegistrationStats(): Promise<RegistrationStats> {
       totalInsurers: BigInt(result[3])
     };
   } catch (error) {
-    console.error('❌ Error fetching registration stats:', error);
-    
-    // Provide more specific error information
-    if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      
-      if (error.message.includes('404') || error.message.includes('Not Found')) {
-        console.error('🔴 RPC endpoint not found - check if Anvil is running on the correct port');
-        console.error('Expected RPC URL:', process.env.NEXT_PUBLIC_RPC_URL);
-      }
-    }
+    console.error('Error fetching registration stats:', error);
     
     // Return zero stats instead of throwing
     return {

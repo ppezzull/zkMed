@@ -1,7 +1,7 @@
 'use client';
 
 import { useActiveAccount } from 'thirdweb/react';
-import { getClientChain } from '@/lib/configs/chain-config';
+import { mantleFork } from '@/lib/configs/chain-config';
 import { useCallback, useState, useEffect } from 'react';
 import { 
   prepareTransaction, 
@@ -11,11 +11,6 @@ import {
 import { privateKeyToAccount } from 'thirdweb/wallets';
 import { toWei } from 'thirdweb/utils';
 import { client } from '@/utils/thirdweb/client';
-// Get the appropriate chain for client-side operations
-const clientChain = getClientChain();
-
-// Anvil's default pre-funded account private key
-const ANVIL_DEFAULT_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 
 export interface FundingState {
   balance: bigint;
@@ -33,7 +28,7 @@ export interface FundingActions {
 
 export interface UseFundingReturn extends FundingState, FundingActions {
   client: typeof client;
-  chain: typeof clientChain;
+  chain: typeof mantleFork;
 }
 
 export function useFunding(): UseFundingReturn {
@@ -57,7 +52,7 @@ export function useFunding(): UseFundingReturn {
     setIsLoading(true);
     setError(null);
     try {
-      const rpc = getRpcClient({ client, chain: clientChain });
+      const rpc = getRpcClient({ client, chain: mantleFork });
       const balanceHex = await rpc({
         method: 'eth_getBalance',
         params: [account.address, 'latest'],
@@ -86,13 +81,13 @@ export function useFunding(): UseFundingReturn {
       // Create account from Anvil's default private key
       const fundingAccount = privateKeyToAccount({ 
         client,
-        privateKey: ANVIL_DEFAULT_PRIVATE_KEY 
+        privateKey: process.env.EXAMPLES_TEST_PRIVATE_KEY as `0x${string}`
       });
 
       // Prepare the funding transaction
       const transaction = prepareTransaction({
         client,
-        chain: clientChain,
+        chain: mantleFork,
         to: account.address,
         value: toWei(amount),
       });
@@ -143,6 +138,6 @@ export function useFunding(): UseFundingReturn {
     
     // Configuration
     client,
-    chain: clientChain,
+    chain: mantleFork,
   };
 }

@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from 'react';
 import { useActiveAccount } from 'thirdweb/react';
-import { getHealthcareContract } from '@/lib/utils';
 import { useProver } from './useProver';
 import { useVerifier } from './useVerifier';
 

@@ -35,7 +35,7 @@ export async function getUserVerificationData(address: string): Promise<UserVeri
       try {
         userType = await readContract({
           contract,
-          method: 'userTypes',
+          method: 'getUserType',
           params: [address]
         });
       } catch (err) {
@@ -64,11 +64,11 @@ export async function getUserVerificationData(address: string): Promise<UserVeri
         try {
           const orgRecord = await readContract({
             contract,
-            method: 'organizationRecords',
+            method: 'getOrganizationRecord',
             params: [address]
           });
-          domain = orgRecord[2]; // domain field
-          organizationName = orgRecord[3]; // organizationName field
+          domain = orgRecord.domain;
+          organizationName = orgRecord.organizationName;
         } catch (err) {
           console.error('Error fetching organization data:', err);
         }

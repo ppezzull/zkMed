@@ -7,7 +7,7 @@ import {
 	createAuth,
 } from "thirdweb/auth";
 import { privateKeyToAccount } from "thirdweb/wallets";
-import { server } from "@/utils/thirdweb/server";
+import { client } from "@/utils/thirdweb/client";
 
 const privateKey = process.env.THIRDWEB_ADMIN_PRIVATE_KEY || "";
 
@@ -17,7 +17,7 @@ if (!privateKey) {
 
 const thirdwebAuth = createAuth({
 	domain: process.env.NEXT_PUBLIC_THIRDWEB_AUTH_DOMAIN || "",
-	adminAccount: privateKeyToAccount({ client: server, privateKey }),
+	adminAccount: privateKeyToAccount({ client: client, privateKey }),
 });
 
 export async function generatePayload(payload: GenerateLoginPayloadParams) {
