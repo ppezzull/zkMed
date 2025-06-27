@@ -14,3 +14,5 @@ services:
       timeout: 60s
       retries: 10
       start_period: 5s
+    networks:
+      - zkmed-network

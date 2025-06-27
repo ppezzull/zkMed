@@ -109,8 +109,8 @@ export async function checkUserPermissions(
         }
       }
 
-      return { allowed: true };
-    }
+  return { allowed: true };
+}
 
     return { allowed: true };
   } catch (error) {

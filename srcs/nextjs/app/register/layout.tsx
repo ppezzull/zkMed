@@ -1,10 +1,17 @@
 import VlayerProvider from '@/components/providers/vlayer-provider';
+import { isLoggedIn } from '@/lib/actions/auth';
+import { redirect } from 'next/navigation';
 
 interface RegisterLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RegisterLayout({ children }: RegisterLayoutProps) {
+export default async function RegisterLayout({ children }: RegisterLayoutProps) {
+  // Redirect if user is not connected
+  if (!(await isLoggedIn())) {
+    redirect("/connect-button");
+  }
+
   return (
     <VlayerProvider>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

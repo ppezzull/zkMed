@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { RoleSelectionContainer } from './RoleSelectionContainer';
+import RoleSelection from '@/components/register/role-selection';
 
 export default async function RoleSelectionPage() {
   return (
@@ -8,7 +8,7 @@ export default async function RoleSelectionPage() {
         <div className="animate-spin h-8 w-8 border-4 border-primary rounded-full border-t-transparent"></div>
       </div>
     }>
-      <RoleSelectionContainer />
+      <RoleSelection />
     </Suspense>
   );
 } 

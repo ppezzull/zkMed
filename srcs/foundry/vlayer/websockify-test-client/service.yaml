@@ -6,3 +6,5 @@ services:
       - "${PORT}"
     environment:
       - PORT=3010
+    networks:
+      - zkmed-network

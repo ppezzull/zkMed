@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import { createAuthMiddleware } from '@/utils/thirdweb/middleware';
 
 export async function middleware(request: NextRequest) {
-  return await createAuthMiddleware(request);
+  // return await createAuthMiddleware(request);
 }
 
 export const config = {

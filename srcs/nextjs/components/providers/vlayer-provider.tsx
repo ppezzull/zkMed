@@ -10,7 +10,7 @@ const queryClient = new QueryClient();
 
 // Prover configuration
 const proverConfig = {
-  proverUrl: process.env.NEXT_PUBLIC_VLAYER_PROVER_URL || 'http://localhost:3001',
+  proverUrl: process.env.NEXT_PUBLIC_VLAYER_PROVER_URL || 'http://localhost:3000',
   token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN,
 };
 

@@ -1,9 +1,48 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useActiveAccount } from 'thirdweb/react';
+
 interface RoleSelectionProps {
-  onRoleSelect: (role: 'PATIENT' | 'HOSPITAL' | 'INSURER') => void;
-  onBack: () => void;
+  onRoleSelect?: (role: 'PATIENT' | 'HOSPITAL' | 'INSURER' | 'ADMIN') => void;
 }
 
-export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelectionProps) => {
+export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
+  const router = useRouter();
+  const account = useActiveAccount();
+
+  const handleRoleSelection = (role: 'PATIENT' | 'HOSPITAL' | 'INSURER' | 'ADMIN') => {
+    if (onRoleSelect) {
+      onRoleSelect(role);
+      return;
+    }
+
+    // Default navigation logic if no onRoleSelect provided
+    switch (role) {
+      case 'PATIENT':
+        router.push('/register/patient');
+        break;
+      case 'HOSPITAL':
+        router.push('/register/organization?type=HOSPITAL');
+        break;
+      case 'INSURER':
+        router.push('/register/organization?type=INSURER');
+        break;
+      case 'ADMIN':
+        router.push('/register/admin');
+        break;
+    }
+  };
+
+  const handleBack = () => {
+    router.push('/');
+  };
+
+  // Don't render if user is not connected
+  if (!account?.address) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -15,7 +54,7 @@ export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelect
               <p className="text-gray-600">Complete your registration to access healthcare services</p>
             </div>
             <button
-              onClick={onBack}
+              onClick={handleBack}
               className="text-gray-500 hover:text-gray-700 transition-colors"
             >
               ← Back to Home
@@ -48,7 +87,7 @@ export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelect
             <div className="space-y-4 max-w-md mx-auto">
               {/* Patient Option */}
               <button
-                onClick={() => onRoleSelect('PATIENT')}
+                onClick={() => handleRoleSelection('PATIENT')}
                 className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
               >
                 <div className="flex items-center">
@@ -64,7 +103,7 @@ export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelect
 
               {/* Hospital Option */}
               <button
-                onClick={() => onRoleSelect('HOSPITAL')}
+                onClick={() => handleRoleSelection('HOSPITAL')}
                 className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:bg-green-50 transition-all text-left"
               >
                 <div className="flex items-center">
@@ -80,7 +119,7 @@ export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelect
 
               {/* Insurer Option */}
               <button
-                onClick={() => onRoleSelect('INSURER')}
+                onClick={() => handleRoleSelection('INSURER')}
                 className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-purple-500 hover:bg-purple-50 transition-all text-left"
               >
                 <div className="flex items-center">
@@ -93,10 +132,26 @@ export const RoleSelectionPresentational = ({ onRoleSelect, onBack }: RoleSelect
                   </div>
                 </div>
               </button>
+
+              {/* Admin Option */}
+              <button
+                onClick={() => handleRoleSelection('ADMIN')}
+                className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-orange-500 hover:bg-orange-50 transition-all text-left"
+              >
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-2xl">👑</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">Administrator</h3>
+                    <p className="text-gray-600 text-sm">Request administrative access to manage the platform</p>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}; 
+} 
