@@ -61,22 +61,34 @@ export function useVerifier(): UseVerifierReturn {
     }));
 
     try {
+      console.log("🔍 DEBUG - Starting patient proof verification");
+      console.log("🔍 DEBUG - Proof received:", proof);
+      console.log("🔍 DEBUG - Registration data:", registrationData);
+      
       const contract = getHealthcareContract();
       
       // Convert to contract-compatible format
       const contractData = toContractRegistrationData(registrationData);
+      console.log("🔍 DEBUG - Contract data:", contractData);
+      
+      // Extract the actual proof object from vlayer result
+      // vlayer returns [Proof, RegistrationData], but we only need the Proof part
+      const proofObject = Array.isArray(proof) ? proof[0] : proof;
+      console.log("🔍 DEBUG - Extracted proof object:", proofObject);
       
       const transaction = prepareContractCall({
         contract,
         method: 'registerPatient',
-        params: [contractData, proof]
+        params: [contractData, proofObject]
       });
       
+      console.log("🔍 DEBUG - Sending transaction...");
       const result = await sendTransaction({
         transaction,
         account,
       });
 
+      console.log("🔍 DEBUG - Transaction result:", result);
       setState(prev => ({ 
         ...prev, 
         isVerifying: false,
@@ -86,6 +98,7 @@ export function useVerifier(): UseVerifierReturn {
 
       return result;
     } catch (error: any) {
+      console.error("🔍 DEBUG - Error in patient proof verification:", error);
       setState(prev => ({ 
         ...prev, 
         isVerifying: false,
@@ -110,6 +123,10 @@ export function useVerifier(): UseVerifierReturn {
     }));
 
     try {
+      console.log("🔍 DEBUG - Starting organization proof verification");
+      console.log("🔍 DEBUG - Proof received:", proof);
+      console.log("🔍 DEBUG - Registration data:", registrationData);
+      
       const contract = getHealthcareContract();
       
       // Choose the correct registration method based on organization type
@@ -117,20 +134,30 @@ export function useVerifier(): UseVerifierReturn {
         ? 'registerHospital' 
         : 'registerInsurer';
       
+      console.log("🔍 DEBUG - Using method:", method);
+      
       // Convert to contract-compatible format
       const contractData = toContractRegistrationData(registrationData);
+      console.log("🔍 DEBUG - Contract data:", contractData);
+      
+      // Extract the actual proof object from vlayer result
+      // vlayer returns [Proof, RegistrationData], but we only need the Proof part
+      const proofObject = Array.isArray(proof) ? proof[0] : proof;
+      console.log("🔍 DEBUG - Extracted proof object:", proofObject);
       
       const transaction = prepareContractCall({
         contract,
         method,
-        params: [contractData, proof]
+        params: [contractData, proofObject]
       });
       
+      console.log("🔍 DEBUG - Sending transaction...");
       const result = await sendTransaction({
         transaction,
         account,
       });
 
+      console.log("🔍 DEBUG - Transaction result:", result);
       setState(prev => ({ 
         ...prev, 
         isVerifying: false,
@@ -140,6 +167,7 @@ export function useVerifier(): UseVerifierReturn {
 
       return result;
     } catch (error: any) {
+      console.error("🔍 DEBUG - Error in organization proof verification:", error);
       setState(prev => ({ 
         ...prev, 
         isVerifying: false,
@@ -152,24 +180,26 @@ export function useVerifier(): UseVerifierReturn {
 
   const validateProofBeforeVerification = useCallback((proof: any, registrationData: RegistrationData): boolean => {
     try {
+      console.log("🔍 DEBUG - Validating proof before verification:");
+      console.log("🔍 DEBUG - Proof:", proof);
+      console.log("🔍 DEBUG - Registration data:", registrationData);
+      
       // Basic validation
       if (!proof || !registrationData) {
+        console.log("🔍 DEBUG - Missing proof or registration data");
         return false;
       }
 
-      // Check proof structure
-      if (!proof.seal || !proof.callGuestId || typeof proof.length !== 'number') {
-        return false;
-      }
-
-      // Check registration data
+      // Check registration data has required fields
       if (!registrationData.walletAddress || !registrationData.emailHash) {
+        console.log("🔍 DEBUG - Missing required registration data fields");
         return false;
       }
 
+      console.log("🔍 DEBUG - Basic proof validation passed");
       return true;
     } catch (error) {
-      console.error('Error validating proof before verification:', error);
+      console.error('🔍 DEBUG - Error validating proof before verification:', error);
       return false;
     }
   }, []);

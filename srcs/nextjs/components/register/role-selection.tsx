@@ -40,7 +40,11 @@ export default function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
 
   // Don't render if user is not connected
   if (!account?.address) {
-    return null;
+    return (
+      <div className="flex items-center justify-center">
+        <div className="text-2xl font-bold text-gray-900">Connect your wallet to continue</div>
+      </div>
+    );
   }
 
   return (

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useCallProver, useWaitForProvingResult } from '@vlayer/react';
+import { preverifyEmail } from '@vlayer/sdk';
 import type { RegistrationData } from '@/utils/types/healthcare';
 import { HealthcareRegistrationProver__factory } from '@/utils/types/HealthcareRegistrationProver/factories/HealthcareRegistrationProver__factory';
 
@@ -75,6 +76,13 @@ export function useProver(): UseProverReturn {
 
   // Generate patient proof
   const generatePatientProof = useCallback(async (emlContent: string) => {
+    // Add debugging logs
+    console.log("🔍 DEBUG - generatePatientProof called:");
+    console.log("🔍 DEBUG - EML content preview:", emlContent?.substring(0, 100));
+    console.log("🔍 DEBUG - EML content length:", emlContent?.length);
+    console.log("🔍 DEBUG - Is Nexthoop email?", emlContent?.includes('nexthoop.it'));
+    console.log("🔍 DEBUG - Is Gmail email?", emlContent?.includes('gmail.com'));
+    
     updateState({ 
       isGeneratingProof: true, 
       isLoading: true, 
@@ -83,23 +91,31 @@ export function useProver(): UseProverReturn {
     });
 
     try {
-      updateState({ currentStep: 'Parsing email content...' });
+      updateState({ currentStep: 'Preverifying email...' });
       
-      // Parse the email content
-      const unverifiedEmail = parseEmailContent(emlContent);
+      // Preverify the email using vlayer SDK
+      const email = await preverifyEmail({
+        mimeEmail: emlContent,
+        dnsResolverUrl: process.env.NEXT_PUBLIC_DNS_SERVICE_URL || 'http://localhost:3002',
+        token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN!,
+      });
+      
+      console.log("🔍 DEBUG - Email preverified successfully");
       
       updateState({ currentStep: 'Generating cryptographic proof...' });
       
-      // Call the vlayer prover
-      await callPatientProver([unverifiedEmail]);
+      // Call the vlayer prover with preverified email
+      await callPatientProver([email]);
       
       updateState({ 
-        currentStep: 'Proof generated successfully!',
+        currentStep: 'Waiting for proof result...',
         isGeneratingProof: false 
       });
       
-      return proof;
+      // Don't return proof immediately - it will be available via useWaitForProvingResult
+      return patientProofHash;
     } catch (error: any) {
+      console.log("🔍 DEBUG - Error in generatePatientProof:", error);
       updateState({ 
         isGeneratingProof: false,
         error: error?.message || 'Failed to generate patient proof',
@@ -107,10 +123,17 @@ export function useProver(): UseProverReturn {
       });
       throw error;
     }
-  }, [callPatientProver, proof]);
+  }, [callPatientProver, patientProofHash]);
 
   // Generate organization proof
   const generateOrganizationProof = useCallback(async (emlContent: string) => {
+    // Add debugging logs
+    console.log("🔍 DEBUG - generateOrganizationProof called:");
+    console.log("🔍 DEBUG - EML content preview:", emlContent?.substring(0, 100));
+    console.log("🔍 DEBUG - EML content length:", emlContent?.length);
+    console.log("🔍 DEBUG - Is Nexthoop email?", emlContent?.includes('nexthoop.it'));
+    console.log("🔍 DEBUG - Is Gmail email?", emlContent?.includes('gmail.com'));
+    
     updateState({ 
       isGeneratingProof: true, 
       isLoading: true, 
@@ -119,23 +142,31 @@ export function useProver(): UseProverReturn {
     });
 
     try {
-      updateState({ currentStep: 'Parsing email content...' });
+      updateState({ currentStep: 'Preverifying email...' });
       
-      // Parse the email content
-      const unverifiedEmail = parseEmailContent(emlContent);
+      // Preverify the email using vlayer SDK
+      const email = await preverifyEmail({
+        mimeEmail: emlContent,
+        dnsResolverUrl: process.env.NEXT_PUBLIC_DNS_SERVICE_URL || 'http://localhost:3002',
+        token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN!,
+      });
+      
+      console.log("🔍 DEBUG - Email preverified successfully");
       
       updateState({ currentStep: 'Generating cryptographic proof...' });
       
-      // Call the vlayer prover
-      await callOrganizationProver([unverifiedEmail]);
+      // Call the vlayer prover with preverified email
+      await callOrganizationProver([email]);
       
       updateState({ 
-        currentStep: 'Proof generated successfully!',
+        currentStep: 'Waiting for proof result...',
         isGeneratingProof: false 
       });
       
-      return proof;
+      // Don't return proof immediately - it will be available via useWaitForProvingResult
+      return orgProofHash;
     } catch (error: any) {
+      console.log("🔍 DEBUG - Error in generateOrganizationProof:", error);
       updateState({ 
         isGeneratingProof: false,
         error: error?.message || 'Failed to generate organization proof',
@@ -143,7 +174,7 @@ export function useProver(): UseProverReturn {
       });
       throw error;
     }
-  }, [callOrganizationProver, proof]);
+  }, [callOrganizationProver, orgProofHash]);
 
   // Preview registration data from proof
   const previewRegistrationData = useCallback((proof: any): RegistrationData | null => {
@@ -203,10 +234,10 @@ export function useProver(): UseProverReturn {
     }
   }, []);
 
-  // Helper function to parse email content
+  // Helper function to parse email content - now deprecated since we use preverifyEmail
   const parseEmailContent = (emlContent: string) => {
-    // TODO: Implement proper EML parsing
-    // For now, return a mock structure based on the expected format
+    // This function is now deprecated - we use preverifyEmail instead
+    // Keeping for backward compatibility
     return {
       email: emlContent,
       dnsRecord: {
@@ -228,6 +259,30 @@ export function useProver(): UseProverReturn {
   
   // Update error state based on sub-hooks
   const error = state.error || patientCallError?.message || orgCallError?.message || waitingError?.message || null;
+
+  // Handle when proof becomes available (like in useEmailProofVerification.ts)
+  useEffect(() => {
+    if (proof) {
+      console.log("🔍 DEBUG - Proof received:", proof);
+      updateState({ 
+        currentStep: 'Proof generated successfully!',
+        isLoading: false,
+        error: null
+      });
+    }
+  }, [proof]);
+
+  // Handle waiting errors
+  useEffect(() => {
+    if (waitingError) {
+      console.log("🔍 DEBUG - Waiting error:", waitingError);
+      updateState({ 
+        currentStep: '',
+        isLoading: false,
+        error: waitingError.message || 'Failed to wait for proof result'
+      });
+    }
+  }, [waitingError]);
 
   return {
     ...state,

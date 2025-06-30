@@ -287,6 +287,11 @@ quick-start: ## Quick start guide for new users
 	@echo "🧹 When done:"
 	@echo "   make clean                  # Remove everything"
 
+export-to-frontend: ## Export contracts to local frontend environment
+	@echo "🔄 Exporting contracts to local environment..."
+	@node srcs/nextjs/scripts/export-to-frontend.js
+	@echo "✅ Contracts exported to local environment!"
+
 reset: ## Clean everything and redeploy from scratch
 	@echo "🔄 zkMed Complete Reset & Fresh Deployment"
 	@echo "=========================================="

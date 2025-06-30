@@ -22,19 +22,60 @@ export default function VerifyRegistration({ role, emlContent, organizationName,
   
   const [currentStep, setCurrentStep] = useState<string>('Generating proof...');
   const [isComplete, setIsComplete] = useState(false);
+  const [proofGenerated, setProofGenerated] = useState(false);
 
   useEffect(() => {
-    if (account?.address && emlContent) {
-      handleVerification();
+    if (account?.address && emlContent && !proofGenerated) {
+      // Add debugging logs
+      console.log("🔍 DEBUG - Starting verification with:");
+      console.log("🔍 DEBUG - Email content preview:", emlContent?.substring(0, 100));
+      console.log("🔍 DEBUG - Email content length:", emlContent?.length);
+      console.log("🔍 DEBUG - Is Nexthoop email?", emlContent?.includes('nexthoop.it'));
+      console.log("🔍 DEBUG - Is Gmail email?", emlContent?.includes('gmail.com'));
+      console.log("🔍 DEBUG - Role:", role);
+      console.log("🔍 DEBUG - Organization name:", organizationName);
+      
+      handleProofGeneration();
     }
-  }, [account?.address, emlContent]);
+  }, [account?.address, emlContent, proofGenerated]);
 
-  const handleVerification = async () => {
+  // Handle when proof becomes available (like useEmailProofVerification.ts)
+  useEffect(() => {
+    if (prover.proof && proofGenerated && !isComplete) {
+      console.log("🔍 DEBUG - Proof received, starting verification:", prover.proof);
+      handleVerificationOnChain();
+    }
+  }, [prover.proof, proofGenerated, isComplete]);
+
+  const handleProofGeneration = async () => {
     if (!account?.address) return;
 
     try {
       setCurrentStep('Parsing email content...');
+      setProofGenerated(false);
       
+      setCurrentStep('Generating cryptographic proof...');
+      
+      // Generate proof based on role
+      if (role === 'PATIENT') {
+        await prover.generatePatientProof(emlContent);
+      } else {
+        await prover.generateOrganizationProof(emlContent);
+      }
+      
+      setProofGenerated(true);
+      setCurrentStep('Waiting for proof...');
+      
+    } catch (error: any) {
+      console.log("🔍 DEBUG - Error in handleProofGeneration:", error);
+      setCurrentStep(`Error: ${error.message || 'Failed to generate proof'}`);
+    }
+  };
+
+  const handleVerificationOnChain = async () => {
+    if (!account?.address || !prover.proof) return;
+
+    try {
       // Create registration data based on role
       const registrationData: RegistrationData = {
         requestedRole: role === 'PATIENT' ? UserType.PATIENT : 
@@ -45,28 +86,14 @@ export default function VerifyRegistration({ role, emlContent, organizationName,
         emailHash: generateEmailHash(emlContent)
       };
 
-      setCurrentStep('Generating cryptographic proof...');
-      
-      // Generate proof based on role
-      let proof;
-      if (role === 'PATIENT') {
-        proof = await prover.generatePatientProof(emlContent);
-      } else {
-        proof = await prover.generateOrganizationProof(emlContent);
-      }
-
-      if (!proof) {
-        throw new Error('Failed to generate proof');
-      }
-
       setCurrentStep('Submitting to blockchain...');
       
       // Verify proof on-chain based on role
       let result;
       if (role === 'PATIENT') {
-        result = await verifier.verifyPatientProof(proof, registrationData);
+        result = await verifier.verifyPatientProof(prover.proof, registrationData);
       } else {
-        result = await verifier.verifyOrganizationProof(proof, registrationData);
+        result = await verifier.verifyOrganizationProof(prover.proof, registrationData);
       }
 
       if (result) {
@@ -89,7 +116,8 @@ export default function VerifyRegistration({ role, emlContent, organizationName,
         }, 2000);
       }
     } catch (error: any) {
-      setCurrentStep(`Error: ${error.message || 'Registration failed'}`);
+      console.log("🔍 DEBUG - Error in handleVerificationOnChain:", error);
+      setCurrentStep(`Error: ${error.message || 'Verification failed'}`);
     }
   };
 
@@ -222,10 +250,17 @@ export default function VerifyRegistration({ role, emlContent, organizationName,
                 
                 <div className="mb-6">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-lg font-semibold mb-2">{currentStep}</p>
+                  <p className="text-lg font-semibold mb-2">
+                    {prover.currentStep && prover.isLoading ? prover.currentStep : currentStep}
+                  </p>
                   <p className="text-gray-600 text-sm">
                     Please wait while we process your registration...
                   </p>
+                  {prover.isLoading && (
+                    <p className="text-blue-600 text-xs mt-2">
+                      Proof generation in progress...
+                    </p>
+                  )}
                 </div>
 
                 {(verifier.error || prover.error) && (

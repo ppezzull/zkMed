@@ -37,16 +37,22 @@ export default function DemoClient({ registrationStats }: DemoClientProps) {
   const insurance = useInsurance();
   const funding = useFunding();
 
-  // Use centralized registration status hook
+  // Use centralized registration status hook - destructure specific values to avoid infinite loop
   const registrationStatus = useRegistrationStatus();
+  const { 
+    userType: statusUserType, 
+    isRegistered: statusIsRegistered, 
+    verificationData: statusVerificationData, 
+    isLoading: statusIsLoading 
+  } = registrationStatus;
 
-  // Update local state based on registration status
+  // Update local state based on registration status - use specific destructured values
   useEffect(() => {
-    setCurrentUserType(registrationStatus.userType);
-    setIsRegistered(registrationStatus.isRegistered);
-    setUserVerificationData(registrationStatus.verificationData);
-    setCheckingRegistration(registrationStatus.isLoading);
-  }, [registrationStatus]);
+    setCurrentUserType(statusUserType);
+    setIsRegistered(statusIsRegistered);
+    setUserVerificationData(statusVerificationData);
+    setCheckingRegistration(statusIsLoading);
+  }, [statusUserType, statusIsRegistered, statusVerificationData, statusIsLoading]);
 
   const getUserTypeLabel = (userType: UserType | null) => {
     switch (userType) {
@@ -136,72 +142,11 @@ export default function DemoClient({ registrationStats }: DemoClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* RPC Error Warning */}
-      {registrationStats.totalRegisteredUsers === BigInt(0) && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4">
-          <div className="flex">
-            <div className="py-1">
-              <svg
-                className="fill-current h-6 w-6 text-red-500 mr-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-bold">RPC Connection Issue</p>
-              <p className="text-sm">
-                Unable to connect to Anvil at <code>http://localhost:8547</code>
-                . Make sure Anvil is running with:{" "}
-                <code>anvil --port 8547</code>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Server-rendered header with stats */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              zkMed Healthcare Registration Demo
-            </h1>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-2xl font-bold text-blue-600">
-                  {registrationStats.totalRegisteredUsers.toString()}
-                </p>
-                <p className="text-sm text-blue-600">Total Users</p>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <p className="text-2xl font-bold text-green-600">
-                  {registrationStats.totalPatients.toString()}
-                </p>
-                <p className="text-sm text-green-600">Patients</p>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-2xl font-bold text-purple-600">
-                  {registrationStats.totalHospitals.toString()}
-                </p>
-                <p className="text-sm text-purple-600">Hospitals</p>
-              </div>
-              <div className="bg-orange-50 p-4 rounded-lg">
-                <p className="text-2xl font-bold text-orange-600">
-                  {registrationStats.totalInsurers.toString()}
-                </p>
-                <p className="text-sm text-orange-600">Insurers</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="max-w-6xl mx-auto px-4">
         {/* SSR Registration Stats Overview */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            📊 Registration Statistics (Server-Side)
+            📊 Registration Statistics
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg text-center">

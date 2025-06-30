@@ -37,6 +37,12 @@ export default function WalletConnect() {
   const account = useActiveAccount();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component is mounted before rendering to prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Check authentication status when account changes
   useEffect(() => {
@@ -58,8 +64,10 @@ export default function WalletConnect() {
       }
     };
 
-    checkAuthStatus();
-  }, [account?.address]);
+    if (isMounted) {
+      checkAuthStatus();
+    }
+  }, [account?.address, isMounted]);
 
   const handleLogout = async () => {
     try {
@@ -69,6 +77,19 @@ export default function WalletConnect() {
       console.error('Error logging out:', error);
     }
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <Button 
+        variant="outline" 
+        disabled 
+        className="btn inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium py-2 px-4 rounded-lg"
+      >
+        Loading...
+      </Button>
+    );
+  }
 
   // Show loading state while checking authentication
   if (isCheckingAuth) {
@@ -93,7 +114,7 @@ export default function WalletConnect() {
     );
   }
 
-  // Show connect button if not authenticated
+  // Show connect button if not authenticated - with consistent styling to prevent hydration mismatch
   return (
     <ConnectButton
       client={client}
@@ -102,6 +123,11 @@ export default function WalletConnect() {
       connectButton={{
         label: "Connect Wallet",
         className: "btn inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+        style: {
+          fontSize: "16px",
+          height: "50px",
+          minWidth: "165px"
+        }
       }}
       connectModal={{
         title: "Connect to zkMed",

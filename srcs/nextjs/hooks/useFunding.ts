@@ -81,7 +81,7 @@ export function useFunding(): UseFundingReturn {
       // Create account from Anvil's default private key
       const fundingAccount = privateKeyToAccount({ 
         client,
-        privateKey: process.env.EXAMPLES_TEST_PRIVATE_KEY as `0x${string}`
+        privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
       });
 
       // Prepare the funding transaction

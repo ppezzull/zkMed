@@ -13,9 +13,23 @@ interface CollectEmailProps {
 export default function CollectEmail({ emailId, role, onEmailReceived, onBack }: CollectEmailProps) {
   const { emlFetched, emlContent, isLoading, error } = useZkMedInbox(emailId);
 
+  // Add debugging logs
+  console.log("🔍 DEBUG - CollectEmail component:");
+  console.log("🔍 DEBUG - Email ID:", emailId);
+  console.log("🔍 DEBUG - Role:", role);
+  console.log("🔍 DEBUG - Is loading:", isLoading);
+  console.log("🔍 DEBUG - Error:", error);
+  console.log("🔍 DEBUG - EML fetched:", emlFetched);
+  console.log("🔍 DEBUG - EML content preview:", emlContent?.substring(0, 100));
+
   // Auto-proceed when email is fetched
   useEffect(() => {
     if (emlFetched && emlContent) {
+      console.log("🔍 DEBUG - Proceeding with email content:");
+      console.log("🔍 DEBUG - Content length:", emlContent.length);
+      console.log("🔍 DEBUG - Is Nexthoop email?", emlContent.includes('nexthoop.it'));
+      console.log("🔍 DEBUG - Is Gmail email?", emlContent.includes('gmail.com'));
+      
       onEmailReceived(emlContent);
     }
   }, [emlFetched, emlContent, onEmailReceived]);
