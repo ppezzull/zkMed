@@ -401,15 +401,15 @@ export interface HealthcareRegistrationInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerHospital",
-    values: [HealthcareRegistrationProver.RegistrationDataStruct, ProofStruct]
+    values: [ProofStruct, HealthcareRegistrationProver.RegistrationDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "registerInsurer",
-    values: [HealthcareRegistrationProver.RegistrationDataStruct, ProofStruct]
+    values: [ProofStruct, HealthcareRegistrationProver.RegistrationDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "registerPatient",
-    values: [HealthcareRegistrationProver.RegistrationDataStruct, ProofStruct]
+    values: [ProofStruct, HealthcareRegistrationProver.RegistrationDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "rejectRequest",
@@ -1028,8 +1028,8 @@ export interface HealthcareRegistration extends BaseContract {
 
   registerHospital: TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"
@@ -1037,8 +1037,8 @@ export interface HealthcareRegistration extends BaseContract {
 
   registerInsurer: TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"
@@ -1046,8 +1046,8 @@ export interface HealthcareRegistration extends BaseContract {
 
   registerPatient: TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"
@@ -1323,8 +1323,8 @@ export interface HealthcareRegistration extends BaseContract {
     nameOrSignature: "registerHospital"
   ): TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"
@@ -1333,8 +1333,8 @@ export interface HealthcareRegistration extends BaseContract {
     nameOrSignature: "registerInsurer"
   ): TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"
@@ -1343,8 +1343,8 @@ export interface HealthcareRegistration extends BaseContract {
     nameOrSignature: "registerPatient"
   ): TypedContractMethod<
     [
-      registrationData: HealthcareRegistrationProver.RegistrationDataStruct,
-      arg1: ProofStruct
+      arg0: ProofStruct,
+      registrationData: HealthcareRegistrationProver.RegistrationDataStruct
     ],
     [void],
     "nonpayable"

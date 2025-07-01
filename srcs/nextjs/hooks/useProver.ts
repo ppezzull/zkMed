@@ -234,26 +234,6 @@ export function useProver(): UseProverReturn {
     }
   }, []);
 
-  // Helper function to parse email content - now deprecated since we use preverifyEmail
-  const parseEmailContent = (emlContent: string) => {
-    // This function is now deprecated - we use preverifyEmail instead
-    // Keeping for backward compatibility
-    return {
-      email: emlContent,
-      dnsRecord: {
-        name: "",
-        recordType: 0,
-        data: "",
-        ttl: 0,
-      },
-      verificationData: {
-        validUntil: 0,
-        signature: "0x",
-        pubKey: "0x",
-      },
-    };
-  };
-
   // Update loading state based on sub-hooks
   const isLoading = isPatientProving || isOrganizationProving || isWaitingForResult || state.isGeneratingProof;
   

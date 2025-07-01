@@ -76,24 +76,14 @@ export default function VerifyRegistration({ role, emlContent, organizationName,
     if (!account?.address || !prover.proof) return;
 
     try {
-      // Create registration data based on role
-      const registrationData: RegistrationData = {
-        requestedRole: role === 'PATIENT' ? UserType.PATIENT : 
-                     role === 'HOSPITAL' ? UserType.HOSPITAL : UserType.INSURER,
-        walletAddress: account.address,
-        domain: organizationName ? extractDomainFromEmail(emlContent) : '',
-        organizationName: organizationName || '',
-        emailHash: generateEmailHash(emlContent)
-      };
-
       setCurrentStep('Submitting to blockchain...');
       
       // Verify proof on-chain based on role
       let result;
       if (role === 'PATIENT') {
-        result = await verifier.verifyPatientProof(prover.proof, registrationData);
+        result = await verifier.verifyPatientProof(prover.proof);
       } else {
-        result = await verifier.verifyOrganizationProof(prover.proof, registrationData);
+        result = await verifier.verifyOrganizationProof(prover.proof);
       }
 
       if (result) {

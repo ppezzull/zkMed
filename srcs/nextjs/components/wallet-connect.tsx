@@ -65,7 +65,7 @@ export default function WalletConnect() {
     };
 
     if (isMounted) {
-      checkAuthStatus();
+    checkAuthStatus();
     }
   }, [account?.address, isMounted]);
 

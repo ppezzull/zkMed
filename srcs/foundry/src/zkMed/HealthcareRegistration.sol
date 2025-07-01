@@ -317,8 +317,8 @@ contract HealthcareRegistration is Verifier, Ownable {
      * @param registrationData Data structure containing registration information
      */
     function registerPatient(
-        HealthcareRegistrationProver.RegistrationData calldata registrationData,
-        Proof calldata
+        Proof calldata,
+        HealthcareRegistrationProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered
@@ -380,8 +380,8 @@ contract HealthcareRegistration is Verifier, Ownable {
      * @param registrationData Data structure containing registration information
      */
     function registerHospital(
-        HealthcareRegistrationProver.RegistrationData calldata registrationData,
-        Proof calldata 
+        Proof calldata, 
+        HealthcareRegistrationProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered
@@ -453,8 +453,8 @@ contract HealthcareRegistration is Verifier, Ownable {
      * @param registrationData Data structure containing registration information
      */
     function registerInsurer(
-        HealthcareRegistrationProver.RegistrationData calldata registrationData,
-        Proof calldata 
+        Proof calldata,
+        HealthcareRegistrationProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered

@@ -16,25 +16,12 @@ interface UseVerifierState {
 
 interface UseVerifierReturn extends UseVerifierState {
   // Verification methods
-  verifyPatientProof: (proof: any, registrationData: RegistrationData) => Promise<any>;
-  verifyOrganizationProof: (proof: any, registrationData: RegistrationData) => Promise<any>;
-  
-  // Utilities
-  validateProofBeforeVerification: (proof: any, registrationData: RegistrationData) => boolean;
-  extractVerificationData: (result: any) => any;
+  verifyPatientProof: (proof: any) => Promise<any>;
+  verifyOrganizationProof: (proof: any) => Promise<any>;
   
   // State management
   resetVerificationState: () => void;
 }
-
-// Helper function to convert RegistrationData to contract-compatible format
-const toContractRegistrationData = (data: RegistrationData) => ({
-  requestedRole: data.requestedRole,
-  walletAddress: data.walletAddress,
-  domain: data.domain,
-  organizationName: data.organizationName,
-  emailHash: data.emailHash.startsWith('0x') ? data.emailHash as `0x${string}` : `0x${data.emailHash}` as `0x${string}`
-});
 
 export function useVerifier(): UseVerifierReturn {
   const account = useActiveAccount();
@@ -47,7 +34,7 @@ export function useVerifier(): UseVerifierReturn {
     lastVerificationResult: null,
   });
 
-  const verifyPatientProof = useCallback(async (proof: any, registrationData: RegistrationData) => {
+  const verifyPatientProof = useCallback(async (proof: any) => {
     if (!account) {
       setState(prev => ({ ...prev, error: 'Wallet not connected' }));
       return null;
@@ -60,26 +47,26 @@ export function useVerifier(): UseVerifierReturn {
       verificationStep: 'Verifying patient proof...'
     }));
 
+    // The prover returns an array: [proofObject, registrationData]
+    const proofForContract = proof[0]; // Proof calldata
+    const registrationData = proof[1] as RegistrationData;
+
     try {
       console.log("🔍 DEBUG - Starting patient proof verification");
-      console.log("🔍 DEBUG - Proof received:", proof);
-      console.log("🔍 DEBUG - Registration data:", registrationData);
+      console.log("🔍 DEBUG - Full proof structure:", proof);
+      console.log("🔍 DEBUG - Parsed registration data (proof[1]):", registrationData);
+      console.log("🔍 DEBUG - Parsed proof object (proof[0]):", proofForContract);
+      
+      if (!proofForContract || !registrationData) {
+        throw new Error('Invalid proof structure - missing proof or registration data');
+      }
       
       const contract = getHealthcareContract();
-      
-      // Convert to contract-compatible format
-      const contractData = toContractRegistrationData(registrationData);
-      console.log("🔍 DEBUG - Contract data:", contractData);
-      
-      // Extract the actual proof object from vlayer result
-      // vlayer returns [Proof, RegistrationData], but we only need the Proof part
-      const proofObject = Array.isArray(proof) ? proof[0] : proof;
-      console.log("🔍 DEBUG - Extracted proof object:", proofObject);
       
       const transaction = prepareContractCall({
         contract,
         method: 'registerPatient',
-        params: [contractData, proofObject]
+        params: [proofForContract, registrationData]
       });
       
       console.log("🔍 DEBUG - Sending transaction...");
@@ -109,7 +96,7 @@ export function useVerifier(): UseVerifierReturn {
     }
   }, [account]);
 
-  const verifyOrganizationProof = useCallback(async (proof: any, registrationData: RegistrationData) => {
+  const verifyOrganizationProof = useCallback(async (proof: any) => {
     if (!account) {
       setState(prev => ({ ...prev, error: 'Wallet not connected' }));
       return null;
@@ -122,33 +109,35 @@ export function useVerifier(): UseVerifierReturn {
       verificationStep: 'Verifying organization proof...'
     }));
 
+    // The prover returns an array: [proofObject, registrationData]
+    const proofForContract = proof[0]; // Proof calldata
+    const extractedRegistrationData = proof[1] as RegistrationData;
+
     try {
       console.log("🔍 DEBUG - Starting organization proof verification");
-      console.log("🔍 DEBUG - Proof received:", proof);
-      console.log("🔍 DEBUG - Registration data:", registrationData);
+      console.log("🔍 DEBUG - Full proof structure:", proof);
+      console.log("🔍 DEBUG - Parsed registration data (proof[1]):", extractedRegistrationData);
+      console.log("🔍 DEBUG - Parsed proof object (proof[0]):", proofForContract);
+      console.log("🔍 DEBUG - Account address:", account?.address);
+      console.log("🔍 DEBUG - Registration wallet:", extractedRegistrationData?.walletAddress);
+      
+      if (!proofForContract || !extractedRegistrationData) {
+        throw new Error('Invalid proof structure - missing proof or registration data');
+      }
       
       const contract = getHealthcareContract();
       
       // Choose the correct registration method based on organization type
-      const method = registrationData.requestedRole === UserType.HOSPITAL 
+      const method = extractedRegistrationData.requestedRole === UserType.HOSPITAL 
         ? 'registerHospital' 
         : 'registerInsurer';
       
       console.log("🔍 DEBUG - Using method:", method);
       
-      // Convert to contract-compatible format
-      const contractData = toContractRegistrationData(registrationData);
-      console.log("🔍 DEBUG - Contract data:", contractData);
-      
-      // Extract the actual proof object from vlayer result
-      // vlayer returns [Proof, RegistrationData], but we only need the Proof part
-      const proofObject = Array.isArray(proof) ? proof[0] : proof;
-      console.log("🔍 DEBUG - Extracted proof object:", proofObject);
-      
       const transaction = prepareContractCall({
         contract,
         method,
-        params: [contractData, proofObject]
+        params: [proofForContract, extractedRegistrationData]
       });
       
       console.log("🔍 DEBUG - Sending transaction...");
@@ -178,49 +167,6 @@ export function useVerifier(): UseVerifierReturn {
     }
   }, [account]);
 
-  const validateProofBeforeVerification = useCallback((proof: any, registrationData: RegistrationData): boolean => {
-    try {
-      console.log("🔍 DEBUG - Validating proof before verification:");
-      console.log("🔍 DEBUG - Proof:", proof);
-      console.log("🔍 DEBUG - Registration data:", registrationData);
-      
-      // Basic validation
-      if (!proof || !registrationData) {
-        console.log("🔍 DEBUG - Missing proof or registration data");
-        return false;
-      }
-
-      // Check registration data has required fields
-      if (!registrationData.walletAddress || !registrationData.emailHash) {
-        console.log("🔍 DEBUG - Missing required registration data fields");
-        return false;
-      }
-
-      console.log("🔍 DEBUG - Basic proof validation passed");
-      return true;
-    } catch (error) {
-      console.error('🔍 DEBUG - Error validating proof before verification:', error);
-      return false;
-    }
-  }, []);
-
-  const extractVerificationData = useCallback((result: any) => {
-    try {
-      if (!result) return null;
-      
-      // Extract meaningful data from transaction result
-      return {
-        transactionHash: result.transactionHash,
-        blockNumber: result.blockNumber,
-        gasUsed: result.gasUsed,
-        status: result.status
-      };
-    } catch (error) {
-      console.error('Error extracting verification data:', error);
-      return null;
-    }
-  }, []);
-
   const resetVerificationState = useCallback(() => {
     setState({
       isLoading: false,
@@ -235,8 +181,6 @@ export function useVerifier(): UseVerifierReturn {
     ...state,
     verifyPatientProof,
     verifyOrganizationProof,
-    validateProofBeforeVerification,
-    extractVerificationData,
     resetVerificationState,
   };
 } 
