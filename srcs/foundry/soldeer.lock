@@ -14,14 +14,14 @@ integrity = "3874463846ab995a6a9a88412913cacec6144f7605daa1af57c2d8bf3f210b13"
 
 [[dependencies]]
 name = "risc0-ethereum"
-version = "2.0.0"
-url = "https://github.com/vlayer-xyz/risc0-ethereum/releases/download/v2.0.0-soldeer/contracts.zip"
-checksum = "e0185c9324d619546bf7d190b472d19c67e2bf1ac1c69743cddc00035fb4cf3e"
-integrity = "002c2e20d189f8346e8683c6253c60a1603f63cb2567329cd7c53b9960bf295b"
+version = "2.1.1"
+url = "https://github.com/vlayer-xyz/risc0-ethereum/releases/download/v2.1.1-soldeer/contracts.zip"
+checksum = "aa3294018761aba8c78dc4c5408f6e17397e6becfcf2059dd0530981ef05e95d"
+integrity = "0fc4fffd631df1377f23753dd6fb1d576a0e1fde4f4793f0271eac4bc664a72c"
 
 [[dependencies]]
 name = "vlayer"
-version = "1.0.3"
-url = "https://soldeer-revisions.s3.amazonaws.com/vlayer/1_0_3_05-06-2025_14:15:52_vlayer.zip"
-checksum = "1702c193a11dc1497acbcdf42ece035f3df7c9c2731322877577cf5f1bbf8342"
-integrity = "667d75ceca3e31662c4880793d3738a16802f91393e0b95463eb314b515f7e9d"
+version = "1.2.3"
+url = "https://soldeer-revisions.s3.amazonaws.com/vlayer/1_2_3_01-07-2025_15:09:59_vlayer.zip"
+checksum = "ee73f5824286626004b0fbd8b03ea302a448be2c47dbfeec47dd1fcfafede6a5"
+integrity = "96df668353ba582702915f13faf994b29beba74467502ae1038327d822db07d2"
