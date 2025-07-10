@@ -1,0 +1,3 @@
+[submodule "daje/lib/forge-std"]
+	path = daje/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
