@@ -50,6 +50,7 @@ export function useProver(): UseProverReturn {
     proverAbi: HealthcareRegistrationProver__factory.abi,
     functionName: 'provePatientEmail',
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
+    chainId: process.env.NEXT_PUBLIC_CHAIN_ID ? Number(process.env.NEXT_PUBLIC_CHAIN_ID) : 1, // Default to mainnet
   });
 
   // Organization proof generation
@@ -63,6 +64,7 @@ export function useProver(): UseProverReturn {
     proverAbi: HealthcareRegistrationProver__factory.abi,
     functionName: 'proveOrganizationDomain',
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
+    chainId: process.env.NEXT_PUBLIC_CHAIN_ID ? Number(process.env.NEXT_PUBLIC_CHAIN_ID) : 1, // Default to mainnet
   });
 
   // Active proof hash (either patient or organization)
