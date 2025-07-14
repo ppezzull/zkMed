@@ -9,10 +9,12 @@
 // - app/demo/page.tsx (mockGetRegistrationStats, mockIsLoggedIn)
 //
 // Demo URLs for testing:
-// Patient: http://localhost:5173/patient/0x2345678901234567890123456789012345678901
-// Hospital: http://localhost:5173/hospital/0x3456789012345678901234567890123456789012
-// Insurance: http://localhost:5173/insurance/0x1234567890123456789012345678901234567890 (or 0x4567...)
+// Patient: http://localhost:5173/patient/0x7890123456789012345678901234567890123456
+// Hospital: http://localhost:5173/hospital/0x1234567890123456789012345678901234567890 
+// Hospital (alt): http://localhost:5173/hospital/0x3456789012345678901234567890123456789012  
+// Insurance: http://localhost:5173/insurance/0x2345678901234567890123456789012345678901
 // Admin: http://localhost:5173/admin
+// Demo: http://localhost:5173/demo
 
 import { 
   UserType, 
@@ -57,6 +59,15 @@ export const mockPatientRecords: PatientRecord[] = [
       isActive: true,
       requestId: BigInt(102)
     }
+  },
+  {
+    base: {
+      walletAddress: "0x7890123456789012345678901234567890123456",
+      emailHash: "0x789abc012345678901234567890123456789012345678901234567890def456123" as `0x${string}`,
+      registrationTime: BigInt(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      isActive: true,
+      requestId: BigInt(103)
+    }
   }
 ];
 
@@ -69,6 +80,18 @@ export const mockOrganizationRecords: OrganizationRecord[] = [
       registrationTime: BigInt(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
       isActive: true,
       requestId: BigInt(101)
+    },
+    orgType: UserType.HOSPITAL,
+    domain: "demohospital.com",
+    organizationName: "Demo General Hospital"
+  },
+  {
+    base: {
+      walletAddress: "0x2345678901234567890123456789012345678901",
+      emailHash: "0xdef456789012345678901234567890123456789012345678901234567890abc123" as `0x${string}`,
+      registrationTime: BigInt(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+      isActive: true,
+      requestId: BigInt(102)
     },
     orgType: UserType.INSURER,
     domain: "demoinsurance.com",
@@ -198,16 +221,18 @@ export const mockAllPendingRequests = [
 // Mock user verification data
 export const mockUserVerificationData: { [address: string]: UserVerificationData } = {
   "0x1234567890123456789012345678901234567890": {
+    userType: UserType.HOSPITAL,
+    isActive: true,
+    isAdmin: false,
+    domain: "demohospital.com",
+    organizationName: "Demo General Hospital"
+  },
+  "0x2345678901234567890123456789012345678901": {
     userType: UserType.INSURER,
     isActive: true,
     isAdmin: false,
     domain: "demoinsurance.com",
     organizationName: "Demo Insurance Company"
-  },
-  "0x2345678901234567890123456789012345678901": {
-    userType: UserType.PATIENT,
-    isActive: true,
-    isAdmin: false
   },
   "0x3456789012345678901234567890123456789012": {
     userType: UserType.HOSPITAL,
@@ -236,6 +261,11 @@ export const mockUserVerificationData: { [address: string]: UserVerificationData
     isAdmin: true,
     adminRole: AdminRole.MODERATOR,
     permissions: BigInt(0x0000FFFF)
+  },
+  "0x7890123456789012345678901234567890123456": {
+    userType: UserType.PATIENT,
+    isActive: true,
+    isAdmin: false
   }
 };
 

@@ -52,28 +52,21 @@ export default function HospitalDashboard({
     };
 
     checkRegistration();
-  }, [account?.address, hospital]);
+  }, [address]);
 
-  // Redirect if not connected to correct wallet
+  // Redirect if not connected to correct wallet (disabled for demo)
+  /*
   useEffect(() => {
     if (account?.address && account.address.toLowerCase() !== address.toLowerCase()) {
       router.push('/');
     }
   }, [account?.address, address, router]);
+  */
 
-  // Show wallet connection if not connected
+  // Show wallet connection if not connected (optional for demo)
   if (!account?.address) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4 text-center">
-          <h2 className="text-xl font-semibold mb-4">Connect Wallet</h2>
-          <p className="text-gray-600 mb-6">
-            Please connect your wallet to access the hospital dashboard.
-          </p>
-          <WalletConnect />
-        </div>
-      </div>
-    );
+    // For demo purposes, we'll use the address from props instead of requiring wallet connection
+    // In production, you would require wallet connection
   }
 
   // Loading state
