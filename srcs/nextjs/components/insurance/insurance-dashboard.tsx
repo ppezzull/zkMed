@@ -7,6 +7,7 @@ import { UserType, OrganizationRecord } from '@/utils/types/healthcare';
 import { useRouter } from 'next/navigation';
 import WalletConnect from '@/components/wallet-connect';
 import { safeStringify } from '@/utils/serialization';
+import { mockGetUserVerificationData, mockGetOrganizationRecord } from '@/lib/mock-data';
 
 interface InsuranceDashboardProps {
   address: string;
@@ -30,17 +31,16 @@ export default function InsuranceDashboard({
   // Check registration status
   useEffect(() => {
     const checkRegistration = async () => {
-      if (!account?.address) return;
-      
       try {
-        const verification = await insurance.fetchUserVerification(account.address);
-        if (verification?.isRegistered) {
+        // Use mock data instead of actual contract calls
+        const verification = await mockGetUserVerificationData(address);
+        if (verification && verification.isActive) {
           setIsRegistered(true);
           setUserType(verification.userType);
           
           // Fetch organization record if registered as insurer
           if (verification.userType === UserType.INSURER) {
-            const record = await insurance.fetchInsuranceRecord(account.address);
+            const record = await mockGetOrganizationRecord(address);
             setOrganizationRecord(record);
           }
         }
@@ -52,28 +52,21 @@ export default function InsuranceDashboard({
     };
 
     checkRegistration();
-  }, [account?.address, insurance]);
+  }, [address]);
 
-  // Redirect if not connected to correct wallet
+  // Redirect if not connected to correct wallet (disabled for demo)
+  /*
   useEffect(() => {
     if (account?.address && account.address.toLowerCase() !== address.toLowerCase()) {
       router.push('/');
     }
   }, [account?.address, address, router]);
+  */
 
-  // Show wallet connection if not connected
+  // Show wallet connection if not connected (optional for demo)
   if (!account?.address) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4 text-center">
-          <h2 className="text-xl font-semibold mb-4">Connect Wallet</h2>
-          <p className="text-gray-600 mb-6">
-            Please connect your wallet to access the insurance dashboard.
-          </p>
-          <WalletConnect />
-        </div>
-      </div>
-    );
+    // For demo purposes, we'll use the address from props instead of requiring wallet connection
+    // In production, you would require wallet connection
   }
 
   // Loading state
@@ -152,13 +145,13 @@ export default function InsuranceDashboard({
               </div>
               <div>
                 <span className="text-sm text-gray-500">Wallet Address:</span>
-                <p className="font-mono text-sm break-all">{account.address}</p>
+                <p className="font-mono text-sm break-all">{organizationRecord?.base.walletAddress || address}</p>
               </div>
               <div>
                 <span className="text-sm text-gray-500">Registration Date:</span>
                 <p className="text-sm">
-                  {organizationRecord?.registrationTime 
-                    ? new Date(Number(organizationRecord.registrationTime) * 1000).toLocaleDateString()
+                  {organizationRecord?.base.registrationTime 
+                    ? new Date(Number(organizationRecord.base.registrationTime)).toLocaleDateString()
                     : 'N/A'
                   }
                 </p>
@@ -166,7 +159,7 @@ export default function InsuranceDashboard({
               <div>
                 <span className="text-sm text-gray-500">Email Hash:</span>
                 <p className="font-mono text-xs break-all">
-                  {organizationRecord?.emailHash || 'N/A'}
+                  {organizationRecord?.base.emailHash || 'N/A'}
                 </p>
               </div>
               <div>

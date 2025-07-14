@@ -7,6 +7,7 @@ import { UserType, OrganizationRecord } from '@/utils/types/healthcare';
 import { useParams, useRouter } from 'next/navigation';
 import WalletConnect from '@/components/wallet-connect';
 import { safeStringify } from '@/utils/serialization';
+import { mockGetUserVerificationData, mockGetOrganizationRecord } from '@/lib/mock-data';
 
 interface HospitalDashboardProps {
   address: string;
@@ -30,17 +31,16 @@ export default function HospitalDashboard({
   // Check registration status
   useEffect(() => {
     const checkRegistration = async () => {
-      if (!account?.address) return;
-      
       try {
-        const verification = await hospital.fetchUserVerification(account.address);
-        if (verification?.isRegistered) {
+        // Use mock data instead of actual contract calls
+        const verification = await mockGetUserVerificationData(address);
+        if (verification && verification.isActive) {
           setIsRegistered(true);
           setUserType(verification.userType);
           
           // Fetch organization record if registered as hospital
           if (verification.userType === UserType.HOSPITAL) {
-            const record = await hospital.fetchHospitalRecord(account.address);
+            const record = await mockGetOrganizationRecord(address);
             setOrganizationRecord(record);
           }
         }
@@ -152,13 +152,13 @@ export default function HospitalDashboard({
               </div>
               <div>
                 <span className="text-sm text-gray-500">Wallet Address:</span>
-                <p className="font-mono text-sm break-all">{account.address}</p>
+                <p className="font-mono text-sm break-all">{organizationRecord?.base.walletAddress || address}</p>
               </div>
               <div>
                 <span className="text-sm text-gray-500">Registration Date:</span>
                 <p className="text-sm">
-                  {organizationRecord?.registrationTime 
-                    ? new Date(Number(organizationRecord.registrationTime) * 1000).toLocaleDateString()
+                  {organizationRecord?.base.registrationTime 
+                    ? new Date(Number(organizationRecord.base.registrationTime)).toLocaleDateString()
                     : 'N/A'
                   }
                 </p>
@@ -166,7 +166,7 @@ export default function HospitalDashboard({
               <div>
                 <span className="text-sm text-gray-500">Email Hash:</span>
                 <p className="font-mono text-xs break-all">
-                  {organizationRecord?.emailHash || 'N/A'}
+                  {organizationRecord?.base.emailHash || 'N/A'}
                 </p>
               </div>
               <div>

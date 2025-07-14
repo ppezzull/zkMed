@@ -7,6 +7,12 @@
 // - app/hospital/[address]/page.tsx (mockGetOrganizationRecord, mockGetUserVerificationData)
 // - app/insurance/[address]/page.tsx (mockGetOrganizationRecord, mockGetUserVerificationData)
 // - app/demo/page.tsx (mockGetRegistrationStats, mockIsLoggedIn)
+//
+// Demo URLs for testing:
+// Patient: http://localhost:5173/patient/0x2345678901234567890123456789012345678901
+// Hospital: http://localhost:5173/hospital/0x3456789012345678901234567890123456789012
+// Insurance: http://localhost:5173/insurance/0x1234567890123456789012345678901234567890 (or 0x4567...)
+// Admin: http://localhost:5173/admin
 
 import { 
   UserType, 
@@ -56,6 +62,18 @@ export const mockPatientRecords: PatientRecord[] = [
 
 // Mock organization records
 export const mockOrganizationRecords: OrganizationRecord[] = [
+  {
+    base: {
+      walletAddress: "0x1234567890123456789012345678901234567890",
+      emailHash: "0xabc123456789012345678901234567890123456789012345678901234567890def" as `0x${string}`,
+      registrationTime: BigInt(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+      isActive: true,
+      requestId: BigInt(101)
+    },
+    orgType: UserType.INSURER,
+    domain: "demoinsurance.com",
+    organizationName: "Demo Insurance Company"
+  },
   {
     base: {
       walletAddress: "0x3456789012345678901234567890123456789012",
@@ -180,9 +198,11 @@ export const mockAllPendingRequests = [
 // Mock user verification data
 export const mockUserVerificationData: { [address: string]: UserVerificationData } = {
   "0x1234567890123456789012345678901234567890": {
-    userType: UserType.PATIENT,
+    userType: UserType.INSURER,
     isActive: true,
-    isAdmin: false
+    isAdmin: false,
+    domain: "demoinsurance.com",
+    organizationName: "Demo Insurance Company"
   },
   "0x2345678901234567890123456789012345678901": {
     userType: UserType.PATIENT,
