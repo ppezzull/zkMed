@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import { 
-  getPendingRequests, 
-  getPendingRequestsByType, 
-  getRegistrationStats 
-} from '@/lib/actions/healthcare';
+  mockGetPendingRequests, 
+  mockGetPendingRequestsByType, 
+  mockGetRegistrationStats 
+} from '@/lib/mock-data';
 import { RequestType } from '@/utils/types/healthcare';
 import AdminDashboard from '@/components/admin/admin-dashboard';
 
@@ -27,11 +27,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       adminRequests,
       registrationStats
     ] = await Promise.all([
-      getPendingRequests(),
-      getPendingRequestsByType(RequestType.PATIENT_REGISTRATION),
-      getPendingRequestsByType(RequestType.ORG_REGISTRATION),
-      getPendingRequestsByType(RequestType.ADMIN_ACCESS),
-      getRegistrationStats()
+      mockGetPendingRequests(),
+      mockGetPendingRequestsByType(RequestType.PATIENT_REGISTRATION),
+      mockGetPendingRequestsByType(RequestType.ORG_REGISTRATION),
+      mockGetPendingRequestsByType(RequestType.ADMIN_ACCESS),
+      mockGetRegistrationStats()
     ]);
 
     if (!registrationStats) {

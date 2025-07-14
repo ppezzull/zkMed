@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
 import DemoClient from '@/components/demo/demo-client';
-import { getRegistrationStats } from '@/lib/actions/admin';
-import { isLoggedIn } from '@/lib/actions/auth';
+import { mockGetRegistrationStats } from '@/lib/mock-data';
+import { mockIsLoggedIn } from '@/lib/mock-data';
 import { redirect } from 'next/navigation';
 
 export default async function DemoPage() {  
   try {
-    const registrationStats = await getRegistrationStats();
+    const registrationStats = await mockGetRegistrationStats();
     
     return (
       <div>

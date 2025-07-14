@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getOrganizationRecord, getUserVerificationData } from '@/lib/actions/healthcare';
+import { mockGetOrganizationRecord, mockGetUserVerificationData } from '@/lib/mock-data';
 import HospitalDashboard from '@/components/hospital/hospital-dashboard';
 
 interface HospitalPageProps {
@@ -14,8 +14,8 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
   try {
     // Fetch initial data server-side
     const [organizationRecord, verificationData] = await Promise.allSettled([
-      getOrganizationRecord(address),
-      getUserVerificationData(address)
+      mockGetOrganizationRecord(address),
+      mockGetUserVerificationData(address)
     ]);
 
     const initialOrganizationRecord = organizationRecord.status === 'fulfilled' ? organizationRecord.value : null;
