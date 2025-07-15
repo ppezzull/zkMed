@@ -1,2 +1,11 @@
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts
-  
+forge-std-1.9.4/src/=dependencies/forge-std-1.9.4/src/
+forge-std/=dependencies/forge-std-1.9.4/src/
+openzeppelin-contracts/=dependencies/@openzeppelin-contracts-5.0.1/
+risc0-ethereum-2.1.1/=dependencies/risc0-ethereum-2.1.1/
+vlayer-0.1.0/=dependencies/vlayer-1.2.3/src/
+solidity-bytes-utils/=dependencies/solidity-bytes-utils/contracts/
+@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.0.1/contracts/
+openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.0.1/contracts/
+openzeppelin/=dependencies/@openzeppelin-contracts-5.0.1/contracts/
+contract/=contracts/
+src/=contracts/
