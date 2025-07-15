@@ -1,4 +1,4 @@
-import { Account, Address, Chain, Client, Transport, getContract } from "viem";
+import { getContract } from "viem";
 import { usePublicClient } from "wagmi";
 import { GetWalletClientReturnType } from "wagmi/actions";
 import { useSelectedNetwork } from "~~/hooks/scaffold-eth";
@@ -36,26 +36,18 @@ export const useScaffoldContract = <
 
   let contract = undefined;
   if (deployedContractData && publicClient) {
-    contract = getContract<
-      Transport,
-      Address,
-      Contract<TContractName>["abi"],
-      TWalletClient extends Exclude<GetWalletClientReturnType, null>
-        ? {
-            public: Client<Transport, Chain>;
-            wallet: TWalletClient;
-          }
-        : { public: Client<Transport, Chain> },
-      Chain,
-      Account
-    >({
+    contract = getContract({
       address: deployedContractData.address,
       abi: deployedContractData.abi as Contract<TContractName>["abi"],
-      client: {
-        public: publicClient,
-        wallet: walletClient ? walletClient : undefined,
-      } as any,
-    });
+      client: walletClient
+        ? {
+            public: publicClient,
+            wallet: walletClient,
+          }
+        : {
+            public: publicClient,
+          },
+    } as any);
   }
 
   return {

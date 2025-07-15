@@ -35,7 +35,7 @@ export const WriteOnlyFunctionForm = ({
 }: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() => getInitialFormState(abiFunction));
   const [txValue, setTxValue] = useState<string>("");
-  const { chain } = useAccount();
+  const { chain, address } = useAccount();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
   const writeDisabled = !chain || chain?.id !== targetNetwork.id;
@@ -53,10 +53,12 @@ export const WriteOnlyFunctionForm = ({
           abi: abi,
           args: getParsedContractFunctionArgs(form),
           value: BigInt(txValue),
+          chain: targetNetwork,
+          account: address as `0x${string}`,
         };
         await simulateContractWriteAndNotifyError({ wagmiConfig, writeContractParams: writeContractObj });
 
-        const makeWriteWithParams = () => writeContractAsync(writeContractObj);
+        const makeWriteWithParams = () => writeContractAsync(writeContractObj as any);
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
@@ -70,7 +72,7 @@ export const WriteOnlyFunctionForm = ({
     hash: result,
   });
   useEffect(() => {
-    setDisplayedTxResult(txResult);
+    setDisplayedTxResult(txResult as TransactionReceipt);
   }, [txResult]);
 
   // TODO use `useMemo` to optimize also update in ReadOnlyFunctionForm
@@ -136,7 +138,7 @@ export const WriteOnlyFunctionForm = ({
       </div>
       {zeroInputs && txResult ? (
         <div className="grow basis-0">
-          <TxReceipt txResult={txResult} />
+          <TxReceipt txResult={txResult as TransactionReceipt} />
         </div>
       ) : null}
     </div>
