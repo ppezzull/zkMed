@@ -5,6 +5,9 @@ import "./DeployHelpers.s.sol";
 import "../contracts/zkMed/zkMedCore.sol";
 import "../contracts/zkMed/provers/zkMedDomainProver.sol";
 import "../contracts/zkMed/provers/zkMedInvitationProver.sol";
+import "../contracts/zkMed/users/zkMedPatient.sol";
+import "../contracts/zkMed/users/zkMedHospital.sol";
+import "../contracts/zkMed/users/zkMedInsurer.sol";
 
 /**
  * @notice Deploy script for YourContract contract
@@ -27,12 +30,29 @@ contract DeployYourContract is ScaffoldETHDeploy {
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
     function run() external ScaffoldEthDeployerRunner {
-        zkMedDomainProver prover = new zkMedDomainProver();
-        zkMedInvitationProver invitationProver = new zkMedInvitationProver(address(0)); // Will be set after zkMedCore deployment
-        zkMedCore registration = new zkMedCore(address(prover), address(invitationProver));
+        // Deploy provers first
+        zkMedDomainProver domainProver = new zkMedDomainProver();
+        zkMedInvitationProver invitationProver = new zkMedInvitationProver(address(0)); // Temporary address
         
-        // Update the invitation prover with the correct zkMedCore address
-        invitationProver = new zkMedInvitationProver(address(registration));
-        // Note: In production, you'd want to update the registration contract with the new invitation prover address
+        // Deploy core contract
+        zkMedCore core = new zkMedCore(address(domainProver), address(invitationProver));
+        
+        // Deploy user contracts
+        zkMedPatient patientContract = new zkMedPatient(address(core), address(domainProver));
+        zkMedHospital hospitalContract = new zkMedHospital(address(core), address(domainProver));
+        zkMedInsurer insurerContract = new zkMedInsurer(address(core), address(domainProver), address(invitationProver));
+        
+        // Set user contract addresses in the core contract
+        core.setUserContracts(
+            address(patientContract),
+            address(hospitalContract), 
+            address(insurerContract)
+        );
+        
+        // Deploy invitation prover with correct core address
+        invitationProver = new zkMedInvitationProver(address(core));
+        
+        // Note: In production, you might want to update contracts with the new invitation prover address
+        // For now, the user contracts are initialized with the correct addresses
     }
 }

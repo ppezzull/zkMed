@@ -7,7 +7,8 @@ import {RegexLib} from "vlayer-0.1.0/Regex.sol";
 import {VerifiedEmail, UnverifiedEmail, EmailProofLib} from "vlayer-0.1.0/EmailProof.sol";
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 
-interface IzkMedCore {
+// Simple interface for the invitation prover's needs
+interface IzkMedCoreSimple {
     enum UserType { PATIENT, HOSPITAL, INSURER }
     function userTypes(address user) external view returns (UserType);
     function isOrganizationApproved(address organization) external view returns (bool);
@@ -41,10 +42,10 @@ contract zkMedInvitationProver is Prover {
         bool hasPaymentPlan;        // True if invitation includes payment plan
     }
 
-    IzkMedCore public zkMedCore;
+    IzkMedCoreSimple public zkMedCore;
 
     constructor(address _zkMedCore) {
-        zkMedCore = IzkMedCore(_zkMedCore);
+        zkMedCore = IzkMedCoreSimple(_zkMedCore);
     }
 
     /// @notice Convert string to address
@@ -130,7 +131,7 @@ contract zkMedInvitationProver is Prover {
         // Get sender address from domain
         address senderAddress = zkMedCore.domainToUser(senderDomain);
         require(senderAddress != address(0), "Sender domain not registered");
-        require(zkMedCore.userTypes(senderAddress) == IzkMedCore.UserType.INSURER, "Sender is not an insurer");
+        require(zkMedCore.userTypes(senderAddress) == IzkMedCoreSimple.UserType.INSURER, "Sender is not an insurer");
         require(zkMedCore.isOrganizationApproved(senderAddress), "Sender organization not approved");
         
         // Extract recipient email and determine type
@@ -146,7 +147,7 @@ contract zkMedInvitationProver is Prover {
         address orgAddress = zkMedCore.domainToUser(recipientDomain);
         if (orgAddress != address(0)) {
             // It's an organization
-            require(zkMedCore.userTypes(orgAddress) == IzkMedCore.UserType.HOSPITAL, "Recipient organization must be a hospital");
+            require(zkMedCore.userTypes(orgAddress) == IzkMedCoreSimple.UserType.HOSPITAL, "Recipient organization must be a hospital");
             require(zkMedCore.isOrganizationApproved(orgAddress), "Recipient hospital not approved");
             recipientAddress = orgAddress;
             recipientType = RecipientType.HOSPITAL;

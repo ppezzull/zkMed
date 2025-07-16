@@ -113,6 +113,11 @@ contract zkMedCore is Verifier, Ownable {
     
     address public emailDomainProver;
     
+    // User contract addresses
+    address public zkMedPatientContract;
+    address public zkMedHospitalContract;
+    address public zkMedInsurerContract;
+    
     // User records
     mapping(address => UserType) public userTypes;
     mapping(address => PatientRecord) public patientRecords;
@@ -177,6 +182,21 @@ contract zkMedCore is Verifier, Ownable {
         });
     }
     
+    // ======== Contract Management ========
+    
+    /**
+     * @dev Set the user contract addresses (only owner)
+     */
+    function setUserContracts(
+        address _zkMedPatientContract,
+        address _zkMedHospitalContract,
+        address _zkMedInsurerContract
+    ) external onlyOwner {
+        zkMedPatientContract = _zkMedPatientContract;
+        zkMedHospitalContract = _zkMedHospitalContract;
+        zkMedInsurerContract = _zkMedInsurerContract;
+    }
+    
     // ======== Modifiers ========
     
     modifier onlyAdmin() {
@@ -207,6 +227,16 @@ contract zkMedCore is Verifier, Ownable {
         require(
             userTypes[msg.sender] == UserType(0) && !_isUserActive(msg.sender), 
             "User already registered"
+        );
+        _;
+    }
+    
+    modifier onlyUserContract() {
+        require(
+            msg.sender == zkMedPatientContract || 
+            msg.sender == zkMedHospitalContract || 
+            msg.sender == zkMedInsurerContract,
+            "Only authorized user contracts"
         );
         _;
     }
@@ -658,6 +688,263 @@ contract zkMedCore is Verifier, Ownable {
         // Mark invitation as processed
         processedInvitations[invitationHash] = true;
         insurerPatientInvitations[invitationData.senderAddress][invitationData.recipientAddress] = true;
+        
+        emit InvitationSent(invitationData.senderAddress, invitationData.recipientAddress, requestId);
+        emit RequestSubmitted(requestId, invitationData.senderAddress, RequestType.INVITATION);
+        emit RequestApproved(requestId, address(0)); // Auto-approved
+    }
+    
+    // ======== Functions for User Contracts ========
+    
+    /**
+     * @dev Register a patient from the patient contract
+     * @param patient Patient address
+     * @param emailHash Email hash from verification
+     * @param requestId Unique request identifier
+     */
+    function registerPatientFromContract(
+        address patient,
+        bytes32 emailHash,
+        uint256 requestId
+    ) external onlyUserContract {
+        require(!usedEmailHashes[emailHash], "Email already used");
+        require(!_isUserActive(patient), "Patient already registered");
+        
+        // Create patient registration request (auto-approved)
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = patient;
+        baseReq.requestType = RequestType.PATIENT_REGISTRATION;
+        baseReq.status = RequestStatus.APPROVED; // Auto-approved
+        baseReq.requestTime = block.timestamp;
+        baseReq.processedTime = block.timestamp;
+        
+        PatientRegistrationRequest storage patientReq = patientRequests[requestId];
+        patientReq.base = baseReq;
+        patientReq.emailHash = emailHash;
+
+        // Create patient record
+        BaseRecord memory baseRec = BaseRecord({
+            walletAddress: patient,
+            emailHash: emailHash,
+            registrationTime: block.timestamp,
+            isActive: true,
+            requestId: requestId
+        });
+        
+        patientRecords[patient] = PatientRecord({
+            base: baseRec
+        });
+        
+        // Update mappings
+        userTypes[patient] = UserType.PATIENT;
+        usedEmailHashes[emailHash] = true;
+        userToRequestId[patient] = requestId;
+        totalRegisteredUsers++;
+        totalPatients++;
+        requestCount = requestId > requestCount ? requestId : requestCount;
+
+        emit PatientRegistered(patient);
+        emit RequestSubmitted(requestId, patient, RequestType.PATIENT_REGISTRATION);
+        emit RequestApproved(requestId, address(0)); // Auto-approved
+    }
+    
+    /**
+     * @dev Register a hospital from the hospital contract
+     * @param hospital Hospital address
+     * @param emailHash Email hash from verification
+     * @param domain Hospital domain
+     * @param organizationName Hospital organization name
+     * @param requestId Unique request identifier
+     */
+    function registerHospitalFromContract(
+        address hospital,
+        bytes32 emailHash,
+        string calldata domain,
+        string calldata organizationName,
+        uint256 requestId
+    ) external onlyUserContract {
+        require(!usedEmailHashes[emailHash], "Email already used");
+        require(!_isUserActive(hospital), "Hospital already registered");
+        require(domainToUser[domain] == address(0), "Domain already registered");
+        
+        // Create organization registration request
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = hospital;
+        baseReq.requestType = RequestType.ORG_REGISTRATION;
+        baseReq.status = RequestStatus.PENDING;
+        baseReq.requestTime = block.timestamp;
+        
+        OrganizationRegistrationRequest storage orgReq = organizationRequests[requestId];
+        orgReq.base = baseReq;
+        orgReq.orgType = UserType.HOSPITAL;
+        orgReq.domain = domain;
+        orgReq.organizationName = organizationName;
+        orgReq.emailHash = emailHash;
+        
+        // Create hospital record
+        BaseRecord memory baseRec = BaseRecord({
+            walletAddress: hospital,
+            emailHash: emailHash,
+            registrationTime: block.timestamp,
+            isActive: true,
+            requestId: requestId
+        });
+        
+        organizationRecords[hospital] = OrganizationRecord({
+            base: baseRec,
+            orgType: UserType.HOSPITAL,
+            domain: domain,
+            organizationName: organizationName
+        });
+        
+        // Update mappings
+        userTypes[hospital] = UserType.HOSPITAL;
+        domainToUser[domain] = hospital;
+        usedEmailHashes[emailHash] = true;
+        userToRequestId[hospital] = requestId;
+        totalRegisteredUsers++;
+        totalHospitals++;
+        pendingRequestCount++;
+        requestCount = requestId > requestCount ? requestId : requestCount;
+        
+        emit HospitalRegistered(hospital, domain, emailHash);
+        emit RequestSubmitted(requestId, hospital, RequestType.ORG_REGISTRATION);
+    }
+    
+    /**
+     * @dev Register an insurer from the insurer contract
+     * @param insurer Insurer address
+     * @param emailHash Email hash from verification
+     * @param domain Insurer domain
+     * @param organizationName Insurer organization name
+     * @param requestId Unique request identifier
+     */
+    function registerInsurerFromContract(
+        address insurer,
+        bytes32 emailHash,
+        string calldata domain,
+        string calldata organizationName,
+        uint256 requestId
+    ) external onlyUserContract {
+        require(!usedEmailHashes[emailHash], "Email already used");
+        require(!_isUserActive(insurer), "Insurer already registered");
+        require(domainToUser[domain] == address(0), "Domain already registered");
+        
+        // Create organization registration request
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = insurer;
+        baseReq.requestType = RequestType.ORG_REGISTRATION;
+        baseReq.status = RequestStatus.PENDING;
+        baseReq.requestTime = block.timestamp;
+        
+        OrganizationRegistrationRequest storage orgReq = organizationRequests[requestId];
+        orgReq.base = baseReq;
+        orgReq.orgType = UserType.INSURER;
+        orgReq.domain = domain;
+        orgReq.organizationName = organizationName;
+        orgReq.emailHash = emailHash;
+        
+        // Create insurer record
+        BaseRecord memory baseRec = BaseRecord({
+            walletAddress: insurer,
+            emailHash: emailHash,
+            registrationTime: block.timestamp,
+            isActive: true,
+            requestId: requestId
+        });
+        
+        organizationRecords[insurer] = OrganizationRecord({
+            base: baseRec,
+            orgType: UserType.INSURER,
+            domain: domain,
+            organizationName: organizationName
+        });
+        
+        // Update mappings
+        userTypes[insurer] = UserType.INSURER;
+        domainToUser[domain] = insurer;
+        usedEmailHashes[emailHash] = true;
+        userToRequestId[insurer] = requestId;
+        totalRegisteredUsers++;
+        totalInsurers++;
+        pendingRequestCount++;
+        requestCount = requestId > requestCount ? requestId : requestCount;
+        
+        emit InsurerRegistered(insurer, domain, emailHash);
+        emit RequestSubmitted(requestId, insurer, RequestType.ORG_REGISTRATION);
+    }
+    
+    /**
+     * @dev Process an invitation from the insurer contract
+     * @param invitationData Data structure containing invitation information
+     * @param requestId Unique request identifier
+     */
+    function processInvitationFromContract(
+        zkMedInvitationProver.InvitationData calldata invitationData,
+        uint256 requestId
+    ) external onlyUserContract {
+        // Check that the invitation hasn't been processed before
+        bytes32 invitationHash = keccak256(abi.encodePacked(
+            invitationData.senderEmailHash, 
+            invitationData.recipientEmailHash
+        ));
+        require(!processedInvitations[invitationHash], "Invitation already processed");
+        
+        // Validate sender (already done in prover, but double-check)
+        require(userTypes[invitationData.senderAddress] == UserType.INSURER, "Sender must be an insurer");
+        require(isOrganizationApproved(invitationData.senderAddress), "Sender must be approved");
+        
+        // Validate recipient based on type
+        if (invitationData.recipientType == zkMedInvitationProver.RecipientType.HOSPITAL) {
+            require(userTypes[invitationData.recipientAddress] == UserType.HOSPITAL, "Recipient must be a hospital");
+            require(isOrganizationApproved(invitationData.recipientAddress), "Hospital must be approved");
+        } else {
+            require(userTypes[invitationData.recipientAddress] == UserType.PATIENT, "Recipient must be a patient");
+        }
+        
+        // Create invitation request
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = invitationData.senderAddress;
+        baseReq.requestType = RequestType.INVITATION;
+        baseReq.status = RequestStatus.APPROVED; // Invitations are auto-approved if validation passes
+        baseReq.requestTime = block.timestamp;
+        baseReq.processedTime = block.timestamp;
+        
+        InvitationRequest storage inviteReq = invitationRequests[requestId];
+        inviteReq.base = baseReq;
+        inviteReq.senderAddress = invitationData.senderAddress;
+        inviteReq.recipientAddress = invitationData.recipientAddress;
+        inviteReq.recipientType = invitationData.recipientType;
+        inviteReq.insuranceName = invitationData.insuranceName;
+        inviteReq.senderEmailHash = invitationData.senderEmailHash;
+        inviteReq.recipientEmailHash = invitationData.recipientEmailHash;
+        inviteReq.hasPaymentPlan = invitationData.hasPaymentPlan;
+        
+        // If it's a patient invitation with payment plan, create the payment plan
+        if (invitationData.recipientType == zkMedInvitationProver.RecipientType.PATIENT && invitationData.hasPaymentPlan) {
+            PaymentPlan memory newPlan = PaymentPlan({
+                duration: invitationData.paymentPlan.duration,
+                monthlyAllowance: invitationData.paymentPlan.monthlyAllowance,
+                isActive: true,
+                createdAt: block.timestamp,
+                insurerAddress: invitationData.senderAddress
+            });
+            
+            patientPaymentPlans[invitationData.recipientAddress].push(newPlan);
+            inviteReq.paymentPlan = newPlan;
+            
+            emit PaymentPlanCreated(
+                invitationData.recipientAddress, 
+                invitationData.senderAddress, 
+                newPlan.duration, 
+                newPlan.monthlyAllowance
+            );
+        }
+        
+        // Mark invitation as processed
+        processedInvitations[invitationHash] = true;
+        insurerPatientInvitations[invitationData.senderAddress][invitationData.recipientAddress] = true;
+        requestCount = requestId > requestCount ? requestId : requestCount;
         
         emit InvitationSent(invitationData.senderAddress, invitationData.recipientAddress, requestId);
         emit RequestSubmitted(requestId, invitationData.senderAddress, RequestType.INVITATION);

@@ -4,10 +4,16 @@ pragma solidity ^0.8.21;
 import {Test} from "forge-std/Test.sol";
 import {zkMedCore} from "../../contracts/zkMed/zkMedCore.sol";
 import {zkMedDomainProver} from "../../contracts/zkMed/provers/zkMedDomainProver.sol";
+import {zkMedPatient} from "../../contracts/zkMed/users/zkMedPatient.sol";
+import {zkMedHospital} from "../../contracts/zkMed/users/zkMedHospital.sol";
+import {zkMedInsurer} from "../../contracts/zkMed/users/zkMedInsurer.sol";
 
 contract zkMedCoreTest is Test {
     zkMedCore public registration;
     zkMedDomainProver public prover;
+    zkMedPatient public patientContract;
+    zkMedHospital public hospitalContract;
+    zkMedInsurer public insurerContract;
     
     address public admin;
     address public hospital1;
@@ -24,6 +30,18 @@ contract zkMedCoreTest is Test {
         
         prover = new zkMedDomainProver();
         registration = new zkMedCore(address(prover), address(0x123)); // placeholder for invitation prover
+        
+        // Deploy user contracts
+        patientContract = new zkMedPatient(address(registration), address(prover));
+        hospitalContract = new zkMedHospital(address(registration), address(prover));
+        insurerContract = new zkMedInsurer(address(registration), address(prover), address(0x456)); // placeholder for invitation prover
+        
+        // Set user contracts in core
+        registration.setUserContracts(
+            address(patientContract),
+            address(hospitalContract),
+            address(insurerContract)
+        );
     }
 
     // ======== Admin Management Tests ========
