@@ -36,7 +36,7 @@ export function OrganizationDetailsComponent({
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-600">Complete your registration to access healthcare services</p>
+              <p className="text-gray-800">Complete your registration to access healthcare services</p>
             </div>
             <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
               ← Back
@@ -68,10 +68,10 @@ export function OrganizationDetailsComponent({
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-sm border p-8">
           <div className="text-center max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">
               {organizationType === "HOSPITAL" ? "Hospital Registration" : "Insurance Company Registration"}
             </h2>
-            <p className="text-gray-600 mb-6">Enter your organization name to begin the verification process:</p>
+            <p className="text-gray-800 mb-6">Enter your organization name to begin the verification process:</p>
 
             <div className="mb-6 text-left">
               <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-2">

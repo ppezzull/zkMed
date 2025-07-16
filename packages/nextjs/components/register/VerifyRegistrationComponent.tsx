@@ -87,7 +87,7 @@ export function VerifyRegistrationComponent({
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-600">Complete your registration to access healthcare services</p>
+              <p className="text-gray-800">Complete your registration to access healthcare services</p>
             </div>
             {!isComplete && (
               <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
@@ -156,8 +156,8 @@ export function VerifyRegistrationComponent({
               <div>
                 <div className="text-6xl mb-4">🎉</div>
                 <h2 className="text-2xl font-bold text-green-600 mb-4">Registration Complete!</h2>
-                <p className="text-gray-600 mb-6">Your registration has been successfully submitted and verified.</p>
-                <p className="text-sm text-gray-500 mb-8">
+                <p className="text-gray-800 mb-6">Your registration has been successfully submitted and verified.</p>
+                <p className="text-sm text-gray-600 mb-8">
                   {role === "PATIENT"
                     ? "You can now access your patient dashboard and manage your medical records."
                     : role === "ADMIN"
@@ -206,8 +206,8 @@ export function VerifyRegistrationComponent({
             {!isComplete && !error && (
               <div>
                 <div className="text-6xl mb-4">⚡</div>
-                <h2 className="text-2xl font-bold mb-4">Verifying Registration</h2>
-                <p className="text-gray-600 mb-6">
+                <h2 className="text-2xl font-bold mb-4 text-gray-900">Verifying Registration</h2>
+                <p className="text-gray-800 mb-6">
                   We&apos;re processing your email verification and generating cryptographic proofs.
                 </p>
 

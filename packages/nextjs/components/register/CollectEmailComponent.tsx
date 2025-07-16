@@ -56,7 +56,7 @@ This is a mock email verification content.`;
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-600">Complete your registration to access healthcare services</p>
+              <p className="text-gray-800">Complete your registration to access healthcare services</p>
             </div>
             <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
               ← Back
@@ -112,7 +112,7 @@ This is a mock email verification content.`;
             {isLoading && (
               <div className="mb-6">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Checking for your email... This may take a few moments.</p>
+                <p className="text-gray-800">Checking for your email... This may take a few moments.</p>
                 <p className="text-sm text-gray-500 mt-2">Email ID: {emailId}</p>
               </div>
             )}
@@ -120,7 +120,7 @@ This is a mock email verification content.`;
             {!isLoading && !emlFetched && (
               <div className="mb-6">
                 <div className="text-6xl mb-4">📧</div>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-800 mb-4">
                   We&apos;re waiting to receive your email. Make sure you&apos;ve sent the email with the exact subject
                   line provided.
                 </p>

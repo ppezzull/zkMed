@@ -138,7 +138,7 @@ Best regards`;
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-600">Complete your registration to access healthcare services</p>
+              <p className="text-gray-800">Complete your registration to access healthcare services</p>
             </div>
             <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
               ← Back
@@ -182,8 +182,8 @@ Best regards`;
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-sm border p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6">Send Verification Email</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Send Verification Email</h2>
+            <p className="text-gray-800 mb-6">
               {role === "PATIENT"
                 ? "Send an email from your personal email address to verify your identity."
                 : "Send an email from your organization's official email address to verify domain ownership."}

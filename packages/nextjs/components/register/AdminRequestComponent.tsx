@@ -72,7 +72,7 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-600">Complete your registration to access healthcare services</p>
+              <p className="text-gray-800">Complete your registration to access healthcare services</p>
             </div>
             {!isComplete && (
               <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
@@ -114,7 +114,7 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
               <>
                 <div className="text-green-600 text-6xl mb-4">✓</div>
                 <h2 className="text-2xl font-bold text-green-800 mb-4">Request Submitted!</h2>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-800 mb-4">
                   Your admin access request has been submitted successfully. A current administrator will review your
                   request.
                 </p>
@@ -122,8 +122,8 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-bold mb-6">Request Admin Access</h2>
-                <p className="text-gray-600 mb-6">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900">Request Admin Access</h2>
+                <p className="text-gray-800 mb-6">
                   Request administrative access to the zkMed platform. Your request will be reviewed by current
                   administrators.
                 </p>
