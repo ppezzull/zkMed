@@ -2,7 +2,8 @@
 pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
-import "../contracts/YourContract.sol";
+import "../contracts/zkMed/HealthcareRegistration.sol";
+import "../contracts/zkMed/HealthcareRegistrationProver.sol";
 
 /**
  * @notice Deploy script for YourContract contract
@@ -25,6 +26,7 @@ contract DeployYourContract is ScaffoldETHDeploy {
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
     function run() external ScaffoldEthDeployerRunner {
-        new YourContract(deployer);
+        HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
+        HealthcareRegistration registration = new HealthcareRegistration(address(prover));
     }
 }

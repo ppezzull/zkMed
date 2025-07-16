@@ -6,14 +6,502 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    YourContract: {
+    HealthcareRegistrationProver: {
       address: "0x700b6a60ce7eaaea56f065753d8dcb9653dbad35",
+      abi: [
+        {
+          type: "function",
+          name: "proof",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "proveOrganizationDomain",
+          inputs: [
+            {
+              name: "unverifiedEmail",
+              type: "tuple",
+              internalType: "struct UnverifiedEmail",
+              components: [
+                {
+                  name: "email",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "dnsRecord",
+                  type: "tuple",
+                  internalType: "struct DnsRecord",
+                  components: [
+                    {
+                      name: "name",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "recordType",
+                      type: "uint8",
+                      internalType: "uint8",
+                    },
+                    {
+                      name: "data",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "ttl",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                  ],
+                },
+                {
+                  name: "verificationData",
+                  type: "tuple",
+                  internalType: "struct VerificationData",
+                  components: [
+                    {
+                      name: "validUntil",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                    {
+                      name: "signature",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                    {
+                      name: "pubKey",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "provePatientEmail",
+          inputs: [
+            {
+              name: "unverifiedEmail",
+              type: "tuple",
+              internalType: "struct UnverifiedEmail",
+              components: [
+                {
+                  name: "email",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "dnsRecord",
+                  type: "tuple",
+                  internalType: "struct DnsRecord",
+                  components: [
+                    {
+                      name: "name",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "recordType",
+                      type: "uint8",
+                      internalType: "uint8",
+                    },
+                    {
+                      name: "data",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "ttl",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                  ],
+                },
+                {
+                  name: "verificationData",
+                  type: "tuple",
+                  internalType: "struct VerificationData",
+                  components: [
+                    {
+                      name: "validUntil",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                    {
+                      name: "signature",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                    {
+                      name: "pubKey",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "setBlock",
+          inputs: [
+            {
+              name: "blockNo",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setChain",
+          inputs: [
+            {
+              name: "chainId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "blockNo",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "stringToAddress",
+          inputs: [
+            {
+              name: "str",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "error",
+          name: "FailedInnerCall",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752669419.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    HealthcareRegistration: {
+      address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
       abi: [
         {
           type: "constructor",
           inputs: [
             {
-              name: "_owner",
+              name: "_emailDomainProver",
               type: "address",
               internalType: "address",
             },
@@ -21,18 +509,853 @@ const deployedContracts = {
           stateMutability: "nonpayable",
         },
         {
-          type: "receive",
-          stateMutability: "payable",
+          type: "function",
+          name: "_setTestVerifier",
+          inputs: [
+            {
+              name: "newVerifier",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "greeting",
-          inputs: [],
+          name: "addAdmin",
+          inputs: [
+            {
+              name: "newAdmin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "adminRequests",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
           outputs: [
+            {
+              name: "base",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRequest",
+              components: [
+                {
+                  name: "requester",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "requestType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestType",
+                },
+                {
+                  name: "status",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestStatus",
+                },
+                {
+                  name: "requestTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "processedBy",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "processedTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "adminRole",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "admins",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+            {
+              name: "permissions",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "adminSince",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "approveRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateUser",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "domainToUser",
+          inputs: [
             {
               name: "",
               type: "string",
               internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "emailDomainProver",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getAdminRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.AdminAccessRequest",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct HealthcareRegistration.BaseRequest",
+                  components: [
+                    {
+                      name: "requester",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "requestType",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestType",
+                    },
+                    {
+                      name: "status",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestStatus",
+                    },
+                    {
+                      name: "requestTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "processedBy",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "processedTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "adminRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.AdminRole",
+                },
+                {
+                  name: "reason",
+                  type: "string",
+                  internalType: "string",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getAdminType",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getDomainOwner",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getOrganizationRecord",
+          inputs: [
+            {
+              name: "organization",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.OrganizationRecord",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct HealthcareRegistration.BaseRecord",
+                  components: [
+                    {
+                      name: "walletAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "emailHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                    {
+                      name: "registrationTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "isActive",
+                      type: "bool",
+                      internalType: "bool",
+                    },
+                    {
+                      name: "requestId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "orgType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.UserType",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getOrganizationRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.OrganizationRegistrationRequest",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct HealthcareRegistration.BaseRequest",
+                  components: [
+                    {
+                      name: "requester",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "requestType",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestType",
+                    },
+                    {
+                      name: "status",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestStatus",
+                    },
+                    {
+                      name: "requestTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "processedBy",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "processedTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "orgType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.UserType",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPatientRecord",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.PatientRecord",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct HealthcareRegistration.BaseRecord",
+                  components: [
+                    {
+                      name: "walletAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "emailHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                    {
+                      name: "registrationTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "isActive",
+                      type: "bool",
+                      internalType: "bool",
+                    },
+                    {
+                      name: "requestId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPatientRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.PatientRegistrationRequest",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct HealthcareRegistration.BaseRequest",
+                  components: [
+                    {
+                      name: "requester",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "requestType",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestType",
+                    },
+                    {
+                      name: "status",
+                      type: "uint8",
+                      internalType: "enum HealthcareRegistration.RequestStatus",
+                    },
+                    {
+                      name: "requestTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "processedBy",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "processedTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequests",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequestsByType",
+          inputs: [
+            {
+              name: "reqType",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.RequestType",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRegistrationStats",
+          inputs: [],
+          outputs: [
+            {
+              name: "totalUsers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "patients",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "hospitals",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "insurers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRequestBase",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRequest",
+              components: [
+                {
+                  name: "requester",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "requestType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestType",
+                },
+                {
+                  name: "status",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestStatus",
+                },
+                {
+                  name: "requestTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "processedBy",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "processedTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserType",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.UserType",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isDomainTaken",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isUserRegistered",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "organizationRecords",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "base",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRecord",
+              components: [
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "registrationTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "orgType",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.UserType",
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "organizationName",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "organizationRequests",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "base",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRequest",
+              components: [
+                {
+                  name: "requester",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "requestType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestType",
+                },
+                {
+                  name: "status",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestStatus",
+                },
+                {
+                  name: "requestTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "processedBy",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "processedTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "orgType",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.UserType",
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "organizationName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
             },
           ],
           stateMutability: "view",
@@ -52,46 +1375,7 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "premium",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setGreeting",
-          inputs: [
-            {
-              name: "_newGreeting",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [],
-          stateMutability: "payable",
-        },
-        {
-          type: "function",
-          name: "totalCounter",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "userGreetingCounter",
+          name: "patientRecords",
           inputs: [
             {
               name: "",
@@ -101,6 +1385,102 @@ const deployedContracts = {
           ],
           outputs: [
             {
+              name: "base",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRecord",
+              components: [
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "registrationTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "patientRequests",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "base",
+              type: "tuple",
+              internalType: "struct HealthcareRegistration.BaseRequest",
+              components: [
+                {
+                  name: "requester",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "requestType",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestType",
+                },
+                {
+                  name: "status",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistration.RequestStatus",
+                },
+                {
+                  name: "requestTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "processedBy",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "processedTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "pendingRequestCount",
+          inputs: [],
+          outputs: [
+            {
               name: "",
               type: "uint256",
               internalType: "uint256",
@@ -110,45 +1490,841 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "withdraw",
+          name: "registerHospital",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "registrationData",
+              type: "tuple",
+              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "registerInsurer",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "registrationData",
+              type: "tuple",
+              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "registerPatient",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "registrationData",
+              type: "tuple",
+              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum HealthcareRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "rejectRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
           inputs: [],
           outputs: [],
           stateMutability: "nonpayable",
         },
         {
-          type: "event",
-          name: "GreetingChange",
+          type: "function",
+          name: "requestAdminAccess",
           inputs: [
             {
-              name: "greetingSetter",
+              name: "requestedRole",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "requestCount",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "requests",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "requester",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "requestType",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.RequestType",
+            },
+            {
+              name: "status",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.RequestStatus",
+            },
+            {
+              name: "requestTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "processedBy",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "processedTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalHospitals",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalInsurers",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalPatients",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalRegisteredUsers",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateAdminPermissions",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "permissions",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "usedEmailHashes",
+          inputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "userToRequestId",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "userTypes",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint8",
+              internalType: "enum HealthcareRegistration.UserType",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "validateHospitalDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "validateInsurerDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "verifier",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "AdminAdded",
+          inputs: [
+            {
+              name: "admin",
               type: "address",
               indexed: true,
               internalType: "address",
             },
             {
-              name: "newGreeting",
+              name: "role",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum HealthcareRegistration.AdminRole",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "HospitalRegistered",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "domain",
               type: "string",
               indexed: false,
               internalType: "string",
             },
             {
-              name: "premium",
-              type: "bool",
+              name: "emailHash",
+              type: "bytes32",
               indexed: false,
-              internalType: "bool",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
+              internalType: "bytes32",
             },
           ],
           anonymous: false,
         },
+        {
+          type: "event",
+          name: "InsurerRegistered",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PatientRegistered",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestApproved",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "approver",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestRejected",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "rejecter",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "reason",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestSubmitted",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "requester",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "requestType",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum HealthcareRegistration.RequestType",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "UserDeactivated",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "InvalidChainId",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752592940.json",
+      deploymentFile: "run-1752669419.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
