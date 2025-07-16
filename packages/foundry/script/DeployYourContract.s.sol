@@ -2,8 +2,9 @@
 pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
-import "../contracts/zkMed/HealthcareRegistration.sol";
-import "../contracts/zkMed/HealthcareRegistrationProver.sol";
+import "../contracts/zkMed/zkMedCore.sol";
+import "../contracts/zkMed/provers/zkMedDomainProver.sol";
+import "../contracts/zkMed/provers/zkMedInvitationProver.sol";
 
 /**
  * @notice Deploy script for YourContract contract
@@ -26,7 +27,12 @@ contract DeployYourContract is ScaffoldETHDeploy {
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
     function run() external ScaffoldEthDeployerRunner {
-        HealthcareRegistrationProver prover = new HealthcareRegistrationProver();
-        HealthcareRegistration registration = new HealthcareRegistration(address(prover));
+        zkMedDomainProver prover = new zkMedDomainProver();
+        zkMedInvitationProver invitationProver = new zkMedInvitationProver(address(0)); // Will be set after zkMedCore deployment
+        zkMedCore registration = new zkMedCore(address(prover), address(invitationProver));
+        
+        // Update the invitation prover with the correct zkMedCore address
+        invitationProver = new zkMedInvitationProver(address(registration));
+        // Note: In production, you'd want to update the registration contract with the new invitation prover address
     }
 }

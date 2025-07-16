@@ -2,12 +2,12 @@
 pragma solidity ^0.8.21;
 
 import {Test} from "forge-std/Test.sol";
-import {HealthcareRegistration} from "../../contracts/zkMed/HealthcareRegistration.sol";
-import {HealthcareRegistrationProver} from "../../contracts/zkMed/HealthcareRegistrationProver.sol";
+import {zkMedCore} from "../../contracts/zkMed/zkMedCore.sol";
+import {zkMedDomainProver} from "../../contracts/zkMed/provers/zkMedDomainProver.sol";
 
-contract HealthcareRegistrationTest is Test {
-    HealthcareRegistration public registration;
-    HealthcareRegistrationProver public prover;
+contract zkMedCoreTest is Test {
+    zkMedCore public registration;
+    zkMedDomainProver public prover;
     
     address public admin;
     address public hospital1;
@@ -22,61 +22,61 @@ contract HealthcareRegistrationTest is Test {
         hospital1 = vm.addr(3);
         insurer1 = vm.addr(4);
         
-        prover = new HealthcareRegistrationProver();
-        registration = new HealthcareRegistration(address(prover));
+        prover = new zkMedDomainProver();
+        registration = new zkMedCore(address(prover), address(0x123)); // placeholder for invitation prover
     }
 
     // ======== Admin Management Tests ========
 
     function test_addAdmin() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user1, zkMedCore.AdminRole.BASIC);
         
-        (bool isActive, HealthcareRegistration.AdminRole role, uint256 permissions, uint256 adminSince) = registration.admins(user1);
+        (bool isActive, zkMedCore.AdminRole role, uint256 permissions, uint256 adminSince) = registration.admins(user1);
         assertTrue(isActive);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.BASIC));
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.BASIC));
         assertEq(permissions, 1); // Basic permissions should be 1
         assertGt(adminSince, 0);
     }
 
     function test_addModeratorAdmin() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.MODERATOR);
+        registration.addAdmin(user1, zkMedCore.AdminRole.MODERATOR);
         
-        (bool isActive, HealthcareRegistration.AdminRole role, uint256 permissions,) = registration.admins(user1);
+        (bool isActive, zkMedCore.AdminRole role, uint256 permissions,) = registration.admins(user1);
         assertTrue(isActive);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.MODERATOR));
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.MODERATOR));
         assertEq(permissions, 255); // Moderate permissions should be 255
     }
 
     function test_addSuperAdmin() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.SUPER_ADMIN);
+        registration.addAdmin(user1, zkMedCore.AdminRole.SUPER_ADMIN);
         
-        (bool isActive, HealthcareRegistration.AdminRole role, uint256 permissions,) = registration.admins(user1);
+        (bool isActive, zkMedCore.AdminRole role, uint256 permissions,) = registration.admins(user1);
         assertTrue(isActive);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.SUPER_ADMIN));
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.SUPER_ADMIN));
         assertEq(permissions, type(uint256).max); // Super admin gets all permissions
     }
 
     function test_revertAddAdminAlreadyAdmin() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user1, zkMedCore.AdminRole.BASIC);
         vm.expectRevert("Already an admin");
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.MODERATOR);
+        registration.addAdmin(user1, zkMedCore.AdminRole.MODERATOR);
     }
 
     function test_revertAddAdminInvalidAddress() public {
         vm.expectRevert("Invalid admin address");
-        registration.addAdmin(address(0), HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(address(0), zkMedCore.AdminRole.BASIC);
     }
 
     function test_revertAddAdminNotSuperAdmin() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user1, zkMedCore.AdminRole.BASIC);
         
         vm.prank(user1);
         vm.expectRevert("Not a super admin");
-        registration.addAdmin(user2, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user2, zkMedCore.AdminRole.BASIC);
     }
 
     function test_updateAdminPermissions() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user1, zkMedCore.AdminRole.BASIC);
         
         uint256 newPermissions = 123;
         registration.updateAdminPermissions(user1, newPermissions);
@@ -92,10 +92,10 @@ contract HealthcareRegistrationTest is Test {
     }
 
     function test_getAdminType() public {
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.MODERATOR);
+        registration.addAdmin(user1, zkMedCore.AdminRole.MODERATOR);
         
-        HealthcareRegistration.AdminRole role = registration.getAdminType(user1);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.MODERATOR));
+        zkMedCore.AdminRole role = registration.getAdminType(user1);
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.MODERATOR));
     }
 
     function test_revertGetAdminTypeNotAdmin() public {
@@ -108,7 +108,7 @@ contract HealthcareRegistrationTest is Test {
     function test_nonExistentPatientRecord() public view {
         // For unregistered users, userTypes[address] returns UserType(0) which is PATIENT
         // So getPatientRecord won't revert but will return an empty record
-        HealthcareRegistration.PatientRecord memory record = registration.getPatientRecord(user1);
+        zkMedCore.PatientRecord memory record = registration.getPatientRecord(user1);
         assertEq(record.base.walletAddress, address(0));
         assertEq(record.base.emailHash, bytes32(0));
         assertEq(record.base.registrationTime, 0);
@@ -166,9 +166,9 @@ contract HealthcareRegistrationTest is Test {
     }
 
     function test_getPendingRequestsByType() public view {
-        uint256[] memory patientRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.PATIENT_REGISTRATION);
-        uint256[] memory orgRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ORG_REGISTRATION);
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory patientRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.PATIENT_REGISTRATION);
+        uint256[] memory orgRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ORG_REGISTRATION);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         
         assertEq(patientRequests.length, 0);
         assertEq(orgRequests.length, 0);
@@ -178,17 +178,17 @@ contract HealthcareRegistrationTest is Test {
     function test_adminRequestSystem() public {
         // Test requesting admin access
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Need admin access for testing");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Need admin access for testing");
         
         // Check that the request was created
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         assertEq(adminRequests.length, 1);
         
         uint256 requestId = adminRequests[0];
-        HealthcareRegistration.BaseRequest memory baseRequest = registration.getRequestBase(requestId);
+        zkMedCore.BaseRequest memory baseRequest = registration.getRequestBase(requestId);
         assertEq(baseRequest.requester, user1);
-        assertEq(uint256(baseRequest.requestType), uint256(HealthcareRegistration.RequestType.ADMIN_ACCESS));
-        assertEq(uint256(baseRequest.status), uint256(HealthcareRegistration.RequestStatus.PENDING));
+        assertEq(uint256(baseRequest.requestType), uint256(zkMedCore.RequestType.ADMIN_ACCESS));
+        assertEq(uint256(baseRequest.status), uint256(zkMedCore.RequestStatus.PENDING));
         
         // Admin should be able to approve the request
         registration.approveRequest(requestId);
@@ -196,20 +196,20 @@ contract HealthcareRegistrationTest is Test {
         // Check that user1 is now an admin
         (bool isActive,,,) = registration.admins(user1);
         assertTrue(isActive);
-        assertEq(uint256(registration.getAdminType(user1)), uint256(HealthcareRegistration.AdminRole.BASIC));
+        assertEq(uint256(registration.getAdminType(user1)), uint256(zkMedCore.AdminRole.BASIC));
     }
 
     function test_revertRequestSuperAdmin() public {
         vm.prank(user1);
         vm.expectRevert("Cannot request super admin role");
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.SUPER_ADMIN, "Trying to get super admin");
+        registration.requestAdminAccess(zkMedCore.AdminRole.SUPER_ADMIN, "Trying to get super admin");
     }
 
     function test_revertApproveRequestNotModerator() public {
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Need admin access");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Need admin access");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
         vm.prank(user2);
@@ -220,17 +220,17 @@ contract HealthcareRegistrationTest is Test {
     function test_rejectRequest() public {
         // Create a request
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Need admin access");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Need admin access");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
         // Reject the request
         registration.rejectRequest(requestId, "Not sufficient justification");
         
         // Check that the request was rejected
-        HealthcareRegistration.BaseRequest memory baseRequest = registration.getRequestBase(requestId);
-        assertEq(uint256(baseRequest.status), uint256(HealthcareRegistration.RequestStatus.REJECTED));
+        zkMedCore.BaseRequest memory baseRequest = registration.getRequestBase(requestId);
+        assertEq(uint256(baseRequest.status), uint256(zkMedCore.RequestStatus.REJECTED));
         
         // User should not be an admin
         (bool isActive,,,) = registration.admins(user1);
@@ -241,31 +241,31 @@ contract HealthcareRegistrationTest is Test {
 
     function test_revertRequestAdminAccessAlreadyAdmin() public {
         // First make user1 an admin
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.BASIC);
+        registration.addAdmin(user1, zkMedCore.AdminRole.BASIC);
         
         // Then try to request admin access again
         vm.prank(user1);
         vm.expectRevert("Already an admin");
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.MODERATOR, "Upgrade request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.MODERATOR, "Upgrade request");
     }
 
     function test_revertRequestAdminAccessPendingRequest() public {
         // Submit first request
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "First request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "First request");
         
         // Try to submit another request while first is pending
         vm.prank(user1);
         vm.expectRevert("Already have pending request");
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.MODERATOR, "Second request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.MODERATOR, "Second request");
     }
 
     function test_requestAdminAccessAfterRejection() public {
         // Submit first request
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "First request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "First request");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
         // Reject the request
@@ -273,10 +273,10 @@ contract HealthcareRegistrationTest is Test {
         
         // Should be able to submit a new request after rejection
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Second attempt");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Second attempt");
         
         // Check that new request was created
-        adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         assertEq(adminRequests.length, 1);
         
         uint256 newRequestId = adminRequests[0];
@@ -285,14 +285,14 @@ contract HealthcareRegistrationTest is Test {
 
     function test_getAdminRequestDetails() public {
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Need basic access");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Need basic access");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
-        HealthcareRegistration.AdminAccessRequest memory adminReq = registration.getAdminRequest(requestId);
+        zkMedCore.AdminAccessRequest memory adminReq = registration.getAdminRequest(requestId);
         assertEq(adminReq.base.requester, user1);
-        assertEq(uint256(adminReq.adminRole), uint256(HealthcareRegistration.AdminRole.BASIC));
+        assertEq(uint256(adminReq.adminRole), uint256(zkMedCore.AdminRole.BASIC));
         assertEq(adminReq.reason, "Need basic access");
     }
 
@@ -303,9 +303,9 @@ contract HealthcareRegistrationTest is Test {
 
     function test_revertGetWrongRequestType() public {
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Admin request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Admin request");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
         // Try to get it as a patient request
@@ -319,13 +319,13 @@ contract HealthcareRegistrationTest is Test {
 
     function test_moderatorCanApproveBasicAdminRequest() public {
         // First create a moderator
-        registration.addAdmin(user1, HealthcareRegistration.AdminRole.MODERATOR);
+        registration.addAdmin(user1, zkMedCore.AdminRole.MODERATOR);
         
         // User2 requests basic admin access
         vm.prank(user2);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Need basic access");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Need basic access");
         
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         
         // Moderator should be able to approve basic admin request
@@ -333,16 +333,16 @@ contract HealthcareRegistrationTest is Test {
         registration.approveRequest(requestId);
         
         // Check that user2 is now a basic admin
-        (bool isActive, HealthcareRegistration.AdminRole role,,) = registration.admins(user2);
+        (bool isActive, zkMedCore.AdminRole role,,) = registration.admins(user2);
         assertTrue(isActive);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.BASIC));
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.BASIC));
     }
 
     function test_contractHasSuperAdminOnDeploy() public view {
         // The deployer (this contract) should be a super admin
-        (bool isActive, HealthcareRegistration.AdminRole role, uint256 permissions, uint256 adminSince) = registration.admins(address(this));
+        (bool isActive, zkMedCore.AdminRole role, uint256 permissions, uint256 adminSince) = registration.admins(address(this));
         assertTrue(isActive);
-        assertEq(uint256(role), uint256(HealthcareRegistration.AdminRole.SUPER_ADMIN));
+        assertEq(uint256(role), uint256(zkMedCore.AdminRole.SUPER_ADMIN));
         assertEq(permissions, type(uint256).max);
         assertGt(adminSince, 0);
     }
@@ -351,12 +351,12 @@ contract HealthcareRegistrationTest is Test {
         uint256 initialCount = registration.requestCount();
         
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "First request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "First request");
         
         assertEq(registration.requestCount(), initialCount + 1);
         
         vm.prank(user2);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Second request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Second request");
         
         assertEq(registration.requestCount(), initialCount + 2);
     }
@@ -366,15 +366,15 @@ contract HealthcareRegistrationTest is Test {
         
         // Submit request - should increase pending count
         vm.prank(user1);
-        registration.requestAdminAccess(HealthcareRegistration.AdminRole.BASIC, "Test request");
+        registration.requestAdminAccess(zkMedCore.AdminRole.BASIC, "Test request");
         
         assertEq(registration.pendingRequestCount(), initialPendingCount + 1);
         
         // Approve request - should decrease pending count
-        uint256[] memory adminRequests = registration.getPendingRequestsByType(HealthcareRegistration.RequestType.ADMIN_ACCESS);
+        uint256[] memory adminRequests = registration.getPendingRequestsByType(zkMedCore.RequestType.ADMIN_ACCESS);
         uint256 requestId = adminRequests[0];
         registration.approveRequest(requestId);
         
         assertEq(registration.pendingRequestCount(), initialPendingCount);
     }
-}
+} 

@@ -4,21 +4,22 @@ pragma solidity ^0.8.21;
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {HealthcareRegistrationProver} from "./HealthcareRegistrationProver.sol";
+import {zkMedDomainProver} from "./provers/zkMedDomainProver.sol";
+import {zkMedInvitationProver} from "./provers/zkMedInvitationProver.sol";
 
 /**
  * @title zkMed Healthcare Registration Contract
  * @notice Manages healthcare stakeholder registration using MailProof domain verification
  * @dev Integrates with vlayer EmailDomainProver for cryptographic email verification
  */
-contract HealthcareRegistration is Verifier, Ownable {
+contract zkMedCore is Verifier, Ownable {
     
     // ======== Type Definitions ========
     
     enum UserType { PATIENT, HOSPITAL, INSURER }
     enum AdminRole { BASIC, MODERATOR, SUPER_ADMIN }
     enum RequestStatus { PENDING, APPROVED, REJECTED }
-    enum RequestType { PATIENT_REGISTRATION, ORG_REGISTRATION, ADMIN_ACCESS }
+    enum RequestType { PATIENT_REGISTRATION, ORG_REGISTRATION, ADMIN_ACCESS, INVITATION }
 
     // Base record with common fields for all users
     struct BaseRecord {
@@ -86,6 +87,28 @@ contract HealthcareRegistration is Verifier, Ownable {
         string reason;
     }
     
+    // Payment plan structure for patient invitations
+    struct PaymentPlan {
+        uint256 duration;           // Timestamp like 01/01/2027
+        uint256 monthlyAllowance;   // Monthly allowance in cents (e.g., 4000 = $40.00)
+        bool isActive;              // Whether the plan is currently active
+        uint256 createdAt;          // When the plan was created
+        address insurerAddress;     // Which insurer created this plan
+    }
+    
+    // Invitation request
+    struct InvitationRequest {
+        BaseRequest base;
+        address senderAddress;      // Insurance company address
+        address recipientAddress;   // Patient or hospital address
+        zkMedInvitationProver.RecipientType recipientType;
+        string insuranceName;
+        bytes32 senderEmailHash;
+        bytes32 recipientEmailHash;
+        PaymentPlan paymentPlan;    // Only populated for patient invitations
+        bool hasPaymentPlan;        // True if invitation includes payment plan
+    }
+    
     // ======== State Variables ========
     
     address public emailDomainProver;
@@ -105,10 +128,18 @@ contract HealthcareRegistration is Verifier, Ownable {
     mapping(uint256 => PatientRegistrationRequest) public patientRequests;
     mapping(uint256 => OrganizationRegistrationRequest) public organizationRequests;
     mapping(uint256 => AdminAccessRequest) public adminRequests;
+    mapping(uint256 => InvitationRequest) public invitationRequests;
     
     mapping(address => uint256) public userToRequestId;
     uint256 public requestCount;
     uint256 public pendingRequestCount;
+    
+    // Invitation and payment plan mappings
+    mapping(address => PaymentPlan[]) public patientPaymentPlans;
+    mapping(address => mapping(address => bool)) public insurerPatientInvitations; // insurer => patient => invited
+    mapping(bytes32 => bool) public processedInvitations; // Track processed invitation emails
+    
+    address public invitationProver;
     
     // Statistics
     uint256 public totalRegisteredUsers;
@@ -128,10 +159,14 @@ contract HealthcareRegistration is Verifier, Ownable {
     event AdminAdded(address indexed admin, AdminRole role);
     event UserDeactivated(address indexed user);
     
+    event InvitationSent(address indexed insurer, address indexed recipient, uint256 indexed requestId);
+    event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 duration, uint256 monthlyAllowance);
+    
     // ======== Constructor ========
     
-    constructor(address _emailDomainProver) Ownable(msg.sender) {
+    constructor(address _emailDomainProver, address _invitationProver) Ownable(msg.sender) {
         emailDomainProver = _emailDomainProver;
+        invitationProver = _invitationProver;
         
         // Set deployer as super admin
         admins[msg.sender] = AdminRecord({
@@ -252,6 +287,10 @@ contract HealthcareRegistration is Verifier, Ownable {
             // Organization was already created during registration, just need to update status
             // No additional action needed as the organization is already registered
         }
+        else if (baseReq.requestType == RequestType.INVITATION) {
+            // Invitations are typically auto-approved, but manual approval might be needed for special cases
+            // No additional action needed as the invitation was already processed
+        }
         // For PATIENT_REGISTRATION, nothing additional is needed as they're auto-approved
         
         // Update the request status
@@ -300,6 +339,24 @@ contract HealthcareRegistration is Verifier, Ownable {
             
             totalRegisteredUsers--;
         }
+        else if (baseReq.requestType == RequestType.INVITATION) {
+            // For invitation rejections, we might need to deactivate payment plans
+            InvitationRequest storage inviteReq = invitationRequests[requestId];
+            
+            if (inviteReq.hasPaymentPlan && inviteReq.recipientType == zkMedInvitationProver.RecipientType.PATIENT) {
+                // Deactivate the most recent payment plan for this patient from this insurer
+                PaymentPlan[] storage plans = patientPaymentPlans[inviteReq.recipientAddress];
+                for (uint256 i = plans.length; i > 0; i--) {
+                    if (plans[i-1].insurerAddress == inviteReq.senderAddress && plans[i-1].isActive) {
+                        plans[i-1].isActive = false;
+                        break;
+                    }
+                }
+            }
+            
+            // Remove invitation mapping
+            insurerPatientInvitations[inviteReq.senderAddress][inviteReq.recipientAddress] = false;
+        }
         
         // Update the request status
         baseReq.status = RequestStatus.REJECTED;
@@ -318,19 +375,19 @@ contract HealthcareRegistration is Verifier, Ownable {
      */
     function registerPatient(
         Proof calldata,
-        HealthcareRegistrationProver.RegistrationData calldata registrationData
+        zkMedDomainProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered
         onlyVerified(
             emailDomainProver, 
-            HealthcareRegistrationProver.provePatientEmail.selector
+            zkMedDomainProver.provePatientEmail.selector
         )
     {
         // Validate registration data
         require(registrationData.walletAddress != address(0), "Invalid patient address");
         require(!usedEmailHashes[registrationData.emailHash], "Email already used");
-        require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.PATIENT, 
+        require(registrationData.requestedRole == zkMedDomainProver.UserType.PATIENT, 
                 "Not a patient registration");
 
         // Create a patient registration request (auto-approved)
@@ -381,17 +438,17 @@ contract HealthcareRegistration is Verifier, Ownable {
      */
     function registerHospital(
         Proof calldata, 
-        HealthcareRegistrationProver.RegistrationData calldata registrationData
+        zkMedDomainProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered
         onlyVerified(
             emailDomainProver, 
-            HealthcareRegistrationProver.proveOrganizationDomain.selector
+            zkMedDomainProver.proveOrganizationDomain.selector
         )
     {
         // Verify this is a hospital registration
-        require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.HOSPITAL, 
+        require(registrationData.requestedRole == zkMedDomainProver.UserType.HOSPITAL, 
                 "Not a hospital registration");
         
         // Validate the registration data
@@ -454,17 +511,17 @@ contract HealthcareRegistration is Verifier, Ownable {
      */
     function registerInsurer(
         Proof calldata,
-        HealthcareRegistrationProver.RegistrationData calldata registrationData
+        zkMedDomainProver.RegistrationData calldata registrationData
     ) 
         external 
         notRegistered
         onlyVerified(
             emailDomainProver, 
-            HealthcareRegistrationProver.proveOrganizationDomain.selector
+            zkMedDomainProver.proveOrganizationDomain.selector
         )
     {
         // Verify this is an insurer registration
-        require(registrationData.requestedRole == HealthcareRegistrationProver.UserType.INSURER, 
+        require(registrationData.requestedRole == zkMedDomainProver.UserType.INSURER, 
                 "Not an insurer registration");
         
         // Validate the registration data
@@ -517,6 +574,94 @@ contract HealthcareRegistration is Verifier, Ownable {
         
         emit InsurerRegistered(msg.sender, registrationData.domain, registrationData.emailHash);
         emit RequestSubmitted(requestId, msg.sender, RequestType.ORG_REGISTRATION);
+    }
+    
+    // ======== Invitation Processing ========
+    
+    /**
+     * @dev Process an invitation from an insurance company to a patient or hospital
+     * @param invitationData Data structure containing invitation information
+     */
+    function processInvitation(
+        Proof calldata,
+        zkMedInvitationProver.InvitationData calldata invitationData
+    ) 
+        external 
+        onlyVerified(
+            invitationProver, 
+            zkMedInvitationProver.proveInvitation.selector
+        )
+    {
+        // Check that the invitation hasn't been processed before
+        bytes32 invitationHash = keccak256(abi.encodePacked(
+            invitationData.senderEmailHash, 
+            invitationData.recipientEmailHash
+        ));
+        require(!processedInvitations[invitationHash], "Invitation already processed");
+        
+        // Validate sender (already done in prover, but double-check)
+        require(userTypes[invitationData.senderAddress] == UserType.INSURER, "Sender must be an insurer");
+        require(isOrganizationApproved(invitationData.senderAddress), "Sender must be approved");
+        
+        // Validate recipient based on type
+        if (invitationData.recipientType == zkMedInvitationProver.RecipientType.HOSPITAL) {
+            require(userTypes[invitationData.recipientAddress] == UserType.HOSPITAL, "Recipient must be a hospital");
+            require(isOrganizationApproved(invitationData.recipientAddress), "Hospital must be approved");
+        } else {
+            // For patients, the recipientAddress might need to be provided by the caller
+            // since we can't directly map email to patient address in the prover
+            require(msg.sender == invitationData.recipientAddress || _isUserActive(invitationData.recipientAddress), "Invalid patient recipient");
+            require(userTypes[invitationData.recipientAddress] == UserType.PATIENT, "Recipient must be a patient");
+        }
+        
+        // Create invitation request
+        uint256 requestId = ++requestCount;
+        
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = invitationData.senderAddress;
+        baseReq.requestType = RequestType.INVITATION;
+        baseReq.status = RequestStatus.APPROVED; // Invitations are auto-approved if validation passes
+        baseReq.requestTime = block.timestamp;
+        baseReq.processedTime = block.timestamp;
+        
+        InvitationRequest storage inviteReq = invitationRequests[requestId];
+        inviteReq.base = baseReq;
+        inviteReq.senderAddress = invitationData.senderAddress;
+        inviteReq.recipientAddress = invitationData.recipientAddress;
+        inviteReq.recipientType = invitationData.recipientType;
+        inviteReq.insuranceName = invitationData.insuranceName;
+        inviteReq.senderEmailHash = invitationData.senderEmailHash;
+        inviteReq.recipientEmailHash = invitationData.recipientEmailHash;
+        inviteReq.hasPaymentPlan = invitationData.hasPaymentPlan;
+        
+        // If it's a patient invitation with payment plan, create the payment plan
+        if (invitationData.recipientType == zkMedInvitationProver.RecipientType.PATIENT && invitationData.hasPaymentPlan) {
+            PaymentPlan memory newPlan = PaymentPlan({
+                duration: invitationData.paymentPlan.duration,
+                monthlyAllowance: invitationData.paymentPlan.monthlyAllowance,
+                isActive: true,
+                createdAt: block.timestamp,
+                insurerAddress: invitationData.senderAddress
+            });
+            
+            patientPaymentPlans[invitationData.recipientAddress].push(newPlan);
+            inviteReq.paymentPlan = newPlan;
+            
+            emit PaymentPlanCreated(
+                invitationData.recipientAddress, 
+                invitationData.senderAddress, 
+                newPlan.duration, 
+                newPlan.monthlyAllowance
+            );
+        }
+        
+        // Mark invitation as processed
+        processedInvitations[invitationHash] = true;
+        insurerPatientInvitations[invitationData.senderAddress][invitationData.recipientAddress] = true;
+        
+        emit InvitationSent(invitationData.senderAddress, invitationData.recipientAddress, requestId);
+        emit RequestSubmitted(requestId, invitationData.senderAddress, RequestType.INVITATION);
+        emit RequestApproved(requestId, address(0)); // Auto-approved
     }
     
     // ======== Admin Management ========
@@ -668,6 +813,25 @@ contract HealthcareRegistration is Verifier, Ownable {
     // ======== View Functions ========
     
     /**
+     * @dev Check if an organization is registered and approved
+     * @param organization Organization address to check
+     * @return bool True if organization is approved
+     */
+    function isOrganizationApproved(address organization) public view returns (bool) {
+        UserType userType = userTypes[organization];
+        if (userType != UserType.HOSPITAL && userType != UserType.INSURER) {
+            return false;
+        }
+        
+        if (!organizationRecords[organization].base.isActive) {
+            return false;
+        }
+        
+        uint256 requestId = organizationRecords[organization].base.requestId;
+        return requests[requestId].status == RequestStatus.APPROVED;
+    }
+    
+    /**
      * @dev Get patient record for an address
      * @param patient Patient address
      * @return PatientRecord struct
@@ -728,6 +892,66 @@ contract HealthcareRegistration is Verifier, Ownable {
     function getAdminRequest(uint256 requestId) external view returns (AdminAccessRequest memory) {
         require(requests[requestId].requestType == RequestType.ADMIN_ACCESS, "Not an admin request");
         return adminRequests[requestId];
+    }
+    
+    /**
+     * @dev Get invitation request details by ID
+     * @param requestId Request ID
+     * @return InvitationRequest struct
+     */
+    function getInvitationRequest(uint256 requestId) external view returns (InvitationRequest memory) {
+        require(requests[requestId].requestType == RequestType.INVITATION, "Not an invitation request");
+        return invitationRequests[requestId];
+    }
+    
+    /**
+     * @dev Get all payment plans for a patient
+     * @param patient Patient address
+     * @return PaymentPlan[] Array of payment plans
+     */
+    function getPatientPaymentPlans(address patient) external view returns (PaymentPlan[] memory) {
+        require(userTypes[patient] == UserType.PATIENT, "Not a patient");
+        return patientPaymentPlans[patient];
+    }
+    
+    /**
+     * @dev Get active payment plans for a patient
+     * @param patient Patient address
+     * @return PaymentPlan[] Array of active payment plans
+     */
+    function getActivePaymentPlans(address patient) external view returns (PaymentPlan[] memory) {
+        require(userTypes[patient] == UserType.PATIENT, "Not a patient");
+        PaymentPlan[] memory allPlans = patientPaymentPlans[patient];
+        
+        // Count active plans
+        uint256 activeCount = 0;
+        for (uint256 i = 0; i < allPlans.length; i++) {
+            if (allPlans[i].isActive && allPlans[i].duration > block.timestamp) {
+                activeCount++;
+            }
+        }
+        
+        // Create array with active plans
+        PaymentPlan[] memory activePlans = new PaymentPlan[](activeCount);
+        uint256 index = 0;
+        for (uint256 i = 0; i < allPlans.length; i++) {
+            if (allPlans[i].isActive && allPlans[i].duration > block.timestamp) {
+                activePlans[index] = allPlans[i];
+                index++;
+            }
+        }
+        
+        return activePlans;
+    }
+    
+    /**
+     * @dev Check if an insurer has invited a patient
+     * @param insurer Insurer address
+     * @param patient Patient address
+     * @return bool True if invitation exists
+     */
+    function hasInsurerInvitedPatient(address insurer, address patient) external view returns (bool) {
+        return insurerPatientInvitations[insurer][patient];
     }
     
     /**
