@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,13 +15,17 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
+  const pathname = usePathname();
+
+  // Don't show Scaffold-ETH header on homepage (it has its own HealthcareHeader)
+  const showScaffoldHeader = pathname !== "/";
 
   return (
     <>
       <div className={`flex flex-col min-h-screen `}>
-        <Header />
+        {showScaffoldHeader && <Header />}
         <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
+        {showScaffoldHeader && <Footer />}
       </div>
       <Toaster />
     </>
