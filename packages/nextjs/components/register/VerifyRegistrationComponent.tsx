@@ -3,103 +3,80 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { HealthcareRole } from "./RoleSelectionComponent";
-import { usePrivy } from "@privy-io/react-auth";
 
-/**
- * Verify Registration Component Props
- */
 interface VerifyRegistrationComponentProps {
   role: HealthcareRole;
   emlContent: string;
+  organizationName?: string;
   onBack: () => void;
 }
 
 /**
- * Registration Status Types
- */
-type RegistrationStatus = "processing" | "success" | "error";
-
-/**
  * Verify Registration Component
  *
- * Final step in registration workflow where the uploaded email
- * is verified and the user registration is completed
+ * Final step in registration workflow where email content is verified
+ * and registration is submitted to the blockchain
  */
-export function VerifyRegistrationComponent({ role, emlContent, onBack }: VerifyRegistrationComponentProps) {
+export function VerifyRegistrationComponent({
+  role,
+  emlContent,
+  organizationName: _organizationName, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onBack,
+}: VerifyRegistrationComponentProps) {
   const router = useRouter();
-  const { user } = usePrivy();
-  const [status, setStatus] = useState<RegistrationStatus>("processing");
+  const [currentStep, setCurrentStep] = useState<string>("Generating proof...");
+  const [isComplete, setIsComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [registrationDetails, setRegistrationDetails] = useState<{
-    userId?: string;
-    role?: string;
-    timestamp?: string;
-  }>({});
+  const [proofGenerated, setProofGenerated] = useState(false);
 
-  /**
-   * Process email verification
-   */
   useEffect(() => {
-    const processEmailVerification = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate processing
+    if (emlContent && !proofGenerated) {
+      handleProofGeneration();
+    }
+  }, [emlContent, proofGenerated]);
 
-        // Basic email content validation
-        if (!emlContent || emlContent.trim().length === 0) {
-          throw new Error("Invalid email content");
-        }
+  const handleProofGeneration = async () => {
+    try {
+      setCurrentStep("Analyzing email content...");
 
-        // Simulate verification process
-        const isValidEmail =
-          emlContent.includes("proving.vlayer.xyz") || emlContent.includes("zkMed") || emlContent.length > 100; // Basic content check
+      // Simulate proof generation steps
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setCurrentStep("Generating cryptographic proof...");
 
-        if (!isValidEmail) {
-          throw new Error("Email verification failed. Please ensure you uploaded the correct email response.");
-        }
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setCurrentStep("Validating proof...");
 
-        // Set success status with mock registration details
-        setRegistrationDetails({
-          userId: user?.id || "unknown",
-          role: role,
-          timestamp: new Date().toISOString(),
-        });
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setProofGenerated(true);
+      setCurrentStep("Submitting to blockchain...");
 
-        setStatus("success");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Verification failed");
-        setStatus("error");
-      }
-    };
+      // Simulate blockchain submission
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setCurrentStep("Registration complete!");
+      setIsComplete(true);
+    } catch (error: any) {
+      console.error("Proof generation failed:", error);
+      setError(error.message || "Failed to generate proof");
+      setCurrentStep("Error occurred");
+    }
+  };
 
-    processEmailVerification();
-  }, [emlContent, role, user?.id]);
-
-  /**
-   * Handle completion and redirect
-   */
-  const handleComplete = () => {
-    // Redirect based on role
+  const handleContinue = () => {
+    // Navigate based on role
     switch (role) {
       case "PATIENT":
-        router.push("/patient");
+        router.push("/dashboard/patient");
         break;
       case "HOSPITAL":
-        router.push("/hospital");
-        break;
       case "INSURER":
-        router.push("/insurance");
+        router.push("/dashboard/organization");
         break;
       case "ADMIN":
-        router.push("/admin");
+        router.push("/dashboard/admin");
         break;
       default:
         router.push("/");
     }
-  };
-
-  const handleRetry = () => {
-    setStatus("processing");
-    setError(null);
   };
 
   return (
@@ -109,10 +86,10 @@ export function VerifyRegistrationComponent({ role, emlContent, onBack }: Verify
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Registration Verification</h1>
-              <p className="text-gray-600">Verifying your registration details</p>
+              <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
+              <p className="text-gray-600">Complete your registration to access healthcare services</p>
             </div>
-            {status === "error" && (
+            {!isComplete && (
               <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
                 ← Back
               </button>
@@ -121,13 +98,50 @@ export function VerifyRegistrationComponent({ role, emlContent, onBack }: Verify
         </div>
       </div>
 
-      {/* Progress Indicator */}
+      {/* Progress Bar */}
       <div className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center space-x-4 py-4">
-            <div className="flex items-center space-x-2 text-blue-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">4</div>
-              <span className="text-sm font-medium">Verify Registration</span>
+            <div className="flex items-center space-x-2 text-green-600">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+              <span className="text-sm font-medium">Choose Role</span>
+            </div>
+
+            {role !== "PATIENT" && (
+              <>
+                <div className="w-8 h-0.5 bg-gray-300"></div>
+                <div className="flex items-center space-x-2 text-green-600">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+                  <span className="text-sm font-medium">Organization Details</span>
+                </div>
+              </>
+            )}
+
+            <div className="w-8 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center space-x-2 text-green-600">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+              <span className="text-sm font-medium">Email Verification</span>
+            </div>
+
+            <div className="w-8 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center space-x-2 text-green-600">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+              <span className="text-sm font-medium">Waiting for Email</span>
+            </div>
+
+            <div className="w-8 h-0.5 bg-gray-300"></div>
+
+            <div
+              className={`flex items-center space-x-2 ${isComplete ? "text-green-600" : error ? "text-red-600" : "text-blue-600"}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${isComplete ? "bg-green-100" : error ? "bg-red-100" : "bg-blue-100"}`}
+              >
+                {isComplete ? "✓" : error ? "!" : role === "PATIENT" ? "4" : "5"}
+              </div>
+              <span className="text-sm font-medium">Verification</span>
             </div>
           </div>
         </div>
@@ -136,139 +150,101 @@ export function VerifyRegistrationComponent({ role, emlContent, onBack }: Verify
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-sm border p-8">
-          <div className="text-center space-y-6">
-            {/* Processing State */}
-            {status === "processing" && <ProcessingState />}
-
+          <div className="text-center">
             {/* Success State */}
-            {status === "success" && (
-              <SuccessState role={role} registrationDetails={registrationDetails} onComplete={handleComplete} />
+            {isComplete && (
+              <div>
+                <div className="text-6xl mb-4">🎉</div>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">Registration Complete!</h2>
+                <p className="text-gray-600 mb-6">Your registration has been successfully submitted and verified.</p>
+                <p className="text-sm text-gray-500 mb-8">
+                  {role === "PATIENT"
+                    ? "You can now access your patient dashboard and manage your medical records."
+                    : role === "ADMIN"
+                      ? "Your admin request has been submitted for review."
+                      : "Your organization registration is pending admin approval."}
+                </p>
+                <button
+                  onClick={handleContinue}
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Continue to Dashboard
+                </button>
+              </div>
             )}
 
             {/* Error State */}
-            {status === "error" && <ErrorState error={error} onRetry={handleRetry} onBack={onBack} />}
+            {error && (
+              <div>
+                <div className="text-6xl mb-4">❌</div>
+                <h2 className="text-2xl font-bold text-red-600 mb-4">Verification Failed</h2>
+                <p className="text-gray-600 mb-4">
+                  We couldn&apos;t verify your registration. Please check the error below and try again.
+                </p>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+                <div className="flex justify-center space-x-4">
+                  <button onClick={onBack} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    Back
+                  </button>
+                  <button
+                    onClick={() => {
+                      setError(null);
+                      setProofGenerated(false);
+                      setCurrentStep("Generating proof...");
+                    }}
+                    className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Processing State */}
+            {!isComplete && !error && (
+              <div>
+                <div className="text-6xl mb-4">⚡</div>
+                <h2 className="text-2xl font-bold mb-4">Verifying Registration</h2>
+                <p className="text-gray-600 mb-6">
+                  We&apos;re processing your email verification and generating cryptographic proofs.
+                </p>
+
+                <div className="mb-6">
+                  <div className="animate-pulse bg-blue-100 rounded-lg p-4">
+                    <p className="text-blue-800 font-medium">{currentStep}</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-2xl mx-auto">
+                  <h3 className="font-semibold text-blue-800 mb-2">Processing Steps:</h3>
+                  <ul className="text-sm text-blue-700 space-y-1 text-left">
+                    <li className={currentStep.includes("Analyzing") ? "font-bold" : ""}>
+                      • Analyzing email content and headers
+                    </li>
+                    <li className={currentStep.includes("Generating") ? "font-bold" : ""}>
+                      • Generating cryptographic proof
+                    </li>
+                    <li className={currentStep.includes("Validating") ? "font-bold" : ""}>
+                      • Validating proof integrity
+                    </li>
+                    <li className={currentStep.includes("Submitting") ? "font-bold" : ""}>
+                      • Submitting to blockchain
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-center mt-8">
+                  <button onClick={onBack} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    Back
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-/**
- * Processing State Component
- */
-function ProcessingState() {
-  return (
-    <>
-      <div className="text-4xl mb-4">⏳</div>
-      <h2 className="text-2xl font-bold mb-4">Verifying Registration</h2>
-      <p className="text-gray-600 mb-8">Please wait while we verify your email and complete your registration...</p>
-      <div className="flex justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
-      </div>
-    </>
-  );
-}
-
-/**
- * Success State Component
- */
-interface SuccessStateProps {
-  role: HealthcareRole;
-  registrationDetails: any;
-  onComplete: () => void;
-}
-
-function SuccessState({ role, registrationDetails, onComplete }: SuccessStateProps) {
-  const getRoleDisplayName = (role: HealthcareRole): string => {
-    switch (role) {
-      case "PATIENT":
-        return "Patient";
-      case "HOSPITAL":
-        return "Hospital";
-      case "INSURER":
-        return "Insurance Company";
-      case "ADMIN":
-        return "Administrator";
-      default:
-        return role;
-    }
-  };
-
-  return (
-    <>
-      <div className="text-4xl mb-4">✅</div>
-      <h2 className="text-2xl font-bold mb-4 text-green-600">Registration Successful!</h2>
-      <p className="text-gray-600 mb-8">
-        Your registration as a {getRoleDisplayName(role)} has been completed successfully.
-      </p>
-
-      {/* Registration Details */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-        <h3 className="font-semibold text-green-800 mb-4">Registration Details</h3>
-        <div className="space-y-2 text-sm text-green-700">
-          <p>
-            <strong>Role:</strong> {getRoleDisplayName(role)}
-          </p>
-          <p>
-            <strong>User ID:</strong> {registrationDetails.userId}
-          </p>
-          <p>
-            <strong>Registered:</strong> {new Date(registrationDetails.timestamp).toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      <button
-        onClick={onComplete}
-        className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-      >
-        Continue to Dashboard
-      </button>
-    </>
-  );
-}
-
-/**
- * Error State Component
- */
-interface ErrorStateProps {
-  error: string | null;
-  onRetry: () => void;
-  onBack: () => void;
-}
-
-function ErrorState({ error, onRetry, onBack }: ErrorStateProps) {
-  return (
-    <>
-      <div className="text-4xl mb-4">❌</div>
-      <h2 className="text-2xl font-bold mb-4 text-red-600">Verification Failed</h2>
-      <p className="text-gray-600 mb-4">
-        We couldn&apos;t verify your registration. Please check the error below and try again.
-      </p>
-
-      {/* Error Details */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
-          <p className="text-red-700">{error}</p>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="flex gap-4 justify-center">
-        <button
-          onClick={onBack}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          Go Back
-        </button>
-        <button
-          onClick={onRetry}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
-    </>
   );
 }
