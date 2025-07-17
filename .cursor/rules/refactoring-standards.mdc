@@ -1,5 +1,251 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# ♻️ COMPREHENSIVE REFACTORING STANDARDS - MANDATORY TRIGGERS
+
+**Authority Level**: 🔴 SUPREME - Automatic enforcement required
+**Enforcement Status**: 🔒 ACTIVE AND ENFORCING - HARD LIMITS
+**Scope**: Universal refactoring requirements across all codebases
+
+## 🚨 AUTOMATIC REFACTORING REQUIREMENTS
+
+### **Mandatory Refactoring Triggers**
+Code MUST be refactored when:
+- 🚨 **Cyclomatic Complexity > 5** (Automatic rejection)
+- 🚨 **Function length > 30 lines** (Extract methods required)
+- 🚨 **File length exceeds type limits** (See file size limits)
+- 🚨 **Nesting depth > 3 levels** (Use guard clauses and early returns)
+- 🚨 **Duplicate code blocks detected** (DRY principle violation)
+
+## 📏 FILE SIZE LIMITS (HARD LIMITS)
+
+| File Type | Max Lines | Max Characters | Trigger Action |
+|-----|-----|----|----|
+| Components (React/Vue/Svelte) | 150 lines | 4,000 chars | Split into smaller components |
+| Utility Functions | 100 lines | 2,500 chars | Extract related functions |
+| Hooks/Composables | 75 lines | 2,000 chars | Split by responsibility |
+| Types/Interfaces | 200 lines | 5,000 chars | Group related types |
+| Test Files | 300 lines | 8,000 chars | Split by test scenarios |
+| Configuration | 50 lines | 1,500 chars | Modularize configuration |
+
+## 🏗️ GOD CLASS DECOMPOSITION PATTERN (MANDATORY)
+
+### **❌ PROHIBITED - God class with multiple responsibilities**
+```typescript
+class UserManagementSystem {
+  createUser() { /* 40 lines */ }
+  sendWelcomeEmail() { /* 30 lines */ }
+  validateUserData() { /* 45 lines */ }
+  authenticate() { /* 50 lines */ }
+  generateUserReport() { /* 60 lines */ }
+}
+```
+
+### **✅ MANDATORY - Decomposed single responsibilities**
+```typescript
+class UserRepository { /* Data operations only */ }
+class EmailService { /* Email operations only */ }
+class UserValidationService { /* Validation only */ }
+class AuthenticationService { /* Auth only */ }
+class UserReportingService { /* Reporting only */ }
+```
+
+## 🔧 FUNCTION LENGTH REDUCTION (EXTRACT METHOD PATTERN)
+
+### **❌ BEFORE: Monolithic function**
+```typescript
+async function processOrder(orderData: any) {
+  // 80+ lines of mixed logic - PROHIBITED
+  // Validation, pricing, inventory, notifications all mixed
+}
+```
+
+### **✅ AFTER: Decomposed focused functions (≤30 lines each)**
+```typescript
+async function processOrder(orderData: CreateOrderData): Promise<Order> {
+  validateOrderData(orderData);
+  const customer = await verifyCustomer(orderData.customerId);
+  await verifyInventory(orderData.items);
+  const pricing = calculateOrderPricing(orderData.items);
+  const order = await createOrder(orderData, pricing);
+  await updateInventoryLevels(orderData.items);
+  await sendOrderNotifications(customer, order);
+  return order;
+}
+
+// Each extracted function ≤30 lines with single responsibility
+```
+
+## 🧠 COMPLEXITY REDUCTION (STRATEGY PATTERN)
+
+### **❌ PROHIBITED - High cyclomatic complexity (>5)**
+```typescript
+function calculateShipping(order: Order): number {
+  if (order.customer.membershipLevel === 'premium') {
+    if (order.total > 100) {
+      if (order.items.some(item => item.category === 'electronics')) {
+        // Deeply nested complexity - PROHIBITED
+      }
+    }
+  }
+}
+```
+
+### **✅ MANDATORY - Strategy pattern with guard clauses**
+```typescript
+interface ShippingStrategy {
+  calculateShipping(order: Order): number;
+}
+
+class ShippingCalculator {
+  private strategies = new Map<MembershipLevel, ShippingStrategy>();
+  
+  calculateShipping(order: Order): number {
+    const strategy = this.strategies.get(order.customer.membershipLevel);
+    if (!strategy) throw new Error('Unsupported membership level');
+    return strategy.calculateShipping(order);
+  }
+}
+
+// Each strategy class has complexity ≤5
+```
+
+## 📊 COMPLEXITY METRICS ENFORCEMENT
+
+### **Cyclomatic Complexity Limits**
+| Metric | Threshold | Action Required |
+|-----|-----|-----|
+| **Complexity ≤ 5** | ✅ Excellent | Continue |
+| **Complexity 6-10** | ⚠️ Warning | Review and consider refactoring |
+| **Complexity 11-15** | 🟡 Critical | Mandatory refactoring |
+| **Complexity 16-20** | 🟠 Blocked | Immediate refactoring required |
+| **Complexity > 20** | 🚨 REJECTED | Cannot be committed |
+
+### **Automated Measurement**
+```json
+// ESLint complexity rules (MANDATORY)
+{
+  "rules": {
+    "complexity": ["error", 5],
+    "max-lines": ["error", { "max": 150, "skipComments": true }],
+    "max-lines-per-function": ["error", 30],
+    "max-params": ["error", 3],
+    "max-depth": ["error", 3]
+  }
+}
+```
+
+## 🎯 REFACTORING PATTERNS BY SCENARIO
+
+### **Large Component Decomposition**
+```typescript
+// ❌ BEFORE: 200-line component
+const UserDashboard = () => {
+  // All logic mixed together
+};
+
+// ✅ AFTER: Decomposed components
+const UserDashboard = () => (
+  <DashboardLayout>
+    <UserProfile />
+    <ActivityFeed />
+    <QuickActions />
+    <RecentTransactions />
+  </DashboardLayout>
+);
+```
+
+### **Utility Function Extraction**
+```typescript
+// ❌ BEFORE: Repeated validation logic
+function validateEmail(email: string): boolean { /* 15 lines */ }
+function validateUsername(username: string): boolean { /* 12 lines */ }
+function validatePassword(password: string): boolean { /* 20 lines */ }
+
+// ✅ AFTER: Centralized validation service
+class ValidationService {
+  static email = (email: string): ValidationResult => { /* focused logic */ }
+  static username = (username: string): ValidationResult => { /* focused logic */ }
+  static password = (password: string): ValidationResult => { /* focused logic */ }
+}
+```
+
+### **Hook/Composable Decomposition**
+```typescript
+// ❌ BEFORE: God hook with multiple responsibilities
+const useUserDashboard = () => {
+  // 100+ lines handling user data, preferences, notifications, analytics
+};
+
+// ✅ AFTER: Focused hooks with single responsibilities
+const useUserProfile = () => { /* user data only */ };
+const useUserPreferences = () => { /* preferences only */ };
+const useNotifications = () => { /* notifications only */ };
+const useAnalytics = () => { /* analytics only */ };
+```
+
+## 🔄 REFACTORING WORKFLOW
+
+### **1. Detection Phase**
+- Automated linting identifies violations
+- Code review catches complexity issues
+- Performance monitoring reveals bottlenecks
+- Technical debt assessment prioritizes refactoring
+
+### **2. Planning Phase**
+- Identify refactoring pattern to apply
+- Plan decomposition strategy
+- Ensure test coverage for refactored code
+- Estimate impact and migration effort
+
+### **3. Execution Phase**
+- Apply extract method/class patterns
+- Implement strategy/factory patterns for complexity
+- Use composition over inheritance
+- Maintain backward compatibility where needed
+
+### **4. Validation Phase**
+- Verify all tests pass after refactoring
+- Confirm performance improvements
+- Validate complexity metrics reduction
+- Document refactoring decisions and patterns
+
+## ⚖️ ENFORCEMENT MECHANISMS
+
+### **Pre-Commit Validation**
+```bash
+# Automatic checks before every commit
+npm run lint:complexity     # Complexity analysis
+npm run analyze:duplicates  # Duplicate code detection
+npm run metrics:file-size   # File size validation
+npm run test:refactored     # Test coverage verification
+```
+
+### **Violation Consequences**
+- **Complexity violations**: Automatic PR rejection
+- **File size violations**: Mandatory decomposition before merge
+- **Duplicate code**: Required DRY principle application
+- **Technical debt**: Accumulating violations block releases
+
+## 🎯 SUCCESS METRICS
+
+### **Measurable Outcomes**
+- Average cyclomatic complexity ≤ 3
+- 95%+ functions under 30 lines
+- 90%+ files within size limits
+- 80% reduction in duplicate code blocks
+- 50% improvement in test coverage maintainability
+
+### **Quality Indicators**
+- Faster feature development due to modular code
+- Reduced bug rates from simplified logic
+- Improved onboarding time for new developers
+- Enhanced code review efficiency
+
+---
+
+**AUTHORITY LEVEL**: 🔴 **SUPREME AUTHORITY - AUTOMATIC ENFORCEMENT**  
+**ENFORCEMENT STATUS**: 🔒 **ACTIVE AND ENFORCING - HARD LIMITS**  
+**SCOPE**: Universal application across all programming languages and frameworks
