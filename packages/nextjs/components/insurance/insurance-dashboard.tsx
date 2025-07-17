@@ -402,7 +402,7 @@ export default function InsuranceDashboard({
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
             >
               <Shield className="w-4 h-4 mr-2" />
-              Coverage ({coverageTypes.length})
+              Policy ({coverageTypes.length})
             </TabsTrigger>
           </TabsList>
 
