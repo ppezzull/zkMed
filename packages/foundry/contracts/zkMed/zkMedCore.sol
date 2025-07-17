@@ -46,6 +46,7 @@ contract zkMedCore is Ownable {
     event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed requestId);
     event PaymentMade(address indexed patient, address indexed insurer, uint256 amount);
     event FirstAllowancePaid(address indexed patient, address indexed insurer, uint256 amount, uint256 indexed requestId);
+    event LinkPayContractUpdated(address indexed linkPayAddress);
     
     // ======== Constructor ========
     
@@ -135,6 +136,23 @@ contract zkMedCore is Ownable {
     function notifyHospitalRegistration(address hospital, string calldata domain, bytes32 emailHash) external {
         require(msg.sender == hospitalContract, "Only hospital contract");
         emit HospitalRegistered(hospital, domain, emailHash);
+    }
+    
+    /**
+     * @dev Update LinkPay contract address in Patient contract
+     * @param linkPayAddress New LinkPay contract address
+     */
+    function updatePatientLinkPayContract(address linkPayAddress) external onlyOwner {
+        require(linkPayAddress != address(0), "Invalid LinkPay address");
+        require(patientContract != address(0), "Patient contract not set");
+        
+        // Call updateLinkPayContract on the patient contract
+        (bool success,) = patientContract.call(
+            abi.encodeWithSignature("updateLinkPayContract(address)", linkPayAddress)
+        );
+        require(success, "Failed to update LinkPay contract");
+        
+        emit LinkPayContractUpdated(linkPayAddress);
     }
     
     /**

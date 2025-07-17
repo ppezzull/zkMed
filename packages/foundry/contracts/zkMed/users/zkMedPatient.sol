@@ -235,6 +235,15 @@ contract zkMedPatient is Verifier {
     // ======== Core Interface Functions ========
     
     /**
+     * @dev Update LinkPay contract address (only callable by zkMedCore)
+     * @param newLinkPayContract New LinkPay contract address
+     */
+    function updateLinkPayContract(address newLinkPayContract) external onlyCore {
+        require(newLinkPayContract != address(0), "Invalid LinkPay contract address");
+        linkPayContract = zkMedLinkPay(newLinkPayContract);
+    }
+    
+    /**
      * @dev Update patient record (only callable by zkMedCore)
      * @param patient Patient address
      * @param requestId Request ID to associate

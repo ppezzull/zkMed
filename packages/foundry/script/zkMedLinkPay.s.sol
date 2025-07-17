@@ -18,7 +18,8 @@ contract DeployZkMedLinkPay is Script {
     address constant MOCK_TREASURY = 0x1234567890123456789012345678901234567890;
     
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(deployerPrivateKey != 0, "DEPLOYER_PRIVATE_KEY not set");
         address deployer = vm.addr(deployerPrivateKey);
         
         console.log("Deploying zkMedLinkPay with deployer:", deployer);
@@ -26,11 +27,11 @@ contract DeployZkMedLinkPay is Script {
         
         vm.startBroadcast(deployerPrivateKey);
         
-        // Deploy the contract
+        // Deploy the contract with actual deployed addresses
         zkMedLinkPay linkPay = new zkMedLinkPay(
             PAYMENT_INTERVAL,
-            address(0),  // zkMedCore - to be set later
-            address(0),  // zkMedPatient - to be set later  
+            0x202Fa7479d6fcBa37148009D256Ac2936729e577,  // zkMedCore
+            0x852FfA30dBdd64a4893D1cAB9DbA14148Ed3690D,  // zkMedPatient  
             MOCK_USDC,   // Payment token (USDC)
             MOCK_TREASURY // Treasury address
         );

@@ -29,35 +29,35 @@ export function HeaderConnectButton() {
     args: [user?.wallet?.address],
   });
 
-  // Effect to detect when user becomes authenticated (covers other login methods)
-  useEffect(() => {
-    if (authenticated && user && !hasLoggedFirstLogin.current && !isRoleLoading) {
-      // Role is an enum: 0: UNREGISTERED, 1: PATIENT, 2: HOSPITAL, 3: INSURER, 4: ADMIN
-      switch (role[0]) {
-        case "UNREGISTERED":
-          router.push("/register");
-          break;
-        case "PATIENT":
-          router.push("/patient");
-          break;
-        case "HOSPITAL":
-          router.push("/hospital");
-          break;
-        case "INSURER":
-          router.push("/insurer");
-          break;
-        case "ADMIN":
-          router.push("/admin");
-          break;
-      }
-      hasLoggedFirstLogin.current = true;
-    }
+  // // Effect to detect when user becomes authenticated (covers other login methods)
+  // useEffect(() => {
+  //   if (authenticated && user && !hasLoggedFirstLogin.current && !isRoleLoading) {
+  //     // Role is an enum: 0: UNREGISTERED, 1: PATIENT, 2: HOSPITAL, 3: INSURER, 4: ADMIN
+  //     switch (role[0]) {
+  //       case "UNREGISTERED":
+  //         router.push("/register");
+  //         break;
+  //       case "PATIENT":
+  //         router.push("/patient");
+  //         break;
+  //       case "HOSPITAL":
+  //         router.push("/hospital");
+  //         break;
+  //       case "INSURER":
+  //         router.push("/insurer");
+  //         break;
+  //       case "ADMIN":
+  //         router.push("/admin");
+  //         break;
+  //     }
+  //     hasLoggedFirstLogin.current = true;
+  //   }
 
-    // Reset flag when user logs out
-    if (!authenticated) {
-      hasLoggedFirstLogin.current = false;
-    }
-  }, [authenticated, user, wallets, role, isRoleLoading, router]);
+  //   // Reset flag when user logs out
+  //   if (!authenticated) {
+  //     hasLoggedFirstLogin.current = false;
+  //   }
+  // }, [authenticated, user, wallets, role, isRoleLoading, router]);
 
   // Show loading state while SDK initializes
   if (!ready) {
