@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ProofProvider } from "@vlayer/react";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { Toaster } from "react-hot-toast";
 import { Footer } from "~~/components/Footer";
@@ -40,13 +41,20 @@ export const queryClient = new QueryClient({
   },
 });
 
+const proverConfig = {
+  proverUrl: process.env.NEXT_PUBLIC_VLAYER_PROVER_URL || "http://localhost:3000",
+  token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN,
+};
+
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <PrivyProvider appId={scaffoldConfig.privyProjectId} config={privyConfig}>
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
-          <ProgressBar height="3px" color="#2299dd" />
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          <ProofProvider config={proverConfig}>
+            <ProgressBar height="3px" color="#2299dd" />
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </ProofProvider>
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>

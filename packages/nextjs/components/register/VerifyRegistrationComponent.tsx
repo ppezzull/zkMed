@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { HealthcareRole } from "./RoleSelectionComponent";
 import { PartyPopper, X, Zap } from "lucide-react";
+import { useProver } from "~~/hooks/zkMed/useProver";
+import { useVerifier } from "~~/hooks/zkMed/useVerifier";
 
 interface VerifyRegistrationComponentProps {
   role: HealthcareRole;
@@ -25,42 +27,76 @@ export function VerifyRegistrationComponent({
   onBack,
 }: VerifyRegistrationComponentProps) {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<string>("Generating proof...");
   const [isComplete, setIsComplete] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [proofGenerated, setProofGenerated] = useState(false);
 
-  useEffect(() => {
-    if (emlContent && !proofGenerated) {
-      handleProofGeneration();
-    }
-  }, [emlContent, proofGenerated]);
+  // Use real hooks
+  const {
+    generatePatientProof,
+    generateOrganizationProof,
+    proof,
+    currentStep,
+    error: proverError,
+    isLoading: isGeneratingProof,
+  } = useProver();
 
-  const handleProofGeneration = async () => {
+  const {
+    verifyPatientProof,
+    verifyOrganizationProof,
+    verificationStep,
+    error: verifierError,
+    isVerifying,
+    lastVerificationResult,
+  } = useVerifier();
+
+  // Combined error and step tracking
+  const error = proverError || verifierError;
+  const currentStepDisplay = currentStep || verificationStep || "Ready";
+
+  const handleProofGeneration = useCallback(async () => {
     try {
-      setCurrentStep("Analyzing email content...");
-
-      // Simulate proof generation steps
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setCurrentStep("Generating cryptographic proof...");
-
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setCurrentStep("Validating proof...");
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (role === "PATIENT") {
+        await generatePatientProof(emlContent);
+      } else {
+        await generateOrganizationProof(emlContent);
+      }
       setProofGenerated(true);
-      setCurrentStep("Submitting to blockchain...");
-
-      // Simulate blockchain submission
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setCurrentStep("Registration complete!");
-      setIsComplete(true);
     } catch (error: any) {
       console.error("Proof generation failed:", error);
-      setError(error.message || "Failed to generate proof");
-      setCurrentStep("Error occurred");
     }
-  };
+  }, [role, emlContent, generatePatientProof, generateOrganizationProof]);
+
+  const handleProofVerification = useCallback(async () => {
+    try {
+      if (role === "PATIENT") {
+        await verifyPatientProof(proof);
+      } else {
+        await verifyOrganizationProof(proof);
+      }
+    } catch (error: any) {
+      console.error("Proof verification failed:", error);
+    }
+  }, [role, proof, verifyPatientProof, verifyOrganizationProof]);
+
+  useEffect(() => {
+    if (emlContent && !proofGenerated && !isGeneratingProof && !proof) {
+      handleProofGeneration();
+    }
+  }, [emlContent, proofGenerated, isGeneratingProof, proof, handleProofGeneration]);
+
+  // Handle proof verification when proof is generated
+  useEffect(() => {
+    if (proof && proofGenerated && !isVerifying && !lastVerificationResult) {
+      handleProofVerification();
+    }
+  }, [proof, proofGenerated, isVerifying, lastVerificationResult, handleProofVerification]);
+
+  // Handle completion when verification is done
+  useEffect(() => {
+    if (lastVerificationResult && !error) {
+      setIsComplete(true);
+    }
+  }, [lastVerificationResult, error]);
 
   const handleContinue = () => {
     // Navigate based on role
@@ -207,9 +243,9 @@ export function VerifyRegistrationComponent({
                   </button>
                   <button
                     onClick={() => {
-                      setError(null);
                       setProofGenerated(false);
-                      setCurrentStep("Generating proof...");
+                      setIsComplete(false);
+                      // Reset hooks will happen automatically when component re-runs the effects
                     }}
                     className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                   >
@@ -234,24 +270,27 @@ export function VerifyRegistrationComponent({
 
                 <div className="mb-6">
                   <div className="animate-pulse bg-slate-700 border border-slate-600 rounded-lg p-4">
-                    <p className="text-cyan-300 font-medium">{currentStep}</p>
+                    <p className="text-cyan-300 font-medium">{currentStepDisplay}</p>
                   </div>
                 </div>
 
                 <div className="mt-8 p-4 bg-slate-700 border border-slate-600 rounded-lg max-w-2xl mx-auto">
                   <h3 className="font-semibold text-cyan-300 mb-2">Processing Steps:</h3>
                   <ul className="text-sm text-gray-300 space-y-1 text-left">
-                    <li className={currentStep.includes("Analyzing") ? "font-bold text-cyan-300" : ""}>
-                      • Analyzing email content and headers
+                    <li className={currentStepDisplay.includes("Preparing") ? "font-bold text-cyan-300" : ""}>
+                      • Preparing email verification
                     </li>
-                    <li className={currentStep.includes("Generating") ? "font-bold text-cyan-300" : ""}>
+                    <li className={currentStepDisplay.includes("Preverifying") ? "font-bold text-cyan-300" : ""}>
+                      • Preverifying email authenticity
+                    </li>
+                    <li className={currentStepDisplay.includes("Generating") ? "font-bold text-cyan-300" : ""}>
                       • Generating cryptographic proof
                     </li>
-                    <li className={currentStep.includes("Validating") ? "font-bold text-cyan-300" : ""}>
-                      • Validating proof integrity
+                    <li className={currentStepDisplay.includes("Waiting") ? "font-bold text-cyan-300" : ""}>
+                      • Waiting for proof result
                     </li>
-                    <li className={currentStep.includes("Submitting") ? "font-bold text-cyan-300" : ""}>
-                      • Submitting to blockchain
+                    <li className={currentStepDisplay.includes("Verifying") ? "font-bold text-cyan-300" : ""}>
+                      • Verifying proof on blockchain
                     </li>
                   </ul>
                 </div>

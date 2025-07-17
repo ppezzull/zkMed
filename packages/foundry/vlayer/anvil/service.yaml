@@ -5,6 +5,6 @@ services:
     platform: linux/amd64
     command: ["anvil --host 0.0.0.0 --chain-id 31337"]
     ports:
-      - "127.0.0.1:8547:8545"
+      - "127.0.0.1:8545:8545"
     networks:
       - zkmed-network

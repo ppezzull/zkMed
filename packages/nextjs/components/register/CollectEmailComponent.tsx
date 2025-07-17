@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import type { HealthcareRole } from "./RoleSelectionComponent";
 import { Mail } from "lucide-react";
+import { useZkMedInbox } from "~~/hooks/zkMed/useZkMedInbox";
 
 interface CollectEmailComponentProps {
   emailId: string;
@@ -18,36 +19,15 @@ interface CollectEmailComponentProps {
  * received email response for verification
  */
 export function CollectEmailComponent({ emailId, role, onEmailReceived, onBack }: CollectEmailComponentProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [emlFetched, setEmlFetched] = useState(false);
+  // Use the real email inbox hook
+  const { emlFetched, emlContent, isLoading, error } = useZkMedInbox(emailId);
 
-  // Mock email fetching - in real implementation this would use useZkMedInbox hook
+  // Call onEmailReceived when email is fetched
   useEffect(() => {
-    const checkForEmail = () => {
-      // Simulate checking for email every 3 seconds
-      const interval = setInterval(() => {
-        // Simulate random email arrival after 10-30 seconds
-        if (Math.random() > 0.9) {
-          setIsLoading(false);
-          setEmlFetched(true);
-          // Mock email content - in real implementation this would come from the API
-          const mockEmlContent = `Received-From: user@example.com
-Subject: Register ${role.toLowerCase()} with wallet: 0x123...
-Message-ID: ${emailId}@proving.vlayer.xyz
-
-This is a mock email verification content.`;
-          onEmailReceived(mockEmlContent);
-          clearInterval(interval);
-        }
-      }, 3000);
-
-      // Cleanup interval on component unmount
-      return () => clearInterval(interval);
-    };
-
-    const cleanup = checkForEmail();
-    return cleanup;
-  }, [emailId, role, onEmailReceived]);
+    if (emlFetched && emlContent) {
+      onEmailReceived(emlContent);
+    }
+  }, [emlFetched, emlContent, onEmailReceived]);
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -124,7 +104,7 @@ This is a mock email verification content.`;
               </div>
             )}
 
-            {!isLoading && !emlFetched && (
+            {!isLoading && !emlFetched && !error && (
               <div className="mb-6">
                 <div className="flex justify-center mb-4">
                   <div className="w-16 h-16 border border-slate-500 rounded-xl flex items-center justify-center">
@@ -135,6 +115,18 @@ This is a mock email verification content.`;
                   We&apos;re waiting to receive your email. Make sure you&apos;ve sent the email with the exact subject
                   line provided.
                 </p>
+                <p className="text-sm text-gray-400">Email ID: {emailId}</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 border border-red-500 rounded-xl flex items-center justify-center">
+                    <Mail className="w-7 h-7 text-red-400" />
+                  </div>
+                </div>
+                <p className="text-red-300 mb-4">Error fetching email: {error}</p>
                 <p className="text-sm text-gray-400">Email ID: {emailId}</p>
               </div>
             )}
