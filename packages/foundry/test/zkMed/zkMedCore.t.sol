@@ -70,7 +70,7 @@ contract zkMedCoreTest is Test {
 
     function test_revertAddAdminAlreadyAdmin() public {
         adminContract.addAdmin(user1, zkMedRequestManager.AdminRole.BASIC);
-        vm.expectRevert("Already an admin");
+        vm.expectRevert("Address is already an admin");
         adminContract.addAdmin(user1, zkMedRequestManager.AdminRole.MODERATOR);
     }
 

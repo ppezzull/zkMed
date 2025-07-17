@@ -45,7 +45,7 @@ contract PaymentPlanFlowTest is Test {
         paymentPlanProver = new zkMedPaymentPlanProver();
         
         insurerContract = new zkMedInsurer(address(core), address(registrationProver));
-        patientContract = new zkMedPatient(address(core), address(registrationProver), address(paymentPlanProver));
+        patientContract = new zkMedPatient(address(core), address(registrationProver), address(paymentPlanProver), address(0));
         adminContract = new zkMedAdmin(address(core));
         
         // Authorize contracts
@@ -78,7 +78,6 @@ contract PaymentPlanFlowTest is Test {
     
     function _registerInsurer() internal {
         // Register insurer through insurer contract (new architecture)
-        vm.prank(insurer);
         
         // Create mock registration data
         zkMedRegistrationProver.RegistrationData memory regData = zkMedRegistrationProver.RegistrationData({
@@ -106,7 +105,6 @@ contract PaymentPlanFlowTest is Test {
     
     function _registerPatient() internal {
         // Register patient through patient contract (new architecture)
-        vm.prank(patient);
         
         // For testing, we'll manually mark the patient as registered
         // In real usage, this would require a valid proof from the registration prover

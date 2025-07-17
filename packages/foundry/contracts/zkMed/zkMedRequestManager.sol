@@ -260,6 +260,39 @@ contract zkMedRequestManager is Ownable {
         emit PaymentPlanCreated(patientAddress, insurerAddress, requestId);
         return requestId;
     }
+
+    /**
+     * @dev Create an admin access request
+     */
+    function createAdminAccessRequest(
+        address requester,
+        AdminRole requestedRole,
+        string calldata reason
+    ) external onlyAuthorized returns (uint256 requestId) {
+        require(requester != address(0), "Invalid requester address");
+        require(requestedRole != AdminRole.SUPER_ADMIN, "Cannot request super admin role");
+        require(bytes(reason).length > 0, "Reason cannot be empty");
+        require(bytes(reason).length <= 500, "Reason too long");
+        
+        requestId = ++requestCount;
+        
+        BaseRequest storage baseReq = requests[requestId];
+        baseReq.requester = requester;
+        baseReq.requestType = RequestType.ADMIN_ACCESS;
+        baseReq.status = RequestStatus.PENDING;
+        baseReq.requestTime = block.timestamp;
+        
+        AdminAccessRequest storage adminReq = adminRequests[requestId];
+        adminReq.base = baseReq;
+        adminReq.adminRole = requestedRole;
+        adminReq.reason = reason;
+        
+        userToRequestId[requester] = requestId;
+        pendingRequestCount++;
+        
+        emit RequestSubmitted(requestId, requester, RequestType.ADMIN_ACCESS);
+        return requestId;
+    }
     
     // ======== Request Status Management ========
     
@@ -380,5 +413,16 @@ contract zkMedRequestManager is Ownable {
         }
         
         return pendingReqs;
+    }
+    
+    /**
+     * @dev Get admin access request details
+     * @param requestId Request ID
+     * @return AdminAccessRequest struct
+     */
+    function getAdminAccessRequest(uint256 requestId) external view returns (AdminAccessRequest memory) {
+        require(requests[requestId].requester != address(0), "Request does not exist");
+        require(requests[requestId].requestType == RequestType.ADMIN_ACCESS, "Not an admin access request");
+        return adminRequests[requestId];
     }
 } 

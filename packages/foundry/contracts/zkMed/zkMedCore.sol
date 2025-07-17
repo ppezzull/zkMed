@@ -238,9 +238,13 @@ contract zkMedCore is Ownable {
         );
         require(success && !abi.decode(result, (bool)), "Already an admin");
         
-        // TODO: Create admin access request through request manager
-        // For now, return a placeholder
-        requestId = 0;
+        // Create admin access request through request manager
+        requestId = requestManagerContract.createAdminAccessRequest(
+            requester,
+            zkMedRequestManager.AdminRole(requestedRole),
+            reason
+        );
+        
         emit RequestSubmitted(requestId, requester, zkMedRequestManager.RequestType.ADMIN_ACCESS);
         return requestId;
     }
@@ -255,9 +259,12 @@ contract zkMedCore is Ownable {
     function approveRequest(uint256 requestId, address approver) external onlyAdminContract {
         // Validate admin permission through admin contract
         (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isModeratorOrSuperAdmin()")
+            abi.encodeWithSignature("isModeratorOrSuperAdmin(address)", approver)
         );
         require(success && abi.decode(result, (bool)), "Not authorized to approve");
+        
+        // Get request details to determine what type of request this is
+        zkMedRequestManager.BaseRequest memory baseReq = requestManagerContract.getRequestBase(requestId);
         
         // Update request status via request manager
         requestManagerContract.updateRequestStatus(
@@ -265,6 +272,18 @@ contract zkMedCore is Ownable {
             zkMedRequestManager.RequestStatus.APPROVED, 
             approver
         );
+        
+        // Handle specific approval actions based on request type
+        if (baseReq.requestType == zkMedRequestManager.RequestType.ADMIN_ACCESS) {
+            // Get admin request details
+            zkMedRequestManager.AdminAccessRequest memory adminReq = requestManagerContract.getAdminAccessRequest(requestId);
+            
+            // Add the user as admin through admin contract via the core interface
+            (bool success,) = adminContract.call(
+                abi.encodeWithSignature("addAdminViaApprovedRequest(address,uint8)", baseReq.requester, uint8(adminReq.adminRole))
+            );
+            require(success, "Failed to add admin");
+        }
         
         emit RequestApproved(requestId, approver);
     }
@@ -278,7 +297,7 @@ contract zkMedCore is Ownable {
     function rejectRequest(uint256 requestId, address rejecter, string calldata reason) external onlyAdminContract {
         // Validate admin permission through admin contract
         (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isModeratorOrSuperAdmin()")
+            abi.encodeWithSignature("isModeratorOrSuperAdmin(address)", rejecter)
         );
         require(success && abi.decode(result, (bool)), "Not authorized to reject");
         

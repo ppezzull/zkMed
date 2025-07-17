@@ -41,7 +41,8 @@ contract DeployYourContract is Script {
         zkMedPatient patientContract = new zkMedPatient(
             address(core),
             address(registrationProver),
-            address(paymentPlanProver)
+            address(paymentPlanProver),
+            address(0) // Placeholder for LinkPay contract - to be updated after deployment
         );
         console.logString("zkMedPatient deployed at:");
         console.logAddress(address(patientContract));

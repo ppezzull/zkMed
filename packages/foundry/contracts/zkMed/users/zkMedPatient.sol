@@ -6,6 +6,7 @@ import {Verifier} from "vlayer-0.1.0/Verifier.sol";
 import {zkMedRequestManager} from "../zkMedRequestManager.sol";
 import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
 import {zkMedPaymentPlanProver} from "../provers/zkMedPaymentPlanProver.sol";
+import {zkMedLinkPay} from "../zkMedLinkPay.sol";
 
 /**
  * @title zkMed Patient Contract
@@ -36,6 +37,7 @@ contract zkMedPatient is Verifier {
     address public zkMedCoreContract;
     address public registrationProver;
     address public paymentPlanProver;
+    zkMedLinkPay public linkPayContract;
     
     // Patient data storage
     mapping(address => PatientRecord) public patientRecords;
@@ -52,11 +54,13 @@ contract zkMedPatient is Verifier {
     constructor(
         address _zkMedCore, 
         address _registrationProver,
-        address _paymentPlanProver
+        address _paymentPlanProver,
+        address _linkPayContract
     ) {
         zkMedCoreContract = _zkMedCore;
         registrationProver = _registrationProver;
         paymentPlanProver = _paymentPlanProver;
+        linkPayContract = zkMedLinkPay(_linkPayContract);
     }
     
     // ======== Modifiers ========
@@ -144,20 +148,39 @@ contract zkMedPatient is Verifier {
         require(planData.monthlyAllowance > 0, "Monthly allowance must be positive");
         require(bytes(planData.insuranceName).length > 0, "Insurance name cannot be empty");
         
+        // Get hospital address from zkMedCore (assuming it exists in the system)
+        (bool success, bytes memory hospitalResult) = zkMedCoreContract.call(
+            abi.encodeWithSignature("getHospitalForPatient(address)", msg.sender)
+        );
+        require(success, "Failed to get hospital address");
+        address hospitalAddress = abi.decode(hospitalResult, (address));
+        require(hospitalAddress != address(0), "No hospital assigned to patient");
+        
+        // Create automated payment plan through LinkPay contract
+        bytes32 planId = linkPayContract.createPaymentPlan(
+            msg.sender,                    // patient
+            planData.insurerAddress,       // insurer
+            hospitalAddress,               // hospital
+            planData.monthlyAllowance,     // monthly allowance
+            planData.duration,             // plan duration
+            planData.insuranceName         // insurance name
+        );
+        
         // Call zkMedCore to create payment plan request with proper validation
-        (bool success, bytes memory result) = zkMedCoreContract.call(
+        (bool coreSuccess, bytes memory result) = zkMedCoreContract.call(
             abi.encodeWithSignature(
-                "createPaymentPlanRequest(address,address,string,uint256,uint256,bytes32,bytes32)",
+                "createPaymentPlanRequest(address,address,string,uint256,uint256,bytes32,bytes32,bytes32)",
                 planData.insurerAddress,
                 msg.sender,
                 planData.insuranceName,
                 planData.duration,
                 planData.monthlyAllowance,
                 planData.insurerEmailHash,
-                planData.patientEmailHash
+                planData.patientEmailHash,
+                planId  // Include the LinkPay plan ID
             )
         );
-        require(success, "Failed to create payment plan request");
+        require(coreSuccess, "Failed to create payment plan request");
         
         uint256 requestId = abi.decode(result, (uint256));
         emit PaymentPlanRequested(msg.sender, planData.insurerAddress, requestId);

@@ -1,5 +1,7 @@
 # 🏗 Scaffold-ETH 2
 
+a3b4adaf29ea90ab5323e5255e22b76e5e3ca674
+
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Documentation</a> |
   <a href="https://scaffoldeth.io">Website</a>

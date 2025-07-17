@@ -336,7 +336,50 @@ contract zkMedAdmin {
         return totalAdmins;
     }
     
+    /**
+     * @dev Check if an address is a moderator or super admin
+     * @param admin Admin address to check
+     * @return bool True if moderator or super admin
+     */
+    function isModeratorOrSuperAdmin(address admin) external view returns (bool) {
+        return admins[admin].isActive && 
+               (admins[admin].role == zkMedRequestManager.AdminRole.SUPER_ADMIN || 
+                admins[admin].role == zkMedRequestManager.AdminRole.MODERATOR);
+    }
+    
+
+    
     // ======== Core Interface Functions ========
+    
+    /**
+     * @dev Add admin via approved request (only callable by zkMedCore)
+     * @param newAdmin Address of the new admin
+     * @param role Role to assign
+     */
+    function addAdminViaApprovedRequest(address newAdmin, zkMedRequestManager.AdminRole role) external onlyCore {
+        require(newAdmin != address(0), "Invalid admin address");
+        require(!admins[newAdmin].isActive, "Address is already an admin");
+        
+        // Set permissions based on role
+        uint256 permissions = 0;
+        if (role == zkMedRequestManager.AdminRole.BASIC) {
+            permissions = 1; // Basic permissions
+        } else if (role == zkMedRequestManager.AdminRole.MODERATOR) {
+            permissions = 255; // Moderate permissions
+        } else if (role == zkMedRequestManager.AdminRole.SUPER_ADMIN) {
+            permissions = type(uint256).max; // Full permissions
+        }
+        
+        admins[newAdmin] = AdminRecord({
+            isActive: true,
+            role: role,
+            permissions: permissions,
+            adminSince: block.timestamp
+        });
+        totalAdmins++;
+        
+        emit AdminAdded(newAdmin, role);
+    }
     
     /**
      * @dev Deactivate an admin (only callable by zkMedCore)
