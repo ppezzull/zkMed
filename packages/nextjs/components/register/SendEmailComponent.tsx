@@ -18,7 +18,7 @@ const InputWithCopy = ({ label, value }: InputWithCopyProps) => (
         type="text"
         value={value}
         readOnly
-        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
       />
       <button
         onClick={() => navigator.clipboard.writeText(value)}
