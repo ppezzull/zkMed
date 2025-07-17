@@ -176,7 +176,10 @@ export default function InsuranceDashboard({
         {organizationRecord && (
           <div className="bg-white rounded-lg shadow p-6 mb-8 border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Full User Record</h3>
-            <pre className="bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm overflow-auto text-gray-800 font-mono whitespace-pre-wrap">
+            <pre
+              className="bg-white border border-gray-300 p-4 rounded-lg text-sm overflow-auto font-mono whitespace-pre-wrap shadow-inner"
+              style={{ color: "#000000", backgroundColor: "#ffffff" }}
+            >
               {safeStringify(organizationRecord, 2)}
             </pre>
           </div>
