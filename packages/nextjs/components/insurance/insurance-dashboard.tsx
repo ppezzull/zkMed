@@ -6,7 +6,6 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  CreditCard,
   DollarSign,
   FileText,
   Mail,
@@ -36,20 +35,6 @@ interface InsuranceInfo {
   licenseNumber: string;
   coverageTypes: string[];
   activePolicies: number;
-  totalClaims: number;
-}
-
-interface Claim {
-  id: string;
-  policyNumber: string;
-  patientName: string;
-  providerName: string;
-  claimAmount: number;
-  status: string;
-  submissionDate: string;
-  processedDate?: string;
-  claimType: string;
-  priority: string;
 }
 
 interface PolicyHolder {
@@ -94,45 +79,8 @@ export default function InsuranceDashboard({
     address: "456 Insurance Plaza, Medical District, MD 67890",
     licenseNumber: "INS-2024-567890",
     coverageTypes: ["Health", "Dental", "Vision", "Prescription", "Mental Health"],
-    activePolicies: 15420,
-    totalClaims: 8934,
+    activePolicies: 4, // Updated to match Total Contracts
   };
-
-  const claims: Claim[] = [
-    {
-      id: "1",
-      policyNumber: "POL-2024-001",
-      patientName: "John Smith",
-      providerName: "City General Hospital",
-      claimAmount: 2500.0,
-      status: "pending",
-      submissionDate: "2024-01-15",
-      claimType: "Emergency",
-      priority: "high",
-    },
-    {
-      id: "2",
-      policyNumber: "POL-2024-002",
-      patientName: "Mary Johnson",
-      providerName: "Regional Medical Center",
-      claimAmount: 450.0,
-      status: "approved",
-      submissionDate: "2024-01-12",
-      claimType: "Routine",
-      priority: "medium",
-    },
-    {
-      id: "3",
-      policyNumber: "POL-2024-003",
-      patientName: "Bob Wilson",
-      providerName: "Dental Care Clinic",
-      claimAmount: 1200.0,
-      status: "rejected",
-      submissionDate: "2024-01-10",
-      claimType: "Dental",
-      priority: "low",
-    },
-  ];
 
   const policyHolders: PolicyHolder[] = [
     {
@@ -156,6 +104,28 @@ export default function InsuranceDashboard({
       startDate: "2023-03-01",
       endDate: "2024-02-28",
       dependents: 1,
+    },
+    {
+      id: "3",
+      name: "Sarah Connor",
+      policyNumber: "POL-2024-003",
+      coverageType: "Premium Health",
+      premiumAmount: 450.0,
+      status: "active",
+      startDate: "2023-06-01",
+      endDate: "2024-05-31",
+      dependents: 2,
+    },
+    {
+      id: "4",
+      name: "Robert Brown",
+      policyNumber: "POL-2024-004",
+      coverageType: "Basic Health",
+      premiumAmount: 280.0,
+      status: "pending",
+      startDate: "2024-01-01",
+      endDate: "2024-12-31",
+      dependents: 0,
     },
   ];
 
@@ -212,18 +182,6 @@ export default function InsuranceDashboard({
     );
   };
 
-  const getPriorityBadge = (priority: string) => {
-    const priorityConfig = {
-      high: { color: "bg-red-500/10 text-red-300 border-red-500/20" },
-      medium: { color: "bg-amber-500/10 text-amber-300 border-amber-500/20" },
-      low: { color: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20" },
-    };
-
-    const config = priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.medium;
-
-    return <Badge className={`${config.color} capitalize`}>{priority} Priority</Badge>;
-  };
-
   // Helper function to convert BigInt values for JSON serialization
   const convertBigIntForJSON = (obj: any): any => {
     if (typeof obj === "bigint") {
@@ -254,7 +212,7 @@ export default function InsuranceDashboard({
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-white">Insurance Portal</h1>
-                <p className="text-blue-200 text-sm">Manage claims, policies, and member coverage</p>
+                <p className="text-blue-200 text-sm">Manage policies and member coverage</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -315,12 +273,12 @@ export default function InsuranceDashboard({
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-slate-300 text-sm">Total Members</span>
-                <span className="text-xl font-bold text-white">{insuranceInfo.activePolicies.toLocaleString()}</span>
+                <span className="text-xl font-bold text-white">{policyHolders.length}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-300 text-sm">Active Claims</span>
+                <span className="text-slate-300 text-sm">Active Policies</span>
                 <span className="text-xl font-bold text-white">
-                  {claims.filter(c => c.status === "pending").length}
+                  {policyHolders.filter(p => p.status === "active").length}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -328,8 +286,10 @@ export default function InsuranceDashboard({
                 <span className="text-xl font-bold text-white">{coverageTypes.length}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-300 text-sm">This Month Claims</span>
-                <span className="text-xl font-bold text-white">{claims.length}</span>
+                <span className="text-slate-300 text-sm">Pending Approvals</span>
+                <span className="text-xl font-bold text-white">
+                  {policyHolders.filter(p => p.status === "pending").length}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -353,7 +313,7 @@ export default function InsuranceDashboard({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-sm">Total Contracts</p>
-                    <p className="text-2xl font-bold text-white">4</p>
+                    <p className="text-2xl font-bold text-white">{policyHolders.length}</p>
                   </div>
                   <FileText className="w-8 h-8 text-blue-400" />
                 </div>
@@ -363,7 +323,9 @@ export default function InsuranceDashboard({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-sm">Pending Approval</p>
-                    <p className="text-2xl font-bold text-yellow-400">1</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {policyHolders.filter(p => p.status === "pending").length}
+                    </p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-400" />
                 </div>
@@ -373,15 +335,22 @@ export default function InsuranceDashboard({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-sm">Active Patients</p>
-                    <p className="text-2xl font-bold text-emerald-400">2</p>
+                    <p className="text-2xl font-bold text-emerald-400">
+                      {policyHolders.filter(p => p.status === "active").length}
+                    </p>
                   </div>
                   <Users className="w-8 h-8 text-emerald-400" />
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            {/* Contract Actions */}
-            <div className="flex flex-col sm:flex-row gap-4">
+        {/* Action Bar with Reorganized Buttons */}
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+              {/* Action Buttons in Requested Order */}
               <Button
                 onClick={() => (window.location.href = "/insurance/send-contract")}
                 className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
@@ -401,39 +370,14 @@ export default function InsuranceDashboard({
                 variant="outline"
                 className="border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center gap-2"
               >
-                <Search className="w-4 h-4" />
-                Find Patient
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                New Claim
-              </Button>
-              <Button
-                variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center gap-2"
-              >
                 <Users className="w-4 h-4" />
                 Manage Members
               </Button>
-              <Button
-                variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center gap-2"
-              >
-                <CreditCard className="w-4 h-4" />
-                Policy Plans
-              </Button>
+              {/* Search Bar */}
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <Input
-                  placeholder="Search claims, members, policies..."
+                  placeholder="Search members, policies..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
@@ -443,16 +387,9 @@ export default function InsuranceDashboard({
           </CardContent>
         </Card>
 
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="claims" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700/50">
-            <TabsTrigger
-              value="claims"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Claims ({claims.length})
-            </TabsTrigger>
+        {/* Main Content Tabs - Only Members and Coverage */}
+        <Tabs defaultValue="members" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-800/50 border border-slate-700/50">
             <TabsTrigger
               value="members"
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
@@ -468,68 +405,6 @@ export default function InsuranceDashboard({
               Coverage ({coverageTypes.length})
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="claims" className="space-y-4">
-            {claims.length === 0 ? (
-              <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-                <CardContent className="py-12 text-center">
-                  <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                  <p className="text-slate-300 text-lg">No claims submitted</p>
-                  <p className="text-slate-500 mb-4">Claims will appear here when submitted</p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Process Claim
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {claims.map(claim => (
-                  <Card
-                    key={claim.id}
-                    className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm hover:bg-slate-800/70 transition-colors"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="text-lg font-semibold text-white">{claim.claimType}</h3>
-                            <p className="text-blue-200 text-sm">{claim.patientName}</p>
-                            <p className="text-slate-400 text-xs">{claim.providerName}</p>
-                            <p className="text-slate-300 text-sm mt-1">{claim.claimAmount}</p>
-                            <div className="flex flex-wrap items-center gap-2 mt-2">
-                              {getStatusBadge(claim.status)}
-                              {claim.priority && getPriorityBadge(claim.priority)}
-                              <Badge className="bg-emerald-500/10 text-emerald-300 border-emerald-500/20">
-                                {formatCurrency(claim.claimAmount)}
-                              </Badge>
-                            </div>
-                            <p className="text-slate-400 text-xs mt-2">Submitted: {formatDate(claim.submissionDate)}</p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
-                            View Details
-                          </Button>
-                          {claim.status === "pending" && (
-                            <>
-                              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">Approve</Button>
-                              <Button variant="outline" className="border-red-600 text-red-400 hover:bg-red-600/10">
-                                Reject
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
 
           <TabsContent value="members" className="space-y-4">
             {policyHolders.length === 0 ? (
@@ -692,7 +567,6 @@ export default function InsuranceDashboard({
                     initialOrganizationRecord,
                     initialVerificationData,
                     insuranceInfo,
-                    claims,
                     policyHolders,
                     coverageTypes,
                   }),
