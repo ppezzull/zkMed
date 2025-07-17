@@ -8,9 +8,9 @@ import {VerifiedEmail, UnverifiedEmail, EmailProofLib} from "vlayer-0.1.0/EmailP
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 
 
-/// @title zkMed Healthcare Registration Contract
+/// @title zkMed Registration Prover Contract
 /// @notice Manages patient and organization registration with MailProof verification for organizations
-contract HealthcareRegistrationProver is Prover {
+contract zkMedRegistrationProver is Prover {
     using RegexLib for string;
     using Strings for string;
     using EmailProofLib for UnverifiedEmail;

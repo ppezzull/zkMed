@@ -15,6 +15,10 @@ chain: setup-anvil-wallet
 fork: setup-anvil-wallet
 	anvil --fork-url ${FORK_URL} --chain-id 31337
 
+# Fork Base network
+fork-base: setup-anvil-wallet
+	anvil --fork-url https://mainnet.base.org --chain-id 31337
+
 # Deploy the contracts
 deploy:
 	@if [ ! -f "$(DEPLOY_SCRIPT)" ]; then 		echo "Error: Deploy script '$(DEPLOY_SCRIPT)' not found"; 		exit 1; 	fi

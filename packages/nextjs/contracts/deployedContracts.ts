@@ -6,8 +6,1342 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    HealthcareRegistrationProver: {
-      address: "0x700b6a60ce7eaaea56f065753d8dcb9653dbad35",
+    zkMedCore: {
+      address: "0x54a876b49f2eff54c4dda449fcab46e2bc1d29d2",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "adminContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "approvePaymentPlan",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "approver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "approveRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "approver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "authorizeContract",
+          inputs: [
+            {
+              name: "contractAddress",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "authorizedContracts",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "createAdminAccessRequest",
+          inputs: [
+            {
+              name: "requester",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "requestedRole",
+              type: "uint8",
+              internalType: "uint8",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "createPaymentPlanRequest",
+          inputs: [
+            {
+              name: "insurerAddress",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "patientAddress",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "insurerEmailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "patientEmailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateUser",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getInsurerPaymentHistory",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedPaymentHistory.PaymentEntry[]",
+              components: [
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "amount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "timestamp",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "paymentType",
+                  type: "uint8",
+                  internalType: "enum zkMedPaymentHistory.PaymentType",
+                },
+                {
+                  name: "isAutomaticPayment",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPatientPaymentHistory",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedPaymentHistory.PaymentEntry[]",
+              components: [
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "amount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "timestamp",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "paymentType",
+                  type: "uint8",
+                  internalType: "enum zkMedPaymentHistory.PaymentType",
+                },
+                {
+                  name: "isAutomaticPayment",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentPlanHistory",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedPaymentHistory.PaymentEntry[]",
+              components: [
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "amount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "timestamp",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "paymentType",
+                  type: "uint8",
+                  internalType: "enum zkMedPaymentHistory.PaymentType",
+                },
+                {
+                  name: "isAutomaticPayment",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentPlanRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedRequestManager.PaymentPlanRequest",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct zkMedRequestManager.BaseRequest",
+                  components: [
+                    {
+                      name: "requester",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "requestType",
+                      type: "uint8",
+                      internalType: "enum zkMedRequestManager.RequestType",
+                    },
+                    {
+                      name: "status",
+                      type: "uint8",
+                      internalType: "enum zkMedRequestManager.RequestStatus",
+                    },
+                    {
+                      name: "requestTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "processedBy",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "processedTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "plan",
+                  type: "tuple",
+                  internalType: "struct zkMedRequestManager.PaymentPlan",
+                  components: [
+                    {
+                      name: "insurerAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "patientAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "insuranceName",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "duration",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "monthlyAllowance",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "isActive",
+                      type: "bool",
+                      internalType: "bool",
+                    },
+                    {
+                      name: "createdAt",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "lastPayment",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "totalPaid",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "paymentsCount",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "insurerEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "patientEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentPlanSummary",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "plan",
+              type: "tuple",
+              internalType: "struct zkMedRequestManager.PaymentPlan",
+              components: [
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "createdAt",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "lastPayment",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "totalPaid",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "paymentsCount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "paymentsCount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "totalPaid",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "lastPaymentTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentStatistics",
+          inputs: [],
+          outputs: [
+            {
+              name: "totalPayments",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "totalAmountPaid",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequests",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequestsByType",
+          inputs: [
+            {
+              name: "reqType",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.RequestType",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRegistrationStats",
+          inputs: [],
+          outputs: [
+            {
+              name: "totalUsers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "patients",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "hospitals",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "insurers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRequestBase",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedRequestManager.BaseRequest",
+              components: [
+                {
+                  name: "requester",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "requestType",
+                  type: "uint8",
+                  internalType: "enum zkMedRequestManager.RequestType",
+                },
+                {
+                  name: "status",
+                  type: "uint8",
+                  internalType: "enum zkMedRequestManager.RequestStatus",
+                },
+                {
+                  name: "requestTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "processedBy",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "processedTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "hospitalContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "insurerContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "notifyAdminAdded",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "uint8",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "notifyHospitalRegistration",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "notifyInsurerRegistration",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "notifyPatientRegistration",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "patientContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "paymentHistoryContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract zkMedPaymentHistory",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "pendingRequestCount",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "rejectPaymentPlan",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "rejecter",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "rejectRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "rejecter",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
+          inputs: [],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "requestCount",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "requestManagerContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract zkMedRequestManager",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "revokeContractAuthorization",
+          inputs: [
+            {
+              name: "contractAddress",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setUserContracts",
+          inputs: [
+            {
+              name: "_patientContract",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_hospitalContract",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_insurerContract",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_adminContract",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "userToRequestId",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "validateHospitalDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "validateInsurerDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "AdminAdded",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "FirstAllowancePaid",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "HospitalRegistered",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "InsurerRegistered",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PatientRegistered",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentMade",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentPlanCreated",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestApproved",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "approver",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestRejected",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "rejecter",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "reason",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestSubmitted",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "requester",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "requestType",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum zkMedRequestManager.RequestType",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "UserDeactivated",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752712652.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedRegistrationProver: {
+      address: "0xbc7236ec1a6514b408af7a813d1bbb7df51acdc9",
       abi: [
         {
           type: "function",
@@ -229,12 +1563,12 @@ const deployedContracts = {
             {
               name: "",
               type: "tuple",
-              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              internalType: "struct zkMedRegistrationProver.RegistrationData",
               components: [
                 {
                   name: "requestedRole",
                   type: "uint8",
-                  internalType: "enum HealthcareRegistrationProver.UserType",
+                  internalType: "enum zkMedRegistrationProver.UserType",
                 },
                 {
                   name: "walletAddress",
@@ -402,12 +1736,12 @@ const deployedContracts = {
             {
               name: "",
               type: "tuple",
-              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              internalType: "struct zkMedRegistrationProver.RegistrationData",
               components: [
                 {
                   name: "requestedRole",
                   type: "uint8",
-                  internalType: "enum HealthcareRegistrationProver.UserType",
+                  internalType: "enum zkMedRegistrationProver.UserType",
                 },
                 {
                   name: "walletAddress",
@@ -491,17 +1825,395 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752669419.json",
+      deploymentFile: "run-1752712652.json",
       deploymentScript: "Deploy.s.sol",
     },
-    HealthcareRegistration: {
-      address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
+    zkMedPaymentPlanProver: {
+      address: "0x7bacf1e4b8f558608401b816d0e4b71594a38735",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "parseAmount",
+          inputs: [
+            {
+              name: "amountStr",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "parseDate",
+          inputs: [
+            {
+              name: "dateStr",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "proof",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "provePaymentPlan",
+          inputs: [
+            {
+              name: "unverifiedEmail",
+              type: "tuple",
+              internalType: "struct UnverifiedEmail",
+              components: [
+                {
+                  name: "email",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "dnsRecord",
+                  type: "tuple",
+                  internalType: "struct DnsRecord",
+                  components: [
+                    {
+                      name: "name",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "recordType",
+                      type: "uint8",
+                      internalType: "uint8",
+                    },
+                    {
+                      name: "data",
+                      type: "string",
+                      internalType: "string",
+                    },
+                    {
+                      name: "ttl",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                  ],
+                },
+                {
+                  name: "verificationData",
+                  type: "tuple",
+                  internalType: "struct VerificationData",
+                  components: [
+                    {
+                      name: "validUntil",
+                      type: "uint64",
+                      internalType: "uint64",
+                    },
+                    {
+                      name: "signature",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                    {
+                      name: "pubKey",
+                      type: "bytes",
+                      internalType: "bytes",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedPaymentPlanProver.PaymentPlanData",
+              components: [
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "insurerEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "patientEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "setBlock",
+          inputs: [
+            {
+              name: "blockNo",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "setChain",
+          inputs: [
+            {
+              name: "chainId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "blockNo",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "stringToAddress",
+          inputs: [
+            {
+              name: "str",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "error",
+          name: "FailedInnerCall",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752712652.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedPatient: {
+      address: "0x4d8b823aa9be90b1e80926b6c3ef93eb3e704dec",
       abi: [
         {
           type: "constructor",
           inputs: [
             {
-              name: "_emailDomainProver",
+              name: "_zkMedCore",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_registrationProver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_paymentPlanProver",
               type: "address",
               internalType: "address",
             },
@@ -523,301 +2235,152 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "addAdmin",
+          name: "acceptPaymentPlan",
           inputs: [
-            {
-              name: "newAdmin",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "role",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.AdminRole",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "adminRequests",
-          inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "base",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRequest",
-              components: [
-                {
-                  name: "requester",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "requestType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestType",
-                },
-                {
-                  name: "status",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestStatus",
-                },
-                {
-                  name: "requestTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "processedBy",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "processedTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-            {
-              name: "adminRole",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.AdminRole",
-            },
-            {
-              name: "reason",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "admins",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "isActive",
-              type: "bool",
-              internalType: "bool",
-            },
-            {
-              name: "role",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.AdminRole",
-            },
-            {
-              name: "permissions",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "adminSince",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "approveRequest",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "deactivateUser",
-          inputs: [
-            {
-              name: "user",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "domainToUser",
-          inputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "emailDomainProver",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getAdminRequest",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
             {
               name: "",
               type: "tuple",
-              internalType: "struct HealthcareRegistration.AdminAccessRequest",
+              internalType: "struct Proof",
               components: [
                 {
-                  name: "base",
+                  name: "seal",
                   type: "tuple",
-                  internalType: "struct HealthcareRegistration.BaseRequest",
+                  internalType: "struct Seal",
                   components: [
                     {
-                      name: "requester",
-                      type: "address",
-                      internalType: "address",
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
                     },
                     {
-                      name: "requestType",
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
                       type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestType",
-                    },
-                    {
-                      name: "status",
-                      type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestStatus",
-                    },
-                    {
-                      name: "requestTime",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "processedBy",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "processedTime",
-                      type: "uint256",
-                      internalType: "uint256",
+                      internalType: "enum ProofMode",
                     },
                   ],
                 },
                 {
-                  name: "adminRole",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.AdminRole",
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
                 },
                 {
-                  name: "reason",
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "planData",
+              type: "tuple",
+              internalType: "struct zkMedPaymentPlanProver.PaymentPlanData",
+              components: [
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
                   type: "string",
                   internalType: "string",
+                },
+                {
+                  name: "insurerEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "patientEmailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
                 },
               ],
             },
           ],
-          stateMutability: "view",
+          outputs: [],
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "getAdminType",
+          name: "deactivatePatient",
           inputs: [
             {
-              name: "user",
+              name: "patient",
               type: "address",
               internalType: "address",
             },
           ],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.AdminRole",
-            },
-          ],
-          stateMutability: "view",
+          outputs: [],
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "getDomainOwner",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getOrganizationRecord",
-          inputs: [
-            {
-              name: "organization",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          name: "getMyPatientRecord",
+          inputs: [],
           outputs: [
             {
               name: "",
               type: "tuple",
-              internalType: "struct HealthcareRegistration.OrganizationRecord",
+              internalType: "struct zkMedPatient.PatientRecord",
               components: [
                 {
                   name: "base",
                   type: "tuple",
-                  internalType: "struct HealthcareRegistration.BaseRecord",
+                  internalType: "struct zkMedPatient.BaseRecord",
                   components: [
                     {
                       name: "walletAddress",
@@ -845,99 +2408,6 @@ const deployedContracts = {
                       internalType: "uint256",
                     },
                   ],
-                },
-                {
-                  name: "orgType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.UserType",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getOrganizationRequest",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.OrganizationRegistrationRequest",
-              components: [
-                {
-                  name: "base",
-                  type: "tuple",
-                  internalType: "struct HealthcareRegistration.BaseRequest",
-                  components: [
-                    {
-                      name: "requester",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "requestType",
-                      type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestType",
-                    },
-                    {
-                      name: "status",
-                      type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestStatus",
-                    },
-                    {
-                      name: "requestTime",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "processedBy",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "processedTime",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                  ],
-                },
-                {
-                  name: "orgType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.UserType",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
                 },
               ],
             },
@@ -958,12 +2428,12 @@ const deployedContracts = {
             {
               name: "",
               type: "tuple",
-              internalType: "struct HealthcareRegistration.PatientRecord",
+              internalType: "struct zkMedPatient.PatientRecord",
               components: [
                 {
                   name: "base",
                   type: "tuple",
-                  internalType: "struct HealthcareRegistration.BaseRecord",
+                  internalType: "struct zkMedPatient.BaseRecord",
                   components: [
                     {
                       name: "walletAddress",
@@ -999,121 +2469,11 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "getPatientRequest",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.PatientRegistrationRequest",
-              components: [
-                {
-                  name: "base",
-                  type: "tuple",
-                  internalType: "struct HealthcareRegistration.BaseRequest",
-                  components: [
-                    {
-                      name: "requester",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "requestType",
-                      type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestType",
-                    },
-                    {
-                      name: "status",
-                      type: "uint8",
-                      internalType: "enum HealthcareRegistration.RequestStatus",
-                    },
-                    {
-                      name: "requestTime",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "processedBy",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "processedTime",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                  ],
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getPendingRequests",
+          name: "getTotalPatients",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256[]",
-              internalType: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getPendingRequestsByType",
-          inputs: [
-            {
-              name: "reqType",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.RequestType",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256[]",
-              internalType: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getRegistrationStats",
-          inputs: [],
-          outputs: [
-            {
-              name: "totalUsers",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "patients",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "hospitals",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "insurers",
               type: "uint256",
               internalType: "uint256",
             },
@@ -1122,253 +2482,38 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "getRequestBase",
+          name: "isEmailHashUsed",
           inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRequest",
-              components: [
-                {
-                  name: "requester",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "requestType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestType",
-                },
-                {
-                  name: "status",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestStatus",
-                },
-                {
-                  name: "requestTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "processedBy",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "processedTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getUserType",
-          inputs: [
-            {
-              name: "user",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.UserType",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "isDomainTaken",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "isUserRegistered",
-          inputs: [
-            {
-              name: "user",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "organizationRecords",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "base",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRecord",
-              components: [
-                {
-                  name: "walletAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "registrationTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "isActive",
-                  type: "bool",
-                  internalType: "bool",
-                },
-                {
-                  name: "requestId",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-            {
-              name: "orgType",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.UserType",
-            },
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "organizationName",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "organizationRequests",
-          inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "base",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRequest",
-              components: [
-                {
-                  name: "requester",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "requestType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestType",
-                },
-                {
-                  name: "status",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestStatus",
-                },
-                {
-                  name: "requestTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "processedBy",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "processedTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-            {
-              name: "orgType",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.UserType",
-            },
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "organizationName",
-              type: "string",
-              internalType: "string",
-            },
             {
               name: "emailHash",
               type: "bytes32",
               internalType: "bytes32",
             },
           ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
           stateMutability: "view",
         },
         {
           type: "function",
-          name: "owner",
-          inputs: [],
+          name: "isPatientRegistered",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
           outputs: [
             {
               name: "",
-              type: "address",
-              internalType: "address",
+              type: "bool",
+              internalType: "bool",
             },
           ],
           stateMutability: "view",
@@ -1387,7 +2532,7 @@ const deployedContracts = {
             {
               name: "base",
               type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRecord",
+              internalType: "struct zkMedPatient.BaseRecord",
               components: [
                 {
                   name: "walletAddress",
@@ -1421,294 +2566,16 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "patientRequests",
-          inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "base",
-              type: "tuple",
-              internalType: "struct HealthcareRegistration.BaseRequest",
-              components: [
-                {
-                  name: "requester",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "requestType",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestType",
-                },
-                {
-                  name: "status",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistration.RequestStatus",
-                },
-                {
-                  name: "requestTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "processedBy",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "processedTime",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-            {
-              name: "emailHash",
-              type: "bytes32",
-              internalType: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "pendingRequestCount",
+          name: "paymentPlanProver",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
+              type: "address",
+              internalType: "address",
             },
           ],
           stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "registerHospital",
-          inputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct Proof",
-              components: [
-                {
-                  name: "seal",
-                  type: "tuple",
-                  internalType: "struct Seal",
-                  components: [
-                    {
-                      name: "verifierSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "seal",
-                      type: "bytes32[8]",
-                      internalType: "bytes32[8]",
-                    },
-                    {
-                      name: "mode",
-                      type: "uint8",
-                      internalType: "enum ProofMode",
-                    },
-                  ],
-                },
-                {
-                  name: "callGuestId",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "length",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "callAssumptions",
-                  type: "tuple",
-                  internalType: "struct CallAssumptions",
-                  components: [
-                    {
-                      name: "proverContractAddress",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "functionSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "settleChainId",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockNumber",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockHash",
-                      type: "bytes32",
-                      internalType: "bytes32",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "registrationData",
-              type: "tuple",
-              internalType: "struct HealthcareRegistrationProver.RegistrationData",
-              components: [
-                {
-                  name: "requestedRole",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistrationProver.UserType",
-                },
-                {
-                  name: "walletAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-              ],
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "registerInsurer",
-          inputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct Proof",
-              components: [
-                {
-                  name: "seal",
-                  type: "tuple",
-                  internalType: "struct Seal",
-                  components: [
-                    {
-                      name: "verifierSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "seal",
-                      type: "bytes32[8]",
-                      internalType: "bytes32[8]",
-                    },
-                    {
-                      name: "mode",
-                      type: "uint8",
-                      internalType: "enum ProofMode",
-                    },
-                  ],
-                },
-                {
-                  name: "callGuestId",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "length",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "callAssumptions",
-                  type: "tuple",
-                  internalType: "struct CallAssumptions",
-                  components: [
-                    {
-                      name: "proverContractAddress",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "functionSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "settleChainId",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockNumber",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockHash",
-                      type: "bytes32",
-                      internalType: "bytes32",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "registrationData",
-              type: "tuple",
-              internalType: "struct HealthcareRegistrationProver.RegistrationData",
-              components: [
-                {
-                  name: "requestedRole",
-                  type: "uint8",
-                  internalType: "enum HealthcareRegistrationProver.UserType",
-                },
-                {
-                  name: "walletAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-              ],
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
         },
         {
           type: "function",
@@ -1788,12 +2655,12 @@ const deployedContracts = {
             {
               name: "registrationData",
               type: "tuple",
-              internalType: "struct HealthcareRegistrationProver.RegistrationData",
+              internalType: "struct zkMedRegistrationProver.RegistrationData",
               components: [
                 {
                   name: "requestedRole",
                   type: "uint8",
-                  internalType: "enum HealthcareRegistrationProver.UserType",
+                  internalType: "enum zkMedRegistrationProver.UserType",
                 },
                 {
                   name: "walletAddress",
@@ -1823,126 +2690,13 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "rejectRequest",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "reason",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "renounceOwnership",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "requestAdminAccess",
-          inputs: [
-            {
-              name: "requestedRole",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.AdminRole",
-            },
-            {
-              name: "reason",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "requestCount",
+          name: "registrationProver",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "requests",
-          inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "requester",
               type: "address",
               internalType: "address",
-            },
-            {
-              name: "requestType",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.RequestType",
-            },
-            {
-              name: "status",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.RequestStatus",
-            },
-            {
-              name: "requestTime",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "processedBy",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "processedTime",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "totalHospitals",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "totalInsurers",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
             },
           ],
           stateMutability: "view",
@@ -1962,41 +2716,15 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "totalRegisteredUsers",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "transferOwnership",
+          name: "updatePatientRequestId",
           inputs: [
             {
-              name: "newOwner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "updateAdminPermissions",
-          inputs: [
-            {
-              name: "admin",
+              name: "patient",
               type: "address",
               internalType: "address",
             },
             {
-              name: "permissions",
+              name: "requestId",
               type: "uint256",
               internalType: "uint256",
             },
@@ -2025,14 +2753,270 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "userToRequestId",
-          inputs: [
+          name: "verifier",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "zkMedCoreContract",
+          inputs: [],
+          outputs: [
             {
               name: "",
               type: "address",
               internalType: "address",
             },
           ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "PatientRegistered",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "emailHash",
+              type: "bytes32",
+              indexed: false,
+              internalType: "bytes32",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentPlanRequested",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "InvalidChainId",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752712652.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedHospital: {
+      address: "0x9ada4c9ef644456c74f0d4ccd5abdf3ea4cf449d",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_zkMedCore",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_registrationProver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "_setTestVerifier",
+          inputs: [
+            {
+              name: "newVerifier",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "approveHospital",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateHospital",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "domainToHospital",
+          inputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getApprovedHospitals",
+          inputs: [],
+          outputs: [
+            {
+              name: "hospitals",
+              type: "address[]",
+              internalType: "address[]",
+            },
+            {
+              name: "domains",
+              type: "string[]",
+              internalType: "string[]",
+            },
+            {
+              name: "count",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getHospitalByDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getHospitalRecord",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "record",
+              type: "tuple",
+              internalType: "struct zkMedHospital.OrganizationRecord",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct zkMedHospital.BaseRecord",
+                  components: [
+                    {
+                      name: "userAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "emailHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                    {
+                      name: "registrationTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "isActive",
+                      type: "bool",
+                      internalType: "bool",
+                    },
+                  ],
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "isApproved",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getTotalHospitals",
+          inputs: [],
           outputs: [
             {
               name: "",
@@ -2044,7 +3028,7 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "userTypes",
+          name: "hospitalRecords",
           inputs: [
             {
               name: "",
@@ -2054,9 +3038,277 @@ const deployedContracts = {
           ],
           outputs: [
             {
+              name: "base",
+              type: "tuple",
+              internalType: "struct zkMedHospital.BaseRecord",
+              components: [
+                {
+                  name: "userAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "registrationTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "organizationName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "isApproved",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isEmailHashUsed",
+          inputs: [
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
               name: "",
-              type: "uint8",
-              internalType: "enum HealthcareRegistration.UserType",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isHospitalApproved",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isHospitalRegistered",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "receivePayment",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "registerHospital",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "registrationData",
+              type: "tuple",
+              internalType: "struct zkMedRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum zkMedRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "registrationProver",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalHospitals",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "usedEmailHashes",
+          inputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
             },
           ],
           stateMutability: "view",
@@ -2069,6 +3321,927 @@ const deployedContracts = {
               name: "domain",
               type: "string",
               internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "pure",
+        },
+        {
+          type: "function",
+          name: "verifier",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "zkMedCoreContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract zkMedCore",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "HospitalRegisteredLocal",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "domain",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentReceived",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "InvalidChainId",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752712652.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedInsurer: {
+      address: "0x4e3f0f08c79410f83b8b146169dbaa299f033541",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_zkMedCore",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_registrationProver",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "_setTestVerifier",
+          inputs: [
+            {
+              name: "newVerifier",
+              type: "address",
+              internalType: "contract IProofVerifier",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "amIApproved",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "amIRegistered",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "createPaymentPlan",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "proposalIndex",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivatePaymentProposal",
+          inputs: [
+            {
+              name: "proposalIndex",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "domainToInsurer",
+          inputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getInsurerByDomain",
+          inputs: [
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getMyOrganizationRecord",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedInsurer.OrganizationRecord",
+              components: [
+                {
+                  name: "base",
+                  type: "tuple",
+                  internalType: "struct zkMedInsurer.BaseRecord",
+                  components: [
+                    {
+                      name: "walletAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "emailHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                    {
+                      name: "registrationTime",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "isActive",
+                      type: "bool",
+                      internalType: "bool",
+                    },
+                    {
+                      name: "requestId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                  ],
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "isApproved",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getMyPatients",
+          inputs: [],
+          outputs: [
+            {
+              name: "patients",
+              type: "address[]",
+              internalType: "address[]",
+            },
+            {
+              name: "planCounts",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getMyPaymentProposals",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedInsurer.PaymentPlanProposal[]",
+              components: [
+                {
+                  name: "patient",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "createdAt",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPatientPlans",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedRequestManager.PaymentPlan[]",
+              components: [
+                {
+                  name: "insurerAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "patientAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "createdAt",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "lastPayment",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "totalPaid",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "paymentsCount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentProposalsForPatient",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple[]",
+              internalType: "struct zkMedInsurer.PaymentPlanProposal[]",
+              components: [
+                {
+                  name: "patient",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "duration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "createdAt",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getTotalInsurers",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "hasActivePaymentPlanWith",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "insurerPatientProposals",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "createdAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "insurerPaymentProposals",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "createdAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "insurerRecords",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "base",
+              type: "tuple",
+              internalType: "struct zkMedInsurer.BaseRecord",
+              components: [
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "registrationTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "requestId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "domain",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "organizationName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "isApproved",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isEmailHashUsed",
+          inputs: [
+            {
+              name: "emailHash",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isInsurerApproved",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isInsurerRegistered",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "payHospital",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "payPatient",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "registerInsurer",
+          inputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct Proof",
+              components: [
+                {
+                  name: "seal",
+                  type: "tuple",
+                  internalType: "struct Seal",
+                  components: [
+                    {
+                      name: "verifierSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "seal",
+                      type: "bytes32[8]",
+                      internalType: "bytes32[8]",
+                    },
+                    {
+                      name: "mode",
+                      type: "uint8",
+                      internalType: "enum ProofMode",
+                    },
+                  ],
+                },
+                {
+                  name: "callGuestId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "length",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "callAssumptions",
+                  type: "tuple",
+                  internalType: "struct CallAssumptions",
+                  components: [
+                    {
+                      name: "proverContractAddress",
+                      type: "address",
+                      internalType: "address",
+                    },
+                    {
+                      name: "functionSelector",
+                      type: "bytes4",
+                      internalType: "bytes4",
+                    },
+                    {
+                      name: "settleChainId",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockNumber",
+                      type: "uint256",
+                      internalType: "uint256",
+                    },
+                    {
+                      name: "settleBlockHash",
+                      type: "bytes32",
+                      internalType: "bytes32",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "registrationData",
+              type: "tuple",
+              internalType: "struct zkMedRegistrationProver.RegistrationData",
+              components: [
+                {
+                  name: "requestedRole",
+                  type: "uint8",
+                  internalType: "enum zkMedRegistrationProver.UserType",
+                },
+                {
+                  name: "walletAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "domain",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "organizationName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "emailHash",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "registrationProver",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "totalInsurers",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "usedEmailHashes",
+          inputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
             },
           ],
           outputs: [
@@ -2113,52 +4286,21 @@ const deployedContracts = {
           stateMutability: "view",
         },
         {
-          type: "event",
-          name: "AdminAdded",
-          inputs: [
+          type: "function",
+          name: "zkMedCoreContract",
+          inputs: [],
+          outputs: [
             {
-              name: "admin",
+              name: "",
               type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "role",
-              type: "uint8",
-              indexed: false,
-              internalType: "enum HealthcareRegistration.AdminRole",
+              internalType: "contract zkMedCore",
             },
           ],
-          anonymous: false,
+          stateMutability: "view",
         },
         {
           type: "event",
-          name: "HospitalRegistered",
-          inputs: [
-            {
-              name: "hospital",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "domain",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "emailHash",
-              type: "bytes32",
-              indexed: false,
-              internalType: "bytes32",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "InsurerRegistered",
+          name: "InsurerRegisteredLocal",
           inputs: [
             {
               name: "insurer",
@@ -2173,49 +4315,637 @@ const deployedContracts = {
               internalType: "string",
             },
             {
-              name: "emailHash",
-              type: "bytes32",
+              name: "requestId",
+              type: "uint256",
               indexed: false,
-              internalType: "bytes32",
+              internalType: "uint256",
             },
           ],
           anonymous: false,
         },
         {
           type: "event",
-          name: "OwnershipTransferred",
+          name: "PaymentPlanCreated",
           inputs: [
             {
-              name: "previousOwner",
+              name: "insurer",
               type: "address",
               indexed: true,
               internalType: "address",
             },
-            {
-              name: "newOwner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "PatientRegistered",
-          inputs: [
             {
               name: "patient",
               type: "address",
               indexed: true,
               internalType: "address",
             },
+            {
+              name: "insuranceName",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
           ],
           anonymous: false,
         },
         {
           type: "event",
-          name: "RequestApproved",
+          name: "PaymentPlanSent",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "proposalIndex",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentSentToHospital",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentSentToPatient",
+          inputs: [
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "InvalidChainId",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752712652.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedAdmin: {
+      address: "0x1418ec17ae270b139eff02a52555760e46d925bc",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_zkMedCore",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "addAdmin",
+          inputs: [
+            {
+              name: "newAdmin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "admins",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+            {
+              name: "permissions",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "adminSince",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "amIAdmin",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "approvePaymentPlan",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "approveRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateAdmin",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateUser",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getAdminRecord",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedAdmin.AdminRecord",
+              components: [
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "role",
+                  type: "uint8",
+                  internalType: "enum zkMedRequestManager.AdminRole",
+                },
+                {
+                  name: "permissions",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "adminSince",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getAdminType",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getMyAdminDetails",
+          inputs: [],
+          outputs: [
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+            {
+              name: "permissions",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "adminSince",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequests",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPendingRequestsByType",
+          inputs: [
+            {
+              name: "reqType",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.RequestType",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRegistrationStats",
+          inputs: [],
+          outputs: [
+            {
+              name: "totalUsers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "patients",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "hospitals",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "insurers",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getTotalAdmins",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isAdmin",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isModeratorOrSuperAdmin",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isSuperAdmin",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "rejectPaymentPlan",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "rejectRequest",
+          inputs: [
+            {
+              name: "requestId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "requestAdminAccess",
+          inputs: [
+            {
+              name: "requestedRole",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+            {
+              name: "reason",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "totalAdmins",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "updateAdminPermissions",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "permissions",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "zkMedCoreContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "AdminAccessRequested",
+          inputs: [
+            {
+              name: "requester",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "requestedRole",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+            {
+              name: "requestId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "AdminAdded",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "AdminPermissionsUpdated",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newPermissions",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RequestApprovedByAdmin",
           inputs: [
             {
               name: "requestId",
@@ -2224,7 +4954,7 @@ const deployedContracts = {
               internalType: "uint256",
             },
             {
-              name: "approver",
+              name: "admin",
               type: "address",
               indexed: true,
               internalType: "address",
@@ -2234,7 +4964,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "RequestRejected",
+          name: "RequestRejectedByAdmin",
           inputs: [
             {
               name: "requestId",
@@ -2243,7 +4973,7 @@ const deployedContracts = {
               internalType: "uint256",
             },
             {
-              name: "rejecter",
+              name: "admin",
               type: "address",
               indexed: true,
               internalType: "address",
@@ -2259,32 +4989,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "RequestSubmitted",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "requester",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "requestType",
-              type: "uint8",
-              indexed: false,
-              internalType: "enum HealthcareRegistration.RequestType",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "UserDeactivated",
+          name: "UserDeactivatedByAdmin",
           inputs: [
             {
               name: "user",
@@ -2292,39 +4997,18 @@ const deployedContracts = {
               indexed: true,
               internalType: "address",
             },
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
           ],
           anonymous: false,
         },
-        {
-          type: "error",
-          name: "InvalidChainId",
-          inputs: [],
-        },
-        {
-          type: "error",
-          name: "OwnableInvalidOwner",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "OwnableUnauthorizedAccount",
-          inputs: [
-            {
-              name: "account",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752669419.json",
+      deploymentFile: "run-1752712652.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
