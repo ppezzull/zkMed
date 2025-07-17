@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     zkMedCore: {
-      address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      address: "0x959922be3caee4b8cd9a407cc3ac1c251c2007b1",
       abi: [
         {
           type: "constructor",
@@ -1380,11 +1380,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedRegistrationProver: {
-      address: "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+      address: "0x9a9f2ccfde556a7e9ff0848998aa4a0cfd8863ae",
       abi: [
         {
           type: "function",
@@ -1868,11 +1868,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPaymentPlanProver: {
-      address: "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+      address: "0x68b1d87f95878fe05b998f19b66f4baba5de1aed",
       abi: [
         {
           type: "constructor",
@@ -2236,11 +2236,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPatient: {
-      address: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      address: "0x3aa5ebb10dc797cac828524e59a333d0a371443c",
       abi: [
         {
           type: "constructor",
@@ -2257,6 +2257,11 @@ const deployedContracts = {
             },
             {
               name: "_paymentPlanProver",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_linkPayContract",
               type: "address",
               internalType: "address",
             },
@@ -2557,6 +2562,19 @@ const deployedContracts = {
               name: "",
               type: "bool",
               internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "linkPayContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract zkMedLinkPay",
             },
           ],
           stateMutability: "view",
@@ -2871,11 +2889,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedHospital: {
-      address: "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+      address: "0xc6e7df5e7b4f2a278906862b61205850344d4e7d",
       abi: [
         {
           type: "constructor",
@@ -3458,11 +3476,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedInsurer: {
-      address: "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      address: "0x59b670e9fa9d0a427751af201d676719a970857b",
       abi: [
         {
           type: "constructor",
@@ -4485,11 +4503,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedAdmin: {
-      address: "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      address: "0x4ed7c70f96b99c776995fb64377f0d4ab3b0e1c1",
       abi: [
         {
           type: "constructor",
@@ -4505,6 +4523,24 @@ const deployedContracts = {
         {
           type: "function",
           name: "addAdmin",
+          inputs: [
+            {
+              name: "newAdmin",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "role",
+              type: "uint8",
+              internalType: "enum zkMedRequestManager.AdminRole",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "addAdminViaApprovedRequest",
           inputs: [
             {
               name: "newAdmin",
@@ -4814,6 +4850,25 @@ const deployedContracts = {
         },
         {
           type: "function",
+          name: "isModeratorOrSuperAdmin",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
           name: "isSuperAdmin",
           inputs: [],
           outputs: [
@@ -5051,7 +5106,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752722826.json",
+      deploymentFile: "run-1752736016.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
