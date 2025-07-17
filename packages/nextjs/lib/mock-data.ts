@@ -413,3 +413,42 @@ export function mockSetConnectedWallet(address: string) {
 
   console.log(`Setting connected wallet: ${address} (Unknown)`);
 }
+
+// Default mock functions for static dashboards (without address parameter)
+export const mockGetDefaultOrganizationRecord = async (
+  type: "hospital" | "insurance",
+): Promise<OrganizationRecord | null> => {
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Return the first organization of the requested type
+  const orgRecord = mockOrganizationRecords.find(record =>
+    type === "hospital" ? record.orgType === UserType.HOSPITAL : record.orgType === UserType.INSURER,
+  );
+
+  return orgRecord || null;
+};
+
+export const mockGetDefaultUserVerificationData = async (
+  type: "hospital" | "insurance",
+): Promise<UserVerificationData | null> => {
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Get the first organization of the requested type
+  const orgRecord = mockOrganizationRecords.find(record =>
+    type === "hospital" ? record.orgType === UserType.HOSPITAL : record.orgType === UserType.INSURER,
+  );
+
+  if (orgRecord) {
+    return {
+      userType: orgRecord.orgType,
+      isActive: orgRecord.base.isActive,
+      isAdmin: false,
+      adminRole: undefined,
+      permissions: undefined,
+      domain: orgRecord.domain,
+      organizationName: orgRecord.organizationName,
+    };
+  }
+
+  return null;
+};

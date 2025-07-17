@@ -1,28 +1,21 @@
+import { NextPage } from "next";
 import HospitalDashboard from "~~/components/hospital/hospital-dashboard";
-import { mockGetOrganizationRecord, mockGetUserVerificationData } from "~~/lib/mock-data";
+import { mockGetDefaultOrganizationRecord, mockGetDefaultUserVerificationData } from "~~/lib/mock-data";
 
-interface PageProps {
-  params: {
-    address: string;
-  };
-}
-
-export default async function HospitalPage({ params }: PageProps) {
-  const { address } = await params;
-
+const HospitalPage: NextPage = async () => {
   try {
-    // Get organization and verification data in parallel
+    // Get default organization and verification data
     const [organizationRecord, userVerification] = await Promise.all([
-      mockGetOrganizationRecord(address),
-      mockGetUserVerificationData(address),
+      mockGetDefaultOrganizationRecord("hospital"),
+      mockGetDefaultUserVerificationData("hospital"),
     ]);
 
     if (!organizationRecord) {
       return (
         <main className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Organization Not Found</h1>
-            <p className="text-gray-600">No organization record found for address {address}</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Hospital Dashboard Unavailable</h1>
+            <p className="text-gray-600">Unable to load hospital data</p>
           </div>
         </main>
       );
@@ -44,4 +37,6 @@ export default async function HospitalPage({ params }: PageProps) {
       </main>
     );
   }
-}
+};
+
+export default HospitalPage;

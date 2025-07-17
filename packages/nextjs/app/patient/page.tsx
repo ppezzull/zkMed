@@ -1,15 +1,7 @@
 import { NextPage } from "next";
 import PatientDashboard from "~~/components/patient/patient-dashboard";
 
-interface PatientPageProps {
-  params: {
-    address: string;
-  };
-}
-
-const PatientPage: NextPage<PatientPageProps> = async ({ params }) => {
-  await params; // Await params to satisfy Next.js 15 requirement
-
+const PatientPage: NextPage = async () => {
   // Create mock patient data for UI
   const initialPatientData = {
     id: "1",
