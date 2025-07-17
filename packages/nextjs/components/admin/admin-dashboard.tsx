@@ -22,6 +22,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~~/components/ui/tabs"
 import { useAdmin } from "~~/hooks/useAdmin";
 import { RegistrationStats } from "~~/types/healthcare";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  verificationStatus: "pending" | "approved" | "rejected";
+  registrationDate: string;
+  organizationName: string | null;
+}
+
 interface AdminDashboardProps {
   initialData: {
     allPendingRequests: bigint[];
@@ -38,15 +48,17 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
   const admin = useAdmin();
 
   // Extract data from initialData with safety checks
-  const stats = initialData?.registrationStats || {
-    totalPatients: BigInt(0),
-    totalHospitals: BigInt(0),
-    totalInsurers: BigInt(0),
-    totalRegisteredUsers: BigInt(0),
-  };
+  // Note: initialData preserved for future backend integration
+  console.log("Admin dashboard initialized with:", initialData);
+  // const stats = initialData?.registrationStats || {
+  //   totalPatients: BigInt(0),
+  //   totalHospitals: BigInt(0),
+  //   totalInsurers: BigInt(0),
+  //   totalRegisteredUsers: BigInt(0),
+  // };
 
-  // Create mock users data for the UI
-  const pendingUsers = [
+  // Initialize all users in one array with state management
+  const initialUsers: User[] = [
     {
       id: "1",
       name: "John Smith",
@@ -65,11 +77,26 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
       registrationDate: "2024-01-14",
       organizationName: "City General Hospital",
     },
-  ];
-
-  const approvedUsers = [
     {
       id: "3",
+      name: "Sarah Connor",
+      email: "sarah.connor@email.com",
+      role: "Patient",
+      verificationStatus: "pending",
+      registrationDate: "2024-01-16",
+      organizationName: null,
+    },
+    {
+      id: "4",
+      name: "HealthSecure Insurance",
+      email: "admin@healthsecure.com",
+      role: "Insurance",
+      verificationStatus: "pending",
+      registrationDate: "2024-01-13",
+      organizationName: "HealthSecure Insurance",
+    },
+    {
+      id: "5",
       name: "Mary Johnson",
       email: "mary.j@email.com",
       role: "Patient",
@@ -77,11 +104,17 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
       registrationDate: "2024-01-10",
       organizationName: null,
     },
-  ];
-
-  const rejectedUsers = [
     {
-      id: "4",
+      id: "6",
+      name: "Metro Medical Center",
+      email: "contact@metromedical.com",
+      role: "Hospital",
+      verificationStatus: "approved",
+      registrationDate: "2024-01-09",
+      organizationName: "Metro Medical Center",
+    },
+    {
+      id: "7",
       name: "Invalid Hospital",
       email: "fake@hospital.com",
       role: "Hospital",
@@ -89,7 +122,33 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
       registrationDate: "2024-01-08",
       organizationName: "Invalid Hospital",
     },
+    {
+      id: "8",
+      name: "Fake Insurance Co",
+      email: "fake@insurance.com",
+      role: "Insurance",
+      verificationStatus: "rejected",
+      registrationDate: "2024-01-07",
+      organizationName: "Fake Insurance Co",
+    },
   ];
+
+  // State management for users
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [processingUsers, setProcessingUsers] = useState<Set<string>>(new Set());
+
+  // Filter users by status
+  const pendingUsers = users.filter(user => user.verificationStatus === "pending");
+  const approvedUsers = users.filter(user => user.verificationStatus === "approved");
+  const rejectedUsers = users.filter(user => user.verificationStatus === "rejected");
+
+  // Stats calculations
+  const totalUsers = users.length;
+  const totalApproved = approvedUsers.length;
+  const totalPending = pendingUsers.length;
+  const totalRejected = rejectedUsers.length;
 
   const isLoading = admin.isProcessingRequest;
 
@@ -111,17 +170,70 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
     return obj;
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
-
   const handleApprove = async (userId: string) => {
-    console.log("Approving user:", userId);
-    // Implementation for approval
+    console.log("🟢 APPROVE CLICKED - User ID:", userId);
+    console.log("🟢 Current users:", users);
+    console.log("🟢 Current pending users:", pendingUsers);
+
+    // Add to processing set to show loading state
+    setProcessingUsers(prev => {
+      console.log("🟢 Adding to processing:", userId);
+      return new Set([...prev, userId]);
+    });
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Update user status
+    setUsers(prevUsers => {
+      console.log("🟢 Updating user status for:", userId);
+      const updatedUsers = prevUsers.map(user =>
+        user.id === userId ? { ...user, verificationStatus: "approved" as const } : user,
+      );
+      console.log("🟢 Updated users:", updatedUsers);
+      return updatedUsers;
+    });
+
+    // Remove from processing set
+    setProcessingUsers(prev => {
+      console.log("🟢 Removing from processing:", userId);
+      const newSet = new Set(prev);
+      newSet.delete(userId);
+      return newSet;
+    });
   };
 
   const handleReject = async (userId: string) => {
-    console.log("Rejecting user:", userId);
-    // Implementation for rejection
+    console.log("🔴 REJECT CLICKED - User ID:", userId);
+    console.log("🔴 Current users:", users);
+    console.log("🔴 Current pending users:", pendingUsers);
+
+    // Add to processing set to show loading state
+    setProcessingUsers(prev => {
+      console.log("🔴 Adding to processing:", userId);
+      return new Set([...prev, userId]);
+    });
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Update user status
+    setUsers(prevUsers => {
+      console.log("🔴 Updating user status for:", userId);
+      const updatedUsers = prevUsers.map(user =>
+        user.id === userId ? { ...user, verificationStatus: "rejected" as const } : user,
+      );
+      console.log("🔴 Updated users:", updatedUsers);
+      return updatedUsers;
+    });
+
+    // Remove from processing set
+    setProcessingUsers(prev => {
+      console.log("🔴 Removing from processing:", userId);
+      const newSet = new Set(prev);
+      newSet.delete(userId);
+      return newSet;
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -143,6 +255,71 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
         <Icon className="w-3 h-3" />
         {status}
       </Badge>
+    );
+  };
+
+  const renderUserCard = (user: User, showActions = false) => {
+    const isProcessing = processingUsers.has(user.id);
+
+    return (
+      <Card
+        key={user.id}
+        className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm hover:bg-slate-800/70 transition-colors"
+      >
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-lg font-semibold text-white truncate">{user.name}</h3>
+                <p className="text-blue-200 text-sm">{user.email}</p>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {getStatusBadge(user.verificationStatus)}
+                  <Badge className="bg-slate-700/50 text-slate-300 border-slate-600">{user.role}</Badge>
+                  {user.organizationName && (
+                    <Badge className="bg-purple-500/10 text-purple-300 border-purple-500/20">
+                      <Building2 className="w-3 h-3 mr-1" />
+                      {user.organizationName}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-slate-400 text-xs mt-2">Registered: {formatDate(user.registrationDate)}</p>
+              </div>
+            </div>
+            {showActions && (
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
+                  onClick={() => handleApprove(user.id)}
+                  disabled={isProcessing}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  {isProcessing ? "Processing..." : "Approve"}
+                </Button>
+                <Button
+                  onClick={() => handleReject(user.id)}
+                  disabled={isProcessing}
+                  variant="outline"
+                  className="border-red-600 text-red-400 hover:bg-red-600/10 flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isProcessing ? (
+                    <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                  ) : (
+                    <XCircle className="w-4 h-4" />
+                  )}
+                  {isProcessing ? "Processing..." : "Reject"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -187,9 +364,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-200 text-sm font-medium">Total Users</p>
-                  <p className="text-2xl font-bold text-white">
-                    {Number(stats.totalPatients) + Number(stats.totalHospitals) + Number(stats.totalInsurers)}
-                  </p>
+                  <p className="text-2xl font-bold text-white">{totalUsers}</p>
                   <p className="text-xs text-emerald-400 flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3" />
                     +12% from last month
@@ -207,7 +382,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-200 text-sm font-medium">Pending</p>
-                  <p className="text-2xl font-bold text-white">{pendingUsers.length}</p>
+                  <p className="text-2xl font-bold text-white">{totalPending}</p>
                   <p className="text-xs text-amber-400 flex items-center gap-1 mt-1">
                     <Activity className="w-3 h-3" />
                     Requires attention
@@ -225,7 +400,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-200 text-sm font-medium">Approved</p>
-                  <p className="text-2xl font-bold text-white">{approvedUsers.length}</p>
+                  <p className="text-2xl font-bold text-white">{totalApproved}</p>
                   <p className="text-xs text-emerald-400 flex items-center gap-1 mt-1">
                     <UserCheck className="w-3 h-3" />
                     Active users
@@ -243,7 +418,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-200 text-sm font-medium">Rejected</p>
-                  <p className="text-2xl font-bold text-white">{rejectedUsers.length}</p>
+                  <p className="text-2xl font-bold text-white">{totalRejected}</p>
                   <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
                     <XCircle className="w-3 h-3" />
                     Declined applications
@@ -304,19 +479,19 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               value="pending"
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
             >
-              Pending ({pendingUsers.length})
+              Pending ({totalPending})
             </TabsTrigger>
             <TabsTrigger
               value="approved"
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
             >
-              Approved ({approvedUsers.length})
+              Approved ({totalApproved})
             </TabsTrigger>
             <TabsTrigger
               value="rejected"
               className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
             >
-              Rejected ({rejectedUsers.length})
+              Rejected ({totalRejected})
             </TabsTrigger>
           </TabsList>
 
@@ -330,58 +505,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {pendingUsers.map(user => (
-                  <Card
-                    key={user.id}
-                    className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm hover:bg-slate-800/70 transition-colors"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Users className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="text-lg font-semibold text-white truncate">{user.name}</h3>
-                            <p className="text-blue-200 text-sm">{user.email}</p>
-                            <div className="flex flex-wrap items-center gap-2 mt-2">
-                              {getStatusBadge(user.verificationStatus)}
-                              <Badge className="bg-slate-700/50 text-slate-300 border-slate-600">{user.role}</Badge>
-                              {user.organizationName && (
-                                <Badge className="bg-purple-500/10 text-purple-300 border-purple-500/20">
-                                  <Building2 className="w-3 h-3 mr-1" />
-                                  {user.organizationName}
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-slate-400 text-xs mt-2">
-                              Registered: {formatDate(user.registrationDate)}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <Button
-                            onClick={() => handleApprove(user.id)}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 flex items-center gap-2"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                            Approve
-                          </Button>
-                          <Button
-                            onClick={() => handleReject(user.id)}
-                            variant="outline"
-                            className="border-red-600 text-red-400 hover:bg-red-600/10 flex items-center gap-2"
-                          >
-                            <XCircle className="w-4 h-4" />
-                            Reject
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <div className="space-y-4">{pendingUsers.map(user => renderUserCard(user, true))}</div>
             )}
           </TabsContent>
 
@@ -395,34 +519,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {approvedUsers.map(user => (
-                  <Card key={user.id} className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                          <CheckCircle className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="text-lg font-semibold text-white">{user.name}</h3>
-                          <p className="text-blue-200 text-sm">{user.email}</p>
-                          <div className="flex flex-wrap items-center gap-2 mt-2">
-                            {getStatusBadge(user.verificationStatus)}
-                            <Badge className="bg-slate-700/50 text-slate-300 border-slate-600">{user.role}</Badge>
-                            {user.organizationName && (
-                              <Badge className="bg-purple-500/10 text-purple-300 border-purple-500/20">
-                                <Building2 className="w-3 h-3 mr-1" />
-                                {user.organizationName}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-slate-400 text-xs mt-2">Approved: {formatDate(user.registrationDate)}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <div className="space-y-4">{approvedUsers.map(user => renderUserCard(user, false))}</div>
             )}
           </TabsContent>
 
@@ -436,34 +533,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {rejectedUsers.map(user => (
-                  <Card key={user.id} className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                          <XCircle className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="text-lg font-semibold text-white">{user.name}</h3>
-                          <p className="text-blue-200 text-sm">{user.email}</p>
-                          <div className="flex flex-wrap items-center gap-2 mt-2">
-                            {getStatusBadge(user.verificationStatus)}
-                            <Badge className="bg-slate-700/50 text-slate-300 border-slate-600">{user.role}</Badge>
-                            {user.organizationName && (
-                              <Badge className="bg-purple-500/10 text-purple-300 border-purple-500/20">
-                                <Building2 className="w-3 h-3 mr-1" />
-                                {user.organizationName}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-slate-400 text-xs mt-2">Rejected: {formatDate(user.registrationDate)}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <div className="space-y-4">{rejectedUsers.map(user => renderUserCard(user, false))}</div>
             )}
           </TabsContent>
         </Tabs>
@@ -473,10 +543,10 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Shield className="w-5 h-5" />
-              Full User Record (Debug)
+              System Stats (Debug)
             </CardTitle>
             <CardDescription className="text-slate-400">
-              Complete user data for administrative debugging purposes
+              Real-time statistics and state management information
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -487,17 +557,30 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               >
                 {JSON.stringify(
                   convertBigIntForJSON({
-                    initialData,
-                    computedStats: {
-                      totalUsers:
-                        Number(stats.totalPatients) + Number(stats.totalHospitals) + Number(stats.totalInsurers),
-                      totalPatients: Number(stats.totalPatients),
-                      totalHospitals: Number(stats.totalHospitals),
-                      totalInsurers: Number(stats.totalInsurers),
+                    realTimeStats: {
+                      totalUsers,
+                      totalPending,
+                      totalApproved,
+                      totalRejected,
+                      processingCount: processingUsers.size,
                     },
-                    pendingUsers,
-                    approvedUsers,
-                    rejectedUsers,
+                    userDistribution: {
+                      byRole: {
+                        Patient: users.filter(u => u.role === "Patient").length,
+                        Hospital: users.filter(u => u.role === "Hospital").length,
+                        Insurance: users.filter(u => u.role === "Insurance").length,
+                      },
+                      byStatus: {
+                        pending: pendingUsers.length,
+                        approved: approvedUsers.length,
+                        rejected: rejectedUsers.length,
+                      },
+                    },
+                    currentState: {
+                      searchTerm,
+                      selectedFilter,
+                      processingUsers: Array.from(processingUsers),
+                    },
                   }),
                   null,
                   2,
