@@ -8,7 +8,7 @@ interface PageProps {
 }
 
 export default async function InsurancePage({ params }: PageProps) {
-  const { address } = params;
+  const { address } = await params;
 
   try {
     // Get organization and verification data in parallel
@@ -30,11 +30,7 @@ export default async function InsurancePage({ params }: PageProps) {
 
     return (
       <main className="min-h-screen bg-gray-50">
-        <InsuranceDashboard
-          address={address}
-          initialOrganizationRecord={organizationRecord}
-          initialVerificationData={userVerification}
-        />
+        <InsuranceDashboard initialOrganizationRecord={organizationRecord} initialVerificationData={userVerification} />
       </main>
     );
   } catch (error) {
