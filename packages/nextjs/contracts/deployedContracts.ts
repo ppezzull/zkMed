@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     zkMedCore: {
-      address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      address: "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6",
       abi: [
         {
           type: "constructor",
@@ -1406,11 +1406,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedRegistrationProver: {
-      address: "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+      address: "0x8a791620dd6260079bf849dc5567adc3f2fdc318",
       abi: [
         {
           type: "function",
@@ -1894,11 +1894,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPaymentPlanProver: {
-      address: "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+      address: "0x610178da211fef7d417bc0e6fed39f05609ad788",
       abi: [
         {
           type: "constructor",
@@ -2262,11 +2262,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPatient: {
-      address: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      address: "0xa51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0",
       abi: [
         {
           type: "constructor",
@@ -2928,11 +2928,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedHospital: {
-      address: "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+      address: "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82",
       abi: [
         {
           type: "constructor",
@@ -3515,11 +3515,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedInsurer: {
-      address: "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      address: "0x9a676e781a523b5d0c0e43731313a708cb607508",
       abi: [
         {
           type: "constructor",
@@ -4542,11 +4542,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedAdmin: {
-      address: "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      address: "0x0b306bf915c4d645ff596e518faf3f9669b97016",
       abi: [
         {
           type: "constructor",
@@ -5145,7 +5145,934 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752746528.json",
+      deploymentFile: "run-1752747901.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    zkMedLinkPay: {
+      address: "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_paymentInterval",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "_zkMedCore",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_zkMedPatient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_paymentToken",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_treasury",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "activePlans",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "cancelPaymentPlan",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "checkUpkeep",
+          inputs: [
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [
+            {
+              name: "upkeepNeeded",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "performData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "createPaymentPlan",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "executePaymentManual",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getActivePlansCount",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getHospitalPlans",
+          inputs: [
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32[]",
+              internalType: "bytes32[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPatientPlans",
+          inputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32[]",
+              internalType: "bytes32[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentPlan",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedLinkPay.PaymentPlan",
+              components: [
+                {
+                  name: "patient",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "insurer",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "hospital",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "monthlyAllowance",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "planDuration",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "lastPaymentTime",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "totalPaid",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isActive",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "insuranceName",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "planId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPaymentRecord",
+          inputs: [
+            {
+              name: "index",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct zkMedLinkPay.PaymentRecord",
+              components: [
+                {
+                  name: "patient",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "hospital",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "amount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "timestamp",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "planId",
+                  type: "bytes32",
+                  internalType: "bytes32",
+                },
+                {
+                  name: "successful",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getPlanPaymentHistory",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "hospitalPlans",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "lastUpkeepTime",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "patientPlans",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "paymentHistory",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "successful",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "paymentInterval",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "paymentPlans",
+          inputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          outputs: [
+            {
+              name: "patient",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "planDuration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "lastPaymentTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "totalPaid",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "isActive",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "insuranceName",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "planId",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "paymentToken",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "contract IERC20",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "performUpkeep",
+          inputs: [
+            {
+              name: "performData",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "planPaymentHistory",
+          inputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "platformFeePercent",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "renounceOwnership",
+          inputs: [],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "totalFeesCollected",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "treasury",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "updatePlatformFee",
+          inputs: [
+            {
+              name: "newFeePercent",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateTreasury",
+          inputs: [
+            {
+              name: "newTreasury",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateZkMedContracts",
+          inputs: [
+            {
+              name: "newCore",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "newPatient",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "withdrawFees",
+          inputs: [
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "zkMedCoreContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "zkMedPatientContract",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "MonthlyPaymentExecuted",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "platformFee",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentFailed",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "reason",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentPlanCanceled",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PaymentPlanCreated",
+          inputs: [
+            {
+              name: "planId",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "patient",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "insurer",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "hospital",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "monthlyAllowance",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PlatformFeeUpdated",
+          inputs: [
+            {
+              name: "newFeePercent",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TreasuryUpdated",
+          inputs: [
+            {
+              name: "newTreasury",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "ReentrancyGuardReentrantCall",
+          inputs: [],
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1752747901.json",
       deploymentScript: "Deploy.s.sol",
     },
   },

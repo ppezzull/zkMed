@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { cn } from "~~/lib/utils";
 
@@ -9,6 +10,7 @@ interface ProductOption {
   name: string;
   description: string;
   icon: string;
+  href: string;
 }
 
 const productOptions: ProductOption[] = [
@@ -17,29 +19,40 @@ const productOptions: ProductOption[] = [
     name: "Insurance Portal",
     description: "Manage claims and verify patient data privately",
     icon: "🛡️",
+    href: "/insurance",
   },
   {
     id: "hospital",
     name: "Hospital Dashboard",
     description: "Access patient records with zero-knowledge proofs",
     icon: "🏥",
+    href: "/hospital",
   },
   {
     id: "patient",
     name: "Patient Access",
     description: "Control your medical data with privacy",
     icon: "👤",
+    href: "/patient",
+  },
+  {
+    id: "admin",
+    name: "Admin Panel",
+    description: "Manage platform settings and user permissions",
+    icon: "⚙️",
+    href: "/admin",
   },
 ];
 
 export const ProductDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<ProductOption | null>(null);
+  const router = useRouter();
 
   const handleSelect = (option: ProductOption) => {
     setSelected(option);
     setIsOpen(false);
-    // Add navigation logic here based on the selected option
+    router.push(option.href);
   };
 
   return (

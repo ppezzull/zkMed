@@ -12,114 +12,115 @@ import "../contracts/zkMed/users/zkMedInsurer.sol";
 import "../contracts/zkMed/users/zkMedAdmin.sol";
 
 contract DeployYourContract is Script {
-    error InvalidPrivateKey(string);
 
+    // Mock addresses for Base Sepolia
+    address constant MOCK_USDC = 0x036CbD53842c5426634e7929541eC2318f3dCF7e;  // Base Sepolia USDC
+    address constant MOCK_TREASURY = 0xa235DC00B1d7501b919e27C2968999d4bCA5Bc3e; // Use deployer as treasury
+    uint256 constant PAYMENT_INTERVAL = 30 days;
+    
     function run() external {
-        uint256 deployerPrivateKey = setupLocalhostEnv();
-        if (deployerPrivateKey == 0) {
-            revert InvalidPrivateKey(
-                "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
-            );
-        }
+        uint256 deployerPrivateKey = vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
+        require(deployerPrivateKey != 0, "DEPLOYER_PRIVATE_KEY not set");
+        
+        console.log("=== zkMed Complete Deployment ===");
+        console.log("Deployer:", vm.addr(deployerPrivateKey));
+        console.log("Network: Base Sepolia");
+        
         vm.startBroadcast(deployerPrivateKey);
 
-        // 1. Deploy zkMedCore first (simplified, no dependencies)
+        // 1. Deploy zkMedCore first
         zkMedCore core = new zkMedCore();
-        console.logString("zkMedCore deployed at:");
-        console.logAddress(address(core));
+        console.log("+ zkMedCore deployed at:", address(core));
 
         // 2. Deploy the provers
         zkMedRegistrationProver registrationProver = new zkMedRegistrationProver();
-        console.logString("zkMedRegistrationProver deployed at:");
-        console.logAddress(address(registrationProver));
+        console.log("+ zkMedRegistrationProver deployed at:", address(registrationProver));
 
         zkMedPaymentPlanProver paymentPlanProver = new zkMedPaymentPlanProver();
-        console.logString("zkMedPaymentPlanProver deployed at:");
-        console.logAddress(address(paymentPlanProver));
+        console.log("+ zkMedPaymentPlanProver deployed at:", address(paymentPlanProver));
 
-        // 3. Deploy user contracts with core and prover addresses
+        // 3. Deploy LinkPay contract with core address
+        zkMedLinkPay linkPay = new zkMedLinkPay(
+            PAYMENT_INTERVAL,
+            address(core),      // zkMedCore
+            address(0),         // zkMedPatient - will be set after deployment
+            MOCK_USDC,          // Payment token 
+            MOCK_TREASURY       // Treasury address
+        );
+        console.log("+ zkMedLinkPay deployed at:", address(linkPay));
+
+        // 4. Deploy user contracts with LinkPay address
         zkMedPatient patientContract = new zkMedPatient(
             address(core),
             address(registrationProver),
             address(paymentPlanProver),
-            address(0) // Placeholder for LinkPay contract - to be updated after deployment
+            address(linkPay)  // LinkPay contract address
         );
-        console.logString("zkMedPatient deployed at:");
-        console.logAddress(address(patientContract));
+        console.log("+ zkMedPatient deployed at:", address(patientContract));
 
         zkMedHospital hospitalContract = new zkMedHospital(
             address(core),
             address(registrationProver)
         );
-        console.logString("zkMedHospital deployed at:");
-        console.logAddress(address(hospitalContract));
+        console.log("+ zkMedHospital deployed at:", address(hospitalContract));
 
         zkMedInsurer insurerContract = new zkMedInsurer(
             address(core),
             address(registrationProver)
         );
-        console.logString("zkMedInsurer deployed at:");
-        console.logAddress(address(insurerContract));
+        console.log("+ zkMedInsurer deployed at:", address(insurerContract));
 
         zkMedAdmin adminContract = new zkMedAdmin(address(core));
-        console.logString("zkMedAdmin deployed at:");
-        console.logAddress(address(adminContract));
+        console.log("+ zkMedAdmin deployed at:", address(adminContract));
 
-        // 4. Get payment history contract address and authorize core contract
+        // 5. Update LinkPay with patient contract address
+        linkPay.updateZkMedContracts(address(core), address(patientContract));
+        console.log("+ LinkPay updated with patient contract address");
+
+        // 6. Get payment history contract address
         zkMedPaymentHistory paymentHistory = core.paymentHistoryContract();
-        console.logString("Payment History Contract deployed at:");
-        console.logAddress(address(paymentHistory));
-        
-        // The payment history contract is owned by zkMedCore, so we need to authorize from zkMedCore
-        // This is already done in the zkMedCore constructor, so no additional authorization needed here
-        console.logString("Payment history contract automatically authorized by zkMedCore");
+        console.log("+ Payment History Contract at:", address(paymentHistory));
 
-        // 5. Set user contract addresses in core (this also authorizes them)
+        // 7. Set user contract addresses in core
         core.setUserContracts(
             address(patientContract),
             address(hospitalContract),
             address(insurerContract),
             address(adminContract)
         );
-        console.logString("Set user contract addresses in zkMedCore");
-
-        console.logString("=== Deployment Summary ===");
-        console.logString("Core Contract:");
-        console.logAddress(address(core));
-        console.logString("Payment History Contract:");
-        console.logAddress(address(paymentHistory));
-        console.logString("Registration Prover:");
-        console.logAddress(address(registrationProver));
-        console.logString("Payment Plan Prover:");
-        console.logAddress(address(paymentPlanProver));
-        console.logString("Patient Contract:");
-        console.logAddress(address(patientContract));
-        console.logString("Hospital Contract:");
-        console.logAddress(address(hospitalContract));
-        console.logString("Insurer Contract:");
-        console.logAddress(address(insurerContract));
-        console.logString("Admin Contract:");
-        console.logAddress(address(adminContract));
+        console.log("+ Set user contract addresses in zkMedCore");
 
         vm.stopBroadcast();
 
-        /**
-         * This function generates the file containing the contracts Abi definitions.
-         * These definitions are used to derive the types needed in the custom scaffold-eth hooks, for example.
-         * This function should be called last.
-         */
-        exportDeployments();
-    }
-
-    function setupLocalhostEnv() internal returns (uint256 forkId) {
-        // This function is called only when the deployment is made to localhost
-        // You can skip it if you are not deploying to localhost
-        string memory localhostRpcUrl = "http://localhost:8545";
-        return vm.envOr("DEPLOYER_PRIVATE_KEY", uint256(0));
-    }
-
-    function exportDeployments() internal {
-        // Add deployment export logic here if needed
-        // This would typically write deployment info to a file for frontend consumption
+        // Display deployment summary
+        console.log("\n=== DEPLOYMENT SUMMARY ===");
+        console.log("Network: Base Sepolia (Chain ID: 84532)");
+        console.log("");
+        console.log("Core Contracts:");
+        console.log("  zkMedCore:           ", address(core));
+        console.log("  PaymentHistory:      ", address(paymentHistory));
+        console.log("  RequestManager:      ", address(core.requestManagerContract()));
+        console.log("  zkMedLinkPay:        ", address(linkPay));
+        console.log("");
+        console.log("Prover Contracts:");
+        console.log("  RegistrationProver:  ", address(registrationProver));
+        console.log("  PaymentPlanProver:   ", address(paymentPlanProver));
+        console.log("");
+        console.log("User Contracts:");
+        console.log("  Patient:             ", address(patientContract));
+        console.log("  Hospital:            ", address(hospitalContract));
+        console.log("  Insurer:             ", address(insurerContract));
+        console.log("  Admin:               ", address(adminContract));
+        console.log("");
+        console.log("Configuration:");
+        console.log("  Payment Token (USDC):", MOCK_USDC);
+        console.log("  Treasury:            ", MOCK_TREASURY);
+        console.log("  Payment Interval:    ", PAYMENT_INTERVAL, "seconds (30 days)");
+        console.log("");
+        console.log("Next Steps:");
+        console.log("1. Register LinkPay with Chainlink Automation");
+        console.log("2. Fund LinkPay automation subscription");
+        console.log("3. Update frontend contract addresses");
+        console.log("4. Test the complete workflow");
     }
 }

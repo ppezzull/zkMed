@@ -26,7 +26,7 @@ export const HealthcareHeader = ({ className }: HealthcareHeaderProps) => {
           <nav className="hidden md:flex items-center space-x-8">
             <ProductDropdown />
             <Link
-              href="/explore"
+              href="/blockexplorer"
               className={cn(
                 "px-4 py-2 text-sm font-medium",
                 "text-gray-300 hover:text-white transition-colors duration-200",
