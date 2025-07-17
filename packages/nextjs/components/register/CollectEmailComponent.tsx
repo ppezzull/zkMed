@@ -127,8 +127,8 @@ This is a mock email verification content.`;
             {!isLoading && !emlFetched && (
               <div className="mb-6">
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <Mail className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 border border-slate-500 rounded-xl flex items-center justify-center">
+                    <Mail className="w-7 h-7 text-gray-400" />
                   </div>
                 </div>
                 <p className="text-gray-300 mb-4">

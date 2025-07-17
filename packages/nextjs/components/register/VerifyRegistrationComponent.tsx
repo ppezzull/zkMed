@@ -164,8 +164,8 @@ export function VerifyRegistrationComponent({
             {isComplete && (
               <div>
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <PartyPopper className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 border border-green-500 rounded-xl flex items-center justify-center">
+                    <PartyPopper className="w-7 h-7 text-green-400" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-cyan-300 mb-4">Registration Complete!</h2>
@@ -190,8 +190,8 @@ export function VerifyRegistrationComponent({
             {error && (
               <div>
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center">
-                    <X className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 border border-red-500 rounded-xl flex items-center justify-center">
+                    <X className="w-7 h-7 text-red-400" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-red-400 mb-4">Verification Failed</h2>
@@ -223,8 +223,8 @@ export function VerifyRegistrationComponent({
             {!isComplete && !error && (
               <div>
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <Zap className="w-8 h-8 text-white animate-pulse" />
+                  <div className="w-16 h-16 border border-slate-500 rounded-xl flex items-center justify-center">
+                    <Zap className="w-7 h-7 text-cyan-400 animate-pulse" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold mb-4 text-white">Verifying Registration</h2>

@@ -107,8 +107,8 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
                 className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-blue-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <User className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 border border-slate-500 rounded-lg flex items-center justify-center mr-4 group-hover:border-blue-400 transition-all">
+                    <User className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Patient</h3>
@@ -123,8 +123,8 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
                 className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-cyan-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <Building2 className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 border border-slate-500 rounded-lg flex items-center justify-center mr-4 group-hover:border-cyan-400 transition-all">
+                    <Building2 className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Hospital</h3>
@@ -141,8 +141,8 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
                 className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-blue-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <Shield className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 border border-slate-500 rounded-lg flex items-center justify-center mr-4 group-hover:border-blue-400 transition-all">
+                    <Shield className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Insurance Company</h3>
@@ -157,8 +157,8 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
                 className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-cyan-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <Crown className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 border border-slate-500 rounded-lg flex items-center justify-center mr-4 group-hover:border-cyan-400 transition-all">
+                    <Crown className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Administrator</h3>

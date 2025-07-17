@@ -116,8 +116,8 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
             {isComplete ? (
               <>
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 border border-green-500 rounded-xl flex items-center justify-center">
+                    <CheckCircle className="w-7 h-7 text-green-400" />
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-cyan-300 mb-4">Request Submitted!</h2>
