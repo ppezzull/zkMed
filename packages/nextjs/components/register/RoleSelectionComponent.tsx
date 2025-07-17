@@ -56,22 +56,22 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
   if (!user?.wallet?.address) {
     return (
       <div className="flex items-center justify-center">
-        <div className="text-2xl font-bold text-gray-900">Connect your wallet to continue</div>
+        <div className="text-2xl font-bold text-white">Connect your wallet to continue</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-slate-800 shadow-sm border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-800">Complete your registration to access healthcare services</p>
+              <h1 className="text-2xl font-bold text-white">Join zkMed</h1>
+              <p className="text-gray-300">Complete your registration to access healthcare services</p>
             </div>
-            <button onClick={handleBack} className="text-gray-500 hover:text-gray-700 transition-colors">
+            <button onClick={handleBack} className="text-gray-400 hover:text-white transition-colors">
               ← Back to Home
             </button>
           </div>
@@ -79,11 +79,13 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-slate-800 border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center space-x-4 py-4">
-            <div className="flex items-center space-x-2 text-blue-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">1</div>
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                1
+              </div>
               <span className="text-sm font-medium">Choose Role</span>
             </div>
           </div>
@@ -92,24 +94,24 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-sm border p-8">
+        <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Choose Your Role</h2>
-            <p className="text-gray-800 mb-8">Please select your role to get started with zkMed</p>
+            <h2 className="text-2xl font-bold mb-6 text-white">Choose Your Role</h2>
+            <p className="text-gray-300 mb-8">Please select your role to get started with zkMed</p>
 
             <div className="space-y-4 max-w-md mx-auto">
               {/* Patient Option */}
               <button
                 onClick={() => handleRoleSelection("PATIENT")}
-                className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
+                className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-blue-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
                     <span className="text-2xl">👤</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-900">Patient</h3>
-                    <p className="text-gray-700 text-sm">Access your medical records and manage healthcare data</p>
+                    <h3 className="font-semibold text-lg text-white">Patient</h3>
+                    <p className="text-gray-300 text-sm">Access your medical records and manage healthcare data</p>
                   </div>
                 </div>
               </button>
@@ -117,15 +119,15 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               {/* Hospital Option */}
               <button
                 onClick={() => handleRoleSelection("HOSPITAL")}
-                className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 hover:bg-green-50 transition-all text-left"
+                className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-cyan-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
                     <span className="text-2xl">🏥</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-900">Hospital</h3>
-                    <p className="text-gray-700 text-sm">
+                    <h3 className="font-semibold text-lg text-white">Hospital</h3>
+                    <p className="text-gray-300 text-sm">
                       Manage patient records and medical data as a healthcare provider
                     </p>
                   </div>
@@ -135,15 +137,15 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               {/* Insurer Option */}
               <button
                 onClick={() => handleRoleSelection("INSURER")}
-                className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-purple-500 hover:bg-purple-50 transition-all text-left"
+                className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-blue-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
                     <span className="text-2xl">🛡️</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-900">Insurance Company</h3>
-                    <p className="text-gray-700 text-sm">Process claims and manage insurance policies</p>
+                    <h3 className="font-semibold text-lg text-white">Insurance Company</h3>
+                    <p className="text-gray-300 text-sm">Process claims and manage insurance policies</p>
                   </div>
                 </div>
               </button>
@@ -151,15 +153,15 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               {/* Admin Option */}
               <button
                 onClick={() => handleRoleSelection("ADMIN")}
-                className="w-full border-2 border-gray-200 rounded-lg p-6 hover:border-orange-500 hover:bg-orange-50 transition-all text-left"
+                className="w-full border-2 border-slate-600 rounded-lg p-6 hover:border-cyan-400 hover:bg-slate-700 transition-all text-left group"
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
                     <span className="text-2xl">👑</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-900">Administrator</h3>
-                    <p className="text-gray-700 text-sm">Request administrative access to manage the platform</p>
+                    <h3 className="font-semibold text-lg text-white">Administrator</h3>
+                    <p className="text-gray-300 text-sm">Request administrative access to manage the platform</p>
                   </div>
                 </div>
               </button>

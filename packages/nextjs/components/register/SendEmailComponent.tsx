@@ -12,17 +12,17 @@ interface InputWithCopyProps {
 
 const InputWithCopy = ({ label, value }: InputWithCopyProps) => (
   <div className="text-left">
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}:</label>
+    <label className="block text-sm font-medium text-gray-300 mb-2">{label}:</label>
     <div className="flex items-center space-x-2">
       <input
         type="text"
         value={value}
         readOnly
-        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+        className="flex-1 px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white"
       />
       <button
         onClick={() => navigator.clipboard.writeText(value)}
-        className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+        className="px-3 py-2 bg-slate-600 text-gray-300 rounded-lg hover:bg-slate-500 hover:text-white transition-colors text-sm"
       >
         Copy
       </button>
@@ -127,20 +127,20 @@ Best regards`;
   };
 
   if (!user?.wallet?.address) {
-    return <div>Connect your wallet to continue</div>;
+    return <div className="text-white">Connect your wallet to continue</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-slate-800 shadow-sm border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-800">Complete your registration to access healthcare services</p>
+              <h1 className="text-2xl font-bold text-white">Join zkMed</h1>
+              <p className="text-gray-300">Complete your registration to access healthcare services</p>
             </div>
-            <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
+            <button onClick={onBack} className="text-gray-400 hover:text-white transition-colors">
               ← Back
             </button>
           </div>
@@ -148,28 +148,32 @@ Best regards`;
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-slate-800 border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center space-x-4 py-4">
-            <div className="flex items-center space-x-2 text-green-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                ✓
+              </div>
               <span className="text-sm font-medium">Choose Role</span>
             </div>
 
             {role !== "PATIENT" && (
               <>
-                <div className="w-8 h-0.5 bg-gray-300"></div>
-                <div className="flex items-center space-x-2 text-green-600">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+                <div className="w-8 h-0.5 bg-slate-600"></div>
+                <div className="flex items-center space-x-2 text-cyan-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                    ✓
+                  </div>
                   <span className="text-sm font-medium">Organization Details</span>
                 </div>
               </>
             )}
 
-            <div className="w-8 h-0.5 bg-gray-300"></div>
+            <div className="w-8 h-0.5 bg-slate-600"></div>
 
-            <div className="flex items-center space-x-2 text-blue-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
                 {role === "PATIENT" ? "2" : "3"}
               </div>
               <span className="text-sm font-medium">Email Verification</span>
@@ -180,10 +184,10 @@ Best regards`;
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-sm border p-8">
+        <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Send Verification Email</h2>
-            <p className="text-gray-800 mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-white">Send Verification Email</h2>
+            <p className="text-gray-300 mb-6">
               {role === "PATIENT"
                 ? "Send an email from your personal email address to verify your identity."
                 : "Send an email from your organization's official email address to verify domain ownership."}
@@ -195,9 +199,9 @@ Best regards`;
               <InputWithCopy label="Body" value={emailBody} />
             </div>
 
-            <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-2xl mx-auto">
-              <h3 className="font-semibold text-blue-800 mb-2">Important:</h3>
-              <ul className="text-sm text-blue-700 space-y-1 text-left">
+            <div className="mt-8 p-4 bg-slate-700 border border-slate-600 rounded-lg max-w-2xl mx-auto">
+              <h3 className="font-semibold text-cyan-300 mb-2">Important:</h3>
+              <ul className="text-sm text-gray-300 space-y-1 text-left">
                 {role === "PATIENT" ? (
                   <>
                     <li>• Send this email from your personal email address</li>
@@ -216,13 +220,13 @@ Best regards`;
             </div>
 
             <div className="flex justify-between mt-8">
-              <button onClick={onBack} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+              <button onClick={onBack} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
                 Back
               </button>
 
               <button
                 onClick={handleEmailSent}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg"
               >
                 I&apos;ve Sent the Email
               </button>

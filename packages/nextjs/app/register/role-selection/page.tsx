@@ -20,8 +20,8 @@ export default function RoleSelectionPage() {
  */
 function RoleSelectionLoadingState() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="animate-spin h-8 w-8 border-4 border-cyan-400 rounded-full border-t-transparent"></div>
     </div>
   );
 }

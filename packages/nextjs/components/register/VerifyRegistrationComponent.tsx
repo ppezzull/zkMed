@@ -80,17 +80,17 @@ export function VerifyRegistrationComponent({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-slate-800 shadow-sm border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Join zkMed</h1>
-              <p className="text-gray-800">Complete your registration to access healthcare services</p>
+              <h1 className="text-2xl font-bold text-white">Join zkMed</h1>
+              <p className="text-gray-300">Complete your registration to access healthcare services</p>
             </div>
             {!isComplete && (
-              <button onClick={onBack} className="text-gray-500 hover:text-gray-700 transition-colors">
+              <button onClick={onBack} className="text-gray-400 hover:text-white transition-colors">
                 ← Back
               </button>
             )}
@@ -99,45 +99,53 @@ export function VerifyRegistrationComponent({
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-slate-800 border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center space-x-4 py-4">
-            <div className="flex items-center space-x-2 text-green-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                ✓
+              </div>
               <span className="text-sm font-medium">Choose Role</span>
             </div>
 
             {role !== "PATIENT" && (
               <>
-                <div className="w-8 h-0.5 bg-gray-300"></div>
-                <div className="flex items-center space-x-2 text-green-600">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+                <div className="w-8 h-0.5 bg-slate-600"></div>
+                <div className="flex items-center space-x-2 text-cyan-300">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                    ✓
+                  </div>
                   <span className="text-sm font-medium">Organization Details</span>
                 </div>
               </>
             )}
 
-            <div className="w-8 h-0.5 bg-gray-300"></div>
+            <div className="w-8 h-0.5 bg-slate-600"></div>
 
-            <div className="flex items-center space-x-2 text-green-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                ✓
+              </div>
               <span className="text-sm font-medium">Email Verification</span>
             </div>
 
-            <div className="w-8 h-0.5 bg-gray-300"></div>
+            <div className="w-8 h-0.5 bg-slate-600"></div>
 
-            <div className="flex items-center space-x-2 text-green-600">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">✓</div>
+            <div className="flex items-center space-x-2 text-cyan-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                ✓
+              </div>
               <span className="text-sm font-medium">Waiting for Email</span>
             </div>
 
-            <div className="w-8 h-0.5 bg-gray-300"></div>
+            <div className="w-8 h-0.5 bg-slate-600"></div>
 
             <div
-              className={`flex items-center space-x-2 ${isComplete ? "text-green-600" : error ? "text-red-600" : "text-blue-600"}`}
+              className={`flex items-center space-x-2 ${isComplete ? "text-cyan-300" : error ? "text-red-400" : "text-cyan-300"}`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${isComplete ? "bg-green-100" : error ? "bg-red-100" : "bg-blue-100"}`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${isComplete ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white" : error ? "bg-red-500 text-white" : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"}`}
               >
                 {isComplete ? "✓" : error ? "!" : role === "PATIENT" ? "4" : "5"}
               </div>
@@ -149,15 +157,15 @@ export function VerifyRegistrationComponent({
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-sm border p-8">
+        <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-8">
           <div className="text-center">
             {/* Success State */}
             {isComplete && (
               <div>
                 <div className="text-6xl mb-4">🎉</div>
-                <h2 className="text-2xl font-bold text-green-600 mb-4">Registration Complete!</h2>
-                <p className="text-gray-800 mb-6">Your registration has been successfully submitted and verified.</p>
-                <p className="text-sm text-gray-600 mb-8">
+                <h2 className="text-2xl font-bold text-cyan-300 mb-4">Registration Complete!</h2>
+                <p className="text-gray-300 mb-6">Your registration has been successfully submitted and verified.</p>
+                <p className="text-sm text-gray-400 mb-8">
                   {role === "PATIENT"
                     ? "You can now access your patient dashboard and manage your medical records."
                     : role === "ADMIN"
@@ -166,7 +174,7 @@ export function VerifyRegistrationComponent({
                 </p>
                 <button
                   onClick={handleContinue}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg"
                 >
                   Continue to Dashboard
                 </button>
@@ -177,15 +185,15 @@ export function VerifyRegistrationComponent({
             {error && (
               <div>
                 <div className="text-6xl mb-4">❌</div>
-                <h2 className="text-2xl font-bold text-red-600 mb-4">Verification Failed</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-2xl font-bold text-red-400 mb-4">Verification Failed</h2>
+                <p className="text-gray-300 mb-4">
                   We couldn&apos;t verify your registration. Please check the error below and try again.
                 </p>
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                  <p className="text-red-700 text-sm">{error}</p>
+                <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 mb-6">
+                  <p className="text-red-300 text-sm">{error}</p>
                 </div>
                 <div className="flex justify-center space-x-4">
-                  <button onClick={onBack} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                  <button onClick={onBack} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
                     Back
                   </button>
                   <button
@@ -206,37 +214,37 @@ export function VerifyRegistrationComponent({
             {!isComplete && !error && (
               <div>
                 <div className="text-6xl mb-4">⚡</div>
-                <h2 className="text-2xl font-bold mb-4 text-gray-900">Verifying Registration</h2>
-                <p className="text-gray-800 mb-6">
+                <h2 className="text-2xl font-bold mb-4 text-white">Verifying Registration</h2>
+                <p className="text-gray-300 mb-6">
                   We&apos;re processing your email verification and generating cryptographic proofs.
                 </p>
 
                 <div className="mb-6">
-                  <div className="animate-pulse bg-blue-100 rounded-lg p-4">
-                    <p className="text-blue-800 font-medium">{currentStep}</p>
+                  <div className="animate-pulse bg-slate-700 border border-slate-600 rounded-lg p-4">
+                    <p className="text-cyan-300 font-medium">{currentStep}</p>
                   </div>
                 </div>
 
-                <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-2xl mx-auto">
-                  <h3 className="font-semibold text-blue-800 mb-2">Processing Steps:</h3>
-                  <ul className="text-sm text-blue-700 space-y-1 text-left">
-                    <li className={currentStep.includes("Analyzing") ? "font-bold" : ""}>
+                <div className="mt-8 p-4 bg-slate-700 border border-slate-600 rounded-lg max-w-2xl mx-auto">
+                  <h3 className="font-semibold text-cyan-300 mb-2">Processing Steps:</h3>
+                  <ul className="text-sm text-gray-300 space-y-1 text-left">
+                    <li className={currentStep.includes("Analyzing") ? "font-bold text-cyan-300" : ""}>
                       • Analyzing email content and headers
                     </li>
-                    <li className={currentStep.includes("Generating") ? "font-bold" : ""}>
+                    <li className={currentStep.includes("Generating") ? "font-bold text-cyan-300" : ""}>
                       • Generating cryptographic proof
                     </li>
-                    <li className={currentStep.includes("Validating") ? "font-bold" : ""}>
+                    <li className={currentStep.includes("Validating") ? "font-bold text-cyan-300" : ""}>
                       • Validating proof integrity
                     </li>
-                    <li className={currentStep.includes("Submitting") ? "font-bold" : ""}>
+                    <li className={currentStep.includes("Submitting") ? "font-bold text-cyan-300" : ""}>
                       • Submitting to blockchain
                     </li>
                   </ul>
                 </div>
 
                 <div className="flex justify-center mt-8">
-                  <button onClick={onBack} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                  <button onClick={onBack} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
                     Back
                   </button>
                 </div>
