@@ -1,5 +1,326 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# 🏗️ zkMed APPLICATION STRUCTURE - HEALTHCARE PLATFORM ARCHITECTURE
+
+**Authority Level**: 🔴 SUPREME - Architectural foundation for zkMed healthcare platform
+**Enforcement Status**: 🔒 ACTIVE AND ENFORCING
+**Scope**: Universal application structure for zkMed healthcare payment platform
+
+## 🏥 HEALTHCARE DOMAIN ORGANIZATION (MANDATORY)
+
+### **Domain-Driven Directory Structure**
+```
+src/
+├── app/
+│   ├── (dashboard)/           # Route groups for role-based access
+│   │   ├── admin/            # Administrative management
+│   │   ├── insurance/        # Insurance company operations
+│   │   ├── hospital/         # Hospital management
+│   │   └── patient/          # Patient interface
+│   └── api/                  # Healthcare API endpoints
+├── components/
+│   ├── ui/                   # Atomic design components
+│   ├── admin/                # Administrative components
+│   ├── insurance/            # Insurance domain components
+│   ├── hospital/             # Hospital domain components
+│   ├── patient/              # Patient domain components
+│   └── shared/               # Cross-domain components
+├── hooks/                    # Healthcare-specific custom hooks
+├── types/                    # Healthcare domain type definitions
+├── lib/                      # Web3, ZK-proof, DeFi utilities
+└── utils/                    # Healthcare utility functions
+```
+
+### **Healthcare Role-Based Organization**
+Each healthcare domain MUST maintain clear boundaries:
+
+```typescript
+// ✅ MANDATORY - Clear domain separation
+components/
+├── admin/
+│   ├── OrganizationManager.tsx      # Approve/manage healthcare orgs
+│   ├── DomainVerification.tsx       # Verify org authenticity
+│   └── AdminDashboard.tsx           # Admin overview
+├── insurance/
+│   ├── PoolManagement.tsx           # DeFi pool operations
+│   ├── ClaimProcessor.tsx           # Process patient claims
+│   ├── PatientRegistry.tsx          # Manage patient network
+│   └── HospitalNetwork.tsx          # Manage hospital partnerships
+├── hospital/
+│   ├── PaymentTracker.tsx           # Track insurance payments
+│   ├── ClaimSubmission.tsx          # Submit patient claims
+│   └── InsurancePartnership.tsx     # Manage insurance relationships
+└── patient/
+    ├── ReceiptUpload.tsx            # Upload medical receipts
+    ├── InsuranceConnection.tsx      # Connect to insurance providers
+    └── PaymentHistory.tsx           # View reimbursement history
+```
+
+## 🧱 ATOMIC DESIGN FOR HEALTHCARE UI (ENFORCED)
+
+### **Component Hierarchy Classification**
+```typescript
+// Atoms (≤50 lines) - Basic healthcare UI elements
+components/ui/
+├── MedicalButton.tsx         # Healthcare-themed buttons
+├── ClaimBadge.tsx           # Status badges for claims
+├── PaymentCard.tsx          # Payment information cards
+└── HealthcareInput.tsx      # Medical form inputs
+
+// Molecules (≤100 lines) - Combined healthcare elements
+components/shared/
+├── ClaimStatusIndicator.tsx  # Badge + Progress + Status
+├── PaymentSummary.tsx       # Amount + Currency + Date
+├── UserHealthProfile.tsx    # Avatar + Role + Organization
+└── AssociationRequest.tsx   # Request + Actions + Status
+
+// Organisms (≤150 lines) - Complex healthcare workflows
+components/[domain]/
+├── ClaimsManagementTable.tsx
+├── InsurancePoolDashboard.tsx
+├── HospitalPaymentProcessor.tsx
+└── PatientReceiptHandler.tsx
+```
+
+### **Healthcare Component Naming Standards**
+```typescript
+// ✅ MANDATORY - Healthcare-specific naming
+// Pattern: [HealthcareDomain][ComponentFunction]
+InsuranceClaimProcessor.tsx
+HospitalPaymentTracker.tsx
+PatientReceiptUploader.tsx
+AdminOrganizationManager.tsx
+
+// ✅ MANDATORY - Clear medical context
+MedicalReceiptValidator.tsx
+HealthcareWalletConnector.tsx
+ZKProofMedicalHandler.tsx
+DeFiHealthcarePool.tsx
+```
+
+## 🔗 HEALTHCARE TYPE DEFINITIONS (MANDATORY)
+
+### **Domain-Specific Type Organization**
+```typescript
+// types/healthcare.ts - Core healthcare entities
+interface Patient {
+  id: string;
+  walletAddress: string;
+  insuranceConnections: InsuranceConnection[];
+  encryptedMedicalHistory: ZKProofData[];
+}
+
+interface Insurance {
+  id: string;
+  organizationName: string;
+  poolAddress: string;
+  connectedHospitals: Hospital[];
+  managedPatients: Patient[];
+}
+
+interface Hospital {
+  id: string;
+  organizationName: string;
+  verifiedDomain: string;
+  insurancePartnerships: InsurancePartnership[];
+}
+
+// types/blockchain.ts - Web3 and DeFi types
+interface HealthcarePool {
+  poolAddress: string;
+  totalValueLocked: bigint;
+  apy: number;
+  supportedTokens: ['USDC', 'EURC'];
+}
+
+interface ZKProofClaim {
+  proofHash: string;
+  medicalReceiptHash: string;
+  claimAmount: bigint;
+  verificationStatus: 'pending' | 'verified' | 'rejected';
+}
+```
+
+## 🎯 HEALTHCARE-SPECIFIC CODING PATTERNS
+
+### **Medical Data Privacy Pattern (MANDATORY)**
+```typescript
+// ✅ MANDATORY - Always encrypt medical data
+interface MedicalRecord {
+  id: string;
+  patientHash: string;          // Never store direct patient ID
+  encryptedData: ZKProofData;   // Always encrypted
+  accessPermissions: string[];   // Role-based access
+}
+
+// ✅ MANDATORY - ZK-proof integration
+const processMedicalClaim = async (receipt: MedicalReceipt) => {
+  const zkProof = await generateZKProof(receipt);
+  const encryptedReceipt = await encryptMedicalData(receipt);
+  return submitClaimWithProof(zkProof, encryptedReceipt);
+};
+```
+
+### **Healthcare Role-Based Access Control**
+```typescript
+// ✅ MANDATORY - Role-based component access
+interface HealthcareProps {
+  userRole: 'admin' | 'insurance' | 'hospital' | 'patient';
+  permissions: HealthcarePermission[];
+}
+
+const HealthcareDashboard: React.FC<HealthcareProps> = ({ userRole, permissions }) => {
+  const canAccessMedicalData = permissions.includes('VIEW_MEDICAL_DATA');
+  const canProcessClaims = permissions.includes('PROCESS_CLAIMS');
+  
+  return (
+    <DashboardLayout role={userRole}>
+      {canAccessMedicalData && <MedicalDataViewer />}
+      {canProcessClaims && <ClaimProcessor />}
+    </DashboardLayout>
+  );
+};
+```
+
+### **Web3 Healthcare Integration Pattern**
+```typescript
+// ✅ MANDATORY - Healthcare-specific Web3 hooks
+const useHealthcareWallet = () => {
+  const { address, isConnected } = useWallet();
+  const userRole = useHealthcareRole(address);
+  const permissions = useHealthcarePermissions(userRole);
+  
+  return {
+    address,
+    isConnected,
+    userRole,
+    permissions,
+    canAccessMedicalData: permissions.includes('MEDICAL_ACCESS')
+  };
+};
+
+// ✅ MANDATORY - DeFi pool integration
+const useInsurancePool = (insuranceAddress: string) => {
+  const poolData = useAavePool(insuranceAddress);
+  const yield = usePoolYield(poolData.poolAddress);
+  
+  return {
+    totalLocked: poolData.totalValueLocked,
+    currentAPY: yield.apy,
+    availableForClaims: poolData.availableBalance,
+    recentPayments: poolData.recentTransactions
+  };
+};
+```
+
+## 📂 HEALTHCARE FILE ORGANIZATION RULES
+
+### **Co-location for Healthcare Workflows**
+```
+components/insurance/claim-processing/
+├── ClaimProcessor.tsx           # Main component
+├── ClaimProcessor.test.tsx      # Component tests
+├── ClaimProcessor.types.ts      # Local type definitions
+├── ClaimProcessor.hooks.ts      # Component-specific hooks
+└── components/                  # Sub-components
+    ├── ClaimValidation.tsx
+    ├── PaymentCalculation.tsx
+    └── ApprovalWorkflow.tsx
+```
+
+### **Healthcare-Specific Import Organization**
+```typescript
+// 1. React and Next.js imports
+import React from 'react';
+import { NextPage } from 'next';
+
+// 2. Web3 and blockchain libraries
+import { ethers } from 'ethers';
+import { useWallet } from '@/hooks/useWallet';
+
+// 3. Healthcare-specific utilities
+import { generateZKProof } from '@/lib/zkproof';
+import { encryptMedicalData } from '@/utils/encryption';
+import { validateMedicalReceipt } from '@/utils/validation';
+
+// 4. Healthcare components
+import { ClaimProcessor } from '@/components/insurance/ClaimProcessor';
+import { MedicalReceiptUploader } from '@/components/patient/MedicalReceiptUploader';
+
+// 5. Healthcare types
+import type { Patient, Insurance, MedicalClaim } from '@/types/healthcare';
+import type { ZKProofData, HealthcarePool } from '@/types/blockchain';
+```
+
+## 🔄 HEALTHCARE WORKFLOW PATTERNS
+
+### **Medical Claim Processing Workflow**
+```typescript
+// ✅ MANDATORY - End-to-end healthcare workflow
+const processHealthcareClaim = async (claim: MedicalClaim) => {
+  // 1. Validate medical receipt
+  const isValidReceipt = await validateMedicalReceipt(claim.receipt);
+  if (!isValidReceipt) throw new Error('Invalid medical receipt');
+  
+  // 2. Generate zero-knowledge proof
+  const zkProof = await generateZKProof(claim.receipt);
+  
+  // 3. Submit to insurance pool
+  const poolResponse = await submitToInsurancePool(claim, zkProof);
+  
+  // 4. Process payment via DeFi
+  const payment = await processPoolPayment(poolResponse);
+  
+  // 5. Update all stakeholders
+  await notifyStakeholders(claim, payment);
+  
+  return { claim, payment, zkProof };
+};
+```
+
+### **Healthcare Association Management**
+```typescript
+// ✅ MANDATORY - Healthcare network management
+const manageHealthcareAssociation = async (
+  requester: HealthcareEntity,
+  target: HealthcareEntity,
+  associationType: 'insurance-patient' | 'insurance-hospital' | 'patient-hospital'
+) => {
+  // Validate association permissions
+  const canAssociate = await validateAssociationPermissions(requester, target);
+  
+  // Create encrypted association request
+  const associationRequest = await createEncryptedAssociation(requester, target);
+  
+  // Submit via blockchain
+  const txHash = await submitAssociationRequest(associationRequest);
+  
+  return { associationRequest, txHash };
+};
+```
+
+## 📊 HEALTHCARE QUALITY METRICS
+
+### **Healthcare-Specific File Size Limits**
+| Healthcare Component Type | Max Lines | Rationale |
+|-----|-----|-----|
+| Medical Workflow Components | 200 lines | Complex healthcare processes |
+| Insurance Pool Components | 150 lines | DeFi integration complexity |
+| Patient Interface Components | 125 lines | User-friendly medical interfaces |
+| Admin Management Components | 175 lines | Organization management workflows |
+| Healthcare Utility Functions | 100 lines | Medical data processing |
+
+### **Healthcare Security Requirements**
+- **Medical Data Encryption**: 100% of medical data must be encrypted
+- **ZK-Proof Integration**: All medical claims must use zero-knowledge proofs
+- **Role-Based Access**: Healthcare components must implement role-based access
+- **Audit Trail**: All medical transactions must be logged and auditable
+
+---
+
+**AUTHORITY LEVEL**: 🔴 **SUPREME AUTHORITY - HEALTHCARE PLATFORM FOUNDATION**  
+**ENFORCEMENT STATUS**: 🔒 **ACTIVE AND ENFORCING**  
+**SCOPE**: Universal application across zkMed healthcare payment platform
