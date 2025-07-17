@@ -553,4 +553,99 @@ contract zkMedCore is Ownable {
             paymentReq.plan.lastPayment
         );
     }
+    
+    // ======== User Role Functions ========
+    
+    /**
+     * @dev Get the role of a user address
+     * @param user The address to check
+     * @return role String representing the user role ("PATIENT", "HOSPITAL", "INSURER", "ADMIN", "UNREGISTERED")
+     * @return isActive Whether the user is active in the system
+     */
+    function getRole(address user) external view returns (string memory role, bool isActive) {
+        // Check if user is a patient
+        if (patientContract != address(0)) {
+            try IzkMedPatient(patientContract).isPatientRegistered(user) returns (bool isPatient) {
+                if (isPatient) {
+                    return ("PATIENT", true);
+                }
+            } catch {
+                // Contract call failed, continue checking other roles
+            }
+        }
+        
+        // Check if user is a hospital
+        if (hospitalContract != address(0)) {
+            try IzkMedHospital(hospitalContract).isHospitalRegistered(user) returns (bool isHospital) {
+                if (isHospital) {
+                    try IzkMedHospital(hospitalContract).isHospitalApproved(user) returns (bool approved) {
+                        return ("HOSPITAL", approved);
+                    } catch {
+                        return ("HOSPITAL", false);
+                    }
+                }
+            } catch {
+                // Contract call failed, continue checking other roles
+            }
+        }
+        
+        // Check if user is an insurer
+        if (insurerContract != address(0)) {
+            try IzkMedInsurer(insurerContract).isInsurerRegistered(user) returns (bool isInsurer) {
+                if (isInsurer) {
+                    try IzkMedInsurer(insurerContract).isInsurerApproved(user) returns (bool approved) {
+                        return ("INSURER", approved);
+                    } catch {
+                        return ("INSURER", false);
+                    }
+                }
+            } catch {
+                // Contract call failed, continue checking other roles
+            }
+        }
+        
+        // Check if user is an admin
+        if (adminContract != address(0)) {
+            try IzkMedAdmin(adminContract).isAdmin(user) returns (bool isAdminUser) {
+                if (isAdminUser) {
+                    return ("ADMIN", true);
+                }
+            } catch {
+                // Contract call failed, continue checking other roles
+            }
+        }
+        
+        // User is not registered in any capacity
+        return ("UNREGISTERED", false);
+    }
+    
+    /**
+     * @dev Check if an address is registered in the system
+     * @param user The address to check
+     * @return Whether the user is registered in any capacity
+     */
+    function isUserRegistered(address user) external view returns (bool) {
+        (string memory role, ) = this.getRole(user);
+        return keccak256(abi.encodePacked(role)) != keccak256(abi.encodePacked("UNREGISTERED"));
+    }
+}
+
+// ======== Interface Definitions ========
+
+interface IzkMedPatient {
+    function isPatientRegistered(address patient) external view returns (bool);
+}
+
+interface IzkMedHospital {
+    function isHospitalRegistered(address hospital) external view returns (bool);
+    function isHospitalApproved(address hospital) external view returns (bool);
+}
+
+interface IzkMedInsurer {
+    function isInsurerRegistered(address insurer) external view returns (bool);
+    function isInsurerApproved(address insurer) external view returns (bool);
+}
+
+interface IzkMedAdmin {
+    function isAdmin(address admin) external view returns (bool);
 }

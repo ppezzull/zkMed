@@ -73,18 +73,14 @@ contract DeployYourContract is Script {
         // This is already done in the zkMedCore constructor, so no additional authorization needed here
         console.logString("Payment history contract automatically authorized by zkMedCore");
 
-        // 5. Authorize user contracts to call core functions
-        core.authorizeContract(address(patientContract));
-        console.logString("Authorized zkMedPatient contract");
-
-        core.authorizeContract(address(hospitalContract));
-        console.logString("Authorized zkMedHospital contract");
-
-        core.authorizeContract(address(insurerContract));
-        console.logString("Authorized zkMedInsurer contract");
-
-        core.authorizeContract(address(adminContract));
-        console.logString("Authorized zkMedAdmin contract");
+        // 5. Set user contract addresses in core (this also authorizes them)
+        core.setUserContracts(
+            address(patientContract),
+            address(hospitalContract),
+            address(insurerContract),
+            address(adminContract)
+        );
+        console.logString("Set user contract addresses in zkMedCore");
 
         console.logString("=== Deployment Summary ===");
         console.logString("Core Contract:");
