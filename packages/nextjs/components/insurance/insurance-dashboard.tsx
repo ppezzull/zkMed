@@ -16,7 +16,6 @@ import {
   Search,
   Shield,
   Star,
-  TrendingUp,
   Users,
   XCircle,
 } from "lucide-react";
@@ -336,86 +335,78 @@ export default function InsuranceDashboard({
           </Card>
         </div>
 
-        {/* Quick Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-200 text-sm font-medium">Pending Claims</p>
-                  <p className="text-2xl font-bold text-white">{claims.filter(c => c.status === "pending").length}</p>
-                  <p className="text-xs text-amber-400 flex items-center gap-1 mt-1">
-                    <Clock className="w-3 h-3" />
-                    Needs review
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-amber-400" />
+        {/* Contract Management Section */}
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <FileText className="w-5 h-5 text-blue-400" />
+              Insurance Contracts
+            </CardTitle>
+            <CardDescription className="text-slate-400">
+              Manage and track insurance contracts sent to patients
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              {/* Contract Stats */}
+              <div className="p-4 bg-slate-700/30 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm">Total Contracts</p>
+                    <p className="text-2xl font-bold text-white">4</p>
+                  </div>
+                  <FileText className="w-8 h-8 text-blue-400" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-200 text-sm font-medium">Approved Today</p>
-                  <p className="text-2xl font-bold text-white">{claims.filter(c => c.status === "approved").length}</p>
-                  <p className="text-xs text-emerald-400 flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3" />
-                    +15% from yesterday
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
+              <div className="p-4 bg-slate-700/30 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm">Pending Approval</p>
+                    <p className="text-2xl font-bold text-yellow-400">1</p>
+                  </div>
+                  <Clock className="w-8 h-8 text-yellow-400" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-200 text-sm font-medium">Total Payout</p>
-                  <p className="text-2xl font-bold text-white">
-                    {formatCurrency(
-                      claims.filter(c => c.status === "approved").reduce((sum, c) => sum + c.claimAmount, 0),
-                    )}
-                  </p>
-                  <p className="text-xs text-blue-400 flex items-center gap-1 mt-1">
-                    <DollarSign className="w-3 h-3" />
-                    This month
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-blue-400" />
+              <div className="p-4 bg-slate-700/30 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm">Active Patients</p>
+                    <p className="text-2xl font-bold text-emerald-400">2</p>
+                  </div>
+                  <Users className="w-8 h-8 text-emerald-400" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-200 text-sm font-medium">Active Policies</p>
-                  <p className="text-2xl font-bold text-white">
-                    {policyHolders.filter(p => p.status === "active").length}
-                  </p>
-                  <p className="text-xs text-emerald-400 flex items-center gap-1 mt-1">
-                    <Users className="w-3 h-3" />
-                    Policy holders
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {/* Contract Actions */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                onClick={() => (window.location.href = "/insurance/send-contract")}
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Send New Contract
+              </Button>
+              <Button
+                onClick={() => (window.location.href = "/insurance/history")}
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                View Contract History
+              </Button>
+              <Button
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 flex items-center gap-2"
+              >
+                <Search className="w-4 h-4" />
+                Find Patient
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
