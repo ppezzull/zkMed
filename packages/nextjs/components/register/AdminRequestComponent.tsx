@@ -178,7 +178,7 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
                       onChange={e => setReason(e.target.value)}
                       placeholder="Please explain why you need admin access and your qualifications..."
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-600"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Provide a detailed explanation to help administrators review your request

@@ -85,7 +85,7 @@ export function OrganizationDetailsComponent({
                 placeholder={
                   organizationType === "HOSPITAL" ? "e.g., City General Hospital" : "e.g., HealthCare Insurance Group"
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-600"
                 onKeyPress={e => {
                   if (e.key === "Enter" && organizationName.trim()) {
                     handleSubmit();
