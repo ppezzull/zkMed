@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     zkMedCore: {
-      address: "0x94c1328bb2b6d2401d5caa3fc6cd49e7d10e00a5",
+      address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
       abi: [
         {
           type: "constructor",
@@ -1380,11 +1380,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedRegistrationProver: {
-      address: "0xfb620ab36263570e7dcf1d766b4c69b591d56767",
+      address: "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
       abi: [
         {
           type: "function",
@@ -1868,11 +1868,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPaymentPlanProver: {
-      address: "0xe0722bb76e5ad4e3237d07d55a7769a6de582136",
+      address: "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
       abi: [
         {
           type: "constructor",
@@ -2236,11 +2236,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPatient: {
-      address: "0xa32bae5a24c282bc3316e6cb53a31137d7c64d34",
+      address: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
       abi: [
         {
           type: "constructor",
@@ -2871,11 +2871,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedHospital: {
-      address: "0x23fe266f90a74eb57f0507f3adcc1659fcc31131",
+      address: "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
       abi: [
         {
           type: "constructor",
@@ -3458,11 +3458,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedInsurer: {
-      address: "0x78a418e107cbe7dd7ddd7890959b59804ef1858c",
+      address: "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
       abi: [
         {
           type: "constructor",
@@ -4485,11 +4485,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedAdmin: {
-      address: "0x0bef1790c799f7db84f38e1d5e1e030e3b4729ed",
+      address: "0x0165878a594ca255338adfa4d48449f69242eb8f",
       abi: [
         {
           type: "constructor",
@@ -5051,7 +5051,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1752715320.json",
+      deploymentFile: "run-1752722826.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
