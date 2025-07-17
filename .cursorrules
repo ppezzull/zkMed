@@ -1,0 +1,377 @@
+# 🏥 zkMed Healthcare Platform - Comprehensive Development Rules
+
+**Authority Level**: 🔴 SUPREME - Complete development foundation for zkMed
+**Enforcement Status**: 🔒 ACTIVE AND ENFORCING - ZERO TOLERANCE
+**Scope**: Universal application across entire zkMed healthcare payment platform
+
+## 📋 RULE INTEGRATION OVERVIEW
+
+This `.cursorrules` file integrates four critical rule sets for zkMed development:
+
+1. **🏗️ App Structure (zkMed Healthcare Platform Architecture)**
+2. **🧱 Coding Principles (SOLID + DRY + KISS + YAGNI)**
+3. **♻️ Refactoring Standards (Mandatory Triggers & Hard Limits)**
+4. **⭐ Task Execution Completion (Zero Tolerance Error Correction)**
+
+---
+
+## 🏗️ zkMed APPLICATION STRUCTURE - HEALTHCARE PLATFORM ARCHITECTURE
+
+### **Healthcare Domain Organization (MANDATORY)**
+
+**Domain-Driven Directory Structure:**
+```
+src/
+├── app/
+│   ├── (dashboard)/           # Route groups for role-based access
+│   │   ├── admin/            # Administrative management
+│   │   ├── insurance/        # Insurance company operations
+│   │   ├── hospital/         # Hospital management
+│   │   └── patient/          # Patient interface
+│   └── api/                  # Healthcare API endpoints
+├── components/
+│   ├── ui/                   # Atomic design components
+│   ├── admin/                # Administrative components
+│   ├── insurance/            # Insurance domain components
+│   ├── hospital/             # Hospital domain components
+│   ├── patient/              # Patient domain components
+│   └── shared/               # Cross-domain components
+├── hooks/                    # Healthcare-specific custom hooks
+├── types/                    # Healthcare domain type definitions
+├── lib/                      # Web3, ZK-proof, DeFi utilities
+└── utils/                    # Healthcare utility functions
+```
+
+### **Healthcare Component Naming Standards:**
+```typescript
+// ✅ MANDATORY - Healthcare-specific naming patterns
+InsuranceClaimProcessor.tsx
+HospitalPaymentTracker.tsx
+PatientReceiptUploader.tsx
+AdminOrganizationManager.tsx
+MedicalReceiptValidator.tsx
+HealthcareWalletConnector.tsx
+ZKProofMedicalHandler.tsx
+DeFiHealthcarePool.tsx
+```
+
+### **Medical Data Privacy Pattern (MANDATORY):**
+```typescript
+// ✅ MANDATORY - Always encrypt medical data
+interface MedicalRecord {
+  id: string;
+  patientHash: string;          // Never store direct patient ID
+  encryptedData: ZKProofData;   // Always encrypted
+  accessPermissions: string[];   // Role-based access
+}
+
+// ✅ MANDATORY - ZK-proof integration
+const processMedicalClaim = async (receipt: MedicalReceipt) => {
+  const zkProof = await generateZKProof(receipt);
+  const encryptedReceipt = await encryptMedicalData(receipt);
+  return submitClaimWithProof(zkProof, encryptedReceipt);
+};
+```
+
+---
+
+## 🧱 COMPREHENSIVE CODING PRINCIPLES - ARCHITECTURAL FOUNDATION
+
+### **SOLID PRINCIPLES (MANDATORY IMPLEMENTATION)**
+
+#### **Single Responsibility Principle**
+```typescript
+// ❌ PROHIBITED - Multiple responsibilities
+class UserManager {
+  createUser() { /* user creation */ }
+  sendEmail() { /* email logic */ }
+  validateData() { /* validation logic */ }
+}
+
+// ✅ MANDATORY - Single responsibility
+class UserService { createUser() { /* only user creation */ } }
+class EmailService { sendEmail() { /* only email logic */ } }
+class ValidationService { validateData() { /* only validation logic */ } }
+```
+
+#### **Open/Closed Principle**
+```typescript
+// ✅ MANDATORY - Extensible design
+interface NotificationStrategy {
+  send(message: string): Promise<void>;
+}
+
+class EmailNotification implements NotificationStrategy {
+  async send(message: string): Promise<void> {
+    // Email implementation
+  }
+}
+```
+
+#### **Dependency Inversion Principle**
+```typescript
+// ✅ MANDATORY - Dependency injection
+class UserService {
+  constructor(
+    private database: DatabaseRepository,
+    private emailProvider: EmailProvider
+  ) {}
+}
+```
+
+### **Additional Core Principles (MANDATORY)**
+
+#### **DRY - Don't Repeat Yourself**
+```typescript
+// ✅ MANDATORY - Single source of truth
+function formatFullName(firstName: string, lastName: string): string {
+  return `${firstName} ${lastName}`.trim();
+}
+
+const formatUserName = (user: User) => formatFullName(user.firstName, user.lastName);
+```
+
+#### **KISS - Keep It Simple, Stupid**
+```typescript
+// ✅ MANDATORY - Simple and clear
+function calculateDiscount(user: User): number {
+  if (user.membershipLevel !== 'premium') {
+    return user.purchaseAmount > 500 ? 0.05 : 0.02;
+  }
+  
+  const baseDiscount = user.purchaseAmount > 1000 ? 0.20 : 0.10;
+  const firstTimeBonus = user.isFirstTime ? 0.05 : 0;
+  
+  return baseDiscount + firstTimeBonus;
+}
+```
+
+#### **YAGNI - You Aren't Gonna Need It**
+```typescript
+// ✅ MANDATORY - Only current requirements
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+// Add fields only when actually needed
+```
+
+### **Code Quality Metrics (ENFORCED)**
+| Metric | Threshold | Action Required |
+|-----|-----|-----|
+| **Cyclomatic Complexity** | ≤ 5 | Excellent |
+| **Function Parameters** | ≤ 3 | Use objects for more |
+| **Nesting Depth** | ≤ 3 | Use guard clauses |
+| **Function Length** | ≤ 30 lines | Extract methods |
+| **Class/Module Size** | ≤ 200 lines | Split responsibilities |
+
+---
+
+## ♻️ COMPREHENSIVE REFACTORING STANDARDS - MANDATORY TRIGGERS
+
+### **Automatic Refactoring Requirements**
+Code MUST be refactored when:
+- 🚨 **Cyclomatic Complexity > 5** (Automatic rejection)
+- 🚨 **Function length > 30 lines** (Extract methods required)
+- 🚨 **File length exceeds type limits** (See file size limits)
+- 🚨 **Nesting depth > 3 levels** (Use guard clauses and early returns)
+- 🚨 **Duplicate code blocks detected** (DRY principle violation)
+
+### **File Size Limits (HARD LIMITS)**
+| File Type | Max Lines | Max Characters | Trigger Action |
+|-----|-----|----|----|
+| Healthcare Components | 200 lines | 5,000 chars | Split into smaller components |
+| UI Components | 150 lines | 4,000 chars | Split into smaller components |
+| Utility Functions | 100 lines | 2,500 chars | Extract related functions |
+| Hooks/Composables | 75 lines | 2,000 chars | Split by responsibility |
+| Types/Interfaces | 200 lines | 5,000 chars | Group related types |
+| Test Files | 300 lines | 8,000 chars | Split by test scenarios |
+
+### **Complexity Metrics Enforcement**
+| Metric | Threshold | Action Required |
+|-----|-----|-----|
+| **Complexity ≤ 5** | ✅ Excellent | Continue |
+| **Complexity 6-10** | ⚠️ Warning | Review and consider refactoring |
+| **Complexity 11-15** | 🟡 Critical | Mandatory refactoring |
+| **Complexity 16-20** | 🟠 Blocked | Immediate refactoring required |
+| **Complexity > 20** | 🚨 REJECTED | Cannot be committed |
+
+### **Refactoring Patterns**
+```typescript
+// ❌ BEFORE: 200-line component
+const UserDashboard = () => {
+  // All logic mixed together
+};
+
+// ✅ AFTER: Decomposed components
+const UserDashboard = () => (
+  <DashboardLayout>
+    <UserProfile />
+    <ActivityFeed />
+    <QuickActions />
+    <RecentTransactions />
+  </DashboardLayout>
+);
+```
+
+---
+
+## ⭐ COMPREHENSIVE TASK EXECUTION COMPLETION CRITERIA - ZERO TOLERANCE
+
+### **Universal Completion Requirements (NON-NEGOTIABLE)**
+- **NO ATTEMPT LIMITS**: Every error must be systematically corrected until resolved
+- **MANDATORY ERROR RESOLUTION**: All linting, compilation, and runtime errors must be resolved
+- **SUCCESSFUL BUILD REQUIREMENT**: Task completion requires successful build execution
+- **BUILD VERIFICATION PROTOCOL**: Every task must pass build validation
+- **CONTINUOUS ERROR CORRECTION**: Iterate until all issues resolved, regardless of attempt count
+- **QUALITY GATE ENFORCEMENT**: No task complete with outstanding errors, warnings, or failures
+
+### **Mandatory Build Validation Sequence**
+```bash
+# Required execution sequence before task completion
+npm run lint              # Must pass with zero warnings
+npm run type-check         # Type compilation must succeed
+npm run test              # All tests must pass
+npm run test:coverage     # Coverage thresholds must be met
+npm run build             # Build must complete without errors
+```
+
+### **Task Completion Checklist (MANDATORY)**
+#### **Code Quality Validation**
+- [ ] **Linting**: All linting rules pass without warnings
+- [ ] **Type Safety**: Type compilation succeeds without errors
+- [ ] **Test Coverage**: Minimum coverage thresholds maintained
+- [ ] **Build Success**: Production build completes without errors
+- [ ] **Performance**: No performance regressions introduced
+
+#### **Healthcare Security Requirements**
+- [ ] **Medical Data Encryption**: 100% of medical data must be encrypted
+- [ ] **ZK-Proof Integration**: All medical claims must use zero-knowledge proofs
+- [ ] **Role-Based Access**: Healthcare components must implement role-based access
+- [ ] **Audit Trail**: All medical transactions must be logged and auditable
+
+### **Quality Metrics Thresholds**
+| Metric | Minimum Threshold | Action if Below |
+|-----|---|-----|
+| **Test Coverage** | 95% | Add missing tests |
+| **Code Quality** | A grade | Refactor problematic code |
+| **Performance** | Baseline ±5% | Optimize performance |
+| **Security Score** | 100% (no critical) | Fix security issues |
+| **Documentation** | 90% coverage | Add missing documentation |
+
+---
+
+## 🔧 HEALTHCARE-SPECIFIC IMPLEMENTATION STANDARDS
+
+### **Healthcare Type Definitions (MANDATORY)**
+```typescript
+// types/healthcare.ts - Core healthcare entities
+interface Patient {
+  id: string;
+  walletAddress: string;
+  insuranceConnections: InsuranceConnection[];
+  encryptedMedicalHistory: ZKProofData[];
+}
+
+interface Insurance {
+  id: string;
+  organizationName: string;
+  poolAddress: string;
+  connectedHospitals: Hospital[];
+  managedPatients: Patient[];
+}
+
+// types/blockchain.ts - Web3 and DeFi types
+interface HealthcarePool {
+  poolAddress: string;
+  totalValueLocked: bigint;
+  apy: number;
+  supportedTokens: ['USDC', 'EURC'];
+}
+```
+
+### **Healthcare Import Organization**
+```typescript
+// 1. React and Next.js imports
+import React from 'react';
+import { NextPage } from 'next';
+
+// 2. Web3 and blockchain libraries
+import { ethers } from 'ethers';
+import { useWallet } from '@/hooks/useWallet';
+
+// 3. Healthcare-specific utilities
+import { generateZKProof } from '@/lib/zkproof';
+import { encryptMedicalData } from '@/utils/encryption';
+
+// 4. Healthcare components
+import { ClaimProcessor } from '@/components/insurance/ClaimProcessor';
+
+// 5. Healthcare types
+import type { Patient, Insurance, MedicalClaim } from '@/types/healthcare';
+```
+
+### **Web3 Healthcare Integration Pattern**
+```typescript
+// ✅ MANDATORY - Healthcare-specific Web3 hooks
+const useHealthcareWallet = () => {
+  const { address, isConnected } = useWallet();
+  const userRole = useHealthcareRole(address);
+  const permissions = useHealthcarePermissions(userRole);
+  
+  return {
+    address,
+    isConnected,
+    userRole,
+    permissions,
+    canAccessMedicalData: permissions.includes('MEDICAL_ACCESS')
+  };
+};
+```
+
+---
+
+## ⚖️ ENFORCEMENT MECHANISMS
+
+### **Pre-Commit Validation**
+```bash
+# Automatic checks before every commit
+npm run lint:complexity     # Complexity analysis
+npm run analyze:duplicates  # Duplicate code detection
+npm run metrics:file-size   # File size validation
+npm run test:refactored     # Test coverage verification
+npm run security:scan       # Healthcare security validation
+npm run zkproof:validate    # ZK-proof integration check
+```
+
+### **Violation Consequences**
+- **Complexity violations**: Automatic PR rejection
+- **File size violations**: Mandatory decomposition before merge
+- **Medical data violations**: Immediate security review required
+- **Build failures**: Cannot proceed until resolved
+- **Test coverage below 95%**: Add missing tests
+- **Missing ZK-proof integration**: Security compliance failure
+
+---
+
+## 🎯 SUCCESS METRICS
+
+### **Code Quality Indicators**
+- **Maintainability Index**: > 85
+- **Technical Debt Ratio**: < 5%
+- **Code Duplication**: < 3%
+- **Test Coverage**: > 95%
+- **Healthcare Security Score**: 100%
+
+### **Healthcare-Specific Metrics**
+- **Medical Data Encryption**: 100%
+- **ZK-Proof Integration Coverage**: 100%
+- **Role-Based Access Implementation**: 100%
+- **Healthcare Workflow Completion**: All end-to-end flows functional
+
+---
+
+**AUTHORITY LEVEL**: 🔴 **SUPREME AUTHORITY - COMPLETE zkMed DEVELOPMENT FOUNDATION**  
+**ENFORCEMENT STATUS**: 🔒 **ACTIVE AND ENFORCING - ZERO TOLERANCE FOR VIOLATIONS**  
+**SCOPE**: Universal application across entire zkMed healthcare payment platform 
