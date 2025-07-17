@@ -145,7 +145,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
   const rejectedUsers = users.filter(user => user.verificationStatus === "rejected");
 
   // Stats calculations
-  const totalUsers = users.length;
+  const totalUsers = approvedUsers.length; // Only count approved users as "active" users
   const totalApproved = approvedUsers.length;
   const totalPending = pendingUsers.length;
   const totalRejected = rejectedUsers.length;
@@ -191,6 +191,10 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
         user.id === userId ? { ...user, verificationStatus: "approved" as const } : user,
       );
       console.log("🟢 Updated users:", updatedUsers);
+      console.log(
+        "🟢 New active users count will be:",
+        updatedUsers.filter(u => u.verificationStatus === "approved").length,
+      );
       return updatedUsers;
     });
 
@@ -363,11 +367,11 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-200 text-sm font-medium">Total Users</p>
+                  <p className="text-blue-200 text-sm font-medium">Active Users</p>
                   <p className="text-2xl font-bold text-white">{totalUsers}</p>
                   <p className="text-xs text-emerald-400 flex items-center gap-1 mt-1">
                     <TrendingUp className="w-3 h-3" />
-                    +12% from last month
+                    Approved users
                   </p>
                 </div>
                 <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -558,7 +562,8 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 {JSON.stringify(
                   convertBigIntForJSON({
                     realTimeStats: {
-                      totalUsers,
+                      totalActiveUsers: totalUsers, // Only approved users count as "active"
+                      totalRegistrations: users.length, // All registrations (pending + approved + rejected)
                       totalPending,
                       totalApproved,
                       totalRejected,
