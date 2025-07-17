@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useInsurance } from "~~/hooks/useInsurance";
 import { mockGetOrganizationRecord, mockGetUserVerificationData } from "~~/lib/mock-data";
 import { OrganizationRecord, UserType } from "~~/types/healthcare";
-import { safeStringify } from "~~/utils/serialization";
 
 interface InsuranceDashboardProps {
   address: string;
@@ -172,15 +171,7 @@ export default function InsuranceDashboard({
           </div>
         </div>
 
-        {/* User Record Details */}
-        {organizationRecord && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Full User Record</h3>
-            <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-auto">
-              {safeStringify(organizationRecord, 2)}
-            </pre>
-          </div>
-        )}
+        {/* Debug section removed for cleaner UI */}
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
