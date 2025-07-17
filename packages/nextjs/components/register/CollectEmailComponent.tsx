@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import type { HealthcareRole } from "./RoleSelectionComponent";
+import { Mail } from "lucide-react";
 
 interface CollectEmailComponentProps {
   emailId: string;
@@ -125,7 +126,11 @@ This is a mock email verification content.`;
 
             {!isLoading && !emlFetched && (
               <div className="mb-6">
-                <div className="text-6xl mb-4">📧</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <Mail className="w-8 h-8 text-white" />
+                  </div>
+                </div>
                 <p className="text-gray-300 mb-4">
                   We&apos;re waiting to receive your email. Make sure you&apos;ve sent the email with the exact subject
                   line provided.

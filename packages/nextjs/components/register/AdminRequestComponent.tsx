@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { CheckCircle } from "lucide-react";
 
 enum AdminRole {
   BASIC = 0,
@@ -114,7 +115,11 @@ export function AdminRequestComponent({ onBack }: AdminRequestComponentProps) {
           <div className="text-center max-w-2xl mx-auto">
             {isComplete ? (
               <>
-                <div className="text-cyan-400 text-6xl mb-4">✓</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </div>
+                </div>
                 <h2 className="text-2xl font-bold text-cyan-300 mb-4">Request Submitted!</h2>
                 <p className="text-gray-300 mb-4">
                   Your admin access request has been submitted successfully. A current administrator will review your

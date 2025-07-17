@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { HealthcareRole } from "./RoleSelectionComponent";
+import { PartyPopper, X, Zap } from "lucide-react";
 
 interface VerifyRegistrationComponentProps {
   role: HealthcareRole;
@@ -162,7 +163,11 @@ export function VerifyRegistrationComponent({
             {/* Success State */}
             {isComplete && (
               <div>
-                <div className="text-6xl mb-4">🎉</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <PartyPopper className="w-8 h-8 text-white" />
+                  </div>
+                </div>
                 <h2 className="text-2xl font-bold text-cyan-300 mb-4">Registration Complete!</h2>
                 <p className="text-gray-300 mb-6">Your registration has been successfully submitted and verified.</p>
                 <p className="text-sm text-gray-400 mb-8">
@@ -184,7 +189,11 @@ export function VerifyRegistrationComponent({
             {/* Error State */}
             {error && (
               <div>
-                <div className="text-6xl mb-4">❌</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center">
+                    <X className="w-8 h-8 text-white" />
+                  </div>
+                </div>
                 <h2 className="text-2xl font-bold text-red-400 mb-4">Verification Failed</h2>
                 <p className="text-gray-300 mb-4">
                   We couldn&apos;t verify your registration. Please check the error below and try again.
@@ -213,7 +222,11 @@ export function VerifyRegistrationComponent({
             {/* Processing State */}
             {!isComplete && !error && (
               <div>
-                <div className="text-6xl mb-4">⚡</div>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <Zap className="w-8 h-8 text-white animate-pulse" />
+                  </div>
+                </div>
                 <h2 className="text-2xl font-bold mb-4 text-white">Verifying Registration</h2>
                 <p className="text-gray-300 mb-6">
                   We&apos;re processing your email verification and generating cryptographic proofs.

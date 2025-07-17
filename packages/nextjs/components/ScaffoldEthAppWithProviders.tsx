@@ -17,8 +17,8 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
   const pathname = usePathname();
 
-  // Don't show Scaffold-ETH header on homepage (it has its own HealthcareHeader)
-  const showScaffoldHeader = pathname !== "/";
+  // Don't show Scaffold-ETH header on homepage (it has its own HealthcareHeader) or registration pages
+  const showScaffoldHeader = pathname !== "/" && !pathname.startsWith("/register");
 
   return (
     <>

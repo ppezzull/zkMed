@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
+import { Building2, Crown, Shield, User } from "lucide-react";
 
 /**
  * Healthcare Role Types
@@ -107,7 +108,7 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <span className="text-2xl">👤</span>
+                    <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Patient</h3>
@@ -123,7 +124,7 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <span className="text-2xl">🏥</span>
+                    <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Hospital</h3>
@@ -141,7 +142,7 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <span className="text-2xl">🛡️</span>
+                    <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Insurance Company</h3>
@@ -157,7 +158,7 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 group-hover:from-blue-400 group-hover:to-cyan-400 transition-all">
-                    <span className="text-2xl">👑</span>
+                    <Crown className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg text-white">Administrator</h3>
