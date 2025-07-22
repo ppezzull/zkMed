@@ -7,7 +7,7 @@
  [![Chainlink](https://img.shields.io/badge/Chainlink-Automation-orange)](https://docs.chain.link/chainlink-automation)
  [![Scaffold-ETH](https://img.shields.io/badge/Scaffold--ETH-Privy-purple)](https://github.com/ppezzull/Scaffold-Privy-AA)
 
- **Developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
+ **First introduced at [ETHGlobal Prague](https://ethglobal.com/events/prague) and developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
 
 ---
 
@@ -77,6 +77,7 @@ This diagram shows how a patient uses a MailProof from their insurer to authoriz
 sequenceDiagram
     participant P as Patient
     participant I as Insurer (Web2)
+
     participant Privy as zkMed Platform (Privy)
     participant V as vlayer
     participant ZK as zkMed Contracts
