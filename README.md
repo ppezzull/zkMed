@@ -1,13 +1,13 @@
-# zkMed - Revolutionary Healthcare Insurance Platform
+ # zkMed - Revolutionary Healthcare Insurance Platform
 
-> **Privacy-preserving healthcare platform using vlayer MailProofs and automatic payments on Base**
+ > **Privacy-preserving healthcare platform using vlayer MailProofs and automatic payments on Base**
 
-[![Base](https://img.shields.io/badge/Base-Network-blue)](https://base.org/)
-[![vlayer](https://img.shields.io/badge/vlayer-MailProofs-green)](https://book.vlayer.xyz/features/email.html)
-[![Chainlink](https://img.shields.io/badge/Chainlink-Automation-orange)](https://docs.chain.link/chainlink-automation)
-[![Scaffold-ETH](https://img.shields.io/badge/Scaffold--ETH-Privy-purple)](https://github.com/ppezzull/Scaffold-Privy-AA)
+ [![Base](https://img.shields.io/badge/Base-Network-blue)](https://base.org/)
+ [![vlayer](https://img.shields.io/badge/vlayer-MailProofs-green)](https://book.vlayer.xyz/features/email.html)
+ [![Chainlink](https://img.shields.io/badge/Chainlink-Automation-orange)](https://docs.chain.link/chainlink-automation)
+ [![Scaffold-ETH](https://img.shields.io/badge/Scaffold--ETH-Privy-purple)](https://github.com/ppezzull/Scaffold-Privy-AA)
 
-**Developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
+ **Developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
 
 ---
 
@@ -55,62 +55,35 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 
 ```mermaid
 graph TB
-    %% Core Layer
-    Core[zkMedCore.sol<br/>Central orchestrator & user roles]
-    RequestMgr[zkMedRequestManager.sol<br/>Handles all system requests]
-    PaymentHistory[zkMedPaymentHistory.sol<br/>Records transaction activity]
-    
-    %% Payment Infrastructure
-    LinkPay[zkMedLinkPay.sol<br/>Chainlink Automation payments]
-    
-    %% User Contracts
-    Patient[zkMedPatient.sol<br/>Patient registration & data]
-    Hospital[zkMedHospital.sol<br/>Hospital interface & payments]
-    Insurer[zkMedInsurer.sol<br/>Insurance provider interface]
-    Admin[zkMedAdmin.sol<br/>Platform administration]
-    
-    %% Verification Provers
-    RegProver[zkMedRegistrationProver.sol<br/>vlayer domain verification]
-    PayProver[zkMedPaymentPlanProver.sol<br/>vlayer payment authorization]
-    
-    %% External Services
-    ChainlinkAuto[Chainlink Automation Network]
-    VLayer[vlayer MailProof Service]
-    
-    %% Connections
+    Core[zkMedCore.sol]
+    RequestMgr[zkMedRequestManager.sol]
+    PaymentHistory[zkMedPaymentHistory.sol]
+    LinkPay[zkMedLinkPay.sol]
+    Patient[zkMedPatient.sol]
+    Hospital[zkMedHospital.sol]
+    Insurer[zkMedInsurer.sol]
+    Admin[zkMedAdmin.sol]
+    RegProver[zkMedRegistrationProver.sol]
+    PayProver[zkMedPaymentPlanProver.sol]
+    ChainlinkAuto[Chainlink Automation]
+    VLayer[vlayer MailProof]
+
     Core --> RequestMgr
     Core --> PaymentHistory
     Core --> Patient
     Core --> Hospital
     Core --> Insurer
     Core --> Admin
-    
     Patient --> RegProver
     Hospital --> RegProver
     Insurer --> RegProver
     Insurer --> PayProver
-    
-    LinkPay --> ChainlinkAuto
     RegProver --> VLayer
     PayProver --> VLayer
-    
     LinkPay --> PaymentHistory
     Patient --> LinkPay
-    Hospital --> LinkPay
     Insurer --> LinkPay
-    
-    %% Styling
-    classDef coreClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef userClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px  
-    classDef paymentClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef proverClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef externalClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    
-    class Core,RequestMgr,PaymentHistory coreClass
-    class Patient,Hospital,Insurer,Admin userClass
-    class LinkPay paymentClass
-    class RegProver,PayProver proverClass
-    class ChainlinkAuto,VLayer externalClass
+    LinkPay --> ChainlinkAuto
 ```
 
 ### Core Infrastructure
