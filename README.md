@@ -4,8 +4,8 @@
 
 [![Base](https://img.shields.io/badge/Base-Network-blue)](https://base.org/)
 [![vlayer](https://img.shields.io/badge/vlayer-MailProofs-green)](https://book.vlayer.xyz/features/email.html)
-[![Chainlink](https://img.shields.io/badge/Chainlink-Automation-orange)](https://chain.link/automation)
-[![Scaffold-ETH](https://img.shields.io/badge/Scaffold--ETH-Privy-purple)](https://github.com/scaffold-eth/scaffold-eth-2)
+[![Chainlink](https://img.shields.io/badge/Chainlink-Automation-orange)](https://docs.chain.link/chainlink-automation)
+[![Scaffold-ETH](https://img.shields.io/badge/Scaffold--ETH-Privy-purple)](https://github.com/ppezzull/Scaffold-Privy-AA)
 
 **Developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
 
@@ -14,7 +14,7 @@
 ## 🎯 Project Vision
 
 ### Overview
-zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and Chainlink Automation for recurring payments. Built on Base with a seamless Privy wallet integration.
+zkMed is the world's first **privacy-preserving healthcare insurance payment platform** that automates payments from insurers to hospitals and patients by leveraging cryptographically verifiable email proofs (vlayer MailProofs) and [Chainlink Automation](https://docs.chain.link/chainlink-automation) for recurring payments. Built on Base with a seamless Privy wallet integration.
 
 ### Core Innovation
 **Web2/Web3 hybrid architecture** that maintains regulatory compliance while delivering revolutionary blockchain benefits:
@@ -22,23 +22,15 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **Web3 Layer**: MailProof verification, instant payments, automated processing
 - **Bridge**: DKIM-signed emails provide cryptographic proof without exposing medical data
 
-### Current MVP Stage
-- ✅ **Smart contract development and fixing of vlayer wagmi config error caused by different configs used by vlayer and privy**
-- ✅ **Connect the mocked pages to the contracts with scaffold.**
-- ✅ **Setup and deploy all of the contracts with verified ABIs and website deployment.**
-- ✅ **Dynamic Address Resolution**: Client automatically connects to appropriate contract addresses
-- ✅ **Chainlink Automation**: Automated payment execution via zkMedLinkPay
-- ✅ **Email Verification**: Working vlayer proofs for registration and payment plans
-
 ---
 
 ## 🏗️ Technical Architecture
 
 ### Blockchain Infrastructure
 - **Primary Chain**: [Base](https://base.org/) (Ethereum L2)
-- **Chain ID**: 31337 (Local Fork) / 8453 (Mainnet)
+- **Chain ID**: 31337 (Local Fork) / 8453 (Mainnet)  
 - **Native Currency**: ETH for all transactions
-- **Development**: Scaffold-ETH 2 with Privy wallet integration ([repo](https://github.com/ppezzull/Scaffold-Privy-AA))
+- **Development**: [Scaffold-ETH 2 with Privy integration](https://github.com/ppezzull/Scaffold-Privy-AA)
 
 ### Privacy Layer
 - **[vlayer MailProof](https://book.vlayer.xyz/features/email.html)**: DKIM verification for payment authorization
@@ -47,102 +39,98 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **Audit Trails**: Complete email verification history for compliance
 
 ### Payment System
-- **Chainlink Automation**: Scheduled monthly payment execution
-- **zkMedLinkPay**: Smart contract handling recurring payments and fees
+- **[Chainlink Automation](https://docs.chain.link/chainlink-automation)**: Scheduled monthly payment execution via `checkUpkeep` and `performUpkeep` functions
+- **zkMedLinkPay**: Smart contract implementing AutomationCompatibleInterface for recurring payments and fees
 - **Payment Plans**: Verified by email proof between insurer and patient
 
 ### Frontend
 - **Framework**: Next.js with Server Components
 - **Web3 Integration**: Privy SDK for seamless authentication
 - **Smart Accounts**: Abstract account management with gas sponsorship
-- **Responsive Design**: Desktop-first approach with modern UI/UX
+- **Responsive Design**: Modern UI/UX with desktop-first approach
 
 ---
 
 ## 📋 Smart Contract Architecture
 
-### Core Contract
-**zkMedCore.sol**: Central hub contract that coordinates all components
-- Manages registration of patients, hospitals, and insurers
-- Maintains user roles and permissions
-- Connects all specialized contracts together
-- Provides core functionality like getRole for identifying user types
+```mermaid
+graph TB
+    %% Core Layer
+    Core[zkMedCore.sol<br/>Central orchestrator & user roles]
+    RequestMgr[zkMedRequestManager.sol<br/>Handles all system requests]
+    PaymentHistory[zkMedPaymentHistory.sol<br/>Records transaction activity]
+    
+    %% Payment Infrastructure
+    LinkPay[zkMedLinkPay.sol<br/>Chainlink Automation payments]
+    
+    %% User Contracts
+    Patient[zkMedPatient.sol<br/>Patient registration & data]
+    Hospital[zkMedHospital.sol<br/>Hospital interface & payments]
+    Insurer[zkMedInsurer.sol<br/>Insurance provider interface]
+    Admin[zkMedAdmin.sol<br/>Platform administration]
+    
+    %% Verification Provers
+    RegProver[zkMedRegistrationProver.sol<br/>vlayer domain verification]
+    PayProver[zkMedPaymentPlanProver.sol<br/>vlayer payment authorization]
+    
+    %% External Services
+    ChainlinkAuto[Chainlink Automation Network]
+    VLayer[vlayer MailProof Service]
+    
+    %% Connections
+    Core --> RequestMgr
+    Core --> PaymentHistory
+    Core --> Patient
+    Core --> Hospital
+    Core --> Insurer
+    Core --> Admin
+    
+    Patient --> RegProver
+    Hospital --> RegProver
+    Insurer --> RegProver
+    Insurer --> PayProver
+    
+    LinkPay --> ChainlinkAuto
+    RegProver --> VLayer
+    PayProver --> VLayer
+    
+    LinkPay --> PaymentHistory
+    Patient --> LinkPay
+    Hospital --> LinkPay
+    Insurer --> LinkPay
+    
+    %% Styling
+    classDef coreClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef userClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px  
+    classDef paymentClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef proverClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef externalClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class Core,RequestMgr,PaymentHistory coreClass
+    class Patient,Hospital,Insurer,Admin userClass
+    class LinkPay paymentClass
+    class RegProver,PayProver proverClass
+    class ChainlinkAuto,VLayer externalClass
+```
 
-### Request Management
-**zkMedRequestManager.sol**: Handles all system requests
-- Processes registration requests for users and organizations
-- Manages payment plan authorization requests
-- Tracks request status (pending, approved, rejected)
-- Stores organization metadata securely
+### Core Infrastructure
 
-### Payment Infrastructure
-**zkMedLinkPay.sol**: Chainlink-powered automatic payment system
-- Uses Chainlink Automation for scheduled payments
-- Executes monthly payments from insurers to hospitals
-- Manages payment plans with configurable durations
-- Collects and distributes platform fees
-- Maintains complete payment history and statistics
+- **zkMedCore.sol**: Central orchestrator managing user roles and contract coordination
+- **zkMedRequestManager.sol**: Processes registration and payment plan authorization requests
+- **zkMedPaymentHistory.sol**: Records all transaction activity for audit trails
+- **zkMedLinkPay.sol**: Implements Chainlink Automation for scheduled monthly payments
 
-**zkMedPaymentHistory.sol**: Records all transaction activity
-- Stores detailed payment records
-- Provides statistical analysis of platform usage
-- Enables audit trails for compliance purposes
-- Preserves privacy while maintaining transparency
+### User Interface Contracts
 
-### Verification Provers
-**zkMedRegistrationProver.sol**: Verifies organization identities
-- Validates DKIM-signed emails for domain verification
-- Ensures hospitals and insurers own their claimed email domains
-- Prevents impersonation through cryptographic proof
-- Built on vlayer email proof technology
+- **zkMedPatient.sol**: Patient registration, verification, and payment plan management
+- **zkMedHospital.sol**: Hospital registration with domain verification and payment receipt
+- **zkMedInsurer.sol**: Insurance provider interface for payment plan creation and approval
+- **zkMedAdmin.sol**: Platform governance and administrative functions
 
-**zkMedPaymentPlanProver.sol**: Validates payment authorizations
-- Verifies insurer-approved payment plans via email proof
-- Extracts payment terms from DKIM-verified emails
-- Ensures patient consent through dual verification
-- Protects sensitive medical information via zero-knowledge proofs
+### Verification Provers (vlayer)
 
-### User Contracts
-**zkMedPatient.sol**: Patient interface contract
-- Manages patient registration and verification
-- Links patients to their payment plans
-- Stores patient metadata securely
-- Integrates with zkMedLinkPay for automated payments
-
-**zkMedHospital.sol**: Hospital interface contract
-- Handles hospital registration with domain verification
-- Manages hospital payment receipt
-- Maintains hospital metadata and credentials
-- Enables service fee configuration
-
-**zkMedInsurer.sol**: Insurance provider interface
-- Manages insurer registration and verification
-- Handles payment plan creation and approval
-- Maintains connections to patients and hospitals
-- Controls monthly payment allocations
-
-**zkMedAdmin.sol**: Administrative interface
-- Provides platform governance capabilities
-- Manages system parameters and fee structures
-- Handles dispute resolution and special cases
-- Controls platform upgrades and maintenance
-
-### 🧪 Test Suite Status
-#### 🎯 Overview
-- Overall test coverage: ~82%
-- Critical suites (Chainlink Automation & Registration Prover): 100%
-- Core contract tests: ~83%
-- PaymentPlanFlow tests: 0%
-
-#### 📊 Test Coverage
-
-| Test Suite                | Pass Rate |
-|---------------------------|-----------|
-| zkMedLinkPay              | 100%      |
-| zkMedRegistrationProver   | 100%      |
-| zkMedCore                 | 83%       |
-| PaymentPlanFlow           | 0%        |
-| YourContract              | 100%      |
+- **zkMedRegistrationProver.sol**: Validates DKIM-signed emails for domain ownership verification
+- **zkMedPaymentPlanProver.sol**: Verifies insurer-approved payment plans via email proofs
 
 ---
 
@@ -182,7 +170,7 @@ sequenceDiagram
 ## 🚀 Bounties Implementation
 
 ### Scaffold++ (Scaffold-ETH with Privy)
-- **Template Used**: Scaffold-ETH 2 with Privy integration (commit a3b4adaf29ea90ab5323e5255e22b76e5e3ca674)
+- **Template Used**: [Scaffold-ETH 2 with Privy integration](https://github.com/ppezzull/Scaffold-Privy-AA)
 - **Features Added**:
   - Smart wallet creation and management
   - Social login options (email, phone, social)
@@ -191,32 +179,32 @@ sequenceDiagram
 
 ### Chainlink Automation
 - **Contract**: zkMedLinkPay.sol
-- **Implementation**:
+- **Implementation**: Full [AutomationCompatibleInterface](https://docs.chain.link/chainlink-automation) with:
   - `checkUpkeep`: Identifies payment plans due for processing
   - `performUpkeep`: Executes monthly payments to hospitals
-  - Triggers automatic payments based on email-verified payment plans
-  - Handles platform fee distribution and payment statistics
+  - Automated triggers based on email-verified payment plans
+  - Platform fee distribution and payment statistics
 
 ### Base Deployment
-- **Contract Addresses**:
-  - zkMedCore: 0x7Ca6F9b0Ef149Ae82D57947Cd7D54B0a701e8dBD
-  - zkMedPatient: 0xF8CeD8823d8d91a42f0775382BC757CCb490d587
-  - zkMedHospital: 0x5aDaB6091C85F08173D5aDb801f4cB63480F0288
-  - zkMedInsurer: 0x9889827a14aF61111E5C79Ea0AB5D343961FeE4f
-  - zkMedAdmin: 0xC6d5aa79bD2f579ECbB6a1f2420B34Fd7a113E20
-  - zkMedPaymentHistory: 0xB03AAa4a2Df9BD42f7CcB32A75E28A329DF39D6B
-  - zkMedRequestManager: 0x51a41348d9b0061A7000D6BAcE8e83D06aE00764
-  - zkMedRegistrationProver: 0x700b6a60ce7eaaea56f065753d8dcb9653dbad35
-  - zkMedPaymentPlanProver: 0x364d6D0333B6BB0cAB7e6FDC06D5B9c45e69Ff8E
+- **Contract Addresses** (Base Mainnet):
+  - zkMedCore: 0x202Fa7479d6fcBa37148009D256Ac2936729e577
+  - zkMedPatient: 0x2a76C471CC4353dAAb3E4938D89f02c7fF1e2F77
+  - zkMedHospital: 0xc9913ad9B3730a0C18d7064313A526d24A6F3DFD
+  - zkMedInsurer: 0xcE451eC2002643f248d0689650Ef36012bAef6f4
+  - zkMedAdmin: 0xb9C155122BcB683EB7d39E980daf811C62203292
+  - zkMedPaymentHistory: 0x852FfA30dBdd64a4893D1cAB9DbA14148Ed3690D
+  - zkMedRequestManager: 0xA95704b4C8d55594394B7B9602C0454Dc9C0f8a9
+  - zkMedRegistrationProver: 0x961A3057DCA3CaAb2bD9Ba54F9BAb42C7c8BEAFa
+  - zkMedPaymentPlanProver: 0x2796E5Ff369a1b845dd70948cE19BE01762D42a5
 
 ---
 
 ## 🧪 Email Formats
 
 ### Registration Email
-Organizations (hospitals and insurers) verify their identity through domain ownership:
+Organizations verify identity through domain ownership:
 - **From**: admin@hospitalname.com
-- **Subject**: "Hospital registration on zkMed"
+- **Subject**: "Hospital registration on zkMed"  
 - **Body**: Contains organization name and wallet address
 
 ### Payment Plan Email
@@ -224,12 +212,9 @@ Insurers authorize payment plans through verified emails:
 - **From**: insurance@provider.com
 - **To**: patient@email.com
 - **Subject**: "{insurance name} payment contract in zkMed"
-- **Body**:
-  ```
-  Patient payment contract
-  Duration: 01/01/2027
-  Monthly allowance: 40$
-  ```
+- **Body**: Patient payment contract, Duration: 01/01/2027, Monthly allowance: 40$
+
+---
 
 ## 🚀 Getting Started
 
@@ -242,7 +227,7 @@ Insurers authorize payment plans through verified emails:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/zkMed.git
+git clone https://github.com/ppezzull/zkMed.git
 cd zkMed
 
 # Install dependencies
@@ -273,11 +258,11 @@ yarn deploy --network base-testnet
 
 ### Current MVP (Hackathon Submission)
 - ✅ **Privy Integration**: Smart account integration with social logins
-- ✅ **Email Verification**: Working vlayer MailProofs for registration
-- ✅ **Payment Plans**: Automated payment system via Chainlink
+- ✅ **Smart Contract Deploy**: Smart contracts deployed and accessible via /debug page
 - ✅ **Role-Based Access**: Dynamic routing based on user type
 
 ### Next Steps
+- 🚧 **Email Verification**: vlayer MailProofs integration (addressing wagmi config conflicts with Privy)
 - 🚧 **Enhanced Payment Analytics**: Detailed reporting for hospitals and insurers
 - 🚧 **Mobile Interface**: Progressive web app for on-the-go access
 - 🚧 **Multi-Currency Support**: Integration with stablecoins for global usage
@@ -286,6 +271,7 @@ yarn deploy --network base-testnet
 - 📋 **Regulatory Compliance Framework**: Comprehensive GDPR/HIPAA compliance
 - 📋 **Decentralized Health Records**: Private, patient-controlled medical data
 - 📋 **Global Healthcare Network**: Cross-border insurance and care coordination
+- 📋 **Universal Insurance Integration**: Payment system compatible with every insurance provider
 
 ---
 
@@ -299,7 +285,7 @@ yarn deploy --network base-testnet
 - **Trusted Verification**: Cryptographic proof of payment authorization
 
 #### Hospitals
-- **Predictable Cash Flow**: Guaranteed monthly payments
+- **Predictable Cash Flow**: Guaranteed monthly payments from insurance
 - **Reduced Admin Costs**: Automated processing reduces overhead
 - **Enhanced Security**: MailProof validation prevents fraud
 
@@ -319,7 +305,7 @@ yarn deploy --network base-testnet
 
 Built by students from [42 Roma Luiss](https://42roma.it/):
 
-- [ppezzull](https://github.com/ppezzull/) – smart contract backend
+- [ppezzull](https://github.com/ppezzull/) – Smart contract backend
 - [rdolzi](https://github.com/rdolzi/) – Next.js frontend
 
 ---
