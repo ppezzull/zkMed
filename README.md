@@ -90,7 +90,7 @@ sequenceDiagram
     Privy->>V: Verifies email proof with vlayer
     V-->>Privy: Returns verified premium data
     
-    Note over Privy,C: 3. Privy Creates Chainlink Upkeep
+    Note over Privy,C: 3. Patient with Privy Smart-Wallet Creates Chainlink Upkeep
     Privy->>ZK: Registers premium plan on-chain
     ZK-->>Privy: Confirms registration
     Privy->>C: Creates & funds a new Chainlink Upkeep for Patient
