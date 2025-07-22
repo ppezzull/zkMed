@@ -317,7 +317,10 @@ yarn deploy --network base-testnet
 
 ## 👨‍💻 Contributors
 
-zkMed is being built by a team passionate about healthcare innovation and blockchain technology.
+Built by students from [42 Roma Luiss](https://42roma.it/):
+
+- [ppezzull](https://github.com/ppezzull/) – smart contract backend
+- [rdolzi](https://github.com/rdolzi/) – Next.js frontend
 
 ---
 
