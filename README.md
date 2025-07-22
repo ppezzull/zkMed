@@ -1,4 +1,4 @@
- # zkMed - Revolutionary Healthcare Insurance Platform
+# zkMed - Revolutionary Healthcare Insurance Platform
 
  > **Privacy-preserving healthcare platform using vlayer MailProofs and automatic payments on Base**
 
@@ -53,84 +53,144 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 
 ## 📋 Smart Contract Architecture
 
+### Hybrid Insurance System Integration
 ```mermaid
 graph TB
-    Core[zkMedCore.sol]
-    RequestMgr[zkMedRequestManager.sol]
-    PaymentHistory[zkMedPaymentHistory.sol]
-    LinkPay[zkMedLinkPay.sol]
-    Patient[zkMedPatient.sol]
-    Hospital[zkMedHospital.sol]
-    Insurer[zkMedInsurer.sol]
-    Admin[zkMedAdmin.sol]
-    RegProver[zkMedRegistrationProver.sol]
-    PayProver[zkMedPaymentPlanProver.sol]
-    ChainlinkAuto[Chainlink Automation]
-    VLayer[vlayer MailProof]
-
-    Core --> RequestMgr
-    Core --> PaymentHistory
-    Core --> Patient
-    Core --> Hospital
-    Core --> Insurer
-    Core --> Admin
-    Patient --> RegProver
-    Hospital --> RegProver
-    Insurer --> RegProver
-    Insurer --> PayProver
-    RegProver --> VLayer
-    PayProver --> VLayer
-    LinkPay --> PaymentHistory
-    Patient --> LinkPay
-    Insurer --> LinkPay
-    LinkPay --> ChainlinkAuto
+    subgraph "Web2: Traditional Insurance Systems"
+        A[Insurer Claims Portal] --> B[Manual Claim Review]
+        B --> C[DKIM-Signed Payment Plan Email]
+    end
+    
+    subgraph "Web3: Blockchain Automation"
+        D[vlayer MailProof Verification] --> E[zkMed Smart Contracts]
+        E --> F[Chainlink Automation Trigger]
+        F --> G[Automated Monthly Payments]
+    end
+    
+    C --> D
 ```
 
-### Core Infrastructure
+### Automated Payment Flow
+This diagram shows how a patient uses a DKIM-signed email from their insurer to set up an automated payment plan using Chainlink Automation.
 
-- **zkMedCore.sol**: Central orchestrator managing user roles and contract coordination
-- **zkMedRequestManager.sol**: Processes registration and payment plan authorization requests
-- **zkMedPaymentHistory.sol**: Records all transaction activity for audit trails
-- **zkMedLinkPay.sol**: Implements Chainlink Automation for scheduled monthly payments
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant FE as zkMed Frontend (Privy)
+    participant V as vlayer
+    participant ZK as zkMed Contracts
+    participant C as Chainlink Automation
+    participant H as Hospital
 
-### User Interface Contracts
+    Note over I,P: 1. Insurer sends Payment Plan Email
+    I->>P: DKIM-Signed email with payment terms
 
-- **zkMedPatient.sol**: Patient registration, verification, and payment plan management
-- **zkMedHospital.sol**: Hospital registration with domain verification and payment receipt
-- **zkMedInsurer.sol**: Insurance provider interface for payment plan creation and approval
-- **zkMedAdmin.sol**: Platform governance and administrative functions
+    Note over P,FE: 2. Patient Onboards & Sets Up Plan
+    P->>FE: Logs in with Privy, submits email proof
+    FE->>V: Verifies email proof with vlayer
+    V-->>FE: Returns verified payment data
+    
+    Note over FE,C: 3. Frontend Creates Chainlink Upkeep
+    FE->>ZK: Registers payment plan on-chain
+    ZK-->>FE: Confirms registration
+    FE->>C: Creates and funds a new Chainlink Upkeep
 
-### Verification Provers (vlayer)
+    Note over C,H: 4. Chainlink Executes Automated Payments
+    loop Monthly Payments
+        C->>ZK: checkUpkeep()
+        ZK-->>C: upkeepNeeded = true
+        C->>ZK: performUpkeep()
+        ZK->>H: Transfers payment to Hospital
+    end
+```
 
-- **zkMedRegistrationProver.sol**: Validates DKIM-signed emails for domain ownership verification
-- **zkMedPaymentPlanProver.sol**: Verifies insurer-approved payment plans via email proofs
+---
+
+## 🏥 Multi-Role User Management Patterns
+
+### Patient Experience Pattern
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant I as Insurer (Web2)
+    participant FE as zkMed Frontend (Privy)
+    participant V as vlayer
+    participant C as Chainlink Automation
+    participant H as Hospital
+
+    Note over P,I: 1. Web2 Registration & Claim Approval
+    P->>I: Submits registration & documents
+    I->>P: Sends insurance agreement
+    P->>H: Receives medical treatment
+    H->>I: Submits claim via traditional portal
+    I->>I: Reviews and approves claim
+
+    Note over I,P: 2. Web3 Payment Authorization
+    I->>P: Sends DKIM-signed payment plan email
+
+    Note over P,FE: 3. Patient Sets Up Automated Payments
+    P->>FE: Logs in with Privy, submits email
+    FE->>V: Verifies email proof with vlayer
+    V-->>FE: Returns verified data
+    FE->>C: Creates Chainlink Upkeep for automated payments to Hospital
+```
+
+### Hospital Integration Pattern
+```mermaid
+sequenceDiagram
+    participant H as Hospital
+    participant V as vlayer
+    participant I as Insurer (Web2)
+    participant P as Patient
+    participant C as Chainlink Automation
+
+    Note over H,V: 1. Hospital Onboarding
+    H->>V: Submits domain verification MailProof
+    V-->>H: Confirms email domain ownership
+    H->>H: Configures payment wallet on zkMed
+
+    Note over P,I: 2. Traditional Claim Process
+    P->>H: Receives medical treatment
+    H->>I: Submits claim via traditional portal
+    I->>I: Reviews and approves claim
+
+    Note over I,C: 3. Automated Settlement
+    I->>P: Sends DKIM-signed payment plan email
+    P->>C: Patient sets up Chainlink Automation
+    C->>H: Executes automated monthly payments
+```
+
+### Insurance Company Pattern
+```mermaid
+sequenceDiagram
+    participant I as Insurer (Web2)
+    participant V as vlayer
+    participant P as Patient
+    participant H as Hospital
+    participant C as Chainlink Automation
+
+    Note over I,V: 1. Insurer Onboarding
+    I->>V: Submits company domain MailProof
+    V-->>I: Verifies corporate email domain
+
+    Note over I,P: 2. Traditional Claim & Authorization
+    P->>H: Patient receives treatment
+    H->>I: Hospital submits claim
+    I->>I: Insurer reviews and approves
+    I->>P: Generates & sends DKIM-signed payment plan email
+
+    Note over P,C: 3. Patient-Initiated Payment Automation
+    P->>V: Patient verifies email proof via zkMed Frontend
+    V-->>P: Returns verified data
+    P->>C: Patient creates Chainlink Upkeep
+    C->>H: Chainlink automatically pays the hospital monthly
+```
 
 ---
 
 ## 🔄 Hybrid Claim Processing Flow
 
-### Web2/Web3 Integration Architecture
-
-```mermaid
-sequenceDiagram
-    participant P as Patient
-    participant H as Hospital
-    participant I as Insurer (Web2)
-    participant V as vlayer
-    participant C as Chainlink
-    
-    Note over P,I: Web2 Traditional Claim Processing
-    P->>H: 1. Receive Medical Treatment
-    H->>I: 2. Submit Claim via Portal/EHR
-    I->>I: 3. Review & Assess Claim (Manual Process)
-    I->>I: 4. Approve/Deny Decision
-    
-    Note over I,C: Web3 Automated Payment Processing
-    I->>P: 5. Send DKIM-Signed Payment Plan Email
-    P->>V: 6. Submit MailProof for Verification
-    V->>C: 7. Setup Recurring Payment Schedule
-    C->>H: 8. Execute Monthly Payments Automatically
-```
 
 ### Why Hybrid Architecture?
 - **Regulatory Compliance**: Medical data stays in traditional systems (GDPR/HIPAA)
