@@ -43,7 +43,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **zkMedLinkPay**: Smart contract implementing AutomationCompatibleInterface for recurring payments and fees
 - **Payment Plans**: Verified by email proof between insurer and patient
 
-### Frontend
+### Privy
 - **Framework**: Next.js with Server Components
 - **Web3 Integration**: Privy SDK for seamless authentication
 - **Smart Accounts**: Abstract account management with gas sponsorship
@@ -71,7 +71,7 @@ graph TB
 ```
 
 ### Automated Premium Payments (Patient to Insurer)
-This diagram shows how a patient sets up automated monthly premium payments to their insurer using Chainlink Automation, authorized by a MailProof.
+This diagram shows how a patient uses a MailProof from their insurer to authorize and set up automated monthly premium payments via Chainlink Automation.
 
 ```mermaid
 sequenceDiagram
@@ -104,26 +104,23 @@ sequenceDiagram
     end
 ```
 
-### Claim Payouts (Insurer to Hospital)
-This diagram shows how an insurer pays a hospital for a claim directly through the platform using Privy, after their internal Web2 approval process.
+### Direct Payouts (Insurer to Patient/Hospital)
+This diagram shows how an insurer can directly pay a user (a patient for reimbursement or a hospital for services) using their Privy smart account. This is a simple, direct transfer and does not involve MailProofs or automation.
 
 ```mermaid
 sequenceDiagram
     participant I as Insurer
-    participant H as Hospital
-    participant P as Patient
+    participant U as User (Patient or Hospital)
     participant Privy as zkMed Platform (Privy)
     participant ZK as zkMed Contracts
 
-    Note over I,P: 1. Traditional Claim Processing (Web2)
-    P->>H: Receives medical treatment
-    H->>I: Submits claim via traditional portal
-    I->>I: Reviews and approves claim internally
+    Note over I,U: 1. Off-Chain Agreement
+    I-->>U: Insurer decides to pay user based on off-chain processes
 
     Note over I,Privy: 2. Insurer Executes On-Chain Payout
-    I->>Privy: Logs in, initiates payment to Hospital
-    Privy->>ZK: Triggers payment function
-    ZK->>H: Transfers claim amount to Hospital's wallet
+    I->>Privy: Logs in, initiates a direct USDC payment to User
+    Privy->>ZK: Triggers a simple transfer function
+    ZK->>U: Transfers USDC to the User's wallet
     ZK-->>I: Records transaction on-chain
 ```
 
@@ -131,81 +128,61 @@ sequenceDiagram
 
 ## 🏥 Multi-Role User Management Patterns
 
+### Identity Verification (For Hospitals & Insurers)
+```mermaid
+sequenceDiagram
+    participant Org as Organization (Hospital/Insurer)
+    participant V as vlayer
+    participant Privy as zkMed Platform (Privy)
+    participant ZK as zkMed Contracts
+
+    Note over Org,Privy: 1. Onboarding
+    Org->>Privy: Logs in and initiates domain verification
+    Privy->>Org: Prompts to send a verification email
+
+    Note over Org,V: 2. MailProof Verification
+    Org->>V: Submits DKIM-signed email for verification
+    V-->>Privy: Confirms domain ownership for the Org's wallet
+
+    Note over Privy,ZK: 3. On-Chain Record
+    Privy->>ZK: Associates the verified domain/email hash with the Org's address
+```
+
 ### Patient Experience Pattern
 ```mermaid
 sequenceDiagram
     participant P as Patient
-    participant I as Insurer (Web2)
-    participant Privy as zkMed Platform (Privy)
-    participant V as vlayer
-    participant C as Chainlink Automation
-    participant H as Hospital
-
-    Note over P,I: 1. Web2 Onboarding & Claim
-    P->>I: Submits registration & documents
-    I->>P: Sends insurance agreement & premium details
-    P->>H: Receives medical treatment
-    H->>I: Submits claim via traditional portal
-
-    Note over P,Privy: 2. Patient Sets Up Automated Premiums
-    P->>Privy: Logs in, submits premium email proof
-    Privy->>V: Verifies email with vlayer
-    V-->>Privy: Returns verified data
-    Privy->>C: Creates Chainlink Upkeep for automated premium payments to Insurer
-
-    Note over I,H: 3. Insurer Pays Claim
-    I->>I: Approves claim (Web2)
-    I->>Privy: Logs in to pay Hospital
-    Privy->>H: Executes direct payment for the claim
-```
-
-### Hospital Integration Pattern
-```mermaid
-sequenceDiagram
-    participant H as Hospital
-    participant V as vlayer
     participant I as Insurer
-    participant P as Patient
     participant Privy as zkMed Platform (Privy)
+    participant C as Chainlink Automation
 
-    Note over H,V: 1. Hospital Onboarding
-    H->>V: Submits domain verification MailProof
-    V-->>H: Confirms email domain ownership
-    H->>Privy: Configures payment wallet on zkMed
+    Note over P,I: 1. Onboarding & Premiums
+    I->>P: Sends premium plan details via email
+    P->>Privy: Logs in, uses MailProof to set up automated premium payments TO Insurer
+    Privy->>C: Creates and manages Chainlink Upkeep
 
-    Note over P,I: 2. Traditional Claim Process
-    P->>H: Receives medical treatment
-    H->>I: Submits claim via traditional portal
-    I->>I: Reviews and approves claim
-
-    Note over I,H: 3. Insurer Pays Claim via Privy
-    I->>Privy: Logs in and initiates payment
-    Privy->>H: Executes instant transfer for the approved claim
+    Note over I,P: 2. Receiving Payouts
+    I->>Privy: Insurer logs in to send a direct payment (e.g., reimbursement)
+    Privy->>P: Patient receives USDC directly to their wallet
 ```
 
 ### Insurance Company Pattern
 ```mermaid
 sequenceDiagram
     participant I as Insurer
-    participant V as vlayer
     participant P as Patient
     participant H as Hospital
     participant C as Chainlink Automation
     participant Privy as zkMed Platform (Privy)
 
-    Note over I,V: 1. Insurer Onboarding
-    I->>V: Submits company domain MailProof
-    V-->>I: Verifies corporate email domain
-
-    Note over I,P: 2. Patient Premiums & Claims
+    Note over I,P: 1. Receiving Premiums
     I->>P: Sends premium plan email
     P->>C: Patient sets up automated premium payments TO Insurer
-    P->>H: Patient receives treatment, Hospital files claim
-    I->>I: Insurer approves claim (Web2)
 
-    Note over I,Privy: 3. Insurer Pays Out Claim
-    I->>Privy: Logs in to pay Hospital
-    Privy->>H: Executes direct payment for the claim
+    Note over I,Privy: 2. Making Payouts
+    I->>Privy: Logs in to make direct payments
+    Privy->>P: Sends reimbursement to Patient
+    Privy->>H: Sends payment for services to Hospital
 ```
 
 ---
