@@ -70,39 +70,61 @@ graph TB
     C --> D
 ```
 
-### Automated Payment Flow
-This diagram shows how a patient uses a DKIM-signed email from their insurer to set up an automated payment plan using Chainlink Automation.
+### Automated Premium Payments (Patient to Insurer)
+This diagram shows how a patient sets up automated monthly premium payments to their insurer using Chainlink Automation, authorized by a MailProof.
 
 ```mermaid
 sequenceDiagram
     participant P as Patient
     participant I as Insurer (Web2)
-    participant FE as zkMed Frontend (Privy)
+    participant Privy as zkMed Platform (Privy)
     participant V as vlayer
     participant ZK as zkMed Contracts
     participant C as Chainlink Automation
-    participant H as Hospital
 
-    Note over I,P: 1. Insurer sends Payment Plan Email
-    I->>P: DKIM-Signed email with payment terms
+    Note over I,P: 1. Insurer sends Premium Plan Email
+    I->>P: DKIM-Signed email with premium details
 
-    Note over P,FE: 2. Patient Onboards & Sets Up Plan
-    P->>FE: Logs in with Privy, submits email proof
-    FE->>V: Verifies email proof with vlayer
-    V-->>FE: Returns verified payment data
+    Note over P,Privy: 2. Patient Onboards & Sets Up Automation
+    P->>Privy: Logs in, submits email proof
+    Privy->>V: Verifies email proof with vlayer
+    V-->>Privy: Returns verified premium data
     
-    Note over FE,C: 3. Frontend Creates Chainlink Upkeep
-    FE->>ZK: Registers payment plan on-chain
-    ZK-->>FE: Confirms registration
-    FE->>C: Creates and funds a new Chainlink Upkeep
+    Note over Privy,C: 3. Privy Creates Chainlink Upkeep
+    Privy->>ZK: Registers premium plan on-chain
+    ZK-->>Privy: Confirms registration
+    Privy->>C: Creates & funds a new Chainlink Upkeep for Patient
 
-    Note over C,H: 4. Chainlink Executes Automated Payments
-    loop Monthly Payments
+    Note over C,I: 4. Chainlink Executes Automated Premium Payments
+    loop Monthly Premiums
         C->>ZK: checkUpkeep()
         ZK-->>C: upkeepNeeded = true
         C->>ZK: performUpkeep()
-        ZK->>H: Transfers payment to Hospital
+        ZK->>I: Transfers premium payment to Insurer
     end
+```
+
+### Claim Payouts (Insurer to Hospital)
+This diagram shows how an insurer pays a hospital for a claim directly through the platform using Privy, after their internal Web2 approval process.
+
+```mermaid
+sequenceDiagram
+    participant I as Insurer
+    participant H as Hospital
+    participant P as Patient
+    participant Privy as zkMed Platform (Privy)
+    participant ZK as zkMed Contracts
+
+    Note over I,P: 1. Traditional Claim Processing (Web2)
+    P->>H: Receives medical treatment
+    H->>I: Submits claim via traditional portal
+    I->>I: Reviews and approves claim internally
+
+    Note over I,Privy: 2. Insurer Executes On-Chain Payout
+    I->>Privy: Logs in, initiates payment to Hospital
+    Privy->>ZK: Triggers payment function
+    ZK->>H: Transfers claim amount to Hospital's wallet
+    ZK-->>I: Records transaction on-chain
 ```
 
 ---
@@ -114,26 +136,27 @@ sequenceDiagram
 sequenceDiagram
     participant P as Patient
     participant I as Insurer (Web2)
-    participant FE as zkMed Frontend (Privy)
+    participant Privy as zkMed Platform (Privy)
     participant V as vlayer
     participant C as Chainlink Automation
     participant H as Hospital
 
-    Note over P,I: 1. Web2 Registration & Claim Approval
+    Note over P,I: 1. Web2 Onboarding & Claim
     P->>I: Submits registration & documents
-    I->>P: Sends insurance agreement
+    I->>P: Sends insurance agreement & premium details
     P->>H: Receives medical treatment
     H->>I: Submits claim via traditional portal
-    I->>I: Reviews and approves claim
 
-    Note over I,P: 2. Web3 Payment Authorization
-    I->>P: Sends DKIM-signed payment plan email
+    Note over P,Privy: 2. Patient Sets Up Automated Premiums
+    P->>Privy: Logs in, submits premium email proof
+    Privy->>V: Verifies email with vlayer
+    V-->>Privy: Returns verified data
+    Privy->>C: Creates Chainlink Upkeep for automated premium payments to Insurer
 
-    Note over P,FE: 3. Patient Sets Up Automated Payments
-    P->>FE: Logs in with Privy, submits email
-    FE->>V: Verifies email proof with vlayer
-    V-->>FE: Returns verified data
-    FE->>C: Creates Chainlink Upkeep for automated payments to Hospital
+    Note over I,H: 3. Insurer Pays Claim
+    I->>I: Approves claim (Web2)
+    I->>Privy: Logs in to pay Hospital
+    Privy->>H: Executes direct payment for the claim
 ```
 
 ### Hospital Integration Pattern
@@ -141,50 +164,48 @@ sequenceDiagram
 sequenceDiagram
     participant H as Hospital
     participant V as vlayer
-    participant I as Insurer (Web2)
+    participant I as Insurer
     participant P as Patient
-    participant C as Chainlink Automation
+    participant Privy as zkMed Platform (Privy)
 
     Note over H,V: 1. Hospital Onboarding
     H->>V: Submits domain verification MailProof
     V-->>H: Confirms email domain ownership
-    H->>H: Configures payment wallet on zkMed
+    H->>Privy: Configures payment wallet on zkMed
 
     Note over P,I: 2. Traditional Claim Process
     P->>H: Receives medical treatment
     H->>I: Submits claim via traditional portal
     I->>I: Reviews and approves claim
 
-    Note over I,C: 3. Automated Settlement
-    I->>P: Sends DKIM-signed payment plan email
-    P->>C: Patient sets up Chainlink Automation
-    C->>H: Executes automated monthly payments
+    Note over I,H: 3. Insurer Pays Claim via Privy
+    I->>Privy: Logs in and initiates payment
+    Privy->>H: Executes instant transfer for the approved claim
 ```
 
 ### Insurance Company Pattern
 ```mermaid
 sequenceDiagram
-    participant I as Insurer (Web2)
+    participant I as Insurer
     participant V as vlayer
     participant P as Patient
     participant H as Hospital
     participant C as Chainlink Automation
+    participant Privy as zkMed Platform (Privy)
 
     Note over I,V: 1. Insurer Onboarding
     I->>V: Submits company domain MailProof
     V-->>I: Verifies corporate email domain
 
-    Note over I,P: 2. Traditional Claim & Authorization
-    P->>H: Patient receives treatment
-    H->>I: Hospital submits claim
-    I->>I: Insurer reviews and approves
-    I->>P: Generates & sends DKIM-signed payment plan email
+    Note over I,P: 2. Patient Premiums & Claims
+    I->>P: Sends premium plan email
+    P->>C: Patient sets up automated premium payments TO Insurer
+    P->>H: Patient receives treatment, Hospital files claim
+    I->>I: Insurer approves claim (Web2)
 
-    Note over P,C: 3. Patient-Initiated Payment Automation
-    P->>V: Patient verifies email proof via zkMed Frontend
-    V-->>P: Returns verified data
-    P->>C: Patient creates Chainlink Upkeep
-    C->>H: Chainlink automatically pays the hospital monthly
+    Note over I,Privy: 3. Insurer Pays Out Claim
+    I->>Privy: Logs in to pay Hospital
+    Privy->>H: Executes direct payment for the claim
 ```
 
 ---
