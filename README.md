@@ -23,7 +23,9 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **Bridge**: DKIM-signed emails provide cryptographic proof without exposing medical data
 
 ### Current MVP Stage
-- ✅ **Smart Wallet Integration**: Working interaction with Privy and Scaffold-ETH
+- ✅ **Smart contract development and fixing of vlayer wagmi config error caused by different configs used by vlayer and privy**
+- ✅ **Connect the mocked pages to the contracts with scaffold.**
+- ✅ **Setup and deploy all of the contracts with verified ABIs and website deployment.**
 - ✅ **Dynamic Address Resolution**: Client automatically connects to appropriate contract addresses
 - ✅ **Chainlink Automation**: Automated payment execution via zkMedLinkPay
 - ✅ **Email Verification**: Working vlayer proofs for registration and payment plans
@@ -36,7 +38,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **Primary Chain**: [Base](https://base.org/) (Ethereum L2)
 - **Chain ID**: 31337 (Local Fork) / 8453 (Mainnet)
 - **Native Currency**: ETH for all transactions
-- **Development**: Scaffold-ETH 2 with Privy wallet integration (commit a3b4adaf29ea90ab5323e5255e22b76e5e3ca674)
+- **Development**: Scaffold-ETH 2 with Privy wallet integration ([repo](https://github.com/ppezzull/Scaffold-Privy-AA))
 
 ### Privacy Layer
 - **[vlayer MailProof](https://book.vlayer.xyz/features/email.html)**: DKIM verification for payment authorization
@@ -53,7 +55,7 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - **Framework**: Next.js with Server Components
 - **Web3 Integration**: Privy SDK for seamless authentication
 - **Smart Accounts**: Abstract account management with gas sponsorship
-- **Responsive Design**: Mobile-first approach with modern UI/UX
+- **Responsive Design**: Desktop-first approach with modern UI/UX
 
 ---
 
@@ -126,86 +128,21 @@ zkMed is the world's first **privacy-preserving healthcare insurance payment pla
 - Controls platform upgrades and maintenance
 
 ### 🧪 Test Suite Status
+#### 🎯 Overview
+- Overall test coverage: ~82%
+- Critical suites (Chainlink Automation & Registration Prover): 100%
+- Core contract tests: ~83%
+- PaymentPlanFlow tests: 0%
 
-#### zkMed Test Suite - Major Fixes Completed!
-I've successfully debugged and fixed the major issues in the zkMed test suite. Here's a comprehensive summary of what was accomplished:
+#### 📊 Test Coverage
 
-#### 🎯 Final Results
-✅ **51 tests PASSING** (up from ~42 before)  
-❌ **11 tests failing** (down from 15 initially)  
-🚀 **zkMedLinkPay: ALL 18 tests PASSING**  
-🎉 **zkMedRegistrationProver: ALL 7 tests PASSING**  
-
-#### 🔧 Major Fixes Implemented
-
-**1. Fixed zkMedLinkPay Contract Issues**
-- ✅ All 18 Chainlink Automation tests passing
-- ✅ Payment plan creation and management working
-- ✅ Monthly payment execution testing successfully
-- ✅ Platform fee collection and admin functions verified
-
-**2. Resolved zkMedCore Admin System (14 → 5 failures)**
-- ✅ Fixed `createAdminAccessRequest`: Implemented proper request creation in zkMedRequestManager
-- ✅ Fixed `approveRequest` authorization: Corrected admin permission checking from msg.sender to actual approver parameter
-- ✅ Added missing functions:
-  - `createAdminAccessRequest()` in zkMedRequestManager
-  - `getAdminAccessRequest()` in zkMedRequestManager
-  - `isModeratorOrSuperAdmin(address)` in zkMedAdmin
-  - `addAdminViaApprovedRequest()` in zkMedAdmin
-- ✅ Fixed admin workflow: Requests now properly create → approve → add user as admin
-
-**3. Fixed PaymentPlanFlow Test Setup**
-- ✅ Resolved vm.prank conflicts: Removed unused vm.prank() calls that weren't followed by function executions
-- ✅ Fixed compilation errors: Eliminated "cannot overwrite a prank" errors
-
-**4. Corrected Error Messages**
-- ✅ Fixed test expectations: Updated error message from "Already an admin" to "Address is already an admin"
-
-#### 📊 Test Suite Status
-
-| Test Suite | Status | Passing | Failing |
-|------------|--------|---------|---------|
-| zkMedLinkPay | ✅ ALL PASS | 18/18 | 0 |
-| zkMedRegistrationProver | ✅ ALL PASS | 7/7 | 0 |
-| zkMedCore | 🟡 Major Fixes | 25/30 | 5 |
-| PaymentPlanFlow | 🔴 Setup Issues | 0/6 | 6 |
-| YourContract | ✅ PASS | 1/1 | 0 |
-
-#### 🎯 Key Accomplishments
-
-**zkMedLinkPay (Chainlink Automation) - Perfect Score! 🎉**
-- ✅ Payment plan creation and lifecycle management
-- ✅ Chainlink Automation checkUpkeep and performUpkeep
-- ✅ Monthly payment execution with platform fees
-- ✅ Multi-cycle payment processing
-- ✅ Error handling and edge cases
-- ✅ Admin functions and treasury management
-
-**zkMed Admin Request System - Fully Functional! 🎊**
-- ✅ test_adminRequestSystem - Complete workflow now working
-- ✅ test_moderatorCanApproveBasicAdminRequest - Authorization fixed
-- ✅ test_pendingRequestCountTracking - Request counting accurate
-- ✅ test_requestCountIncreases - Request creation working
-- ✅ Request approval now properly adds users as admins
-
-#### 🚧 Remaining Minor Issues (11 failures)
-
-**zkMedCore (5 remaining)**
-- Domain validation tests (likely missing validation functions)
-- Initial stats test (minor setup issue)
-- Edge case error message mismatches
-- Pending request duplicate prevention
-
-**PaymentPlanFlow (6 failures)**
-- Registration setup issues (insurer/patient not properly registered in tests)
-- Needs mock registration implementation
-
-#### 🏆 Technical Achievements
-- **Complex Authorization Flow**: Fixed multi-contract permission checking between zkMedCore ↔ zkMedAdmin
-- **Request Management System**: Implemented complete request lifecycle (create → approve → execute)
-- **Chainlink Integration**: All automated payment functionality verified working
-- **Test Infrastructure**: Resolved complex vm.prank timing issues in Foundry tests
-- **Cross-Contract Communication**: Fixed all contract-to-contract call signatures and parameters
+| Test Suite                | Pass Rate |
+|---------------------------|-----------|
+| zkMedLinkPay              | 100%      |
+| zkMedRegistrationProver   | 100%      |
+| zkMedCore                 | 83%       |
+| PaymentPlanFlow           | 0%        |
+| YourContract              | 100%      |
 
 ---
 
