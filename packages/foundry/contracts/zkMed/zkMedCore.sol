@@ -2,11 +2,9 @@
 pragma solidity ^0.8.21;
 
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {zkMedPaymentHistory} from "./zkMedPaymentHistory.sol";
-import {zkMedRequestManager} from "./zkMedRequestManager.sol";
 
 /**
- * @title zkMed Core Contract
+ * @title zkMed Core Contract  
  * @notice Ultra-lean orchestrator for healthcare system verification and coordination
  * @dev Only handles verification, validation, and cross-contract coordination
  */
@@ -17,10 +15,6 @@ contract zkMedCore is Ownable {
     enum UserType { PATIENT, HOSPITAL, INSURER }
 
     // ======== State Variables ========
-    
-    // External contracts
-    zkMedPaymentHistory public paymentHistoryContract;
-    zkMedRequestManager public requestManagerContract;
     
     // User contract addresses
     address public patientContract;
@@ -33,41 +27,30 @@ contract zkMedCore is Ownable {
     
     // ======== Events ========
     
-    event RequestSubmitted(uint256 indexed requestId, address indexed requester, zkMedRequestManager.RequestType requestType);
-    event RequestApproved(uint256 indexed requestId, address indexed approver);
-    event RequestRejected(uint256 indexed requestId, address indexed rejecter, string reason);
-    
     event PatientRegistered(address indexed patient);
     event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash);
     event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash);
-    event AdminAdded(address indexed admin, zkMedRequestManager.AdminRole role);
+    event AdminAdded(address indexed admin, uint8 role);
     event UserDeactivated(address indexed user);
     
-    event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed requestId);
+    event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed planId);
     event PaymentMade(address indexed patient, address indexed insurer, uint256 amount);
-    event FirstAllowancePaid(address indexed patient, address indexed insurer, uint256 amount, uint256 indexed requestId);
     event LinkPayContractUpdated(address indexed linkPayAddress);
-    
-    // ======== Constructor ========
-    
-    constructor() Ownable(msg.sender) {
-        // Deploy external contracts
-        paymentHistoryContract = new zkMedPaymentHistory();
-        requestManagerContract = new zkMedRequestManager();
-        
-        // Authorize this contract to use payment history
-        paymentHistoryContract.authorizeContract(address(this));
-    }
-    
+
     // ======== Modifiers ========
-    
-    modifier onlyAuthorized() {
-        require(authorizedContracts[msg.sender] || msg.sender == owner(), "Not authorized");
-        _;
-    }
     
     modifier onlyPatientContract() {
         require(msg.sender == patientContract, "Only patient contract");
+        _;
+    }
+    
+    modifier onlyHospitalContract() {
+        require(msg.sender == hospitalContract, "Only hospital contract");
+        _;
+    }
+    
+    modifier onlyInsurerContract() {
+        require(msg.sender == insurerContract, "Only insurer contract");
         _;
     }
     
@@ -76,10 +59,25 @@ contract zkMedCore is Ownable {
         _;
     }
     
-    // ======== Setup Functions ========
+    modifier onlyAuthorizedContracts() {
+        require(authorizedContracts[msg.sender], "Not authorized");
+        _;
+    }
+
+    // ======== Constructor ========
+    
+    constructor() Ownable(msg.sender) {
+        // No external contracts to deploy anymore
+    }
+
+    // ======== Contract Management ========
     
     /**
      * @dev Set user contract addresses (owner only)
+     * @param _patientContract Address of the patient contract
+     * @param _hospitalContract Address of the hospital contract
+     * @param _insurerContract Address of the insurer contract
+     * @param _adminContract Address of the admin contract
      */
     function setUserContracts(
         address _patientContract,
@@ -92,347 +90,154 @@ contract zkMedCore is Ownable {
         insurerContract = _insurerContract;
         adminContract = _adminContract;
         
-        // Authorize user contracts
-        authorizeContract(_patientContract);
-        authorizeContract(_hospitalContract);
-        authorizeContract(_insurerContract);
-        authorizeContract(_adminContract);
+        // Auto-authorize all user contracts
+        if (_patientContract != address(0)) authorizedContracts[_patientContract] = true;
+        if (_hospitalContract != address(0)) authorizedContracts[_hospitalContract] = true;
+        if (_insurerContract != address(0)) authorizedContracts[_insurerContract] = true;
+        if (_adminContract != address(0)) authorizedContracts[_adminContract] = true;
     }
     
     /**
      * @dev Authorize a contract to interact with core functions
-     * @param contractAddress Address of the contract to authorize
+     * @param contractAddress Address to authorize
      */
-    function authorizeContract(address contractAddress) public onlyOwner {
-        require(contractAddress != address(0), "Invalid contract address");
+    function authorizeContract(address contractAddress) external onlyOwner {
         authorizedContracts[contractAddress] = true;
     }
     
     /**
      * @dev Revoke authorization for a contract
-     * @param contractAddress Address of the contract to revoke authorization
+     * @param contractAddress Address to revoke authorization from
      */
     function revokeContractAuthorization(address contractAddress) external onlyOwner {
         authorizedContracts[contractAddress] = false;
     }
-    
-    // ======== Cross-Contract Coordination Functions ========
+
+    // ======== User Registration Notifications ========
     
     /**
-     * @dev Notify core of patient registration (called by patient contract)
-     * @param patient Patient address
-     * @param emailHash Email hash
+     * @dev Notify of patient registration (called by patient contract)
+     * @param patient Address of the registered patient
      */
-    function notifyPatientRegistration(address patient, bytes32 emailHash) external onlyPatientContract {
+    function notifyPatientRegistration(address patient) external onlyPatientContract {
         emit PatientRegistered(patient);
     }
     
     /**
-     * @dev Notify core of hospital registration (called by hospital contract)
-     * @param hospital Hospital address
+     * @dev Notify of hospital registration (called by hospital contract)  
+     * @param hospital Address of the registered hospital
      * @param domain Hospital domain
-     * @param emailHash Email hash
+     * @param emailHash Hash of the hospital email
      */
-    function notifyHospitalRegistration(address hospital, string calldata domain, bytes32 emailHash) external {
-        require(msg.sender == hospitalContract, "Only hospital contract");
+    function notifyHospitalRegistration(
+        address hospital,
+        string calldata domain,
+        bytes32 emailHash
+    ) external onlyHospitalContract {
         emit HospitalRegistered(hospital, domain, emailHash);
     }
     
     /**
-     * @dev Update LinkPay contract address in Patient contract
+     * @dev Notify of insurer registration (called by insurer contract)
+     * @param insurer Address of the registered insurer
+     * @param domain Insurer domain
+     * @param emailHash Hash of the insurer email
+     */
+    function notifyInsurerRegistration(
+        address insurer,
+        string calldata domain,
+        bytes32 emailHash
+    ) external onlyInsurerContract {
+        emit InsurerRegistered(insurer, domain, emailHash);
+    }
+
+    // ======== Admin Management ========
+    
+    /**
+     * @dev Add admin through authorization (called by admin contract)
+     * @param admin Address to add as admin
+     * @param role Admin role as uint8
+     */
+    function addAdmin(address admin, uint8 role) external onlyAdminContract {
+        emit AdminAdded(admin, role);
+    }
+
+    // ======== Link Pay Integration ========
+    
+    /**
+     * @dev Update link pay contract address in patient contract
      * @param linkPayAddress New LinkPay contract address
      */
-    function updatePatientLinkPayContract(address linkPayAddress) external onlyOwner {
+    function updatePatientLinkPayContract(address linkPayAddress) external onlyAdminContract {
         require(linkPayAddress != address(0), "Invalid LinkPay address");
         require(patientContract != address(0), "Patient contract not set");
         
-        // Call updateLinkPayContract on the patient contract
         (bool success,) = patientContract.call(
             abi.encodeWithSignature("updateLinkPayContract(address)", linkPayAddress)
         );
-        require(success, "Failed to update LinkPay contract");
+        require(success, "Failed to update LinkPay in patient contract");
         
         emit LinkPayContractUpdated(linkPayAddress);
     }
-    
-    /**
-     * @dev Notify core of insurer registration (called by insurer contract)
-     * @param insurer Insurer address
-     * @param domain Insurer domain
-     * @param emailHash Email hash
-     */
-    function notifyInsurerRegistration(address insurer, string calldata domain, bytes32 emailHash) external {
-        require(msg.sender == insurerContract, "Only insurer contract");
-        emit InsurerRegistered(insurer, domain, emailHash);
-    }
-    
-    /**
-     * @dev Notify core of admin addition (called by admin contract)
-     * @param admin Admin address
-     * @param role Admin role
-     */
-    function notifyAdminAdded(address admin, uint8 role) external onlyAdminContract {
-        emit AdminAdded(admin, zkMedRequestManager.AdminRole(role));
-    }
-    
-    // ======== Payment Plan Orchestration ========
-    
-    /**
-     * @dev Create payment plan request with cross-contract validation
-     * @param insurerAddress Insurer address
-     * @param patientAddress Patient address
-     * @param insuranceName Insurance company name
-     * @param duration Payment plan duration timestamp
-     * @param monthlyAllowance Monthly allowance in cents
-     * @param insurerEmailHash Hash of insurer email proof
-     * @param patientEmailHash Hash of patient email proof
-     * @return requestId The created request ID
-     */
-    function createPaymentPlanRequest(
-        address insurerAddress,
-        address patientAddress,
-        string calldata insuranceName,
-        uint256 duration,
-        uint256 monthlyAllowance,
-        bytes32 insurerEmailHash,
-        bytes32 patientEmailHash
-    ) external onlyPatientContract returns (uint256 requestId) {
-        // Validate insurer through insurer contract
-        (bool success, bytes memory result) = insurerContract.staticcall(
-            abi.encodeWithSignature("isInsurerRegistered(address)", insurerAddress)
-        );
-        require(success && abi.decode(result, (bool)), "Insurer not registered");
-        
-        // Validate patient through patient contract
-        (success, result) = patientContract.staticcall(
-            abi.encodeWithSignature("isPatientRegistered(address)", patientAddress)
-        );
-        require(success && abi.decode(result, (bool)), "Patient not registered");
-        
-        // Check email hash uniqueness across contracts
-        (success, result) = patientContract.staticcall(
-            abi.encodeWithSignature("isEmailHashUsed(bytes32)", patientEmailHash)
-        );
-        require(success && !abi.decode(result, (bool)), "Patient email already used");
-        
-        (success, result) = insurerContract.staticcall(
-            abi.encodeWithSignature("isEmailHashUsed(bytes32)", insurerEmailHash)
-        );
-        require(success && !abi.decode(result, (bool)), "Insurer email already used");
-        
-        // Create request in request manager
-        requestId = requestManagerContract.createPaymentPlanRequest(
-            insurerAddress,
-            patientAddress,
-            insuranceName,
-            duration,
-            monthlyAllowance,
-            insurerEmailHash,
-            patientEmailHash
-        );
-        
-        emit PaymentPlanCreated(patientAddress, insurerAddress, requestId);
-        return requestId;
-    }
-    
-    /**
-     * @dev Create admin access request
-     * @param requester Address requesting admin access
-     * @param requestedRole The admin role being requested (as uint8)
-     * @param reason The reason for requesting admin access
-     * @return requestId The created request ID
-     */
-    function createAdminAccessRequest(
-        address requester,
-        uint8 requestedRole,
-        string calldata reason
-    ) external onlyAdminContract returns (uint256 requestId) {
-        require(requester != address(0), "Invalid requester address");
-        require(requestedRole != uint8(zkMedRequestManager.AdminRole.SUPER_ADMIN), "Cannot request super admin role");
-        
-        // Check if already an admin through admin contract
-        (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isAdmin(address)", requester)
-        );
-        require(success && !abi.decode(result, (bool)), "Already an admin");
-        
-        // Create admin access request through request manager
-        requestId = requestManagerContract.createAdminAccessRequest(
-            requester,
-            zkMedRequestManager.AdminRole(requestedRole),
-            reason
-        );
-        
-        emit RequestSubmitted(requestId, requester, zkMedRequestManager.RequestType.ADMIN_ACCESS);
-        return requestId;
-    }
-    
-    // ======== Request Processing ========
-    
-    /**
-     * @dev Approve a request (called by admin contract)
-     * @param requestId The ID of the request to approve
-     * @param approver The admin approving the request
-     */
-    function approveRequest(uint256 requestId, address approver) external onlyAdminContract {
-        // Validate admin permission through admin contract
-        (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isModeratorOrSuperAdmin(address)", approver)
-        );
-        require(success && abi.decode(result, (bool)), "Not authorized to approve");
-        
-        // Get request details to determine what type of request this is
-        zkMedRequestManager.BaseRequest memory baseReq = requestManagerContract.getRequestBase(requestId);
-        
-        // Update request status via request manager
-        requestManagerContract.updateRequestStatus(
-            requestId, 
-            zkMedRequestManager.RequestStatus.APPROVED, 
-            approver
-        );
-        
-        // Handle specific approval actions based on request type
-        if (baseReq.requestType == zkMedRequestManager.RequestType.ADMIN_ACCESS) {
-            // Get admin request details
-            zkMedRequestManager.AdminAccessRequest memory adminReq = requestManagerContract.getAdminAccessRequest(requestId);
-            
-            // Add the user as admin through admin contract via the core interface
-            (bool success,) = adminContract.call(
-                abi.encodeWithSignature("addAdminViaApprovedRequest(address,uint8)", baseReq.requester, uint8(adminReq.adminRole))
-            );
-            require(success, "Failed to add admin");
-        }
-        
-        emit RequestApproved(requestId, approver);
-    }
-    
-    /**
-     * @dev Reject a request (called by admin contract)
-     * @param requestId The ID of the request to reject
-     * @param rejecter The admin rejecting the request
-     * @param reason The reason for rejection
-     */
-    function rejectRequest(uint256 requestId, address rejecter, string calldata reason) external onlyAdminContract {
-        // Validate admin permission through admin contract
-        (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isModeratorOrSuperAdmin(address)", rejecter)
-        );
-        require(success && abi.decode(result, (bool)), "Not authorized to reject");
-        
-        // Update request status via request manager
-        requestManagerContract.updateRequestStatus(
-            requestId, 
-            zkMedRequestManager.RequestStatus.REJECTED, 
-            rejecter
-        );
-        
-        emit RequestRejected(requestId, rejecter, reason);
-    }
-    
-    /**
-     * @dev Approve a payment plan request with automatic first payment
-     * @param requestId The ID of the payment plan request to approve
-     * @param approver The admin approving the request
-     */
-    function approvePaymentPlan(uint256 requestId, address approver) external payable onlyAdminContract {
-        // Get payment plan request details
-        zkMedRequestManager.PaymentPlanRequest memory paymentReq = requestManagerContract.getPaymentPlanRequest(requestId);
-        zkMedRequestManager.PaymentPlan memory plan = paymentReq.plan;
 
-        require(paymentReq.base.requester != address(0), "Request does not exist");
-        require(paymentReq.base.status == zkMedRequestManager.RequestStatus.PENDING, "Request not pending");
-        require(plan.isActive, "Payment plan is not active");
-        require(plan.duration > block.timestamp, "Payment plan duration has passed");
+    // ======== Organization Activation (Admin Only) ========
+    
+    /**
+     * @dev Activate a registered hospital (admin only)
+     * @param hospitalAddress Address of the hospital to activate
+     */
+    function activateHospital(address hospitalAddress) external onlyAdminContract {
+        require(hospitalContract != address(0), "Hospital contract not set");
         
-        // Calculate first allowance amount in wei
-        uint256 firstAllowanceWei = (plan.monthlyAllowance * 1 ether) / 100;
-        require(msg.value >= firstAllowanceWei, "Insufficient funds for first allowance");
-        
-        // Send first allowance to insurer automatically
-        (bool success, ) = payable(plan.insurerAddress).call{value: firstAllowanceWei}("");
-        require(success, "Failed to send first allowance to insurer");
-        
-        // Record the automatic first payment
-        paymentHistoryContract.recordPayment(
-            requestId,
-            plan.insurerAddress,
-            plan.patientAddress,
-            firstAllowanceWei,
-            zkMedPaymentHistory.PaymentType.FIRST_ALLOWANCE,
-            true
+        (bool success,) = hospitalContract.call(
+            abi.encodeWithSignature("activateByAdmin(address)", hospitalAddress)
         );
-        
-        // Update payment plan statistics
-        requestManagerContract.updatePaymentPlanStats(requestId, firstAllowanceWei);
-        
-        // Refund excess if any
-        if (msg.value > firstAllowanceWei) {
-            (bool refundSuccess, ) = payable(msg.sender).call{value: msg.value - firstAllowanceWei}("");
-            require(refundSuccess, "Refund failed");
-        }
-
-        // Update request status
-        requestManagerContract.updateRequestStatus(
-            requestId, 
-            zkMedRequestManager.RequestStatus.APPROVED, 
-            approver
-        );
-
-        // Emit events
-        emit PaymentMade(plan.patientAddress, plan.insurerAddress, firstAllowanceWei);
-        emit FirstAllowancePaid(plan.patientAddress, plan.insurerAddress, firstAllowanceWei, requestId);
-        emit RequestApproved(requestId, approver);
+        require(success, "Failed to activate hospital");
     }
     
     /**
-     * @dev Reject a payment plan request
-     * @param requestId The ID of the payment plan request to reject
-     * @param rejecter The admin rejecting the request
-     * @param reason The reason for rejection
+     * @dev Activate a registered insurer (admin only)
+     * @param insurerAddress Address of the insurer to activate
      */
-    function rejectPaymentPlan(uint256 requestId, address rejecter, string calldata reason) external onlyAdminContract {
-        // Update request status via request manager
-        requestManagerContract.updateRequestStatus(
-            requestId, 
-            zkMedRequestManager.RequestStatus.REJECTED, 
-            rejecter
-        );
+    function activateInsurer(address insurerAddress) external onlyAdminContract {
+        require(insurerContract != address(0), "Insurer contract not set");
         
-        emit RequestRejected(requestId, rejecter, reason);
+        (bool success,) = insurerContract.call(
+            abi.encodeWithSignature("activateByAdmin(address)", insurerAddress)
+        );
+        require(success, "Failed to activate insurer");
     }
-    
+
     // ======== User Management Coordination ========
     
     /**
      * @dev Deactivate a user across all contracts
      * @param user Address of the user to deactivate
-     * @param admin Admin performing the deactivation
      */
-    function deactivateUser(address user, address admin) external onlyAdminContract {
-        // Validate admin permission
-        (bool success, bytes memory result) = adminContract.staticcall(
-            abi.encodeWithSignature("isAdmin(address)", admin)
-        );
-        require(success && abi.decode(result, (bool)), "Not an admin");
-        
-        // Check user type and deactivate from appropriate contract
-        (success, result) = patientContract.staticcall(
-            abi.encodeWithSignature("isPatientRegistered(address)", user)
-        );
-        if (success && abi.decode(result, (bool))) {
-            (success,) = patientContract.call(
-                abi.encodeWithSignature("deactivatePatient(address)", user)
+    function deactivateUser(address user) external onlyAdminContract {
+        // Try to deactivate from all possible contracts
+        if (patientContract != address(0)) {
+            (bool success,) = patientContract.call(
+                abi.encodeWithSignature("deactivateByAdmin(address)", user)
             );
-            require(success, "Failed to deactivate patient");
+            // Don't require success as user might not be in this contract
         }
         
-        // Check hospital contract (similar pattern)
-        // Check insurer contract (similar pattern)
-        // Check admin contract (similar pattern)
+        if (hospitalContract != address(0)) {
+            (bool success,) = hospitalContract.call(
+                abi.encodeWithSignature("deactivateByAdmin(address)", user)
+            );
+        }
+        
+        if (insurerContract != address(0)) {
+            (bool success,) = insurerContract.call(
+                abi.encodeWithSignature("deactivateByAdmin(address)", user)
+            );
+        }
         
         emit UserDeactivated(user);
     }
-    
+
     // ======== Aggregation and Statistics ========
     
     /**
@@ -449,24 +254,30 @@ contract zkMedCore is Ownable {
         uint256 insurers
     ) {
         // Aggregate from user contracts
-        (bool success, bytes memory result) = patientContract.staticcall(
-            abi.encodeWithSignature("getTotalPatients()")
-        );
-        patients = success ? abi.decode(result, (uint256)) : 0;
+        if (patientContract != address(0)) {
+            (bool success, bytes memory result) = patientContract.staticcall(
+                abi.encodeWithSignature("totalPatients()")
+            );
+            patients = success ? abi.decode(result, (uint256)) : 0;
+        }
         
-        (success, result) = hospitalContract.staticcall(
-            abi.encodeWithSignature("getTotalHospitals()")
-        );
-        hospitals = success ? abi.decode(result, (uint256)) : 0;
+        if (hospitalContract != address(0)) {
+            (bool success, bytes memory result) = hospitalContract.staticcall(
+                abi.encodeWithSignature("totalHospitals()")
+            );
+            hospitals = success ? abi.decode(result, (uint256)) : 0;
+        }
         
-        (success, result) = insurerContract.staticcall(
-            abi.encodeWithSignature("getTotalInsurers()")
-        );
-        insurers = success ? abi.decode(result, (uint256)) : 0;
+        if (insurerContract != address(0)) {
+            (bool success, bytes memory result) = insurerContract.staticcall(
+                abi.encodeWithSignature("totalInsurers()")
+            );
+            insurers = success ? abi.decode(result, (uint256)) : 0;
+        }
         
         totalUsers = patients + hospitals + insurers;
     }
-    
+
     // ======== Domain and Email Validation ========
     
     /**
@@ -475,6 +286,8 @@ contract zkMedCore is Ownable {
      * @return bool True if valid hospital domain
      */
     function validateHospitalDomain(string calldata domain) external view returns (bool) {
+        if (hospitalContract == address(0)) return false;
+        
         (bool success, bytes memory result) = hospitalContract.staticcall(
             abi.encodeWithSignature("validateHospitalDomain(string)", domain)
         );
@@ -487,110 +300,14 @@ contract zkMedCore is Ownable {
      * @return bool True if valid insurer domain
      */
     function validateInsurerDomain(string calldata domain) external view returns (bool) {
+        if (insurerContract == address(0)) return false;
+        
         (bool success, bytes memory result) = insurerContract.staticcall(
             abi.encodeWithSignature("validateInsurerDomain(string)", domain)
         );
         return success && abi.decode(result, (bool));
     }
-    
-    // ======== Delegation Functions ========
-    
-    /**
-     * @dev Get user to request ID mapping (delegate to request manager)
-     */
-    function userToRequestId(address user) external view returns (uint256) {
-        return requestManagerContract.userToRequestId(user);
-    }
-    
-    /**
-     * @dev Get request count (delegate to request manager)
-     */
-    function requestCount() external view returns (uint256) {
-        return requestManagerContract.requestCount();
-    }
-    
-    /**
-     * @dev Get pending request count (delegate to request manager)
-     */
-    function pendingRequestCount() external view returns (uint256) {
-        return requestManagerContract.pendingRequestCount();
-    }
-    
-    /**
-     * @dev Get all pending requests
-     */
-    function getPendingRequests() external view returns (uint256[] memory) {
-        return requestManagerContract.getPendingRequestsByType(zkMedRequestManager.RequestType.PAYMENT_PLAN);
-    }
-    
-    /**
-     * @dev Get all pending requests of a specific type
-     */
-    function getPendingRequestsByType(zkMedRequestManager.RequestType reqType) external view returns (uint256[] memory) {
-        return requestManagerContract.getPendingRequestsByType(reqType);
-    }
-    
-    /**
-     * @dev Get request base details
-     */
-    function getRequestBase(uint256 requestId) external view returns (zkMedRequestManager.BaseRequest memory) {
-        return requestManagerContract.getRequestBase(requestId);
-    }
-    
-    /**
-     * @dev Get payment plan request details
-     */
-    function getPaymentPlanRequest(uint256 requestId) external view returns (zkMedRequestManager.PaymentPlanRequest memory) {
-        return requestManagerContract.getPaymentPlanRequest(requestId);
-    }
-    
-    /**
-     * @dev Get payment plan history
-     */
-    function getPaymentPlanHistory(uint256 requestId) external view returns (zkMedPaymentHistory.PaymentEntry[] memory) {
-        return paymentHistoryContract.getPaymentPlanHistory(requestId);
-    }
-    
-    /**
-     * @dev Get patient payment history
-     */
-    function getPatientPaymentHistory(address patient) external view returns (zkMedPaymentHistory.PaymentEntry[] memory) {
-        return paymentHistoryContract.getPatientPaymentHistory(patient);
-    }
-    
-    /**
-     * @dev Get insurer payment history
-     */
-    function getInsurerPaymentHistory(address insurer) external view returns (zkMedPaymentHistory.PaymentEntry[] memory) {
-        return paymentHistoryContract.getInsurerPaymentHistory(insurer);
-    }
-    
-    /**
-     * @dev Get payment statistics
-     */
-    function getPaymentStatistics() external view returns (uint256 totalPayments, uint256 totalAmountPaid) {
-        return paymentHistoryContract.getPaymentStatistics();
-    }
-    
-    /**
-     * @dev Get payment plan summary with payment statistics
-     */
-    function getPaymentPlanSummary(uint256 requestId) external view returns (
-        zkMedRequestManager.PaymentPlan memory plan,
-        uint256 paymentsCount,
-        uint256 totalPaid,
-        uint256 lastPaymentTime
-    ) {
-        zkMedRequestManager.PaymentPlanRequest memory paymentReq = requestManagerContract.getPaymentPlanRequest(requestId);
-        
-        return (
-            paymentReq.plan,
-            paymentReq.plan.paymentsCount,
-            paymentReq.plan.totalPaid,
-            paymentReq.plan.lastPayment
-        );
-    }
-    
+
     // ======== User Role Functions ========
     
     /**
@@ -602,53 +319,49 @@ contract zkMedCore is Ownable {
     function getRole(address user) external view returns (string memory role, bool isActive) {
         // Check if user is a patient
         if (patientContract != address(0)) {
-            try IzkMedPatient(patientContract).isPatientRegistered(user) returns (bool isPatient) {
-                if (isPatient) {
-                    return ("PATIENT", true);
-                }
-            } catch {
-                // Contract call failed, continue checking other roles
+            (bool success, bytes memory result) = patientContract.staticcall(
+                abi.encodeWithSignature("isPatientRegistered(address)", user)
+            );
+            if (success && abi.decode(result, (bool))) {
+                return ("PATIENT", true);
             }
         }
         
         // Check if user is a hospital
         if (hospitalContract != address(0)) {
-            try IzkMedHospital(hospitalContract).isHospitalRegistered(user) returns (bool isHospital) {
-                if (isHospital) {
-                    try IzkMedHospital(hospitalContract).isHospitalApproved(user) returns (bool approved) {
-                        return ("HOSPITAL", approved);
-                    } catch {
-                        return ("HOSPITAL", false);
-                    }
-                }
-            } catch {
-                // Contract call failed, continue checking other roles
+            (bool success, bytes memory result) = hospitalContract.staticcall(
+                abi.encodeWithSignature("isHospitalRegistered(address)", user)
+            );
+            if (success && abi.decode(result, (bool))) {
+                (bool success2, bytes memory result2) = hospitalContract.staticcall(
+                    abi.encodeWithSignature("isHospitalApproved(address)", user)
+                );
+                bool approved = success2 && abi.decode(result2, (bool));
+                return ("HOSPITAL", approved);
             }
         }
         
         // Check if user is an insurer
         if (insurerContract != address(0)) {
-            try IzkMedInsurer(insurerContract).isInsurerRegistered(user) returns (bool isInsurer) {
-                if (isInsurer) {
-                    try IzkMedInsurer(insurerContract).isInsurerApproved(user) returns (bool approved) {
-                        return ("INSURER", approved);
-                    } catch {
-                        return ("INSURER", false);
-                    }
-                }
-            } catch {
-                // Contract call failed, continue checking other roles
+            (bool success, bytes memory result) = insurerContract.staticcall(
+                abi.encodeWithSignature("isInsurerRegistered(address)", user)
+            );
+            if (success && abi.decode(result, (bool))) {
+                (bool success2, bytes memory result2) = insurerContract.staticcall(
+                    abi.encodeWithSignature("isInsurerApproved(address)", user)
+                );
+                bool approved = success2 && abi.decode(result2, (bool));
+                return ("INSURER", approved);
             }
         }
         
         // Check if user is an admin
         if (adminContract != address(0)) {
-            try IzkMedAdmin(adminContract).isAdmin(user) returns (bool isAdminUser) {
-                if (isAdminUser) {
-                    return ("ADMIN", true);
-                }
-            } catch {
-                // Contract call failed, continue checking other roles
+            (bool success, bytes memory result) = adminContract.staticcall(
+                abi.encodeWithSignature("isAdmin(address)", user)
+            );
+            if (success && abi.decode(result, (bool))) {
+                return ("ADMIN", true);
             }
         }
         
@@ -665,24 +378,4 @@ contract zkMedCore is Ownable {
         (string memory role, ) = this.getRole(user);
         return keccak256(abi.encodePacked(role)) != keccak256(abi.encodePacked("UNREGISTERED"));
     }
-}
-
-// ======== Interface Definitions ========
-
-interface IzkMedPatient {
-    function isPatientRegistered(address patient) external view returns (bool);
-}
-
-interface IzkMedHospital {
-    function isHospitalRegistered(address hospital) external view returns (bool);
-    function isHospitalApproved(address hospital) external view returns (bool);
-}
-
-interface IzkMedInsurer {
-    function isInsurerRegistered(address insurer) external view returns (bool);
-    function isInsurerApproved(address insurer) external view returns (bool);
-}
-
-interface IzkMedAdmin {
-    function isAdmin(address admin) external view returns (bool);
 }

@@ -3,13 +3,13 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 import "../contracts/zkMed/zkMedCore.sol";
-import "../contracts/zkMed/zkMedPaymentHistory.sol";
 import "../contracts/zkMed/provers/zkMedRegistrationProver.sol";
 import "../contracts/zkMed/provers/zkMedPaymentPlanProver.sol";
 import "../contracts/zkMed/users/zkMedPatient.sol";
 import "../contracts/zkMed/users/zkMedHospital.sol";
 import "../contracts/zkMed/users/zkMedInsurer.sol";
 import "../contracts/zkMed/users/zkMedAdmin.sol";
+import "../contracts/zkMed/zkMedLinkPay.sol";
 
 contract DeployYourContract is Script {
 
@@ -77,11 +77,7 @@ contract DeployYourContract is Script {
         linkPay.updateZkMedContracts(address(core), address(patientContract));
         console.log("+ LinkPay updated with patient contract address");
 
-        // 6. Get payment history contract address
-        zkMedPaymentHistory paymentHistory = core.paymentHistoryContract();
-        console.log("+ Payment History Contract at:", address(paymentHistory));
-
-        // 7. Set user contract addresses in core
+        // 6. Set user contract addresses in core
         core.setUserContracts(
             address(patientContract),
             address(hospitalContract),
@@ -98,8 +94,6 @@ contract DeployYourContract is Script {
         console.log("");
         console.log("Core Contracts:");
         console.log("  zkMedCore:           ", address(core));
-        console.log("  PaymentHistory:      ", address(paymentHistory));
-        console.log("  RequestManager:      ", address(core.requestManagerContract()));
         console.log("  zkMedLinkPay:        ", address(linkPay));
         console.log("");
         console.log("Prover Contracts:");

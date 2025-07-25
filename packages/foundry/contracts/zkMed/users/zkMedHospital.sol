@@ -93,13 +93,13 @@ contract zkMedHospital is Verifier {
         require(domainToHospital[registrationData.domain] == address(0), "Domain already registered");
         require(_isValidHospitalDomain(registrationData.domain), "Invalid hospital domain");
         
-        // Store hospital data locally
+        // Store hospital data locally - inactive by default, requires admin activation
         hospitalRecords[msg.sender] = OrganizationRecord({
             base: BaseRecord({
                 userAddress: msg.sender,
                 emailHash: registrationData.emailHash,
                 registrationTime: block.timestamp,
-                isActive: true
+                isActive: false  // Changed: hospitals start inactive and need admin approval
             }),
             domain: registrationData.domain,
             organizationName: registrationData.organizationName,
@@ -132,6 +132,32 @@ contract zkMedHospital is Verifier {
         require(msg.value >= amount, "Insufficient payment sent");
         
         emit PaymentReceived(msg.sender, insurer, amount);
+    }
+    
+    // ======== Admin Functions ========
+    
+    /**
+     * @dev Activate a hospital (called by zkMedCore via admin)
+     * @param hospitalAddress Address of the hospital to activate
+     */
+    function activateByAdmin(address hospitalAddress) external onlyZkMedCore {
+        require(hospitalRecords[hospitalAddress].base.userAddress != address(0), "Hospital not registered");
+        require(!hospitalRecords[hospitalAddress].base.isActive, "Hospital already active");
+        
+        hospitalRecords[hospitalAddress].base.isActive = true;
+        hospitalRecords[hospitalAddress].isApproved = true;
+    }
+    
+    /**
+     * @dev Deactivate a hospital (called by zkMedCore via admin)
+     * @param hospitalAddress Address of the hospital to deactivate
+     */
+    function deactivateByAdmin(address hospitalAddress) external onlyZkMedCore {
+        require(hospitalRecords[hospitalAddress].base.userAddress != address(0), "Hospital not registered");
+        require(hospitalRecords[hospitalAddress].base.isActive, "Hospital already inactive");
+        
+        hospitalRecords[hospitalAddress].base.isActive = false;
+        hospitalRecords[hospitalAddress].isApproved = false;
     }
     
     // ======== View Functions ========

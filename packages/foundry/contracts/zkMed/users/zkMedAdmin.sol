@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
-import {zkMedRequestManager} from "../zkMedRequestManager.sol";
-
 /**
  * @title zkMed Admin Contract
  * @notice Handles admin registration, data storage, and administrative functions
@@ -10,12 +8,16 @@ import {zkMedRequestManager} from "../zkMedRequestManager.sol";
  */
 contract zkMedAdmin {
     
+    // ======== Type Definitions ========
+
+    enum AdminRole { BASIC, MODERATOR, SUPER_ADMIN }
+
     // ======== Data Structures ========
     
     // Admin record structure
     struct AdminRecord {
         bool isActive;
-        zkMedRequestManager.AdminRole role;
+        AdminRole role;
         uint256 permissions;
         uint256 adminSince;
     }
@@ -30,12 +32,9 @@ contract zkMedAdmin {
     
     // ======== Events ========
     
-    event AdminAdded(address indexed admin, zkMedRequestManager.AdminRole role);
-    event AdminAccessRequested(address indexed requester, zkMedRequestManager.AdminRole requestedRole, uint256 indexed requestId);
-    event RequestApprovedByAdmin(uint256 indexed requestId, address indexed admin);
-    event RequestRejectedByAdmin(uint256 indexed requestId, address indexed admin, string reason);
-    event UserDeactivatedByAdmin(address indexed user, address indexed admin);
+    event AdminAdded(address indexed admin, AdminRole role);
     event AdminPermissionsUpdated(address indexed admin, uint256 newPermissions);
+    event AdminDeactivated(address indexed admin);
     
     // ======== Constructor ========
     
@@ -45,13 +44,13 @@ contract zkMedAdmin {
         // Set deployer as super admin
         admins[msg.sender] = AdminRecord({
             isActive: true,
-            role: zkMedRequestManager.AdminRole.SUPER_ADMIN,
+            role: AdminRole.SUPER_ADMIN,
             permissions: type(uint256).max,
             adminSince: block.timestamp
         });
         totalAdmins = 1;
         
-        emit AdminAdded(msg.sender, zkMedRequestManager.AdminRole.SUPER_ADMIN);
+        emit AdminAdded(msg.sender, AdminRole.SUPER_ADMIN);
     }
     
     // ======== Modifiers ========
@@ -69,7 +68,7 @@ contract zkMedAdmin {
     modifier onlySuperAdmin() {
         require(
             admins[msg.sender].isActive && 
-            admins[msg.sender].role == zkMedRequestManager.AdminRole.SUPER_ADMIN, 
+            admins[msg.sender].role == AdminRole.SUPER_ADMIN, 
             "Not a super admin"
         );
         _;
@@ -78,365 +77,151 @@ contract zkMedAdmin {
     modifier onlyModeratorOrSuperAdmin() {
         require(
             admins[msg.sender].isActive && 
-            (admins[msg.sender].role == zkMedRequestManager.AdminRole.SUPER_ADMIN || 
-             admins[msg.sender].role == zkMedRequestManager.AdminRole.MODERATOR), 
+            (admins[msg.sender].role == AdminRole.SUPER_ADMIN || 
+             admins[msg.sender].role == AdminRole.MODERATOR), 
             "Not a moderator or super admin"
         );
         _;
     }
-    
-    modifier notAdmin() {
-        require(!admins[msg.sender].isActive, "Already an admin");
-        _;
-    }
-    
+
     // ======== Admin Management Functions ========
     
     /**
      * @dev Add a new admin with specified role (super admin only)
-     * @param newAdmin Address of the new admin
+     * @param adminAddress Address to add as admin
      * @param role Admin role to assign
      */
-    function addAdmin(address newAdmin, zkMedRequestManager.AdminRole role) external onlySuperAdmin {
-        require(newAdmin != address(0), "Invalid admin address");
-        require(newAdmin != msg.sender, "Cannot add self as admin");
-        require(!admins[newAdmin].isActive, "Address is already an admin");
+    function addAdmin(address adminAddress, AdminRole role) external onlySuperAdmin {
+        require(adminAddress != address(0), "Invalid admin address");
+        require(!admins[adminAddress].isActive, "Address is already an admin");
         
-        // Set permissions based on role
-        uint256 permissions = 0;
-        if (role == zkMedRequestManager.AdminRole.BASIC) {
+        uint256 permissions;
+        if (role == AdminRole.BASIC) {
             permissions = 1; // Basic permissions
-        } else if (role == zkMedRequestManager.AdminRole.MODERATOR) {
+        } else if (role == AdminRole.MODERATOR) {
             permissions = 255; // Moderate permissions
-        } else if (role == zkMedRequestManager.AdminRole.SUPER_ADMIN) {
-            permissions = type(uint256).max; // Full permissions
+        } else if (role == AdminRole.SUPER_ADMIN) {
+            permissions = type(uint256).max; // All permissions
         }
         
-        admins[newAdmin] = AdminRecord({
+        admins[adminAddress] = AdminRecord({
             isActive: true,
             role: role,
             permissions: permissions,
             adminSince: block.timestamp
         });
+        
         totalAdmins++;
         
-        // Notify zkMedCore for cross-system coordination
+        // Notify zkMedCore
         (bool success,) = zkMedCoreContract.call(
-            abi.encodeWithSignature("notifyAdminAdded(address,uint8)", newAdmin, uint8(role))
+            abi.encodeWithSignature("addAdmin(address,uint8)", adminAddress, uint8(role))
         );
-        require(success, "Failed to notify core contract");
+        require(success, "Failed to notify core");
         
-        emit AdminAdded(newAdmin, role);
+        emit AdminAdded(adminAddress, role);
     }
     
     /**
      * @dev Update admin permissions (super admin only)
-     * @param admin Address of the admin
-     * @param permissions New permission bitmask
+     * @param adminAddress Address of admin to update
+     * @param newPermissions New permission level
      */
-    function updateAdminPermissions(address admin, uint256 permissions) external onlySuperAdmin {
-        require(admin != address(0), "Invalid admin address");
-        require(admins[admin].isActive, "Target is not an admin");
+    function updateAdminPermissions(address adminAddress, uint256 newPermissions) external onlySuperAdmin {
+        require(admins[adminAddress].isActive, "Admin not registered");
         
-        admins[admin].permissions = permissions;
-        emit AdminPermissionsUpdated(admin, permissions);
+        admins[adminAddress].permissions = newPermissions;
+        
+        emit AdminPermissionsUpdated(adminAddress, newPermissions);
     }
     
     /**
-     * @dev Request admin access with proper validation
-     * @param requestedRole The admin role being requested
-     * @param reason The reason for requesting admin access
+     * @dev Deactivate an admin (super admin only)
+     * @param adminAddress Address of admin to deactivate
      */
-    function requestAdminAccess(
-        zkMedRequestManager.AdminRole requestedRole, 
-        string calldata reason
-    ) external notAdmin {
-        require(requestedRole != zkMedRequestManager.AdminRole.SUPER_ADMIN, "Cannot request super admin role");
-        require(bytes(reason).length > 0, "Reason cannot be empty");
-        require(bytes(reason).length <= 500, "Reason too long");
+    function deactivateAdmin(address adminAddress) external onlySuperAdmin {
+        require(admins[adminAddress].isActive, "Admin not active");
+        require(adminAddress != msg.sender, "Cannot deactivate yourself");
         
-        // Call zkMedCore to create admin access request
-        (bool success, bytes memory result) = zkMedCoreContract.call(
-            abi.encodeWithSignature(
-                "createAdminAccessRequest(address,uint8,string)",
-                msg.sender,
-                uint8(requestedRole),
-                reason
-            )
-        );
-        require(success, "Failed to create admin access request");
+        admins[adminAddress].isActive = false;
+        totalAdmins--;
         
-        uint256 requestId = abi.decode(result, (uint256));
-        emit AdminAccessRequested(msg.sender, requestedRole, requestId);
+        emit AdminDeactivated(adminAddress);
     }
-    
-    // ======== Request Management Functions ========
+
+    // ======== Hospital & Insurer Activation Functions ========
     
     /**
-     * @dev Approve any type of request with enhanced validation
-     * @param requestId The ID of the request to approve
+     * @dev Activate a registered hospital (moderator+ only)
+     * @param hospitalAddress Address of the hospital to activate
      */
-    function approveRequest(uint256 requestId) external onlyModeratorOrSuperAdmin {
-        // Call zkMedCore to approve request with validation
+    function activateHospital(address hospitalAddress) external onlyModeratorOrSuperAdmin {
         (bool success,) = zkMedCoreContract.call(
-            abi.encodeWithSignature("approveRequest(uint256,address)", requestId, msg.sender)
+            abi.encodeWithSignature("activateHospital(address)", hospitalAddress)
         );
-        require(success, "Failed to approve request");
-        
-        emit RequestApprovedByAdmin(requestId, msg.sender);
+        require(success, "Failed to activate hospital");
     }
     
     /**
-     * @dev Reject any type of request with enhanced validation
-     * @param requestId The ID of the request to reject
-     * @param reason The reason for rejection
+     * @dev Activate a registered insurer (moderator+ only)
+     * @param insurerAddress Address of the insurer to activate
      */
-    function rejectRequest(uint256 requestId, string calldata reason) external onlyModeratorOrSuperAdmin {
-        require(bytes(reason).length > 0, "Rejection reason cannot be empty");
-        require(bytes(reason).length <= 500, "Rejection reason too long");
-        
-        // Call zkMedCore to reject request with validation
+    function activateInsurer(address insurerAddress) external onlyModeratorOrSuperAdmin {
         (bool success,) = zkMedCoreContract.call(
-            abi.encodeWithSignature("rejectRequest(uint256,address,string)", requestId, msg.sender, reason)
+            abi.encodeWithSignature("activateInsurer(address)", insurerAddress)
         );
-        require(success, "Failed to reject request");
-        
-        emit RequestRejectedByAdmin(requestId, msg.sender, reason);
+        require(success, "Failed to activate insurer");
     }
     
     /**
-     * @dev Approve a payment plan request with validation and automatic first payment
-     * @param requestId The ID of the payment plan request to approve
+     * @dev Deactivate any user (moderator+ only)
+     * @param userAddress Address of the user to deactivate
      */
-    function approvePaymentPlan(uint256 requestId) external payable onlyModeratorOrSuperAdmin {
-        // Call zkMedCore to approve payment plan with validation
-        (bool success,) = zkMedCoreContract.call{value: msg.value}(
-            abi.encodeWithSignature("approvePaymentPlan(uint256,address)", requestId, msg.sender)
-        );
-        require(success, "Failed to approve payment plan");
-        
-        emit RequestApprovedByAdmin(requestId, msg.sender);
-    }
-    
-    /**
-     * @dev Reject a payment plan request with validation
-     * @param requestId The ID of the payment plan request to reject
-     * @param reason The reason for rejection
-     */
-    function rejectPaymentPlan(uint256 requestId, string calldata reason) external onlyModeratorOrSuperAdmin {
-        require(bytes(reason).length > 0, "Rejection reason cannot be empty");
-        require(bytes(reason).length <= 500, "Rejection reason too long");
-        
-        // Call zkMedCore to reject payment plan with validation
+    function deactivateUser(address userAddress) external onlyModeratorOrSuperAdmin {
         (bool success,) = zkMedCoreContract.call(
-            abi.encodeWithSignature("rejectPaymentPlan(uint256,address,string)", requestId, msg.sender, reason)
-        );
-        require(success, "Failed to reject payment plan");
-        
-        emit RequestRejectedByAdmin(requestId, msg.sender, reason);
-    }
-    
-    /**
-     * @dev Deactivate a user (admin only)
-     * @param user Address of the user to deactivate
-     */
-    function deactivateUser(address user) external onlyAdmin {
-        require(user != address(0), "Invalid user address");
-        require(user != msg.sender, "Cannot deactivate self");
-        
-        // Call zkMedCore to deactivate user
-        (bool success,) = zkMedCoreContract.call(
-            abi.encodeWithSignature("deactivateUser(address,address)", user, msg.sender)
+            abi.encodeWithSignature("deactivateUser(address)", userAddress)
         );
         require(success, "Failed to deactivate user");
-        
-        emit UserDeactivatedByAdmin(user, msg.sender);
     }
-    
+
     // ======== View Functions ========
     
     /**
      * @dev Check if an address is an admin
-     * @param admin Address to check
-     * @return bool True if active admin
+     * @param adminAddress Address to check
+     * @return bool True if the address is an active admin
      */
-    function isAdmin(address admin) external view returns (bool) {
-        return admins[admin].isActive;
-    }
-    
-    /**
-     * @dev Check if caller is an admin
-     * @return bool True if caller is an active admin
-     */
-    function amIAdmin() external view returns (bool) {
-        return admins[msg.sender].isActive;
-    }
-    
-    /**
-     * @dev Check if caller is a super admin
-     * @return bool True if caller is an active super admin
-     */
-    function isSuperAdmin() external view returns (bool) {
-        return admins[msg.sender].isActive && 
-               admins[msg.sender].role == zkMedRequestManager.AdminRole.SUPER_ADMIN;
-    }
-    
-    /**
-     * @dev Check if caller is a moderator or super admin
-     * @return bool True if caller is an active moderator or super admin
-     */
-    function isModeratorOrSuperAdmin() external view returns (bool) {
-        return admins[msg.sender].isActive && 
-               (admins[msg.sender].role == zkMedRequestManager.AdminRole.SUPER_ADMIN || 
-                admins[msg.sender].role == zkMedRequestManager.AdminRole.MODERATOR);
-    }
-    
-    /**
-     * @dev Get admin details for caller
-     * @return isActive Whether the admin is active
-     * @return role The admin's role
-     * @return permissions The admin's permissions bitmask
-     * @return adminSince Timestamp when admin was appointed
-     */
-    function getMyAdminDetails() external view onlyAdmin returns (
-        bool isActive,
-        zkMedRequestManager.AdminRole role,
-        uint256 permissions,
-        uint256 adminSince
-    ) {
-        AdminRecord memory record = admins[msg.sender];
-        return (record.isActive, record.role, record.permissions, record.adminSince);
-    }
-    
-    /**
-     * @dev Get admin record
-     * @param admin Admin address
-     * @return AdminRecord struct
-     */
-    function getAdminRecord(address admin) external view returns (AdminRecord memory) {
-        require(admins[admin].isActive, "Admin not registered");
-        return admins[admin];
-    }
-    
-    /**
-     * @dev Get admin type
-     * @param admin Admin address
-     * @return AdminRole enum value
-     */
-    function getAdminType(address admin) external view returns (zkMedRequestManager.AdminRole) {
-        require(admins[admin].isActive, "Admin not registered");
-        return admins[admin].role;
-    }
-    
-    /**
-     * @dev Get total number of admins
-     * @return uint256 Total admins
-     */
-    function getTotalAdmins() external view returns (uint256) {
-        return totalAdmins;
+    function isAdmin(address adminAddress) external view returns (bool) {
+        return admins[adminAddress].isActive;
     }
     
     /**
      * @dev Check if an address is a moderator or super admin
-     * @param admin Admin address to check
-     * @return bool True if moderator or super admin
+     * @param adminAddress Address to check
+     * @return bool True if the address is a moderator or super admin
      */
-    function isModeratorOrSuperAdmin(address admin) external view returns (bool) {
-        return admins[admin].isActive && 
-               (admins[admin].role == zkMedRequestManager.AdminRole.SUPER_ADMIN || 
-                admins[admin].role == zkMedRequestManager.AdminRole.MODERATOR);
-    }
-    
-
-    
-    // ======== Core Interface Functions ========
-    
-    /**
-     * @dev Add admin via approved request (only callable by zkMedCore)
-     * @param newAdmin Address of the new admin
-     * @param role Role to assign
-     */
-    function addAdminViaApprovedRequest(address newAdmin, zkMedRequestManager.AdminRole role) external onlyCore {
-        require(newAdmin != address(0), "Invalid admin address");
-        require(!admins[newAdmin].isActive, "Address is already an admin");
-        
-        // Set permissions based on role
-        uint256 permissions = 0;
-        if (role == zkMedRequestManager.AdminRole.BASIC) {
-            permissions = 1; // Basic permissions
-        } else if (role == zkMedRequestManager.AdminRole.MODERATOR) {
-            permissions = 255; // Moderate permissions
-        } else if (role == zkMedRequestManager.AdminRole.SUPER_ADMIN) {
-            permissions = type(uint256).max; // Full permissions
-        }
-        
-        admins[newAdmin] = AdminRecord({
-            isActive: true,
-            role: role,
-            permissions: permissions,
-            adminSince: block.timestamp
-        });
-        totalAdmins++;
-        
-        emit AdminAdded(newAdmin, role);
+    function isModeratorOrSuperAdmin(address adminAddress) external view returns (bool) {
+        return admins[adminAddress].isActive && 
+               (admins[adminAddress].role == AdminRole.MODERATOR || 
+                admins[adminAddress].role == AdminRole.SUPER_ADMIN);
     }
     
     /**
-     * @dev Deactivate an admin (only callable by zkMedCore)
-     * @param admin Admin address to deactivate
+     * @dev Get admin type for a given address
+     * @param adminAddress Address to check
+     * @return AdminRole The role of the admin
      */
-    function deactivateAdmin(address admin) external onlyCore {
-        require(admins[admin].isActive, "Admin not registered");
-        admins[admin].isActive = false;
-        totalAdmins--;
-    }
-    
-    // ======== Request Query Functions (delegated to core) ========
-    
-    /**
-     * @dev Get all pending requests
-     * @return Array of pending request IDs
-     */
-    function getPendingRequests() external view onlyAdmin returns (uint256[] memory) {
-        (bool success, bytes memory result) = zkMedCoreContract.staticcall(
-            abi.encodeWithSignature("getPendingRequests()")
-        );
-        require(success, "Failed to get pending requests");
-        return abi.decode(result, (uint256[]));
+    function getAdminType(address adminAddress) external view returns (AdminRole) {
+        require(admins[adminAddress].isActive, "Admin not registered");
+        return admins[adminAddress].role;
     }
     
     /**
-     * @dev Get pending requests by type
-     * @param reqType The type of requests to filter for
-     * @return Array of pending request IDs of the specified type
+     * @dev Get admin record for a given address
+     * @param adminAddress Address to check
+     * @return AdminRecord The complete admin record
      */
-    function getPendingRequestsByType(
-        zkMedRequestManager.RequestType reqType
-    ) external view onlyAdmin returns (uint256[] memory) {
-        (bool success, bytes memory result) = zkMedCoreContract.staticcall(
-            abi.encodeWithSignature("getPendingRequestsByType(uint8)", uint8(reqType))
-        );
-        require(success, "Failed to get pending requests by type");
-        return abi.decode(result, (uint256[]));
+    function getAdminRecord(address adminAddress) external view returns (AdminRecord memory) {
+        return admins[adminAddress];
     }
-    
-    /**
-     * @dev Get registration statistics
-     * @return totalUsers Total registered users
-     * @return patients Total patients
-     * @return hospitals Total hospitals
-     * @return insurers Total insurers
-     */
-    function getRegistrationStats() external view onlyAdmin returns (
-        uint256 totalUsers,
-        uint256 patients, 
-        uint256 hospitals,
-        uint256 insurers
-    ) {
-        (bool success, bytes memory result) = zkMedCoreContract.staticcall(
-            abi.encodeWithSignature("getRegistrationStats()")
-        );
-        require(success, "Failed to get registration stats");
-        return abi.decode(result, (uint256, uint256, uint256, uint256));
-    }
-} 
+}

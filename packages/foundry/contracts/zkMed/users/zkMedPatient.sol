@@ -3,7 +3,7 @@ pragma solidity ^0.8.21;
 
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
-import {zkMedRequestManager} from "../zkMedRequestManager.sol";
+
 import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
 import {zkMedPaymentPlanProver} from "../provers/zkMedPaymentPlanProver.sol";
 import {zkMedLinkPay} from "../zkMedLinkPay.sol";
@@ -23,7 +23,6 @@ contract zkMedPatient is Verifier {
         bytes32 emailHash;
         uint256 registrationTime;
         bool isActive;
-        uint256 requestId;
     }
     
     // Patient-specific record
@@ -111,8 +110,7 @@ contract zkMedPatient is Verifier {
                 walletAddress: msg.sender,
                 emailHash: registrationData.emailHash,
                 registrationTime: block.timestamp,
-                isActive: true,
-                requestId: 0 // Will be set by core if needed
+                isActive: true
             })
         });
         
@@ -244,20 +242,20 @@ contract zkMedPatient is Verifier {
     }
     
     /**
-     * @dev Update patient record (only callable by zkMedCore)
-     * @param patient Patient address
-     * @param requestId Request ID to associate
-     */
-    function updatePatientRequestId(address patient, uint256 requestId) external onlyCore {
-        require(patientRecords[patient].base.isActive, "Patient not registered");
-        patientRecords[patient].base.requestId = requestId;
-    }
-    
-    /**
      * @dev Deactivate a patient (only callable by zkMedCore)
      * @param patient Patient address to deactivate
      */
     function deactivatePatient(address patient) external onlyCore {
+        require(patientRecords[patient].base.isActive, "Patient not registered");
+        patientRecords[patient].base.isActive = false;
+        totalPatients--;
+    }
+    
+    /**
+     * @dev Deactivate a patient via admin (called by zkMedCore via admin)
+     * @param patient Patient address to deactivate
+     */
+    function deactivateByAdmin(address patient) external onlyCore {
         require(patientRecords[patient].base.isActive, "Patient not registered");
         patientRecords[patient].base.isActive = false;
         totalPatients--;

@@ -4,7 +4,7 @@ pragma solidity ^0.8.21;
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
 import {zkMedCore} from "../zkMedCore.sol";
-import {zkMedRequestManager} from "../zkMedRequestManager.sol";
+
 import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
 
 /**
@@ -23,7 +23,7 @@ contract zkMedInsurer is Verifier {
         bytes32 emailHash;
         uint256 registrationTime;
         bool isActive;
-        uint256 requestId;
+        
     }
     
     struct OrganizationRecord {
@@ -109,14 +109,13 @@ contract zkMedInsurer is Verifier {
         require(domainToInsurer[registrationData.domain] == address(0), "Domain already registered");
         require(!usedEmailHashes[registrationData.emailHash], "Email already used");
         
-        // Store insurer data locally
+        // Store insurer data locally - inactive by default, requires admin activation
         insurerRecords[msg.sender] = OrganizationRecord({
             base: BaseRecord({
                 walletAddress: msg.sender,
                 emailHash: registrationData.emailHash,
                 registrationTime: block.timestamp,
-                isActive: true,
-                requestId: 0
+                isActive: false  // Changed: insurers start inactive and need admin approval
             }),
             domain: registrationData.domain,
             organizationName: registrationData.organizationName,
@@ -197,6 +196,34 @@ contract zkMedInsurer is Verifier {
         }
         
         emit PaymentSentToHospital(msg.sender, hospital, amount);
+    }
+    
+    // ======== Admin Functions ========
+    
+    /**
+     * @dev Activate an insurer (called by zkMedCore via admin)
+     * @param insurerAddress Address of the insurer to activate
+     */
+    function activateByAdmin(address insurerAddress) external {
+        require(msg.sender == address(zkMedCoreContract), "Only zkMedCore can call this");
+        require(insurerRecords[insurerAddress].base.walletAddress != address(0), "Insurer not registered");
+        require(!insurerRecords[insurerAddress].base.isActive, "Insurer already active");
+        
+        insurerRecords[insurerAddress].base.isActive = true;
+        insurerRecords[insurerAddress].isApproved = true;
+    }
+    
+    /**
+     * @dev Deactivate an insurer (called by zkMedCore via admin)
+     * @param insurerAddress Address of the insurer to deactivate
+     */
+    function deactivateByAdmin(address insurerAddress) external {
+        require(msg.sender == address(zkMedCoreContract), "Only zkMedCore can call this");
+        require(insurerRecords[insurerAddress].base.walletAddress != address(0), "Insurer not registered");
+        require(insurerRecords[insurerAddress].base.isActive, "Insurer already inactive");
+        
+        insurerRecords[insurerAddress].base.isActive = false;
+        insurerRecords[insurerAddress].isApproved = false;
     }
     
     // ======== Payment Plan Creation Functions ========
@@ -346,24 +373,6 @@ contract zkMedInsurer is Verifier {
         require(insurerAddress != address(0), "Domain not registered");
         require(isInsurerRegistered(insurerAddress), "Domain not owned by registered insurer");
         return insurerAddress;
-    }
-    
-    /**
-     * @dev Get active payment plans for a specific patient (if insurer has plans with them)
-     * @param patient Patient address
-     * @return Array of active payment plans
-     */
-    function getPatientPlans(address patient) external view onlyRegisteredInsurer returns (zkMedRequestManager.PaymentPlan[] memory) {
-        // Verify patient is registered through patient contract
-        (bool success, bytes memory result) = zkMedCoreContract.patientContract().staticcall(
-            abi.encodeWithSignature("isPatientRegistered(address)", patient)
-        );
-        require(success && abi.decode(result, (bool)), "Patient not registered");
-        
-        // TODO: Implement local payment plan tracking
-        // For now, return empty array as this function needs redesign for the new architecture
-        zkMedRequestManager.PaymentPlan[] memory insurerPlans = new zkMedRequestManager.PaymentPlan[](0);
-        return insurerPlans;
     }
     
     /**
