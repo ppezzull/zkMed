@@ -5,7 +5,7 @@ import { HealthcareLogo } from "./HealthcareLogo";
 import { ProductDropdown } from "./ProductDropdown";
 import { HeaderConnectButton } from "~~/components/PrivyConnector";
 import { cn } from "~~/lib/utils";
-
+import Image from "next/image";
 interface HealthcareHeaderProps {
   className?: string;
 }
@@ -17,8 +17,9 @@ export const HealthcareHeader = ({ className }: HealthcareHeaderProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Left: Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <HealthcareLogo size="md" />
+            <Link href="/" className="flex items-center space-x-2">
+              <Image src="/logo.svg" alt="zkMed Logo" width={32} height={48} className="h-10 w-auto" />
+              <span className="text-xl font-bold text-white">zkMed</span>
             </Link>
           </div>
 

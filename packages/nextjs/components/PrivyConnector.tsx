@@ -77,7 +77,7 @@ export function HeaderConnectButton() {
       <div className="flex items-center gap-2">
         <div className="text-sm">
           {user?.email?.address || user?.phone?.number || "Connected"}
-          {isEmbeddedWallet && <span className="ml-1 text-xs text-green-600">(Smart Account)</span>}
+          {/* {isEmbeddedWallet && <span className="ml-1 text-xs text-green-600">(Smart Account)</span>} */}
         </div>
         <button onClick={logout} className="btn btn-outline btn-sm">
           Disconnect
