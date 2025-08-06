@@ -1,6 +1,6 @@
 # zkMed - Revolutionary Healthcare Insurance Platform
 
-![](https://github.com/ppezzull/zkmed/packages/nextjs/public/demo.gif)
+![](https://github.com/ppezzull/zkMed/blob/main/packages/nextjs/public/demo.gif)
 
  > **Privacy-preserving healthcare platform using vlayer MailProofs and automatic payments on Base**
 
