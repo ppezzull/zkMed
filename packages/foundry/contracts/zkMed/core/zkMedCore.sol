@@ -34,7 +34,6 @@ contract zkMedCore is Ownable {
     
     event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed planId);
     event PaymentMade(address indexed patient, address indexed insurer, uint256 amount);
-    event LinkPayContractUpdated(address indexed linkPayAddress);
 
     // ======== Custom Errors ========
     error NotAdmin();
@@ -163,17 +162,6 @@ contract zkMedCore is Ownable {
      */
     function isAdmin(address admin) public view returns (bool) {
         return adminsState.isAdmin(admin);
-    }
-
-    // ======== Link Pay Integration ========
-    
-    /**
-     * @dev Update link pay contract address in patient contract
-     * @param linkPayAddress New LinkPay contract address
-     */
-    function updatePatientLinkPayContract(address linkPayAddress) external onlyModerator {
-        require(linkPayAddress != address(0), "Invalid LinkPay address");
-        emit LinkPayContractUpdated(linkPayAddress);
     }
 
     // ======== Organization Activation (Admin Only) ========
