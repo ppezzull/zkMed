@@ -1,154 +1,70 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
+import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {PatientLib} from "../libraries/PatientLib.sol";
+import {HospitalLib} from "../libraries/HospitalLib.sol";
+import {InsurerLib} from "../libraries/InsurerLib.sol";
+import {AdminLib} from "../libraries/AdminLib.sol";
 
 /**
  * @title zkMed Core Contract  
  * @notice Ultra-lean orchestrator for healthcare system verification and coordination
  * @dev Only handles verification, validation, and cross-contract coordination
  */
-contract zkMedCore is Ownable {
-    
-    // ======== Type Definitions ========
-    
-    enum UserType { PATIENT, HOSPITAL, INSURER }
-
+contract zkMedCore is Ownable {    
     // ======== State Variables ========
+
+    ERC20 public usdc;
     
-    // User contract addresses
-    address public patientContract;
-    address public hospitalContract;
-    address public insurerContract;
-    address public adminContract;
-    
-    // Authorized user contracts
-    mapping(address => bool) public authorizedContracts;
+    // Centralized user storage (moved from user contracts)
+    using PatientLib for PatientLib.PatientState;
+    using HospitalLib for HospitalLib.HospitalState;
+    using InsurerLib for InsurerLib.InsurerState;
+    using AdminLib for AdminLib.AdminState;
+    PatientLib.PatientState private patientsState;
+    HospitalLib.HospitalState private hospitalsState;
+    InsurerLib.InsurerState private insurersState;
+    AdminLib.AdminState private adminsState;
     
     // ======== Events ========
     
     event PatientRegistered(address indexed patient);
-    event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash);
-    event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash);
-    event AdminAdded(address indexed admin, uint8 role);
+    event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash, string organizationName);
+    event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash, string organizationName);
+    event AdminAdded(address indexed admin, AdminLib.AdminRole role);
     event UserDeactivated(address indexed user);
     
     event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed planId);
     event PaymentMade(address indexed patient, address indexed insurer, uint256 amount);
     event LinkPayContractUpdated(address indexed linkPayAddress);
 
-    // ======== Modifiers ========
-    
-    modifier onlyPatientContract() {
-        require(msg.sender == patientContract, "Only patient contract");
-        _;
-    }
-    
-    modifier onlyHospitalContract() {
-        require(msg.sender == hospitalContract, "Only hospital contract");
-        _;
-    }
-    
-    modifier onlyInsurerContract() {
-        require(msg.sender == insurerContract, "Only insurer contract");
-        _;
-    }
-    
-    modifier onlyAdminContract() {
-        require(msg.sender == adminContract, "Only admin contract");
-        _;
-    }
-    
-    modifier onlyAuthorizedContracts() {
-        require(authorizedContracts[msg.sender], "Not authorized");
-        _;
-    }
-
     // ======== Constructor ========
-    
-    constructor() Ownable(msg.sender) {
-        // No external contracts to deploy anymore
+
+    constructor(address _usdc) Ownable(msg.sender) {
+        require(_usdc != address(0), "Invalid USDC address");
+        usdc = ERC20(_usdc);
+        // Set deployer as SUPER_ADMIN (role = 2) with full permissions
+        adminsState.addAdmin(msg.sender, AdminLib.AdminRole.SUPER_ADMIN, type(uint256).max);
+        emit AdminAdded(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
     }
 
-    // ======== Contract Management ========
-    
-    /**
-     * @dev Set user contract addresses (owner only)
-     * @param _patientContract Address of the patient contract
-     * @param _hospitalContract Address of the hospital contract
-     * @param _insurerContract Address of the insurer contract
-     * @param _adminContract Address of the admin contract
-     */
-    function setUserContracts(
-        address _patientContract,
-        address _hospitalContract,
-        address _insurerContract,
-        address _adminContract
-    ) external onlyOwner {
-        patientContract = _patientContract;
-        hospitalContract = _hospitalContract;
-        insurerContract = _insurerContract;
-        adminContract = _adminContract;
-        
-        // Auto-authorize all user contracts
-        if (_patientContract != address(0)) authorizedContracts[_patientContract] = true;
-        if (_hospitalContract != address(0)) authorizedContracts[_hospitalContract] = true;
-        if (_insurerContract != address(0)) authorizedContracts[_insurerContract] = true;
-        if (_adminContract != address(0)) authorizedContracts[_adminContract] = true;
-    }
-    
-    /**
-     * @dev Authorize a contract to interact with core functions
-     * @param contractAddress Address to authorize
-     */
-    function authorizeContract(address contractAddress) external onlyOwner {
-        authorizedContracts[contractAddress] = true;
-    }
-    
-    /**
-     * @dev Revoke authorization for a contract
-     * @param contractAddress Address to revoke authorization from
-     */
-    function revokeContractAuthorization(address contractAddress) external onlyOwner {
-        authorizedContracts[contractAddress] = false;
-    }
+    // ======== Register Functions (Core API) ========
 
-    // ======== User Registration Notifications ========
-    
-    /**
-     * @dev Notify of patient registration (called by patient contract)
-     * @param patient Address of the registered patient
-     */
-    function notifyPatientRegistration(address patient) external onlyPatientContract {
+    function registerPatient(address patient, bytes32 emailHash) external onlyOwner {
+        patientsState.register(patient, emailHash);
         emit PatientRegistered(patient);
     }
-    
-    /**
-     * @dev Notify of hospital registration (called by hospital contract)  
-     * @param hospital Address of the registered hospital
-     * @param domain Hospital domain
-     * @param emailHash Hash of the hospital email
-     */
-    function notifyHospitalRegistration(
-        address hospital,
-        string calldata domain,
-        bytes32 emailHash
-    ) external onlyHospitalContract {
-        emit HospitalRegistered(hospital, domain, emailHash);
+
+    function registerHospital(address hospital, bytes32 emailHash, string calldata domain, string calldata organizationName) external onlyOwner {
+        hospitalsState.register(hospital, emailHash, domain, organizationName);
+        emit HospitalRegistered(hospital, domain, emailHash, organizationName);
     }
-    
-    /**
-     * @dev Notify of insurer registration (called by insurer contract)
-     * @param insurer Address of the registered insurer
-     * @param domain Insurer domain
-     * @param emailHash Hash of the insurer email
-     */
-    function notifyInsurerRegistration(
-        address insurer,
-        string calldata domain,
-        bytes32 emailHash
-    ) external onlyInsurerContract {
-        emit InsurerRegistered(insurer, domain, emailHash);
+
+    function registerInsurer(address insurer, bytes32 emailHash, string calldata domain, string calldata organizationName) external onlyOwner {
+        insurersState.register(insurer, emailHash, domain, organizationName);
+        emit InsurerRegistered(insurer, domain, emailHash, organizationName);
     }
 
     // ======== Admin Management ========
@@ -158,8 +74,19 @@ contract zkMedCore is Ownable {
      * @param admin Address to add as admin
      * @param role Admin role as uint8
      */
-    function addAdmin(address admin, uint8 role) external onlyAdminContract {
-        emit AdminAdded(admin, role);
+    function addAdmin(address admin, AdminLib.AdminRole role) external onlyOwner {
+        // Basic role permissions mapping; can be extended
+        uint256 perms = role == AdminLib.AdminRole.BASIC ? 1 : (role == AdminLib.AdminRole.MODERATOR ? 255 : type(uint256).max);
+        adminsState.addAdmin(admin, role, perms);
+        emit AdminAdded(admin, AdminLib.AdminRole(role));
+    }
+
+    function deactivateAdmin(address admin) external onlyOwner {
+        adminsState.deactivate(admin);
+    }
+
+    function isAdmin(address admin) external view returns (bool) {
+        return adminsState.isAdmin(admin);
     }
 
     // ======== Link Pay Integration ========
@@ -168,15 +95,8 @@ contract zkMedCore is Ownable {
      * @dev Update link pay contract address in patient contract
      * @param linkPayAddress New LinkPay contract address
      */
-    function updatePatientLinkPayContract(address linkPayAddress) external onlyAdminContract {
+    function updatePatientLinkPayContract(address linkPayAddress) external onlyOwner {
         require(linkPayAddress != address(0), "Invalid LinkPay address");
-        require(patientContract != address(0), "Patient contract not set");
-        
-        (bool success,) = patientContract.call(
-            abi.encodeWithSignature("updateLinkPayContract(address)", linkPayAddress)
-        );
-        require(success, "Failed to update LinkPay in patient contract");
-        
         emit LinkPayContractUpdated(linkPayAddress);
     }
 
@@ -186,26 +106,16 @@ contract zkMedCore is Ownable {
      * @dev Activate a registered hospital (admin only)
      * @param hospitalAddress Address of the hospital to activate
      */
-    function activateHospital(address hospitalAddress) external onlyAdminContract {
-        require(hospitalContract != address(0), "Hospital contract not set");
-        
-        (bool success,) = hospitalContract.call(
-            abi.encodeWithSignature("activateByAdmin(address)", hospitalAddress)
-        );
-        require(success, "Failed to activate hospital");
+    function activateHospital(address hospitalAddress) external onlyOwner {
+        HospitalLib.setActive(hospitalsState, hospitalAddress, true, true);
     }
     
     /**
      * @dev Activate a registered insurer (admin only)
      * @param insurerAddress Address of the insurer to activate
      */
-    function activateInsurer(address insurerAddress) external onlyAdminContract {
-        require(insurerContract != address(0), "Insurer contract not set");
-        
-        (bool success,) = insurerContract.call(
-            abi.encodeWithSignature("activateByAdmin(address)", insurerAddress)
-        );
-        require(success, "Failed to activate insurer");
+    function activateInsurer(address insurerAddress) external onlyOwner {
+        InsurerLib.setActive(insurersState, insurerAddress, true, true);
     }
 
     // ======== User Management Coordination ========
@@ -214,27 +124,10 @@ contract zkMedCore is Ownable {
      * @dev Deactivate a user across all contracts
      * @param user Address of the user to deactivate
      */
-    function deactivateUser(address user) external onlyAdminContract {
-        // Try to deactivate from all possible contracts
-        if (patientContract != address(0)) {
-            (bool success,) = patientContract.call(
-                abi.encodeWithSignature("deactivateByAdmin(address)", user)
-            );
-            // Don't require success as user might not be in this contract
-        }
-        
-        if (hospitalContract != address(0)) {
-            (bool success,) = hospitalContract.call(
-                abi.encodeWithSignature("deactivateByAdmin(address)", user)
-            );
-        }
-        
-        if (insurerContract != address(0)) {
-            (bool success,) = insurerContract.call(
-                abi.encodeWithSignature("deactivateByAdmin(address)", user)
-            );
-        }
-        
+    function deactivateUser(address user) external onlyOwner {
+        PatientLib.deactivate(patientsState, user);
+        HospitalLib.setActive(hospitalsState, user, false, false);
+        InsurerLib.setActive(insurersState, user, false, false);
         emit UserDeactivated(user);
     }
 
@@ -253,28 +146,9 @@ contract zkMedCore is Ownable {
         uint256 hospitals,
         uint256 insurers
     ) {
-        // Aggregate from user contracts
-        if (patientContract != address(0)) {
-            (bool success, bytes memory result) = patientContract.staticcall(
-                abi.encodeWithSignature("totalPatients()")
-            );
-            patients = success ? abi.decode(result, (uint256)) : 0;
-        }
-        
-        if (hospitalContract != address(0)) {
-            (bool success, bytes memory result) = hospitalContract.staticcall(
-                abi.encodeWithSignature("totalHospitals()")
-            );
-            hospitals = success ? abi.decode(result, (uint256)) : 0;
-        }
-        
-        if (insurerContract != address(0)) {
-            (bool success, bytes memory result) = insurerContract.staticcall(
-                abi.encodeWithSignature("totalInsurers()")
-            );
-            insurers = success ? abi.decode(result, (uint256)) : 0;
-        }
-        
+        patients = patientsState.total;
+        hospitals = hospitalsState.total;
+        insurers = insurersState.total;
         totalUsers = patients + hospitals + insurers;
     }
 
@@ -286,12 +160,8 @@ contract zkMedCore is Ownable {
      * @return bool True if valid hospital domain
      */
     function validateHospitalDomain(string calldata domain) external view returns (bool) {
-        if (hospitalContract == address(0)) return false;
-        
-        (bool success, bytes memory result) = hospitalContract.staticcall(
-            abi.encodeWithSignature("validateHospitalDomain(string)", domain)
-        );
-        return success && abi.decode(result, (bool));
+        address hospital = hospitalsState.domainToHospital[domain];
+        return hospital != address(0) && hospitalsState.records[hospital].isActive;
     }
 
     /**
@@ -300,12 +170,34 @@ contract zkMedCore is Ownable {
      * @return bool True if valid insurer domain
      */
     function validateInsurerDomain(string calldata domain) external view returns (bool) {
-        if (insurerContract == address(0)) return false;
-        
-        (bool success, bytes memory result) = insurerContract.staticcall(
-            abi.encodeWithSignature("validateInsurerDomain(string)", domain)
-        );
-        return success && abi.decode(result, (bool));
+        address insurer = insurersState.domainToInsurer[domain];
+        return insurer != address(0) && insurersState.records[insurer].isActive;
+    }
+
+    // ======== User Views ========
+
+    function getTotalPatients() external view returns (uint256) {
+        return patientsState.total;
+    }
+
+    function isPatientRegistered(address patient) external view returns (bool) {
+        return patientsState.isRegistered(patient);
+    }
+
+    function getTotalHospitals() external view returns (uint256) {
+        return hospitalsState.total;
+    }
+
+    function isHospitalRegistered(address hospital) external view returns (bool) {
+        return hospitalsState.isRegistered(hospital);
+    }
+
+    function getTotalInsurers() external view returns (uint256) {
+        return insurersState.total;
+    }
+
+    function isInsurerRegistered(address insurer) external view returns (bool) {
+        return insurersState.isRegistered(insurer);
     }
 
     // ======== User Role Functions ========
@@ -318,51 +210,25 @@ contract zkMedCore is Ownable {
      */
     function getRole(address user) external view returns (string memory role, bool isActive) {
         // Check if user is a patient
-        if (patientContract != address(0)) {
-            (bool success, bytes memory result) = patientContract.staticcall(
-                abi.encodeWithSignature("isPatientRegistered(address)", user)
-            );
-            if (success && abi.decode(result, (bool))) {
-                return ("PATIENT", true);
-            }
+        if (patientsState.isRegistered(user)) {
+            return ("PATIENT", true);
         }
         
         // Check if user is a hospital
-        if (hospitalContract != address(0)) {
-            (bool success, bytes memory result) = hospitalContract.staticcall(
-                abi.encodeWithSignature("isHospitalRegistered(address)", user)
-            );
-            if (success && abi.decode(result, (bool))) {
-                (bool success2, bytes memory result2) = hospitalContract.staticcall(
-                    abi.encodeWithSignature("isHospitalApproved(address)", user)
-                );
-                bool approved = success2 && abi.decode(result2, (bool));
-                return ("HOSPITAL", approved);
-            }
+        if (hospitalsState.isRegistered(user)) {
+            bool approved = hospitalsState.records[user].isApproved;
+            return ("HOSPITAL", approved);
         }
         
         // Check if user is an insurer
-        if (insurerContract != address(0)) {
-            (bool success, bytes memory result) = insurerContract.staticcall(
-                abi.encodeWithSignature("isInsurerRegistered(address)", user)
-            );
-            if (success && abi.decode(result, (bool))) {
-                (bool success2, bytes memory result2) = insurerContract.staticcall(
-                    abi.encodeWithSignature("isInsurerApproved(address)", user)
-                );
-                bool approved = success2 && abi.decode(result2, (bool));
-                return ("INSURER", approved);
-            }
+        if (insurersState.isRegistered(user)) {
+            bool approved = insurersState.records[user].isApproved;
+            return ("INSURER", approved);
         }
         
         // Check if user is an admin
-        if (adminContract != address(0)) {
-            (bool success, bytes memory result) = adminContract.staticcall(
-                abi.encodeWithSignature("isAdmin(address)", user)
-            );
-            if (success && abi.decode(result, (bool))) {
-                return ("ADMIN", true);
-            }
+        if (user == owner() || adminsState.isAdmin(user)) {
+            return ("ADMIN", true);
         }
         
         // User is not registered in any capacity

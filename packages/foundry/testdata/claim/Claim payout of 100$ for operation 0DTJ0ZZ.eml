@@ -1,0 +1,67 @@
+Delivered-To: ppezz.dev@gmail.com
+Received: by 2002:a05:7300:1493:b0:186:1fe1:2b22 with SMTP id b19csp2448dyh;
+        Mon, 11 Aug 2025 10:58:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQlRC6uw0sYIg746GDc/73HzpahyD05RbaIq0w6iumqCALki+dJ37LnuVm1dEk+ZFdzyiU
+X-Received: by 2002:a05:6402:2745:b0:617:b4ce:9d48 with SMTP id 4fb4d7f45d1cf-617e2e59fcamr11514837a12.26.1754935094704;
+        Mon, 11 Aug 2025 10:58:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1754935094; cv=none;
+        d=google.com; s=arc-20240605;
+        b=ic/0NN8wNrG4msw2XKCGJEs+UEdFeX2uoT81NbAfBm9DlYWVxtCAWCJklHz/4P0/ce
+         KpBVwD0bqkyQ+rUFcYetTFfw3abOUF73f0zueEM104uWWAdo/o1sprZhIOQLoyerglus
+         GQKJlf5kL+vbwvG2Ig1BgjSWnHq0xkmlBQXd/fqQzIBEG+9kq8ERvW3rQiSq09bNvVh+
+         w6GrrlFt81AMaPSDrOzSzDrqlnkVXhgCIg0CJwmwnTEwN/ibJ3Hk5rgjHNMOaJr+1mbt
+         Q66tn+VQpGi5wgi9jqzTG0OIG9d06PMV5Q2GkiC5OkvL8eh6neZbsYIJY/Fe3xpPwnsp
+         hThA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:dkim-signature;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        fh=D/XII1mzoDATYoJzHJuggaAOY5P6XgKamWbV6tiqUqk=;
+        b=O/xDCAzwH8RoYLmDeKNi7Ia2RfacInAr8M0yA4eA4zZz/JhtW/w+vKIw/jjfaitL1Q
+         jEhSvuoI7fBuUdFjYfvMLvF04wkToT9OEo1prF1w/pikQA7TiUTPAmovq9eseKW5JkD+
+         RH2+Imf0Zdse0Oo6dx741Jrk90CMMtQu3XjIVPC+f/uzqFh/AYF95XnkKmSX8DOrWj7N
+         2Z2flSqlP+HrxqWcRbYFHdx0QR2yNVTXvZgVGCz1yPs2CaDuhAQeHhwPrQuWEMB8M+Wa
+         ET0gexinFPALRa2VUaM4NIa48fP80l7gxnphDcaVPoN1uyeDyaMtwT+F6cllxS/7N+jj
+         PERQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nexthoop.it header.s=a1 header.b=efu8Zrs9;
+       spf=pass (google.com: domain of dev@nexthoop.it designates 62.149.156.43 as permitted sender) smtp.mailfrom=dev@nexthoop.it;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nexthoop.it
+Return-Path: <dev@nexthoop.it>
+Received: from smtpcmd0643.aruba.it (smtpcmd0643.aruba.it. [62.149.156.43])
+        by mx.google.com with ESMTPS id 4fb4d7f45d1cf-61829a2ddfasi1931829a12.51.2025.08.11.10.58.14
+        for <ppezz.dev@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Aug 2025 10:58:14 -0700 (PDT)
+Received-SPF: pass (google.com: domain of dev@nexthoop.it designates 62.149.156.43 as permitted sender) client-ip=62.149.156.43;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nexthoop.it header.s=a1 header.b=efu8Zrs9;
+       spf=pass (google.com: domain of dev@nexthoop.it designates 62.149.156.43 as permitted sender) smtp.mailfrom=dev@nexthoop.it;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nexthoop.it
+Received: from [192.168.1.14] ([93.65.139.227])
+	by Aruba SMTP with ESMTPSA
+	id lWmjuEUAzL0IylWmku3qpO; Mon, 11 Aug 2025 19:58:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nexthoop.it; s=a1;
+	t=1754935094; bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
+	h=Date:MIME-Version:To:From:Subject:Content-Type;
+	b=efu8Zrs9HewKhv20/fJVhA9zv3px9uVFijiq/3+sUBKZV8U5fTAEwJuVfYgSP+mZe
+	 tPClGm+Z3ctKgkusuUtyeP5Bvbt2/4u9gtbZL4HDd4JtOraZxDa7QxuExsMnNSbPyn
+	 rST2qb/avGW5kNAP0mjHTIKpho/flMco4pJbCe+XQwnxtBGPQUNcb5zzKBJ+eG8+zq
+	 ViyTneQr9ASZsqKAh99Q0NJVx0hpKDLzWwgheKzXkZKTB6hSWwOEuE8oOiG4zT3+Us
+	 YgIuYucYXcbuEBVNGJbITfKwyGG7KAQ7VIp6apVTCmu+ifHueeM5aJ6vm0G8yH6kgM
+	 a+3fmfljNr1NA==
+Message-ID: <750d7fa2-486d-45f4-a9db-14805e047f38@nexthoop.it>
+Date: Mon, 11 Aug 2025 19:58:13 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: ppezz.dev@gmail.com
+From: Pietro Pezzullo <dev@nexthoop.it>
+Subject: Claim payout of 100$ for operation 0DTJ0ZZ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfAHtsXUTw6aqkbd3soZlKHp4dE9VO1fNjmESUpqiFzL6PD9tIM76wPgyl+Sej22qMY+m+jzPVomFUxYSZ1lJioCd5FjS09w2Lot2jrV3lpVcyNp6A7oR
+ FiyAHCMQYubNysrb59S95Rqs4xIzaXEch0ArVqjxz8QmO1rfCU+ltWg6UtnJuCNQGgVL6s7nHNfRPg==
+
+

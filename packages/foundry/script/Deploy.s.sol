@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
 import { DeployYourContract } from "./DeployYourContract.s.sol";
+import { DeployZkMedCore } from "./DeployZkMedCore.s.sol";
 
 /**
  * @notice Main deployment script for all contracts
@@ -15,8 +16,13 @@ contract DeployScript is ScaffoldETHDeploy {
         // Deploys all your contracts sequentially
         // Add new deployments here when needed
 
+        // Deploy your contract
         DeployYourContract deployYourContract = new DeployYourContract();
         deployYourContract.run();
+
+        // Deploy zkMedCore
+        DeployZkMedCore deployZkMedCore = new DeployZkMedCore();
+        deployZkMedCore.run();
 
         // Deploy another contract
         // DeployMyContract myContract = new DeployMyContract();
