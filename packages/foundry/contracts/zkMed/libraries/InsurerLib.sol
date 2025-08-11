@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
-library InsurerLib {
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
+
+library InsurerLib is Verifier {
     struct OrganizationRecord {
         address walletAddress;
         bytes32 emailHash;

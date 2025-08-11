@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
-library HospitalLib {
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
+
+library HospitalLib is Verifier {
     struct OrganizationRecord {
         address userAddress;
         bytes32 emailHash;
