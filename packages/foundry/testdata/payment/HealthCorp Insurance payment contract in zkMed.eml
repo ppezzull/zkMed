@@ -1,0 +1,72 @@
+Delivered-To: ppezz.dev@gmail.com
+Received: by 2002:a05:7301:e27:b0:186:1fe1:2b22 with SMTP id mj39csp5729dyb;
+        Mon, 11 Aug 2025 10:27:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYtrFq+fK3l6m36zBufPPTRxFEKRVsQWHazkFH5WRpuCRUnlT1Mde4IAilFPppJPZDAaqI
+X-Received: by 2002:a17:907:6d29:b0:af9:5260:9ed6 with SMTP id a640c23a62f3a-afa1dfa09f0mr32128866b.3.1754933269602;
+        Mon, 11 Aug 2025 10:27:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1754933269; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Fe1hCjmDANwnmYSqzYwAxkRQup3ML6ah90Typ0ovgEPnYBL9Xs0jLaGYpPL4QU2shZ
+         QC72efPFyk+NmiGgFfm1IpIFutq32pmK8CF/lHgHSIGeX/OnxdjkrV0TDWUzNLWQj/5I
+         xpAIiDXa2BaL6GsCEeK441lTVwSmIA12TGhG+h7SICz2T0fOl959Crkgfoy0O9MKeWR7
+         2HlyJ4a1Rze9KNqXleH+Qz6PXwko0P/QfP4WxqiKRSW3ycm6+sGvhWiPegpYG91VRnGG
+         /7/89Q9vmgzZ9SGYShqDtmM5RxqhRgqJjdgxsV3VQjdPvDE4FiR8ZHyfwkk5CFRp4SH6
+         X8CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:dkim-signature;
+        bh=RSsmLBy3hoBGNw3dBEBnrawX9/B1HyNxzQVN5nHVsAM=;
+        fh=D/XII1mzoDATYoJzHJuggaAOY5P6XgKamWbV6tiqUqk=;
+        b=TQHoxyKmShBs4z6lUi18YBCaUgcQ+eOfkkSRSzGxf3YTecHmOYuEzBizuhWvp9TH4p
+         hV7ffapH/0PaC/fKUdwwXM3oDRRxAb6ZdnukocRdNBaE8WOicA5ynq1OdYDmxtA74PLr
+         DiRA19Nsmu2Kzu6PjwsHHBbZEeugMhuuOe6mHEiy2O6aOrLKEOMCI2P5FWRquAGSg10w
+         HtITRU94XHBNdRo6yMdXqghzSbYsSbTb3CXG9+V8ZwDhhbrwLIsxejTusYaAZXH6sgBa
+         uenHrijw2qMEqNrRMoDoa7TONbzJEozWU1fwnp3SDHgl3o7UWXzyQ3135loglTaeBeFD
+         wEsQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nexthoop.it header.s=a1 header.b=nRwg9qot;
+       spf=pass (google.com: domain of dev@nexthoop.it designates 62.149.155.151 as permitted sender) smtp.mailfrom=dev@nexthoop.it;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nexthoop.it
+Return-Path: <dev@nexthoop.it>
+Received: from smtpdh19-sp2.aruba.it (smtpdh19-sp2.aruba.it. [62.149.155.151])
+        by mx.google.com with ESMTPS id a640c23a62f3a-af91a075969si1739309166b.25.2025.08.11.10.27.49
+        for <ppezz.dev@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Aug 2025 10:27:49 -0700 (PDT)
+Received-SPF: pass (google.com: domain of dev@nexthoop.it designates 62.149.155.151 as permitted sender) client-ip=62.149.155.151;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nexthoop.it header.s=a1 header.b=nRwg9qot;
+       spf=pass (google.com: domain of dev@nexthoop.it designates 62.149.155.151 as permitted sender) smtp.mailfrom=dev@nexthoop.it;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nexthoop.it
+Received: from [192.168.1.14] ([93.65.139.227])
+	by Aruba SMTP with ESMTPSA
+	id lWJIuQbi7voVFlWJJu96wi; Mon, 11 Aug 2025 19:27:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nexthoop.it; s=a1;
+	t=1754933269; bh=RSsmLBy3hoBGNw3dBEBnrawX9/B1HyNxzQVN5nHVsAM=;
+	h=Date:MIME-Version:To:From:Subject:Content-Type;
+	b=nRwg9qotK0kw5nYB6JhTotI3WkJvSbCagimY33DJ+SVwHZHZPuhNilNkEobu2Tzx8
+	 ODO+P1ohHCi7igcE5Tab6VrjZfynpzTgL6Nbbbf822h6eJuXzs71z5jge9ZbhtiIAF
+	 Z09exOBRLIjomDZ/1vimKBa9NzGZYEpUjAlD+baTjambZDeJKXGS44vHrfxreDNg+7
+	 rPEiUXUvPdizDLpD+L2CAmpeTic0+5EDIrsmXbYWHampfLWEdPoBFCgV5bBmMLz05z
+	 a2qLascEOfNXjKPuB1QOac5A5D1E9k1KHhjG9G2bIfVgaT7bjJnszSl9Zcf8MTVnPz
+	 hEGBe3XLrF11w==
+Message-ID: <3616bcd9-1db3-4e9d-b9bb-1b801e84033b@nexthoop.it>
+Date: Mon, 11 Aug 2025 19:27:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: ppezz.dev@gmail.com
+From: Pietro Pezzullo <dev@nexthoop.it>
+Subject: HealthCorp Insurance payment contract in zkMed
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfComBZzggg8YR5pZwiJ/r6NBv9TsxKI+JFK0rWh352rmF8/UE6W3qTrl6MEW860oqoiEgqNxiIGXLGvLKQqWsxJwS7bNlIqlisefryL84KYrh90PTGoy
+ nztHjXhcr+Wv57SdZN8zphAuwRYzPzYcOzJEoumeyEW1pG/Pp18hZwJ5Dtv3jmHDdHS4r4oxHExFsQ==
+
+Patient payment contract
+
+Duration: 01/01/2027
+
+Monthly allowance: 40$
+

@@ -4,7 +4,7 @@ pragma solidity ^0.8.21;
 import {VTest} from "vlayer-0.1.0/testing/VTest.sol";
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {UnverifiedEmail, EmailProofLib, VerifiedEmail} from "vlayer-0.1.0/EmailProof.sol";
-import {zkMedRegistrationProver} from "../../contracts/zkMed/provers/zkMedRegistrationProver.sol";
+import {zkMedRegistrationProver} from "../../../contracts/zkMed/provers/zkMedRegistrationProver.sol";
 
 contract EmailProofLibWrapper {
     using EmailProofLib for UnverifiedEmail;
