@@ -24,10 +24,6 @@ contract zkMedPaymentPlanProver is Prover {
         uint256 monthlyAllowance;   // Monthly allowance in cents (e.g., 4000 = $40.00)
     }
 
-    constructor() {
-        // No dependencies needed for prover contract
-    }
-
     /// @notice Convert string to address (from hex)
     function stringToAddress(string memory str) public pure returns (address) {
         bytes memory strBytes = bytes(str);
@@ -121,7 +117,7 @@ contract zkMedPaymentPlanProver is Prover {
         
         // Parse body to extract payment plan details
         string[] memory bodyCapture = email.body.capture(
-            "Patient payment contract\\s*Duration:\\s*(\\d{2}/\\d{2}/\\d{4})\\s*Monthly allowance:\\s*(\\d+\\$)"
+            "^Patient payment contract\\s*Duration:\\s*(\\d{2}/\\d{2}/\\d{4})\\s*Monthly allowance:\\s*(\\d+\\$)\\s*$"
         );
         require(bodyCapture.length == 3, "Invalid payment contract body format");
         

@@ -22,8 +22,10 @@ contract zkMedRegistrationProverTest is VTest {
     // anvil default wallet 9 for Patient.eml
     address public patientWallet = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720; 
 
-    function getTestEmail(string memory path) public view returns (UnverifiedEmail memory) {
-        string memory mime = vm.readFile(path);
+    function getTestEmail(string memory relativePath) public view returns (UnverifiedEmail memory) {
+        string memory root = vm.projectRoot();
+        string memory fullPath = string.concat(root, "/", relativePath);
+        string memory mime = vm.readFile(fullPath);
         return preverifyEmail(mime);
     }
 
@@ -31,7 +33,7 @@ contract zkMedRegistrationProverTest is VTest {
         // Create test instances
         EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
         zkMedRegistrationProver prover = new zkMedRegistrationProver();
-        UnverifiedEmail memory email = getTestEmail("testdata/Hospital.eml"); // Fix this path if needed
+        UnverifiedEmail memory email = getTestEmail("testdata/registration/Hospital.eml"); // Fix this path if needed
         VerifiedEmail memory verifiedEmail = wrapper.verify(email);
         
         // Call the prover
@@ -50,7 +52,7 @@ contract zkMedRegistrationProverTest is VTest {
         // Create test instances
         EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
         zkMedRegistrationProver prover = new zkMedRegistrationProver();
-        UnverifiedEmail memory email = getTestEmail("testdata/Insurance.eml"); // Fix this path if needed
+        UnverifiedEmail memory email = getTestEmail("testdata/registration/Insurance.eml"); // Fix this path if needed
         VerifiedEmail memory verifiedEmail = wrapper.verify(email);
         
         // Call the prover
@@ -69,7 +71,7 @@ contract zkMedRegistrationProverTest is VTest {
         // Create test instances
         EmailProofLibWrapper wrapper = new EmailProofLibWrapper();
         zkMedRegistrationProver prover = new zkMedRegistrationProver();
-        UnverifiedEmail memory email = getTestEmail("testdata/Patient.eml");
+        UnverifiedEmail memory email = getTestEmail("testdata/registration/Patient.eml");
         VerifiedEmail memory verifiedEmail = wrapper.verify(email);
         
         // Call the prover
