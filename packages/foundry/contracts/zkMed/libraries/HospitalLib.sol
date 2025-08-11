@@ -9,7 +9,6 @@ library HospitalLib {
         bool isActive;
         string domain;
         string organizationName;
-        bool isApproved;
     }
 
     struct HospitalState {
@@ -40,22 +39,26 @@ library HospitalLib {
             registrationTime: block.timestamp,
             isActive: false,
             domain: domain,
-            organizationName: organizationName,
-            isApproved: false
+            organizationName: organizationName
         });
         hs.usedEmailHashes[emailHash] = true;
         hs.domainToHospital[domain] = hospital;
         hs.total += 1;
     }
 
-    function setActive(HospitalState storage hs, address hospital, bool active, bool approved) internal {
-        require(hs.records[hospital].userAddress != address(0), "not registered");
-        hs.records[hospital].isActive = active;
-        hs.records[hospital].isApproved = approved;
+    function isRegistered(HospitalState storage hs, address hospital) internal view returns (bool) {
+        return hs.records[hospital].userAddress != address(0);
     }
 
-    function isRegistered(HospitalState storage hs, address hospital) internal view returns (bool) {
-        return hs.records[hospital].userAddress != address(0) && hs.records[hospital].isActive;
+    function setActive(HospitalState storage hs, address hospital) internal {
+        require(isRegistered(hs, hospital), "not registered");
+        hs.records[hospital].isActive = true;
     }
+
+    function deactivate(HospitalState storage hs, address hospital) internal {
+        require(isRegistered(hs, hospital), "not registered");
+        hs.records[hospital].isActive = false;
+    }
+
 }
 

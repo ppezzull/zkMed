@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     YourContract: {
-      address: "0x700b6a60ce7eaaea56f065753d8dcb9653dbad35",
+      address: "0x0c8e79f3534b00d9a3d4a856b665bf4ebc22f2ba",
       abi: [
         {
           type: "constructor",
@@ -148,11 +148,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754946719.json",
+      deploymentFile: "run-1754951059.json",
       deploymentScript: "Deploy.s.sol",
     },
     MockUSDC: {
-      address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
+      address: "0xed1db453c3156ff3155a97ad217b3087d5dc5f6e",
       abi: [
         {
           type: "constructor",
@@ -469,11 +469,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754946719.json",
+      deploymentFile: "run-1754951059.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedCore: {
-      address: "0xb19b36b1456e65e3a6d514d3f715f204bd59f431",
+      address: "0xf7cd8fa9b94db2aa972023b379c7f72c65e4de9d",
       abi: [
         {
           type: "constructor",
@@ -545,10 +545,23 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "deactivateUser",
+          name: "deactivateHospital",
           inputs: [
             {
-              name: "user",
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateInsurer",
+          inputs: [
+            {
+              name: "insurer",
               type: "address",
               internalType: "address",
             },
@@ -876,44 +889,6 @@ const deployedContracts = {
           stateMutability: "view",
         },
         {
-          type: "function",
-          name: "validateHospitalDomain",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "validateInsurerDomain",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
           type: "event",
           name: "AdminAdded",
           inputs: [
@@ -928,6 +903,19 @@ const deployedContracts = {
               type: "uint8",
               indexed: false,
               internalType: "enum AdminLib.AdminRole",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "AdminDeactivated",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
             },
           ],
           anonymous: false,
@@ -1104,6 +1092,31 @@ const deployedContracts = {
         },
         {
           type: "error",
+          name: "CannotAddSelf",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "CannotDeactivateSelf",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "InvalidAdminAddress",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NotAdmin",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NotModerator",
+          inputs: [],
+        },
+        {
+          type: "error",
           name: "OwnableInvalidOwner",
           inputs: [
             {
@@ -1124,9 +1137,24 @@ const deployedContracts = {
             },
           ],
         },
+        {
+          type: "error",
+          name: "SuperAdminCannotBeAdded",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "SuperAdminCannotBeDeactivated",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "SuperAdminOnly",
+          inputs: [],
+        },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754946719.json",
+      deploymentFile: "run-1754951059.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
@@ -1204,10 +1232,23 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "deactivateUser",
+          name: "deactivateHospital",
           inputs: [
             {
-              name: "user",
+              name: "hospital",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "deactivateInsurer",
+          inputs: [
+            {
+              name: "insurer",
               type: "address",
               internalType: "address",
             },
@@ -1535,44 +1576,6 @@ const deployedContracts = {
           stateMutability: "view",
         },
         {
-          type: "function",
-          name: "validateHospitalDomain",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "validateInsurerDomain",
-          inputs: [
-            {
-              name: "domain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
           type: "event",
           name: "AdminAdded",
           inputs: [
@@ -1587,6 +1590,19 @@ const deployedContracts = {
               type: "uint8",
               indexed: false,
               internalType: "enum AdminLib.AdminRole",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "AdminDeactivated",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
             },
           ],
           anonymous: false,
@@ -1763,6 +1779,31 @@ const deployedContracts = {
         },
         {
           type: "error",
+          name: "CannotAddSelf",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "CannotDeactivateSelf",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "InvalidAdminAddress",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NotAdmin",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "NotModerator",
+          inputs: [],
+        },
+        {
+          type: "error",
           name: "OwnableInvalidOwner",
           inputs: [
             {
@@ -1782,6 +1823,21 @@ const deployedContracts = {
               internalType: "address",
             },
           ],
+        },
+        {
+          type: "error",
+          name: "SuperAdminCannotBeAdded",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "SuperAdminCannotBeDeactivated",
+          inputs: [],
+        },
+        {
+          type: "error",
+          name: "SuperAdminOnly",
+          inputs: [],
         },
       ],
       inheritedFunctions: {},

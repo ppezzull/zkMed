@@ -14,11 +14,7 @@ import {AdminLib} from "../libraries/AdminLib.sol";
  * @dev Only handles verification, validation, and cross-contract coordination
  */
 contract zkMedCore is Ownable {    
-    // ======== State Variables ========
-
-    ERC20 public usdc;
-    
-    // Centralized user storage (moved from user contracts)
+    // ======== Centralized user storage ========
     using PatientLib for PatientLib.PatientState;
     using HospitalLib for HospitalLib.HospitalState;
     using InsurerLib for InsurerLib.InsurerState;
@@ -29,40 +25,100 @@ contract zkMedCore is Ownable {
     AdminLib.AdminState private adminsState;
     
     // ======== Events ========
-    
     event PatientRegistered(address indexed patient);
     event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash, string organizationName);
     event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash, string organizationName);
     event AdminAdded(address indexed admin, AdminLib.AdminRole role);
+    event AdminDeactivated(address indexed admin);
     event UserDeactivated(address indexed user);
     
     event PaymentPlanCreated(address indexed patient, address indexed insurer, uint256 indexed planId);
     event PaymentMade(address indexed patient, address indexed insurer, uint256 amount);
     event LinkPayContractUpdated(address indexed linkPayAddress);
 
-    // ======== Constructor ========
+    // ======== Custom Errors ========
+    error NotAdmin();
+    error NotModerator();
+    error CannotAddSelf();
+    error SuperAdminOnly();
+    error SuperAdminCannotBeAdded();
+    error SuperAdminCannotBeDeactivated();
+    error CannotDeactivateSelf();
+    error InvalidAdminAddress();
 
+    // ======== External Variables ========
+    ERC20 public usdc;
+
+    // ======== Constructor ========
     constructor(address _usdc) Ownable(msg.sender) {
         require(_usdc != address(0), "Invalid USDC address");
         usdc = ERC20(_usdc);
-        // Set deployer as SUPER_ADMIN (role = 2) with full permissions
-        adminsState.addAdmin(msg.sender, AdminLib.AdminRole.SUPER_ADMIN, type(uint256).max);
+        adminsState.addAdmin(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
         emit AdminAdded(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
     }
 
-    // ======== Register Functions (Core API) ========
+    // ======== Modifiers ========
+    modifier onlyAdmin() {
+        if (!isAdmin(msg.sender)) revert NotAdmin();
+        _;
+    }
 
-    function registerPatient(address patient, bytes32 emailHash) external onlyOwner {
+    modifier onlyModerator() {
+        if (_roleOf(msg.sender) < AdminLib.AdminRole.MODERATOR) revert NotModerator();
+        _;
+    }
+
+    // ======== Internal Helpers ========
+    function _roleOf(address account) private view returns (AdminLib.AdminRole) {
+        return adminsState.records[account].role;
+    }
+
+    function _isSuperAdmin(address account) private view returns (bool) {
+        return _roleOf(account) == AdminLib.AdminRole.SUPER_ADMIN;
+    }
+
+    // ======== Register Functions ========
+    
+    /**
+     * @dev Register a patient
+     * @param patient Address of the patient
+     * @param emailHash Email hash of the patient
+     */
+    function registerPatient(address patient, bytes32 emailHash) external {
         patientsState.register(patient, emailHash);
         emit PatientRegistered(patient);
     }
 
-    function registerHospital(address hospital, bytes32 emailHash, string calldata domain, string calldata organizationName) external onlyOwner {
+    /**
+     * @dev Register a hospital
+     * @param hospital Address of the hospital
+     * @param emailHash Email hash of the hospital
+     * @param domain Domain of the hospital
+     * @param organizationName Organization name of the hospital
+     */
+    function registerHospital(
+        address hospital, 
+        bytes32 emailHash, 
+        string calldata domain, 
+        string calldata organizationName
+    ) external {
         hospitalsState.register(hospital, emailHash, domain, organizationName);
         emit HospitalRegistered(hospital, domain, emailHash, organizationName);
     }
 
-    function registerInsurer(address insurer, bytes32 emailHash, string calldata domain, string calldata organizationName) external onlyOwner {
+    /**
+     * @dev Register an insurer
+     * @param insurer Address of the insurer
+     * @param emailHash Email hash of the insurer
+     * @param domain Domain of the insurer
+     * @param organizationName Organization name of the insurer
+     */
+    function registerInsurer(
+        address insurer, 
+        bytes32 emailHash, 
+        string calldata domain, 
+        string calldata organizationName
+    ) external {
         insurersState.register(insurer, emailHash, domain, organizationName);
         emit InsurerRegistered(insurer, domain, emailHash, organizationName);
     }
@@ -74,18 +130,38 @@ contract zkMedCore is Ownable {
      * @param admin Address to add as admin
      * @param role Admin role as uint8
      */
-    function addAdmin(address admin, AdminLib.AdminRole role) external onlyOwner {
-        // Basic role permissions mapping; can be extended
-        uint256 perms = role == AdminLib.AdminRole.BASIC ? 1 : (role == AdminLib.AdminRole.MODERATOR ? 255 : type(uint256).max);
-        adminsState.addAdmin(admin, role, perms);
-        emit AdminAdded(admin, AdminLib.AdminRole(role));
+    function addAdmin(address admin, AdminLib.AdminRole role) external onlyAdmin {
+        if (admin == msg.sender) revert CannotAddSelf();
+        if (admin == address(0)) revert InvalidAdminAddress();
+        if (role == AdminLib.AdminRole.SUPER_ADMIN) revert SuperAdminCannotBeAdded();
+        if (role == AdminLib.AdminRole.MODERATOR) {
+            if (!_isSuperAdmin(msg.sender)) revert SuperAdminOnly();
+        }
+        adminsState.addAdmin(admin, role);
+        emit AdminAdded(admin, role);
     }
 
-    function deactivateAdmin(address admin) external onlyOwner {
+    /**
+     * @dev Deactivate admin through authorization (called by admin contract)
+     * @param admin Address to deactivate
+     */
+    function deactivateAdmin(address admin) external onlyAdmin {
+        if (admin == msg.sender) revert CannotDeactivateSelf();
+        if (admin == address(0)) revert InvalidAdminAddress();
+        if (_isSuperAdmin(admin)) revert SuperAdminCannotBeDeactivated();
+        if (_roleOf(admin) == AdminLib.AdminRole.MODERATOR) {
+            if (!_isSuperAdmin(msg.sender)) revert SuperAdminOnly();
+        }
         adminsState.deactivate(admin);
+        emit AdminDeactivated(admin);
     }
 
-    function isAdmin(address admin) external view returns (bool) {
+    /**
+     * @dev Check if an address is an admin
+     * @param admin Address to check
+     * @return bool True if admin
+     */
+    function isAdmin(address admin) public view returns (bool) {
         return adminsState.isAdmin(admin);
     }
 
@@ -95,7 +171,7 @@ contract zkMedCore is Ownable {
      * @dev Update link pay contract address in patient contract
      * @param linkPayAddress New LinkPay contract address
      */
-    function updatePatientLinkPayContract(address linkPayAddress) external onlyOwner {
+    function updatePatientLinkPayContract(address linkPayAddress) external onlyModerator {
         require(linkPayAddress != address(0), "Invalid LinkPay address");
         emit LinkPayContractUpdated(linkPayAddress);
     }
@@ -106,29 +182,26 @@ contract zkMedCore is Ownable {
      * @dev Activate a registered hospital (admin only)
      * @param hospitalAddress Address of the hospital to activate
      */
-    function activateHospital(address hospitalAddress) external onlyOwner {
-        HospitalLib.setActive(hospitalsState, hospitalAddress, true, true);
+    function activateHospital(address hospitalAddress) external onlyAdmin {
+        HospitalLib.setActive(hospitalsState, hospitalAddress);
     }
     
     /**
      * @dev Activate a registered insurer (admin only)
      * @param insurerAddress Address of the insurer to activate
      */
-    function activateInsurer(address insurerAddress) external onlyOwner {
-        InsurerLib.setActive(insurersState, insurerAddress, true, true);
+    function activateInsurer(address insurerAddress) external onlyAdmin {
+        InsurerLib.setActive(insurersState, insurerAddress);
     }
 
     // ======== User Management Coordination ========
     
-    /**
-     * @dev Deactivate a user across all contracts
-     * @param user Address of the user to deactivate
-     */
-    function deactivateUser(address user) external onlyOwner {
-        PatientLib.deactivate(patientsState, user);
-        HospitalLib.setActive(hospitalsState, user, false, false);
-        InsurerLib.setActive(insurersState, user, false, false);
-        emit UserDeactivated(user);
+    function deactivateHospital(address hospital) external onlyAdmin {
+        HospitalLib.deactivate(hospitalsState, hospital);
+    }
+
+    function deactivateInsurer(address insurer) external onlyAdmin {
+        InsurerLib.deactivate(insurersState, insurer);
     }
 
     // ======== Aggregation and Statistics ========
@@ -150,28 +223,6 @@ contract zkMedCore is Ownable {
         hospitals = hospitalsState.total;
         insurers = insurersState.total;
         totalUsers = patients + hospitals + insurers;
-    }
-
-    // ======== Domain and Email Validation ========
-    
-    /**
-     * @dev Validate hospital domain through hospital contract
-     * @param domain Domain to validate
-     * @return bool True if valid hospital domain
-     */
-    function validateHospitalDomain(string calldata domain) external view returns (bool) {
-        address hospital = hospitalsState.domainToHospital[domain];
-        return hospital != address(0) && hospitalsState.records[hospital].isActive;
-    }
-
-    /**
-     * @dev Validate insurer domain through insurer contract
-     * @param domain Domain to validate
-     * @return bool True if valid insurer domain
-     */
-    function validateInsurerDomain(string calldata domain) external view returns (bool) {
-        address insurer = insurersState.domainToInsurer[domain];
-        return insurer != address(0) && insurersState.records[insurer].isActive;
     }
 
     // ======== User Views ========
@@ -216,14 +267,12 @@ contract zkMedCore is Ownable {
         
         // Check if user is a hospital
         if (hospitalsState.isRegistered(user)) {
-            bool approved = hospitalsState.records[user].isApproved;
-            return ("HOSPITAL", approved);
+            return ("HOSPITAL", hospitalsState.records[user].isActive);
         }
         
         // Check if user is an insurer
         if (insurersState.isRegistered(user)) {
-            bool approved = insurersState.records[user].isApproved;
-            return ("INSURER", approved);
+            return ("INSURER", insurersState.records[user].isActive);
         }
         
         // Check if user is an admin

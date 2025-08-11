@@ -2,12 +2,11 @@
 pragma solidity ^0.8.21;
 
 library AdminLib {
-    enum AdminRole { BASIC, MODERATOR, SUPER_ADMIN }
+    enum AdminRole { UNREGISTERED, BASIC, MODERATOR, SUPER_ADMIN }
 
     struct AdminRecord {
         bool isActive;
         AdminRole role;
-        uint256 permissions;
         uint256 since;
     }
 
@@ -19,15 +18,13 @@ library AdminLib {
     function addAdmin(
         AdminState storage state,
         address admin,
-        AdminRole role,
-        uint256 permissions
+        AdminRole role
     ) internal {
         require(admin != address(0), "invalid admin");
         require(!state.records[admin].isActive, "already admin");
         state.records[admin] = AdminRecord({
             isActive: true,
             role: role,
-            permissions: permissions,
             since: block.timestamp
         });
         state.total += 1;

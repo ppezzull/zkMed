@@ -52,6 +52,4 @@ contract zkMedCoreTest is Test {
         assertEq(core.isPatientRegistered(patient), false);
     }
 
-    function test_getRegistrationStats() public {
-    }
 }
