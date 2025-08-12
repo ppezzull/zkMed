@@ -3,7 +3,7 @@ pragma solidity ^0.8.21;
 
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
-import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
+import {zkMedOrganizationProver} from "../provers/zkMedOrganizationProver.sol";
 
 library HospitalLib is Verifier {
     struct OrganizationRecord {

@@ -3,7 +3,7 @@ pragma solidity ^0.8.21;
 
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
-import {zkMedRegistrationProver} from "../provers/zkMedRegistrationProver.sol";
+import {zkMedPatientProver} from "../provers/zkMedPatientProver.sol";
 import {zkMedPaymentPlanProver} from "../provers/zkMedPaymentPlanProver.sol";
 import {zkMedClaimProver} from "../provers/zkMedClaimProver.sol";
 

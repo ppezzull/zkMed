@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {zkMedCore} from "../../../contracts/zkMed/core/zkMedCore.sol";
 import {MockUSDC} from "../../../contracts/zkMed/mocks/MockUSDC.sol";
 import {AdminLib} from "../../../contracts/zkMed/libraries/AdminLib.sol";
+import {DeployZkMedCore} from "../../../script/DeployZkMedCore.s.sol";
 
 contract zkMedCoreTest is Test {
     // Mirror contract events for expectEmit
@@ -39,7 +40,9 @@ contract zkMedCoreTest is Test {
         addrInsurer = vm.addr(5);
 
         mockUSDC = new MockUSDC();
-        core = new zkMedCore(address(mockUSDC));
+        DeployZkMedCore deployer = new DeployZkMedCore();
+        deployer.run();
+        core = zkMedCore(deployer.zkMedCore());
     }
 
     // Helpers

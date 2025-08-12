@@ -46,10 +46,20 @@ contract zkMedCore is Ownable {
     error InvalidAdminAddress();
 
     // ======== External Variables ========
+    address public organizationProver;
+    address public patientProver;
+    address public paymentPlanProver;
+    address public claimProver;
     ERC20 public usdc;
 
     // ======== Constructor ========
-    constructor(address _usdc) Ownable(msg.sender) {
+    constructor(
+        address _organizationProver,
+        address _patientProver,
+        address _paymentPlanProver,
+        address _claimProver,
+        address _usdc
+    ) Ownable(msg.sender) {
         require(_usdc != address(0), "Invalid USDC address");
         usdc = ERC20(_usdc);
         adminsState.addAdmin(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
