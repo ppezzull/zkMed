@@ -187,7 +187,7 @@ export function useProver(): UseProverReturn {
         console.log("🔍 DEBUG - Structured UnverifiedEmail:", unverifiedEmail);
 
         // Call the vlayer prover with a single tuple argument
-        await callOrganizationProver({ args: [unverifiedEmail as any] });
+        await callOrganizationProver([unverifiedEmail as any]);
 
         updateState({
           currentStep: "Waiting for proof result...",

@@ -148,7 +148,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     MockUSDC: {
@@ -469,7 +469,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedOrganizationProver: {
@@ -695,8 +695,7 @@ const deployedContracts = {
             {
               name: "",
               type: "tuple",
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -785,7 +784,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPatientProver: {
@@ -1085,7 +1084,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPaymentPlanProver: {
@@ -1448,7 +1447,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedClaimProver: {
@@ -1758,7 +1757,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedCore: {
@@ -2189,8 +2188,7 @@ const deployedContracts = {
             {
               name: "data",
               type: "tuple",
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -2301,8 +2299,7 @@ const deployedContracts = {
             {
               name: "data",
               type: "tuple",
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -2504,8 +2501,7 @@ const deployedContracts = {
               name: "data",
               type: "tuple",
               indexed: false,
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -2545,8 +2541,7 @@ const deployedContracts = {
               name: "data",
               type: "tuple",
               indexed: false,
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -2749,7 +2744,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754967541.json",
+      deploymentFile: "run-1754976983.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
@@ -3182,8 +3177,7 @@ const deployedContracts = {
             {
               name: "data",
               type: "tuple",
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -3294,8 +3288,7 @@ const deployedContracts = {
             {
               name: "data",
               type: "tuple",
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -3497,8 +3490,7 @@ const deployedContracts = {
               name: "data",
               type: "tuple",
               indexed: false,
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",
@@ -3538,8 +3530,7 @@ const deployedContracts = {
               name: "data",
               type: "tuple",
               indexed: false,
-              internalType:
-                "struct zkMedOrganizationProver.OrganizationRegistrationData",
+              internalType: "struct zkMedOrganizationProver.OrganizationRegistrationData",
               components: [
                 {
                   name: "requestedRole",

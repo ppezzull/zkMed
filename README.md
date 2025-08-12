@@ -1,6 +1,5 @@
 # zkMed - Revolutionary Healthcare Insurance Platform
 
-![](https://github.com/ppezzull/zkMed/blob/main/packages/nextjs/public/demo.gif)
 
  > **Privacy-preserving healthcare platform using vlayer MailProofs and automatic payments on Base**
 
@@ -11,6 +10,7 @@
 
  **First introduced at [ETHGlobal Prague](https://ethglobal.com/events/prague) and developed at [ETHGlobal Napuleth 2025](https://ethglobal.com/events/napuleth) hackathon on Base**
 
+![](https://github.com/ppezzull/zkMed/blob/main/packages/nextjs/public/demo.gif)
 ---
 
 ## 🎯 Project Vision
@@ -212,24 +212,14 @@ sequenceDiagram
   - Automatic user role detection and routing
 
 ### Chainlink Automation
-- **Contract**: zkMedLinkPay.sol
 - **Implementation**: Full [AutomationCompatibleInterface](https://docs.chain.link/chainlink-automation) with:
   - `checkUpkeep`: Identifies payment plans due for processing
   - `performUpkeep`: Executes monthly payments to hospitals
   - Automated triggers based on email-verified payment plans
   - Platform fee distribution and payment statistics
 
-### Base Deployment
-- **Contract Addresses** (Base Mainnet):
-  - zkMedCore: 0x202Fa7479d6fcBa37148009D256Ac2936729e577
-  - zkMedPatient: 0x2a76C471CC4353dAAb3E4938D89f02c7fF1e2F77
-  - zkMedHospital: 0xc9913ad9B3730a0C18d7064313A526d24A6F3DFD
-  - zkMedInsurer: 0xcE451eC2002643f248d0689650Ef36012bAef6f4
-  - zkMedAdmin: 0xb9C155122BcB683EB7d39E980daf811C62203292
-  - zkMedPaymentHistory: 0x852FfA30dBdd64a4893D1cAB9DbA14148Ed3690D
-  - zkMedRequestManager: 0xA95704b4C8d55594394B7B9602C0454Dc9C0f8a9
-  - zkMedRegistrationProver: 0x961A3057DCA3CaAb2bD9Ba54F9BAb42C7c8BEAFa
-  - zkMedPaymentPlanProver: 0x2796E5Ff369a1b845dd70948cE19BE01762D42a5
+### Claim Mail
+- Claim submissions use vlayer MailProofs (DKIM) to verify claim emails and extract claim data from proof outputs
 
 ---
 
@@ -239,7 +229,7 @@ sequenceDiagram
 Organizations verify identity through domain ownership:
 - **From**: admin@hospitalname.com
 - **Subject**: "Hospital registration on zkMed"  
-- **Body**: Contains organization name and wallet address
+- **Body**: Not needed
 
 ### Payment Plan Email
 Insurers authorize payment plans through verified emails:
@@ -248,6 +238,12 @@ Insurers authorize payment plans through verified emails:
 - **Subject**: "{insurance name} payment contract in zkMed"
 - **Body**: Patient payment contract, Duration: 01/01/2027, Monthly allowance: 40$
 
+### Claim Email (Insurer → Patient)
+
+- **From**: dev@nexthoop.it (insurer domain)
+- **To**: patient@email.com
+- **Subject**: "Claim payout of 100$ for operation 0DTJ0ZZ"
+- **Body**: Not needed
 ---
 
 ## 🚀 Getting Started
@@ -256,6 +252,9 @@ Insurers authorize payment plans through verified emails:
 - **Node.js**: Version 18+
 - **Yarn**: For package management
 - **Foundry**: For smart contract development
+- **Docker**: To run vlayer containers for local development and testing
+- **vlayer**: Version 1.2.3 required to run MailProof contract tests
+
 
 ### Quick Start
 
@@ -267,39 +266,36 @@ cd zkMed
 # Install dependencies
 yarn install
 
-# Start development environment
-yarn chain
+# Run vlayer devnet
+yarn devnet:up
 
-# Deploy contracts
+# Deploy contract locally
 yarn deploy
 
-# Start frontend
+# Enjoy the frontend ;-)
 yarn start
 ```
 
-### Environment Setup for Base
-```bash
-# Start a local Base fork
-yarn chain:base
-
-# Deploy to Base testnet
-yarn deploy --network base-testnet
-```
+### Registration Flow
+- Patient, Hospital, and Insurer registration now works end-to-end using vlayer proofs
+- Frontend hooks call `zkMedCore.registerPatient|Hospital|Insurer(proof, data)`
 
 ---
 
 ## 🗺️ Development Roadmap
 
-### Current MVP (Hackathon Submission)
+### Current MVP 
 - ✅ **Privy Integration**: Smart account integration with social logins
 - ✅ **Smart Contract Deploy**: Smart contracts deployed and accessible via /debug page
 - ✅ **Role-Based Access**: Dynamic routing based on user type
+- ✅ **User Registration with MailProofs**: Users register (Patient, Hospital, Insurer) via email-based proofs for identity verification
+
 
 ### Next Steps
-- 🚧 **Email Verification**: vlayer MailProofs integration (addressing wagmi config conflicts with Privy)
-- 🚧 **Enhanced Payment Analytics**: Detailed reporting for hospitals and insurers
-- 🚧 **Mobile Interface**: Progressive web app for on-the-go access
-- 🚧 **Multi-Currency Support**: Integration with stablecoins for global usage
+- 🚧 Frontend: Connect role dashboards/pages to backend
+- 🚧 Backend: AAVE pool integrations triggered when Insurer registers (capital efficiency)
+- 🚧 Backend: Payment plan automation (Chainlink upkeeps) wired to on-chain plans
+- 🚧 Enhanced Payment Analytics and Mobile UX
 
 ### Long-Term Vision
 - 📋 **Regulatory Compliance Framework**: Comprehensive GDPR/HIPAA compliance

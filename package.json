@@ -4,11 +4,13 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/foundry",
+      "packages/nextjs",
+      "packages/foundry/vlayer"
     ]
   },
   "scripts": {
-    "devnet:up": "docker compose -f packages/foundry/vlayer/docker-compose.devnet.yaml up -d",
+    "devnet:up": "yarn foundry:soldeer && docker compose -f packages/foundry/vlayer/docker-compose.devnet.yaml up -d",
     "devnet:down": "docker compose -f packages/foundry/vlayer/docker-compose.devnet.yaml down",
     "account": "yarn foundry:account",
     "account:generate": "yarn foundry:generate",
@@ -23,6 +25,7 @@
     "format": "yarn next:format && yarn foundry:format",
     "foundry:account": "yarn workspace @se-2/foundry account",
     "foundry:account-import": "yarn workspace @se-2/foundry account:import",
+    "foundry:soldeer": "yarn workspace @se-2/foundry soldeer",
     "foundry:chain": "yarn workspace @se-2/foundry chain",
     "foundry:chain:base": "yarn workspace @se-2/foundry chain:base",
     "foundry:clean": "yarn workspace @se-2/foundry clean",
