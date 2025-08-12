@@ -258,6 +258,10 @@ Insurers authorize payment plans through verified emails:
 ```bash
 # Clone the repository
 git clone https://github.com/ppezzull/zkMed.git
+
+# Install submodules
+git submodule update --init --recursive
+
 cd zkMed
 
 # Install dependencies

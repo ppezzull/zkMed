@@ -1,17 +1,18 @@
 // components/PrivyConnector.tsx
-import React, { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useConnectOrCreateWallet, usePrivy, useWallets } from "@privy-io/react-auth";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+// import React, { useEffect, useRef } from "react";
+// import { useRouter } from "next/navigation";
+import { useConnectOrCreateWallet, usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
+
+// import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export function HeaderConnectButton() {
-  const router = useRouter();
+  // const router = useRouter();
   // Privy auth state and actions
   const { ready, authenticated, logout, user } = usePrivy();
-  const { wallets } = useWallets();
-
+  const { address } = useAccount();
   // Track if this is the first login to avoid logging on every render
-  const hasLoggedFirstLogin = useRef(false);
+  // const hasLoggedFirstLogin = useRef(false);
 
   // Wallet connect method with callbacks for embedded AA wallets
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
@@ -23,11 +24,11 @@ export function HeaderConnectButton() {
     },
   });
 
-  const { data: role, isLoading: isRoleLoading } = useScaffoldReadContract({
-    contractName: "zkMedCore",
-    functionName: "getRole",
-    args: [user?.wallet?.address],
-  });
+  // const { data: role, isLoading: isRoleLoading } = useScaffoldReadContract({
+  //   contractName: "zkMedCore",
+  //   functionName: "getRole",
+  //   args: [user?.wallet?.address],
+  // });
 
   // // Effect to detect when user becomes authenticated (covers other login methods)
   // useEffect(() => {
@@ -70,15 +71,9 @@ export function HeaderConnectButton() {
 
   // If authenticated, show user info and disconnect option
   if (authenticated) {
-    const embeddedWallet = wallets.find(wallet => wallet.walletClientType === "privy");
-    const isEmbeddedWallet = !!embeddedWallet;
-
     return (
       <div className="flex items-center gap-2">
-        <div className="text-sm">
-          {user?.email?.address || user?.phone?.number || "Connected"}
-          {/* {isEmbeddedWallet && <span className="ml-1 text-xs text-green-600">(Smart Account)</span>} */}
-        </div>
+        <div className="text-sm">{user?.email?.address ? user?.email?.address : address}</div>
         <button onClick={logout} className="btn btn-outline btn-sm">
           Disconnect
         </button>

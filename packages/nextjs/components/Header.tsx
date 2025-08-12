@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { ProductDropdown } from "~~/components/shared/ProductDropdown";
-import { HeaderConnectButton } from "~~/components/PrivyConnector";
-import { cn } from "~~/lib/utils";
 import Image from "next/image";
-import { FaucetButton } from "~~/components/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import Link from "next/link";
 import { hardhat } from "wagmi/chains";
+import { HeaderConnectButton } from "~~/components/PrivyConnector";
+import { FaucetButton } from "~~/components/scaffold-eth";
+import { ProductDropdown } from "~~/components/shared/ProductDropdown";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { cn } from "~~/lib/utils";
 
 interface HealthcareHeaderProps {
   className?: string;
@@ -18,7 +18,7 @@ export const Header = ({ className }: HealthcareHeaderProps) => {
   const isLocalNetwork = targetNetwork.id === hardhat.id;
 
   return (
-    <header className={cn("absolute top-0 left-0 w-full z-50 bg-transparent backdrop-blur-sm", className)}>
+    <header className={cn("sticky top-0 left-0 w-full z-50 bg-slate-900 backdrop-blur-sm", className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left: Logo */}

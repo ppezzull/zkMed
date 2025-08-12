@@ -148,7 +148,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     MockUSDC: {
@@ -469,7 +469,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedOrganizationProver: {
@@ -784,7 +784,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPatientProver: {
@@ -1084,7 +1084,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedPaymentPlanProver: {
@@ -1447,7 +1447,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedClaimProver: {
@@ -1757,7 +1757,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
     zkMedCore: {
@@ -2744,7 +2744,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1754976983.json",
+      deploymentFile: "run-1755007725.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
@@ -3729,494 +3729,6 @@ const deployedContracts = {
         {
           type: "error",
           name: "SuperAdminOnly",
-          inputs: [],
-        },
-      ],
-      inheritedFunctions: {},
-      deploymentFile: "run-1752737504.json",
-      deploymentScript: "DeployComplete.s.sol",
-    },
-    zkMedRegistrationProver: {
-      address: "0x0564e773587f77a1eccaf0a46e5418b436f924fc",
-      abi: [
-        {
-          type: "function",
-          name: "proof",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct Proof",
-              components: [
-                {
-                  name: "seal",
-                  type: "tuple",
-                  internalType: "struct Seal",
-                  components: [
-                    {
-                      name: "verifierSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "seal",
-                      type: "bytes32[8]",
-                      internalType: "bytes32[8]",
-                    },
-                    {
-                      name: "mode",
-                      type: "uint8",
-                      internalType: "enum ProofMode",
-                    },
-                  ],
-                },
-                {
-                  name: "callGuestId",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "length",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "callAssumptions",
-                  type: "tuple",
-                  internalType: "struct CallAssumptions",
-                  components: [
-                    {
-                      name: "proverContractAddress",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "functionSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "settleChainId",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockNumber",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockHash",
-                      type: "bytes32",
-                      internalType: "bytes32",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          stateMutability: "pure",
-        },
-        {
-          type: "function",
-          name: "proveOrganizationDomain",
-          inputs: [
-            {
-              name: "unverifiedEmail",
-              type: "tuple",
-              internalType: "struct UnverifiedEmail",
-              components: [
-                {
-                  name: "email",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "dnsRecord",
-                  type: "tuple",
-                  internalType: "struct DnsRecord",
-                  components: [
-                    {
-                      name: "name",
-                      type: "string",
-                      internalType: "string",
-                    },
-                    {
-                      name: "recordType",
-                      type: "uint8",
-                      internalType: "uint8",
-                    },
-                    {
-                      name: "data",
-                      type: "string",
-                      internalType: "string",
-                    },
-                    {
-                      name: "ttl",
-                      type: "uint64",
-                      internalType: "uint64",
-                    },
-                  ],
-                },
-                {
-                  name: "verificationData",
-                  type: "tuple",
-                  internalType: "struct VerificationData",
-                  components: [
-                    {
-                      name: "validUntil",
-                      type: "uint64",
-                      internalType: "uint64",
-                    },
-                    {
-                      name: "signature",
-                      type: "bytes",
-                      internalType: "bytes",
-                    },
-                    {
-                      name: "pubKey",
-                      type: "bytes",
-                      internalType: "bytes",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct Proof",
-              components: [
-                {
-                  name: "seal",
-                  type: "tuple",
-                  internalType: "struct Seal",
-                  components: [
-                    {
-                      name: "verifierSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "seal",
-                      type: "bytes32[8]",
-                      internalType: "bytes32[8]",
-                    },
-                    {
-                      name: "mode",
-                      type: "uint8",
-                      internalType: "enum ProofMode",
-                    },
-                  ],
-                },
-                {
-                  name: "callGuestId",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "length",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "callAssumptions",
-                  type: "tuple",
-                  internalType: "struct CallAssumptions",
-                  components: [
-                    {
-                      name: "proverContractAddress",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "functionSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "settleChainId",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockNumber",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockHash",
-                      type: "bytes32",
-                      internalType: "bytes32",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct zkMedRegistrationProver.RegistrationData",
-              components: [
-                {
-                  name: "requestedRole",
-                  type: "uint8",
-                  internalType: "enum zkMedRegistrationProver.UserType",
-                },
-                {
-                  name: "walletAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "provePatientEmail",
-          inputs: [
-            {
-              name: "unverifiedEmail",
-              type: "tuple",
-              internalType: "struct UnverifiedEmail",
-              components: [
-                {
-                  name: "email",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "dnsRecord",
-                  type: "tuple",
-                  internalType: "struct DnsRecord",
-                  components: [
-                    {
-                      name: "name",
-                      type: "string",
-                      internalType: "string",
-                    },
-                    {
-                      name: "recordType",
-                      type: "uint8",
-                      internalType: "uint8",
-                    },
-                    {
-                      name: "data",
-                      type: "string",
-                      internalType: "string",
-                    },
-                    {
-                      name: "ttl",
-                      type: "uint64",
-                      internalType: "uint64",
-                    },
-                  ],
-                },
-                {
-                  name: "verificationData",
-                  type: "tuple",
-                  internalType: "struct VerificationData",
-                  components: [
-                    {
-                      name: "validUntil",
-                      type: "uint64",
-                      internalType: "uint64",
-                    },
-                    {
-                      name: "signature",
-                      type: "bytes",
-                      internalType: "bytes",
-                    },
-                    {
-                      name: "pubKey",
-                      type: "bytes",
-                      internalType: "bytes",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct Proof",
-              components: [
-                {
-                  name: "seal",
-                  type: "tuple",
-                  internalType: "struct Seal",
-                  components: [
-                    {
-                      name: "verifierSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "seal",
-                      type: "bytes32[8]",
-                      internalType: "bytes32[8]",
-                    },
-                    {
-                      name: "mode",
-                      type: "uint8",
-                      internalType: "enum ProofMode",
-                    },
-                  ],
-                },
-                {
-                  name: "callGuestId",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-                {
-                  name: "length",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "callAssumptions",
-                  type: "tuple",
-                  internalType: "struct CallAssumptions",
-                  components: [
-                    {
-                      name: "proverContractAddress",
-                      type: "address",
-                      internalType: "address",
-                    },
-                    {
-                      name: "functionSelector",
-                      type: "bytes4",
-                      internalType: "bytes4",
-                    },
-                    {
-                      name: "settleChainId",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockNumber",
-                      type: "uint256",
-                      internalType: "uint256",
-                    },
-                    {
-                      name: "settleBlockHash",
-                      type: "bytes32",
-                      internalType: "bytes32",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct zkMedRegistrationProver.RegistrationData",
-              components: [
-                {
-                  name: "requestedRole",
-                  type: "uint8",
-                  internalType: "enum zkMedRegistrationProver.UserType",
-                },
-                {
-                  name: "walletAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "domain",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "organizationName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "emailHash",
-                  type: "bytes32",
-                  internalType: "bytes32",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setBlock",
-          inputs: [
-            {
-              name: "blockNo",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "setChain",
-          inputs: [
-            {
-              name: "chainId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "blockNo",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "stringToAddress",
-          inputs: [
-            {
-              name: "str",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "pure",
-        },
-        {
-          type: "error",
-          name: "FailedInnerCall",
           inputs: [],
         },
       ],
