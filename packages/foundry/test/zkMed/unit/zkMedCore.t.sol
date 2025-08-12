@@ -5,7 +5,14 @@ import {Test} from "forge-std/Test.sol";
 import {zkMedCore} from "../../../contracts/zkMed/core/zkMedCore.sol";
 import {MockUSDC} from "../../../contracts/zkMed/mocks/MockUSDC.sol";
 import {AdminLib} from "../../../contracts/zkMed/libraries/AdminLib.sol";
-import {DeployZkMedCore} from "../../../script/DeployZkMedCore.s.sol";
+import {PatientRegistry} from "../../../contracts/zkMed/users/Patient.sol";
+import {HospitalRegistry} from "../../../contracts/zkMed/users/Hospital.sol";
+import {InsurerRegistry} from "../../../contracts/zkMed/users/Insurer.sol";
+import {zkMedOrganizationProver} from "../../../contracts/zkMed/provers/zkMedOrganizationProver.sol";
+import {zkMedPatientProver} from "../../../contracts/zkMed/provers/zkMedPatientProver.sol";
+import {zkMedPaymentPlanProver} from "../../../contracts/zkMed/provers/zkMedPaymentPlanProver.sol";
+import {zkMedClaimProver} from "../../../contracts/zkMed/provers/zkMedClaimProver.sol";
+
 
 contract zkMedCoreTest is Test {
     // Mirror contract events for expectEmit
@@ -40,9 +47,19 @@ contract zkMedCoreTest is Test {
         addrInsurer = vm.addr(5);
 
         mockUSDC = new MockUSDC();
-        DeployZkMedCore deployer = new DeployZkMedCore();
-        deployer.run();
-        core = zkMedCore(deployer.zkMedCore());
+        zkMedOrganizationProver organizationProver = new zkMedOrganizationProver();
+        zkMedPatientProver patientProver = new zkMedPatientProver();
+        zkMedPaymentPlanProver paymentPlanProver = new zkMedPaymentPlanProver();
+        zkMedClaimProver claimProver = new zkMedClaimProver();
+
+        PatientRegistry patientRegistry = new PatientRegistry(address(this), address(patientProver), address(paymentPlanProver), address(claimProver));
+        HospitalRegistry hospitalRegistry = new HospitalRegistry(address(this), address(organizationProver));
+        InsurerRegistry insurerRegistry = new InsurerRegistry(address(this), address(organizationProver));
+        core = new zkMedCore(address(mockUSDC), address(patientRegistry), address(hospitalRegistry), address(insurerRegistry));
+
+        patientRegistry.setController(address(core));
+        hospitalRegistry.setController(address(core));
+        insurerRegistry.setController(address(core));
     }
 
     // Helpers

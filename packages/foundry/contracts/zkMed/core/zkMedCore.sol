@@ -3,10 +3,10 @@ pragma solidity ^0.8.21;
 
 import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {PatientLib} from "../libraries/PatientLib.sol";
-import {HospitalLib} from "../libraries/HospitalLib.sol";
-import {InsurerLib} from "../libraries/InsurerLib.sol";
 import {AdminLib} from "../libraries/AdminLib.sol";
+import {IPatientRegistry} from "../interfaces/IPatientRegistry.sol";
+import {IHospitalRegistry} from "../interfaces/IHospitalRegistry.sol";
+import {IInsurerRegistry} from "../interfaces/IInsurerRegistry.sol";
 
 /**
  * @title zkMed Core Contract  
@@ -14,14 +14,11 @@ import {AdminLib} from "../libraries/AdminLib.sol";
  * @dev Only handles verification, validation, and cross-contract coordination
  */
 contract zkMedCore is Ownable {    
-    // ======== Centralized user storage ========
-    using PatientLib for PatientLib.PatientState;
-    using HospitalLib for HospitalLib.HospitalState;
-    using InsurerLib for InsurerLib.InsurerState;
+    // ======== External registries ========
     using AdminLib for AdminLib.AdminState;
-    PatientLib.PatientState private patientsState;
-    HospitalLib.HospitalState private hospitalsState;
-    InsurerLib.InsurerState private insurersState;
+    IPatientRegistry public patientRegistry;
+    IHospitalRegistry public hospitalRegistry;
+    IInsurerRegistry public insurerRegistry;
     AdminLib.AdminState private adminsState;
     
     // ======== Events ========
@@ -46,22 +43,23 @@ contract zkMedCore is Ownable {
     error InvalidAdminAddress();
 
     // ======== External Variables ========
-    address public organizationProver;
-    address public patientProver;
-    address public paymentPlanProver;
-    address public claimProver;
     ERC20 public usdc;
 
     // ======== Constructor ========
     constructor(
-        address _organizationProver,
-        address _patientProver,
-        address _paymentPlanProver,
-        address _claimProver,
-        address _usdc
+        address _usdc,
+        address _patientRegistry,
+        address _hospitalRegistry,
+        address _insurerRegistry
     ) Ownable(msg.sender) {
         require(_usdc != address(0), "Invalid USDC address");
+        require(_patientRegistry != address(0), "Invalid patient registry");
+        require(_hospitalRegistry != address(0), "Invalid hospital registry");
+        require(_insurerRegistry != address(0), "Invalid insurer registry");
         usdc = ERC20(_usdc);
+        patientRegistry = IPatientRegistry(_patientRegistry);
+        hospitalRegistry = IHospitalRegistry(_hospitalRegistry);
+        insurerRegistry = IInsurerRegistry(_insurerRegistry);
         adminsState.addAdmin(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
         emit AdminAdded(msg.sender, AdminLib.AdminRole.SUPER_ADMIN);
     }
@@ -94,7 +92,7 @@ contract zkMedCore is Ownable {
      * @param emailHash Email hash of the patient
      */
     function registerPatient(address patient, bytes32 emailHash) external {
-        patientsState.register(patient, emailHash);
+        patientRegistry.register(patient, emailHash);
         emit PatientRegistered(patient);
     }
 
@@ -111,7 +109,7 @@ contract zkMedCore is Ownable {
         string calldata domain, 
         string calldata organizationName
     ) external {
-        hospitalsState.register(hospital, emailHash, domain, organizationName);
+        hospitalRegistry.register(hospital, emailHash, domain, organizationName);
         emit HospitalRegistered(hospital, domain, emailHash, organizationName);
     }
 
@@ -128,7 +126,7 @@ contract zkMedCore is Ownable {
         string calldata domain, 
         string calldata organizationName
     ) external {
-        insurersState.register(insurer, emailHash, domain, organizationName);
+        insurerRegistry.register(insurer, emailHash, domain, organizationName);
         emit InsurerRegistered(insurer, domain, emailHash, organizationName);
     }
 
@@ -181,7 +179,7 @@ contract zkMedCore is Ownable {
      * @param hospitalAddress Address of the hospital to activate
      */
     function activateHospital(address hospitalAddress) external onlyAdmin {
-        HospitalLib.setActive(hospitalsState, hospitalAddress);
+        hospitalRegistry.setActive(hospitalAddress);
     }
     
     /**
@@ -189,17 +187,17 @@ contract zkMedCore is Ownable {
      * @param insurerAddress Address of the insurer to activate
      */
     function activateInsurer(address insurerAddress) external onlyAdmin {
-        InsurerLib.setActive(insurersState, insurerAddress);
+        insurerRegistry.setActive(insurerAddress);
     }
 
     // ======== User Management Coordination ========
     
     function deactivateHospital(address hospital) external onlyAdmin {
-        HospitalLib.deactivate(hospitalsState, hospital);
+        hospitalRegistry.deactivate(hospital);
     }
 
     function deactivateInsurer(address insurer) external onlyAdmin {
-        InsurerLib.deactivate(insurersState, insurer);
+        insurerRegistry.deactivate(insurer);
     }
 
     // ======== Aggregation and Statistics ========
@@ -217,36 +215,36 @@ contract zkMedCore is Ownable {
         uint256 hospitals,
         uint256 insurers
     ) {
-        patients = patientsState.total;
-        hospitals = hospitalsState.total;
-        insurers = insurersState.total;
+        patients = patientRegistry.getTotal();
+        hospitals = hospitalRegistry.getTotal();
+        insurers = insurerRegistry.getTotal();
         totalUsers = patients + hospitals + insurers;
     }
 
     // ======== User Views ========
 
     function getTotalPatients() external view returns (uint256) {
-        return patientsState.total;
+        return patientRegistry.getTotal();
     }
 
     function isPatientRegistered(address patient) external view returns (bool) {
-        return patientsState.isRegistered(patient);
+        return patientRegistry.isRegistered(patient);
     }
 
     function getTotalHospitals() external view returns (uint256) {
-        return hospitalsState.total;
+        return hospitalRegistry.getTotal();
     }
 
     function isHospitalRegistered(address hospital) external view returns (bool) {
-        return hospitalsState.isRegistered(hospital);
+        return hospitalRegistry.isRegistered(hospital);
     }
 
     function getTotalInsurers() external view returns (uint256) {
-        return insurersState.total;
+        return insurerRegistry.getTotal();
     }
 
     function isInsurerRegistered(address insurer) external view returns (bool) {
-        return insurersState.isRegistered(insurer);
+        return insurerRegistry.isRegistered(insurer);
     }
 
     // ======== User Role Functions ========
@@ -259,18 +257,18 @@ contract zkMedCore is Ownable {
      */
     function getRole(address user) external view returns (string memory role, bool isActive) {
         // Check if user is a patient
-        if (patientsState.isRegistered(user)) {
+        if (patientRegistry.isRegistered(user)) {
             return ("PATIENT", true);
         }
         
         // Check if user is a hospital
-        if (hospitalsState.isRegistered(user)) {
-            return ("HOSPITAL", hospitalsState.records[user].isActive);
+        if (hospitalRegistry.isRegistered(user)) {
+            return ("HOSPITAL", hospitalRegistry.isActive(user));
         }
         
         // Check if user is an insurer
-        if (insurersState.isRegistered(user)) {
-            return ("INSURER", insurersState.records[user].isActive);
+        if (insurerRegistry.isRegistered(user)) {
+            return ("INSURER", insurerRegistry.isActive(user));
         }
         
         // Check if user is an admin
@@ -281,6 +279,8 @@ contract zkMedCore is Ownable {
         // User is not registered in any capacity
         return ("UNREGISTERED", false);
     }
+
+    // No extra helpers needed; registries expose `isActive`
     
     /**
      * @dev Check if an address is registered in the system

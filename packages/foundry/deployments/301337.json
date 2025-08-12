@@ -1,0 +1,12 @@
+{
+  "0x34A1D3fff3958843C43aD80F30b94c510645C316": "MockUSDC",
+  "0x50EEf481cae4250d252Ae577A09bF514f224C6C4": "PatientRegistry",
+  "0x62c20Aa1e0272312BC100b4e23B4DC1Ed96dD7D1": "HospitalRegistry",
+  "0x90193C961A926261B756D1E5bb255e67ff9498A1": "zkMedOrganizationProver",
+  "0xA8452Ec99ce0C64f20701dB7dD3abDb607c00496": "zkMedPatientProver",
+  "0xBb2180ebd78ce97360503434eD37fcf4a1Df61c3": "zkMedPaymentPlanProver",
+  "0xD718d5A27a29FF1cD22403426084bA0d479869a0": "zkMedCore",
+  "0xDB8cFf278adCCF9E9b5da745B44E754fC4EE3C76": "zkMedClaimProver",
+  "0xDEb1E9a6Be7Baf84208BB6E10aC9F9bbE1D70809": "InsurerRegistry",
+  "networkName": "arbitrum"
+}
