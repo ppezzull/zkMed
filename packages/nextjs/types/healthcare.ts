@@ -7,10 +7,12 @@ export enum UserType {
   INSURER = 2,
 }
 
+// Matches AdminLib.AdminRole in contracts
 export enum AdminRole {
-  BASIC = 0,
-  MODERATOR = 1,
-  SUPER_ADMIN = 2,
+  UNREGISTERED = 0,
+  BASIC = 1,
+  MODERATOR = 2,
+  SUPER_ADMIN = 3,
 }
 
 export enum RequestStatus {
@@ -84,7 +86,8 @@ export interface AdminAccessRequest {
 
 // Registration data from prover
 export interface RegistrationData {
-  requestedRole: UserType;
+  // For organization registration (HOSPITAL=0, INSURER=1)
+  requestedRole: number;
   walletAddress: string;
   domain: string;
   organizationName: string;

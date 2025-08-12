@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useProver } from "./useProver";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 // import { UserType } from '~~/types/healthcare';
 
@@ -53,6 +55,9 @@ export function useInsurance(): UseInsuranceReturn {
     [],
   );
 
+  const { generateOrganizationProof, proof, previewRegistrationData } = useProver();
+  const { writeContractAsync: writeCore } = useScaffoldWriteContract({ contractName: "zkMedCore" });
+
   const registerInsurance = useCallback(
     async (emlContent: string, walletAddress: string, organizationName: string, domain: string) => {
       setState(prev => ({
@@ -63,21 +68,24 @@ export function useInsurance(): UseInsuranceReturn {
       }));
 
       try {
-        // 1. Generate insurance proof using vlayer
+        // 1) Generate org proof via vlayer
         setState(prev => ({ ...prev, registrationStep: "Generating email proof..." }));
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await generateOrganizationProof(emlContent);
 
-        // 2. Extract registration data from proof
-        setState(prev => ({ ...prev, registrationStep: "Extracting registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 3. Validate registration data matches smart contract requirements
-        setState(prev => ({ ...prev, registrationStep: "Validating registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 4. Submit proof to smart contract for verification and registration
-        setState(prev => ({ ...prev, registrationStep: "Verifying proof on-chain..." }));
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // 2) Build registration data (INSURER role=1)
+        setState(prev => ({ ...prev, registrationStep: "Submitting on-chain registration..." }));
+        const reg = previewRegistrationData(proof);
+        const data = {
+          requestedRole: 1,
+          walletAddress,
+          domain,
+          organizationName,
+          emailHash: (reg?.emailHash as `0x${string}`) || "0x",
+        } as any;
+        await writeCore({
+          functionName: "registerInsurer",
+          args: [proof as any, data],
+        });
 
         // 5. Refresh registration status
         await registrationStatus.checkRegistration();
@@ -88,7 +96,7 @@ export function useInsurance(): UseInsuranceReturn {
           registrationStep: "Insurance registration completed successfully!",
         }));
 
-        console.log("Mock: Insurance registration completed", {
+        console.log("Insurance registration completed", {
           emlContent,
           walletAddress,
           organizationName,
@@ -103,7 +111,7 @@ export function useInsurance(): UseInsuranceReturn {
         }));
       }
     },
-    [registrationStatus],
+    [generateOrganizationProof, proof, previewRegistrationData, writeCore, registrationStatus],
   );
 
   return {

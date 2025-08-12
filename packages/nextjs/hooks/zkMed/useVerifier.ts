@@ -37,17 +37,9 @@ export function useVerifier(): UseVerifierReturn {
     lastVerificationResult: null,
   });
 
-  // Initialize scaffold write contracts for different registration methods
-  const { writeContractAsync: writePatientRegistration, isMining: isPatientMining } = useScaffoldWriteContract({
-    contractName: "zkMedPatient",
-  });
-
-  const { writeContractAsync: writeHospitalRegistration, isMining: isHospitalMining } = useScaffoldWriteContract({
-    contractName: "zkMedHospital",
-  });
-
-  const { writeContractAsync: writeInsurerRegistration, isMining: isInsurerMining } = useScaffoldWriteContract({
-    contractName: "zkMedInsurer",
+  // Single core contract for all registrations
+  const { writeContractAsync: writeCore, isMining: isCoreMining } = useScaffoldWriteContract({
+    contractName: "zkMedCore",
   });
 
   const verifyPatientProof = useCallback(
@@ -85,8 +77,8 @@ export function useVerifier(): UseVerifierReturn {
           throw new Error("Invalid proof structure - missing proof or registration data");
         }
 
-        console.log("🔍 DEBUG - Calling registerPatient...");
-        const result = await writePatientRegistration({
+        console.log("🔍 DEBUG - Calling core.registerPatient...");
+        const result = await writeCore({
           functionName: "registerPatient",
           args: [proofForContract, registrationData],
         });
@@ -111,7 +103,7 @@ export function useVerifier(): UseVerifierReturn {
         return null;
       }
     },
-    [writePatientRegistration],
+    [writeCore],
   );
 
   const verifyOrganizationProof = useCallback(
@@ -151,20 +143,20 @@ export function useVerifier(): UseVerifierReturn {
 
         // Determine which registration method to call based on role
         // UserType enum: PATIENT = 0, HOSPITAL = 1, INSURER = 2
-        const isHospital = extractedRegistrationData.requestedRole === 1;
+        const isHospital = extractedRegistrationData.requestedRole === 0;
 
         console.log("🔍 DEBUG - Organization type:", isHospital ? "HOSPITAL" : "INSURER");
 
         let result;
         if (isHospital) {
-          console.log("🔍 DEBUG - Calling registerHospital");
-          result = await writeHospitalRegistration({
+          console.log("🔍 DEBUG - Calling core.registerHospital");
+          result = await writeCore({
             functionName: "registerHospital",
             args: [proofForContract, extractedRegistrationData],
           });
         } else {
-          console.log("🔍 DEBUG - Calling registerInsurer");
-          result = await writeInsurerRegistration({
+          console.log("🔍 DEBUG - Calling core.registerInsurer");
+          result = await writeCore({
             functionName: "registerInsurer",
             args: [proofForContract, extractedRegistrationData],
           });
@@ -190,7 +182,7 @@ export function useVerifier(): UseVerifierReturn {
         return null;
       }
     },
-    [writeHospitalRegistration, writeInsurerRegistration],
+    [writeCore],
   );
 
   const resetVerificationState = useCallback(() => {
@@ -204,12 +196,12 @@ export function useVerifier(): UseVerifierReturn {
   }, []);
 
   // Update loading state based on mining states
-  const isLoading = state.isLoading || isPatientMining || isHospitalMining || isInsurerMining;
+  const isLoading = state.isLoading || isCoreMining;
 
   return {
     ...state,
     isLoading,
-    isVerifying: state.isVerifying || isPatientMining || isHospitalMining || isInsurerMining,
+    isVerifying: state.isVerifying || isCoreMining,
     verifyPatientProof,
     verifyOrganizationProof,
     resetVerificationState,

@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useProver } from "./useProver";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 // import { UserType } from '~~/types/healthcare';
 
@@ -53,6 +55,9 @@ export function useHospital(): UseHospitalReturn {
     [],
   );
 
+  const { generateOrganizationProof, proof, previewRegistrationData } = useProver();
+  const { writeContractAsync: writeCore } = useScaffoldWriteContract({ contractName: "zkMedCore" });
+
   const registerHospital = useCallback(
     async (emlContent: string, walletAddress: string, organizationName: string, domain: string) => {
       setState(prev => ({
@@ -63,21 +68,25 @@ export function useHospital(): UseHospitalReturn {
       }));
 
       try {
-        // 1. Generate hospital proof using vlayer
+        // 1) Generate org proof via vlayer
         setState(prev => ({ ...prev, registrationStep: "Generating email proof..." }));
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await generateOrganizationProof(emlContent);
 
-        // 2. Extract registration data from proof
-        setState(prev => ({ ...prev, registrationStep: "Extracting registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // 2) Build registration data (HOSPITAL role=0)
+        setState(prev => ({ ...prev, registrationStep: "Submitting on-chain registration..." }));
+        const reg = previewRegistrationData(proof);
+        const data = {
+          requestedRole: 0,
+          walletAddress,
+          domain,
+          organizationName,
+          emailHash: (reg?.emailHash as `0x${string}`) || "0x",
+        } as any;
 
-        // 3. Validate registration data matches smart contract requirements
-        setState(prev => ({ ...prev, registrationStep: "Validating registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 4. Submit proof to smart contract for verification and registration
-        setState(prev => ({ ...prev, registrationStep: "Verifying proof on-chain..." }));
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await writeCore({
+          functionName: "registerHospital",
+          args: [proof as any, data],
+        });
 
         // 5. Refresh registration status
         await registrationStatus.checkRegistration();
@@ -88,7 +97,7 @@ export function useHospital(): UseHospitalReturn {
           registrationStep: "Hospital registration completed successfully!",
         }));
 
-        console.log("Mock: Hospital registration completed", {
+        console.log("Hospital registration completed", {
           emlContent,
           walletAddress,
           organizationName,
@@ -103,7 +112,7 @@ export function useHospital(): UseHospitalReturn {
         }));
       }
     },
-    [registrationStatus],
+    [generateOrganizationProof, proof, previewRegistrationData, writeCore, registrationStatus],
   );
 
   return {

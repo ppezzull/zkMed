@@ -46,6 +46,10 @@ export function useProver(): UseProverReturn {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
 
+  const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID ? Number(process.env.NEXT_PUBLIC_CHAIN_ID) : 31337;
+  const patientProverDef = (deployedContracts as any)[CHAIN_ID]?.zkMedPatientProver;
+  const orgProverDef = (deployedContracts as any)[CHAIN_ID]?.zkMedOrganizationProver;
+
   // Patient proof generation
   const {
     callProver: callPatientProver,
@@ -53,11 +57,11 @@ export function useProver(): UseProverReturn {
     error: patientCallError,
     data: patientProofHash,
   } = useCallProver({
-    address: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS as `0x${string}`,
-    proverAbi: deployedContracts[31337].zkMedRegistrationProver.abi,
+    address: (patientProverDef?.address || process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS) as `0x${string}`,
+    proverAbi: patientProverDef?.abi,
     functionName: "provePatientEmail",
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
-    chainId: process.env.NEXT_PUBLIC_CHAIN_ID ? Number(process.env.NEXT_PUBLIC_CHAIN_ID) : 31337,
+    chainId: CHAIN_ID,
   });
 
   // Organization proof generation
@@ -67,11 +71,11 @@ export function useProver(): UseProverReturn {
     error: orgCallError,
     data: orgProofHash,
   } = useCallProver({
-    address: process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS as `0x${string}`,
-    proverAbi: deployedContracts[31337].zkMedRegistrationProver.abi,
+    address: (orgProverDef?.address || process.env.NEXT_PUBLIC_HEALTHCARE_PROVER_ADDRESS) as `0x${string}`,
+    proverAbi: orgProverDef?.abi,
     functionName: "proveOrganizationDomain",
     gasLimit: Number(process.env.NEXT_PUBLIC_GAS_LIMIT || 1000000),
-    chainId: process.env.NEXT_PUBLIC_CHAIN_ID ? Number(process.env.NEXT_PUBLIC_CHAIN_ID) : 31337,
+    chainId: CHAIN_ID,
   });
 
   // Active proof hash (either patient or organization)

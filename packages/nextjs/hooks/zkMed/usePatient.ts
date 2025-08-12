@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useProver } from "./useProver";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import deployedContracts from "~~/contracts/deployedContracts";
 
 // import { UserType } from '~~/types/healthcare';
 
@@ -48,6 +51,10 @@ export function usePatient(): UsePatientReturn {
     [],
   );
 
+  const { generatePatientProof, proof } = useProver();
+
+  const { writeContractAsync: writeCore } = useScaffoldWriteContract({ contractName: "zkMedCore" });
+
   const registerPatient = useCallback(
     async (emlContent: string, walletAddress: string) => {
       setState(prev => ({
@@ -58,21 +65,20 @@ export function usePatient(): UsePatientReturn {
       }));
 
       try {
-        // 1. Generate patient proof using vlayer
+        // 1) Generate patient proof via vlayer
         setState(prev => ({ ...prev, registrationStep: "Generating email proof..." }));
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await generatePatientProof(emlContent);
 
-        // 2. Extract registration data from proof
-        setState(prev => ({ ...prev, registrationStep: "Extracting registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 3. Validate registration data matches smart contract requirements
-        setState(prev => ({ ...prev, registrationStep: "Validating registration data..." }));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 4. Submit proof to smart contract for verification and registration
-        setState(prev => ({ ...prev, registrationStep: "Verifying proof on-chain..." }));
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // 2) Submit proof + data to core
+        setState(prev => ({ ...prev, registrationStep: "Submitting on-chain registration..." }));
+        const data = {
+          walletAddress,
+          emailHash: (proof?.outputs?.[1]?.emailHash as `0x${string}`) || "0x",
+        } as any;
+        await writeCore({
+          functionName: "registerPatient",
+          args: [proof as any, data],
+        });
 
         // 5. Refresh registration status
         await registrationStatus.checkRegistration();
@@ -83,7 +89,7 @@ export function usePatient(): UsePatientReturn {
           registrationStep: "Registration completed successfully!",
         }));
 
-        console.log("Mock: Patient registration completed", { emlContent, walletAddress });
+        console.log("Patient registration completed", { emlContent, walletAddress });
       } catch (error: any) {
         setState(prev => ({
           ...prev,
@@ -93,7 +99,7 @@ export function usePatient(): UsePatientReturn {
         }));
       }
     },
-    [registrationStatus],
+    [generatePatientProof, proof, writeCore, registrationStatus],
   );
 
   return {
