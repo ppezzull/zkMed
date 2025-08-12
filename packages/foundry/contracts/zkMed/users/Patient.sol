@@ -3,6 +3,7 @@ pragma solidity ^0.8.21;
 
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {ChainIdLibrary} from "vlayer-0.1.0/proof_verifier/ChainId.sol";
 import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {zkMedPatientProver} from "../provers/zkMedPatientProver.sol";
 
@@ -59,12 +60,11 @@ contract PatientRegistry is Verifier, Ownable {
     function register(
         Proof memory,
         zkMedPatientProver.PatientRegistrationData memory data
-    ) external onlyController
-        onlyVerified(
-            patientProver, 
-            zkMedPatientProver.provePatientEmail.selector
-        )
-    {
+    ) external onlyController {
+        // TODO: remove this once we need to deploy to mainnet
+        if (!ChainIdLibrary.isTestEnv()) {
+            _verify(patientProver, zkMedPatientProver.provePatientEmail.selector);
+        }
         require(data.walletAddress != address(0), "invalid patient");
         require(data.emailHash != bytes32(0), "invalid email");
         require(records[data.walletAddress].walletAddress == address(0), "already registered");

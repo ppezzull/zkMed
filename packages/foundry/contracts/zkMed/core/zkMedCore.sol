@@ -16,7 +16,7 @@ import {zkMedPatientProver} from "../provers/zkMedPatientProver.sol";
  * @notice Ultra-lean orchestrator for healthcare system verification and coordination
  * @dev Only handles verification, validation, and cross-contract coordination
  */
-contract zkMedCore is Ownable {    
+contract zkMedCore is Ownable {
     // ======== External registries ========
     using AdminLib for AdminLib.AdminState;
     IPatientRegistry public patientRegistry;
@@ -25,9 +25,9 @@ contract zkMedCore is Ownable {
     AdminLib.AdminState private adminsState;
     
     // ======== Events ========
-    event PatientRegistered(zkMedPatientProver.PatientRegistrationData data);
-    event HospitalRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
-    event InsurerRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
+     event PatientRegistered(zkMedPatientProver.PatientRegistrationData data);
+     event HospitalRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
+     event InsurerRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
     event AdminAdded(address indexed admin, AdminLib.AdminRole role);
     event AdminDeactivated(address indexed admin);
     event UserDeactivated(address indexed user);

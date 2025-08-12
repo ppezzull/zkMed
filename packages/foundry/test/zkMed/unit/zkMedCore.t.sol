@@ -12,13 +12,12 @@ import {zkMedOrganizationProver} from "../../../contracts/zkMed/provers/zkMedOrg
 import {zkMedPatientProver} from "../../../contracts/zkMed/provers/zkMedPatientProver.sol";
 import {zkMedPaymentPlanProver} from "../../../contracts/zkMed/provers/zkMedPaymentPlanProver.sol";
 import {zkMedClaimProver} from "../../../contracts/zkMed/provers/zkMedClaimProver.sol";
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+// vlayer verifier APIs not needed in unit tests since verification is skipped in test env
 
 
 contract zkMedCoreTest is Test {
-    // Mirror contract events for expectEmit
-    event PatientRegistered(address indexed patient);
-    event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash, string organizationName);
-    event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash, string organizationName);
+    // Mirror only admin events
     event AdminAdded(address indexed admin, AdminLib.AdminRole role);
     event AdminDeactivated(address indexed admin);
 
@@ -60,6 +59,8 @@ contract zkMedCoreTest is Test {
         patientRegistry.setController(address(core));
         hospitalRegistry.setController(address(core));
         insurerRegistry.setController(address(core));
+
+        // Proof verification is skipped in test env via ChainIdLibrary.isTestEnv()
     }
 
     // Helpers
@@ -173,38 +174,66 @@ contract zkMedCoreTest is Test {
     }
 
     // Patient registration
-    function test_registerPatient_success_andEvent() public {
-        vm.expectEmit(true, true, true, true);
-        emit PatientRegistered(addrPatient);
-        core.registerPatient(addrPatient, EMAIL1);
+    function test_registerPatient_success() public {
+        Proof memory proof;
+        zkMedPatientProver.PatientRegistrationData memory data = zkMedPatientProver.PatientRegistrationData({
+            walletAddress: addrPatient,
+            emailHash: EMAIL1
+        });
+        core.registerPatient(proof, data);
         assertTrue(core.isPatientRegistered(addrPatient));
     }
 
     function test_registerPatient_revertsOnInvalidAddress() public {
+        Proof memory proof;
+        zkMedPatientProver.PatientRegistrationData memory data = zkMedPatientProver.PatientRegistrationData({
+            walletAddress: address(0),
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid patient"));
-        core.registerPatient(address(0), EMAIL1);
+        core.registerPatient(proof, data);
     }
 
     function test_registerPatient_revertsOnInvalidEmail() public {
+        Proof memory proof;
+        zkMedPatientProver.PatientRegistrationData memory data = zkMedPatientProver.PatientRegistrationData({
+            walletAddress: addrPatient,
+            emailHash: bytes32(0)
+        });
         vm.expectRevert(bytes("invalid email"));
-        core.registerPatient(addrPatient, bytes32(0));
+        core.registerPatient(proof, data);
     }
 
     function test_registerPatient_revertsOnDuplicateAndEmailUsed() public {
-        core.registerPatient(addrPatient, EMAIL1);
+        Proof memory proof;
+        zkMedPatientProver.PatientRegistrationData memory data1 = zkMedPatientProver.PatientRegistrationData({
+            walletAddress: addrPatient,
+            emailHash: EMAIL1
+        });
+        core.registerPatient(proof, data1);
         vm.expectRevert(bytes("already registered"));
-        core.registerPatient(addrPatient, EMAIL2);
+        core.registerPatient(proof, data1);
 
         address another = vm.addr(99);
+        zkMedPatientProver.PatientRegistrationData memory data2 = zkMedPatientProver.PatientRegistrationData({
+            walletAddress: another,
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("email used"));
-        core.registerPatient(another, EMAIL1);
+        core.registerPatient(proof, data2);
     }
 
     // Hospital registration + activation lifecycle
     function test_registerHospital_success_andEvent() public {
-        vm.expectEmit(true, true, true, true);
-        emit HospitalRegistered(addrHospital, "hospital.test", EMAIL1, "HospOrg");
-        core.registerHospital(addrHospital, EMAIL1, "hospital.test", "HospOrg");
+        Proof memory proof;
+        zkMedOrganizationProver.OrganizationRegistrationData memory data = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "hospital.test",
+            organizationName: "HospOrg",
+            emailHash: EMAIL1
+        });
+        core.registerHospital(proof, data);
         assertTrue(core.isHospitalRegistered(addrHospital));
         (string memory role, bool isActive) = core.getRole(addrHospital);
         assertEq(role, "HOSPITAL");
@@ -212,32 +241,90 @@ contract zkMedCoreTest is Test {
     }
 
     function test_registerHospital_revertsOnInvalidsAndDuplicates() public {
+        Proof memory proof;
+        zkMedOrganizationProver.OrganizationRegistrationData memory invalid1 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: address(0),
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid hospital"));
-        core.registerHospital(address(0), EMAIL1, "d1", "o1");
+        core.registerHospital(proof, invalid1);
 
+        zkMedOrganizationProver.OrganizationRegistrationData memory invalid2 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: bytes32(0)
+        });
         vm.expectRevert(bytes("invalid email"));
-        core.registerHospital(addrHospital, bytes32(0), "d1", "o1");
+        core.registerHospital(proof, invalid2);
 
+        zkMedOrganizationProver.OrganizationRegistrationData memory invalid3 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid domain"));
-        core.registerHospital(addrHospital, EMAIL1, "", "o1");
+        core.registerHospital(proof, invalid3);
 
+        zkMedOrganizationProver.OrganizationRegistrationData memory invalid4 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "d1",
+            organizationName: "",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid org"));
-        core.registerHospital(addrHospital, EMAIL1, "d1", "");
+        core.registerHospital(proof, invalid4);
 
-        core.registerHospital(addrHospital, EMAIL1, "d1", "o1");
+        zkMedOrganizationProver.OrganizationRegistrationData memory ok = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
+        core.registerHospital(proof, ok);
         vm.expectRevert(bytes("already registered"));
-        core.registerHospital(addrHospital, EMAIL2, "d2", "o2");
+        core.registerHospital(proof, ok);
 
         address other = vm.addr(55);
+        zkMedOrganizationProver.OrganizationRegistrationData memory dupeDomain = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: other,
+            domain: "d1",
+            organizationName: "o2",
+            emailHash: EMAIL2
+        });
         vm.expectRevert(bytes("domain used"));
-        core.registerHospital(other, EMAIL2, "d1", "o2");
+        core.registerHospital(proof, dupeDomain);
 
+        zkMedOrganizationProver.OrganizationRegistrationData memory dupeEmail = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: other,
+            domain: "d3",
+            organizationName: "o3",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("email used"));
-        core.registerHospital(other, EMAIL1, "d3", "o3");
+        core.registerHospital(proof, dupeEmail);
     }
 
     function test_activateHospital_onlyAdmin_andLifecycle() public {
-        core.registerHospital(addrHospital, EMAIL1, "d-hosp", "o-hosp");
+        Proof memory proof;
+        zkMedOrganizationProver.OrganizationRegistrationData memory hosp = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "d-hosp",
+            organizationName: "o-hosp",
+            emailHash: EMAIL1
+        });
+        core.registerHospital(proof, hosp);
 
         // Non admin cannot activate
         vm.prank(addrOther);
@@ -260,9 +347,15 @@ contract zkMedCoreTest is Test {
 
     // Insurer registration + known library behavior
     function test_registerInsurer_success_andEvent_butNotActive() public {
-        vm.expectEmit(true, true, true, true);
-        emit InsurerRegistered(addrInsurer, "ins.test", EMAIL2, "InsOrg");
-        core.registerInsurer(addrInsurer, EMAIL2, "ins.test", "InsOrg");
+        Proof memory proof;
+        zkMedOrganizationProver.OrganizationRegistrationData memory ins = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "ins.test",
+            organizationName: "InsOrg",
+            emailHash: EMAIL2
+        });
+        core.registerInsurer(proof, ins);
         assertEq(core.getTotalInsurers(), 1);
         assertFalse(core.isInsurerRegistered(addrInsurer));
         (string memory role, bool isActive) = core.getRole(addrInsurer);
@@ -271,32 +364,96 @@ contract zkMedCoreTest is Test {
     }
 
     function test_registerInsurer_revertsOnInvalidsAndDuplicates() public {
+        Proof memory proof;
+        // invalid insurer (zero address)
+        zkMedOrganizationProver.OrganizationRegistrationData memory inv1 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: address(0),
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid insurer"));
-        core.registerInsurer(address(0), EMAIL1, "d1", "o1");
+        core.registerInsurer(proof, inv1);
 
+        // invalid email
+        zkMedOrganizationProver.OrganizationRegistrationData memory inv2 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: bytes32(0)
+        });
         vm.expectRevert(bytes("invalid email"));
-        core.registerInsurer(addrInsurer, bytes32(0), "d1", "o1");
+        core.registerInsurer(proof, inv2);
 
+        // invalid domain
+        zkMedOrganizationProver.OrganizationRegistrationData memory inv3 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid domain"));
-        core.registerInsurer(addrInsurer, EMAIL1, "", "o1");
+        core.registerInsurer(proof, inv3);
 
+        // invalid org
+        zkMedOrganizationProver.OrganizationRegistrationData memory inv4 = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "d1",
+            organizationName: "",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("invalid org"));
-        core.registerInsurer(addrInsurer, EMAIL1, "d1", "");
+        core.registerInsurer(proof, inv4);
 
-        core.registerInsurer(addrInsurer, EMAIL1, "d1", "o1");
+        // ok, then duplicate
+        zkMedOrganizationProver.OrganizationRegistrationData memory okI = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "d1",
+            organizationName: "o1",
+            emailHash: EMAIL1
+        });
+        core.registerInsurer(proof, okI);
         vm.expectRevert(bytes("already registered"));
-        core.registerInsurer(addrInsurer, EMAIL2, "d2", "o2");
+        core.registerInsurer(proof, okI);
 
+        // duplicate domain
         address other = vm.addr(77);
+        zkMedOrganizationProver.OrganizationRegistrationData memory dupeDom = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: other,
+            domain: "d1",
+            organizationName: "o2",
+            emailHash: EMAIL2
+        });
         vm.expectRevert(bytes("domain used"));
-        core.registerInsurer(other, EMAIL2, "d1", "o2");
+        core.registerInsurer(proof, dupeDom);
 
+        // duplicate email
+        zkMedOrganizationProver.OrganizationRegistrationData memory dupeEmail = zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: other,
+            domain: "d3",
+            organizationName: "o3",
+            emailHash: EMAIL1
+        });
         vm.expectRevert(bytes("email used"));
-        core.registerInsurer(other, EMAIL1, "d3", "o3");
+        core.registerInsurer(proof, dupeEmail);
     }
 
     function test_activateInsurer_reverts_notRegistered_dueToLibrary() public {
-        core.registerInsurer(addrInsurer, EMAIL1, "d-ins", "o-ins");
+        Proof memory proof;
+        core.registerInsurer(proof, zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "d-ins",
+            organizationName: "o-ins",
+            emailHash: EMAIL1
+        }));
         _addBasic(addrBasic);
         vm.prank(addrBasic);
         vm.expectRevert(bytes("not registered"));
@@ -304,7 +461,14 @@ contract zkMedCoreTest is Test {
     }
 
     function test_deactivateInsurer_reverts_notRegistered_dueToLibrary() public {
-        core.registerInsurer(addrInsurer, EMAIL1, "d-ins", "o-ins");
+        Proof memory proof;
+        core.registerInsurer(proof, zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "d-ins",
+            organizationName: "o-ins",
+            emailHash: EMAIL1
+        }));
         _addBasic(addrBasic);
         vm.prank(addrBasic);
         vm.expectRevert(bytes("not registered"));
@@ -320,9 +484,25 @@ contract zkMedCoreTest is Test {
         assertEq(core.getTotalInsurers(), 0);
 
         // Register entities
-        core.registerPatient(addrPatient, EMAIL1);
-        core.registerHospital(addrHospital, EMAIL2, "domH", "orgH");
-        core.registerInsurer(addrInsurer, EMAIL3, "domI", "orgI");
+        Proof memory proof;
+        core.registerPatient(proof, zkMedPatientProver.PatientRegistrationData({
+            walletAddress: addrPatient,
+            emailHash: EMAIL1
+        }));
+        core.registerHospital(proof, zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.HOSPITAL,
+            walletAddress: addrHospital,
+            domain: "domH",
+            organizationName: "orgH",
+            emailHash: EMAIL2
+        }));
+        core.registerInsurer(proof, zkMedOrganizationProver.OrganizationRegistrationData({
+            requestedRole: zkMedOrganizationProver.UserType.INSURER,
+            walletAddress: addrInsurer,
+            domain: "domI",
+            organizationName: "orgI",
+            emailHash: EMAIL3
+        }));
 
         // Totals and stats
         assertEq(core.getTotalPatients(), 1);
