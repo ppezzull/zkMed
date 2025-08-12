@@ -48,7 +48,7 @@
 **Status**: Production-ready Docker container stack with foundry + vlayer + anvil integration
 
 **Container Architecture Achievements**:
-- **anvil-l2-mantle**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
+- **anvil**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
 - **zkmed-contracts**: Automated smart contract deployment service with foundry framework
 - **zkmed-frontend**: Next.js application with vlayer integration and live contract access
 - **vlayer Services**: Complete MailProof infrastructure (call-server, notary-server, vdns-server)
@@ -58,7 +58,7 @@
 **Foundry + vlayer Integration**:
 ```yaml
 # Current Production Architecture
-anvil-l2-mantle:
+anvil:
   image: ghcr.io/foundry-rs/foundry:latest
   command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
   ports: ["127.0.0.1:8547:8545"]
@@ -66,7 +66,7 @@ anvil-l2-mantle:
 zkmed-contracts:
   build: ./srcs/foundry/Dockerfile.deployer
   environment:
-    - RPC_URL=http://anvil-l2-mantle:8545
+    - RPC_URL=http://anvil:8545
     - CHAIN_ID=31339
   volumes: [contract-artifacts:/app/out:rw]
 
@@ -100,7 +100,7 @@ zkmed-frontend:
 ```bash
 # Complete Development Workflow
 docker-compose up -d              # Start all services
-docker logs anvil-l2-mantle       # Monitor Mantle fork
+docker logs anvil       # Monitor Mantle fork
 docker logs zkmed-contracts       # Check contract deployment
 docker logs zkmed-frontend        # Monitor frontend
 ```
@@ -122,7 +122,7 @@ docker logs zkmed-frontend        # Monitor frontend
 **Status**: ✅ Production-ready Docker stack with vlayer services and Foundry deployment
 
 **Completed Architecture Elements**:
-- ✅ **anvil-l2-mantle**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
+- ✅ **anvil**: Persistent Mantle fork (Chain ID 31339) using official Foundry Docker image
 - ✅ **vlayer Services**: Complete MailProof infrastructure (call-server, notary-server, vdns-server)
 - ✅ **zkmed-contracts**: Foundry-based smart contract deployment with artifact sharing
 - ✅ **zkmed-frontend**: Next.js with server actions and vlayer integration
@@ -133,7 +133,7 @@ docker logs zkmed-frontend        # Monitor frontend
 ```yaml
 # Production-Ready Container Stack with Foundry + vlayer
 services:
-  anvil-l2-mantle:      # Persistent Mantle fork using official Foundry image
+  anvil:      # Persistent Mantle fork using official Foundry image
     image: ghcr.io/foundry-rs/foundry:latest
     command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
     ports: ["127.0.0.1:8547:8545"]
@@ -141,7 +141,7 @@ services:
   zkmed-contracts:      # Foundry-based contract deployment
     build: ./srcs/foundry/Dockerfile.deployer
     environment:
-      - RPC_URL=http://anvil-l2-mantle:8545
+      - RPC_URL=http://anvil:8545
       - CHAIN_ID=31339
     volumes: [contract-artifacts:/app/out:rw]
       
@@ -150,7 +150,7 @@ services:
     environment:
       - PROVER_URL=http://vlayer-call-server:3000
       - NOTARY_URL=http://notary-server:7047
-      - JSON_RPC_URL=http://anvil-l2-mantle:8545
+      - JSON_RPC_URL=http://anvil:8545
     volumes: [contract-artifacts:/app/contracts:ro]
 ```
 

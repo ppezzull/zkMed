@@ -4,4 +4,4 @@ proof_mode = "fake"
 
 [[rpc_urls]]
 chain_id = 31337
-url = "http://anvil-l2-mantle:8545"
+url = "http://anvil:8545"

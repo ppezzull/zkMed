@@ -1,7 +1,7 @@
 services:
-  anvil-l2-mantle:
+  anvil:
     image: ghcr.io/foundry-rs/foundry:latest
-    container_name: anvil-l2-mantle
+    container_name: anvil
     platform: linux/amd64
     command: ["anvil --host 0.0.0.0 --chain-id 31337"]
     ports:

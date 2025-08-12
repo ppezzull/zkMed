@@ -1,7 +1,7 @@
 services:
   vlayer-call-server:
     depends_on:
-      - anvil-l2-mantle
+      - anvil
     image: ghcr.io/vlayer-xyz/call_server:latest
     container_name: vlayer-call-server
     pull_policy: always

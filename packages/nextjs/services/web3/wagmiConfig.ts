@@ -6,4 +6,5 @@ export const wagmiConfig = createConfig({
   transports: {
     [anvil.id]: http(),
   },
+  ssr: true,
 });

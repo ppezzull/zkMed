@@ -60,7 +60,7 @@
 ```mermaid
 graph TB
     subgraph "vlayer Infrastructure"
-        A[anvil-l2-mantle:8547] --> B[vlayer-call-server:3000]
+        A[anvil:8547] --> B[vlayer-call-server:3000]
         A --> C[notary-server:7047]
         A --> D[vdns-server]
         B --> E[websockify:3003]
@@ -87,11 +87,11 @@ graph TB
 
 #### Core Container Services
 
-##### 1. **Mantle Fork Environment (anvil-l2-mantle)**
+##### 1. **Mantle Fork Environment (anvil)**
 ```yaml
-anvil-l2-mantle:
+anvil:
   image: ghcr.io/foundry-rs/foundry:latest
-  container_name: anvil-l2-mantle
+  container_name: anvil
   platform: linux/amd64
   command: ["anvil --host 0.0.0.0 --chain-id 31339 --fork-url https://rpc.mantle.xyz"]
   ports:
@@ -114,13 +114,13 @@ zkmed-contracts:
     context: ./srcs/foundry
     dockerfile: Dockerfile.deployer
   environment:
-    - RPC_URL=http://anvil-l2-mantle:8545
+    - RPC_URL=http://anvil:8545
     - CHAIN_ID=31339
     - PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
   volumes:
     - contract-artifacts:/app/out:rw
   depends_on:
-    anvil-l2-mantle:
+    anvil:
       condition: service_started
 ```
 
@@ -141,10 +141,10 @@ zkmed-frontend:
     - "3001:3000"
   environment:
     - NEXT_PUBLIC_CHAIN_ID=31339
-    - NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
+    - NEXT_PUBLIC_RPC_URL=http://anvil:8545
     - PROVER_URL=http://vlayer-call-server:3000
     - NOTARY_URL=http://notary-server:7047
-    - JSON_RPC_URL=http://anvil-l2-mantle:8545
+    - JSON_RPC_URL=http://anvil:8545
   volumes:
     - contract-artifacts:/app/contracts:ro
     - ./srcs/nextjs:/app:rw
@@ -186,7 +186,7 @@ docker-compose up -d    # Start complete vlayer + zkMed stack
 
 # Container Status Verification
 docker-compose ps      # Verify all services are healthy
-docker logs anvil-l2-mantle     # Check Mantle fork status
+docker logs anvil     # Check Mantle fork status
 docker logs zkmed-contracts     # Verify contract deployment
 docker logs zkmed-frontend      # Check frontend startup
 
@@ -240,7 +240,7 @@ vlayer = "1.0.3"
 ```json
 {
   "chainId": 31339,
-  "rpcUrl": "http://anvil-l2-mantle:8545",
+  "rpcUrl": "http://anvil:8545",
   "contracts": {
     "Greeting": {
       "address": "0x...",
@@ -310,20 +310,20 @@ volumes:
 # Container Development Configuration
 NODE_ENV=development
 NEXT_PUBLIC_CHAIN_ID=31339
-NEXT_PUBLIC_RPC_URL=http://anvil-l2-mantle:8545
+NEXT_PUBLIC_RPC_URL=http://anvil:8545
 NEXT_PUBLIC_THIRDWEB_CLIENT_ID=b928ddd875d3769c8652f348e29a52c5
 
 # vlayer MailProof Configuration
 VLAYER_ENV=dev
 CHAIN_NAME=anvil
 PROVER_URL=http://vlayer-call-server:3000
-JSON_RPC_URL=http://anvil-l2-mantle:8545
+JSON_RPC_URL=http://anvil:8545
 NOTARY_URL=http://notary-server:7047
 WS_PROXY_URL=ws://localhost:3003
 
 # Foundry Contract Deployment
-RPC_URL=http://anvil-l2-mantle:8545
-RPC_HOST=anvil-l2-mantle
+RPC_URL=http://anvil:8545
+RPC_HOST=anvil
 CHAIN_ID=31339
 PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
@@ -368,7 +368,7 @@ Your Docker stack provides the perfect foundation for zkMed healthcare platform:
 #### **Existing Foundation**
 ```yaml
 # Current Production-Ready Setup
-anvil-l2-mantle:           # Mantle fork (Chain ID 31339)
+anvil:           # Mantle fork (Chain ID 31339)
 zkmed-contracts:           # Foundry deployment service
 zkmed-frontend:            # Next.js with server actions
 vlayer-call-server:        # MailProof verification API
@@ -704,7 +704,7 @@ echo "🏥 Deploying zkMed Healthcare Platform..."
 
 # Wait for Anvil and vlayer services
 echo "⏳ Waiting for services..."
-while ! curl -s http://anvil-l2-mantle:8545 > /dev/null; do sleep 1; done
+while ! curl -s http://anvil:8545 > /dev/null; do sleep 1; done
 while ! curl -s http://vlayer-call-server:3000/health > /dev/null; do sleep 1; done
 
 echo "✅ Services ready!"
@@ -725,7 +725,7 @@ echo "📝 Deploying healthcare contracts..."
 DEPLOY_OUTPUT="/tmp/healthcare_deploy.txt"
 
 if forge script script/DeployHealthcare.s.sol:DeployHealthcare \
-    --rpc-url ${RPC_URL:-http://anvil-l2-mantle:8545} \
+    --rpc-url ${RPC_URL:-http://anvil:8545} \
     --broadcast > "$DEPLOY_OUTPUT" 2>&1; then
     
     echo "✅ Healthcare deployment successful!"
@@ -739,7 +739,7 @@ if forge script script/DeployHealthcare.s.sol:DeployHealthcare \
     cat > out/healthcare.json << EOF
 {
   "chainId": ${CHAIN_ID:-31339},
-  "rpcUrl": "${RPC_URL:-http://anvil-l2-mantle:8545}",
+  "rpcUrl": "${RPC_URL:-http://anvil:8545}",
   "contracts": {
     "HealthcareMailProof": {
       "address": "$HEALTHCARE_MAILPROOF",
@@ -801,7 +801,7 @@ services:
       context: ./srcs/foundry
       dockerfile: Dockerfile.deployer
     environment:
-      - RPC_URL=http://anvil-l2-mantle:8545
+      - RPC_URL=http://anvil:8545
       - CHAIN_ID=31339
       # Merchant Moe Integration
       - LB_FACTORY_ADDRESS=0xa6630671775c4EA2743840F9A5016dCf2A104054
@@ -813,7 +813,7 @@ services:
     volumes:
       - contract-artifacts:/app/out:rw
     depends_on:
-      anvil-l2-mantle:
+      anvil:
         condition: service_started
       vlayer-call-server:
         condition: service_healthy
@@ -827,7 +827,7 @@ services:
       # Service URLs
       - PROVER_URL=http://vlayer-call-server:3000
       - NOTARY_URL=http://notary-server:7047
-      - JSON_RPC_URL=http://anvil-l2-mantle:8545
+      - JSON_RPC_URL=http://anvil:8545
 ```
 
 ### **Frontend Integration Strategy**
@@ -841,11 +841,11 @@ import { createPublicClient, createWalletClient, http, getContract } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { healthcareMailProofAbi, poolManagerAbi } from '@/lib/abis'
 
-const chain = { id: 31339, name: 'Mantle Local Fork', rpcUrl: 'http://anvil-l2-mantle:8545' }
+const chain = { id: 31339, name: 'Mantle Local Fork', rpcUrl: 'http://anvil:8545' }
 
 const publicClient = createPublicClient({
   chain,
-  transport: http('http://anvil-l2-mantle:8545')
+  transport: http('http://anvil:8545')
 })
 
 export async function submitHealthcareClaim(

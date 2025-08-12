@@ -2,11 +2,13 @@
 
 // import { usePathname } from "next/navigation";
 import { PrivyProvider } from "@privy-io/react-auth";
-import { WagmiProvider } from "@privy-io/wagmi";
+import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProofProvider } from "@vlayer/react";
+import { getChainSpecs } from "@vlayer/sdk";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { Toaster } from "react-hot-toast";
+import { useChainId } from "wagmi";
 // import { Footer } from "~~/components/Footer";
 // import { Header } from "~~/components/Header";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
@@ -55,13 +57,30 @@ const proverConfig = {
   token: process.env.NEXT_PUBLIC_VLAYER_API_TOKEN,
 };
 
+const ChainConsistencyCheck = () => {
+  const chainId = useChainId();
+  try {
+    const expected = getChainSpecs(process.env.NEXT_PUBLIC_CHAIN_NAME || "anvil");
+    if (expected?.id && expected.id !== chainId) {
+      console.warn(
+        `vlayer/wagmi chain mismatch: wagmi=${chainId} vlayer=${expected.id}. Check NEXT_PUBLIC_CHAIN_NAME and wagmi config.`,
+      );
+    }
+  } catch (e) {
+    console.warn("getChainSpecs failed. Check NEXT_PUBLIC_CHAIN_NAME.", e);
+  }
+  return null;
+};
+
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <PrivyProvider appId={scaffoldConfig.privyProjectId} config={privyConfig}>
       <QueryClientProvider client={queryClient}>
+        {/* Single wagmi provider (Privy). Do not mount other wagmi configs. */}
         <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
           <ProofProvider config={proverConfig}>
             <ProgressBar height="3px" color="#2299dd" />
+            <ChainConsistencyCheck />
             <ScaffoldEthApp>{children}</ScaffoldEthApp>
           </ProofProvider>
         </WagmiProvider>
