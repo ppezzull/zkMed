@@ -217,10 +217,7 @@ sequenceDiagram
   - `performUpkeep`: Executes monthly payments to hospitals
   - Automated triggers based on email-verified payment plans
   - Platform fee distribution and payment statistics
-
-### Claim Mail
-- Claim submissions use vlayer MailProofs (DKIM) to verify claim emails and extract claim data from proof outputs
-
+    
 ---
 
 ## 🧪 Email Formats
