@@ -53,16 +53,5 @@ contract DeployZkMedCore is ScaffoldETHDeploy {
         patientRegistry.setController(address(core));
         hospitalRegistry.setController(address(core));
         insurerRegistry.setController(address(core));
-
-        // 5) Record named deployments
-        deployments.push(Deployment({name: "MockUSDC", addr: address(mockUSDC)}));
-        deployments.push(Deployment({name: "zkMedOrganizationProver", addr: address(organizationProver)}));
-        deployments.push(Deployment({name: "zkMedPatientProver", addr: address(patientProver)}));
-        deployments.push(Deployment({name: "zkMedPaymentPlanProver", addr: address(paymentPlanProver)}));
-        deployments.push(Deployment({name: "zkMedClaimProver", addr: address(claimProver)}));
-        deployments.push(Deployment({name: "PatientRegistry", addr: address(patientRegistry)}));
-        deployments.push(Deployment({name: "HospitalRegistry", addr: address(hospitalRegistry)}));
-        deployments.push(Deployment({name: "InsurerRegistry", addr: address(insurerRegistry)}));
-        deployments.push(Deployment({name: "zkMedCore", addr: address(core)}));
     }
 }

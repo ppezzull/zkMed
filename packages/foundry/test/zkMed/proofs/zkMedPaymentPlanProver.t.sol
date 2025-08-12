@@ -6,7 +6,7 @@ import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {UnverifiedEmail, EmailProofLib, VerifiedEmail} from "vlayer-0.1.0/EmailProof.sol";
 import {zkMedPaymentPlanProver} from "../../../contracts/zkMed/provers/zkMedPaymentPlanProver.sol";
 
-contract EmailProofLibWrapper2 {
+contract EmailProofLibWrapperPaymentPlan {
     using EmailProofLib for UnverifiedEmail;
 
     function verify(UnverifiedEmail calldata email) public view returns (VerifiedEmail memory v) {
@@ -24,7 +24,7 @@ contract zkMedPaymentPlanProverTest is VTest {
 
     function test_provePaymentPlan_parsesEmailAndReturnsPlanData() public {
         // Arrange
-        EmailProofLibWrapper2 wrapper = new EmailProofLibWrapper2();
+        EmailProofLibWrapperPaymentPlan wrapper = new EmailProofLibWrapperPaymentPlan();
         zkMedPaymentPlanProver prover = new zkMedPaymentPlanProver();
         UnverifiedEmail memory email = getTestEmail(
             "testdata/payment/HealthCorp Insurance payment contract in zkMed.eml"

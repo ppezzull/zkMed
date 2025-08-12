@@ -3,6 +3,8 @@ pragma solidity ^0.8.21;
 
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {zkMedPatientProver} from "../provers/zkMedPatientProver.sol";
 
 /// @title PatientRegistry
 /// @notice Stores patient registrations and exposes simple views. Mutations are restricted to a controller (e.g., core).
@@ -54,18 +56,26 @@ contract PatientRegistry is Verifier, Ownable {
     }
 
     // ========== Mutations ==========
-    function register(address patient, bytes32 emailHash) external onlyController {
-        require(patient != address(0), "invalid patient");
-        require(emailHash != bytes32(0), "invalid email");
-        require(records[patient].walletAddress == address(0), "already registered");
-        require(!usedEmailHashes[emailHash], "email used");
+    function register(
+        Proof memory,
+        zkMedPatientProver.PatientRegistrationData memory data
+    ) external onlyController
+        onlyVerified(
+            patientProver, 
+            zkMedPatientProver.provePatientEmail.selector
+        )
+    {
+        require(data.walletAddress != address(0), "invalid patient");
+        require(data.emailHash != bytes32(0), "invalid email");
+        require(records[data.walletAddress].walletAddress == address(0), "already registered");
+        require(!usedEmailHashes[data.emailHash], "email used");
 
-        records[patient] = PatientRecord({
-            walletAddress: patient,
-            emailHash: emailHash,
+        records[data.walletAddress] = PatientRecord({
+            walletAddress: data.walletAddress,
+            emailHash: data.emailHash,
             registrationTime: block.timestamp
         });
-        usedEmailHashes[emailHash] = true;
+        usedEmailHashes[data.emailHash] = true;
         total += 1;
     }
 

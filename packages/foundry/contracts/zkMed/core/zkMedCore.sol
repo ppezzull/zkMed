@@ -7,6 +7,9 @@ import {AdminLib} from "../libraries/AdminLib.sol";
 import {IPatientRegistry} from "../interfaces/IPatientRegistry.sol";
 import {IHospitalRegistry} from "../interfaces/IHospitalRegistry.sol";
 import {IInsurerRegistry} from "../interfaces/IInsurerRegistry.sol";
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {zkMedOrganizationProver} from "../provers/zkMedOrganizationProver.sol";
+import {zkMedPatientProver} from "../provers/zkMedPatientProver.sol";
 
 /**
  * @title zkMed Core Contract  
@@ -22,9 +25,9 @@ contract zkMedCore is Ownable {
     AdminLib.AdminState private adminsState;
     
     // ======== Events ========
-    event PatientRegistered(address indexed patient);
-    event HospitalRegistered(address indexed hospital, string domain, bytes32 emailHash, string organizationName);
-    event InsurerRegistered(address indexed insurer, string domain, bytes32 emailHash, string organizationName);
+    event PatientRegistered(zkMedPatientProver.PatientRegistrationData data);
+    event HospitalRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
+    event InsurerRegistered(zkMedOrganizationProver.OrganizationRegistrationData data);
     event AdminAdded(address indexed admin, AdminLib.AdminRole role);
     event AdminDeactivated(address indexed admin);
     event UserDeactivated(address indexed user);
@@ -88,46 +91,41 @@ contract zkMedCore is Ownable {
     
     /**
      * @dev Register a patient
-     * @param patient Address of the patient
-     * @param emailHash Email hash of the patient
+     * @param proof Proof of the patient
+     * @param data Data of the patient
      */
-    function registerPatient(address patient, bytes32 emailHash) external {
-        patientRegistry.register(patient, emailHash);
-        emit PatientRegistered(patient);
+    function registerPatient(
+        Proof memory proof,
+        zkMedPatientProver.PatientRegistrationData memory data
+    ) external {
+        patientRegistry.register(proof, data);
+        emit PatientRegistered(data);
     }
 
     /**
      * @dev Register a hospital
-     * @param hospital Address of the hospital
-     * @param emailHash Email hash of the hospital
-     * @param domain Domain of the hospital
-     * @param organizationName Organization name of the hospital
+     * @param proof Proof of the hospital
+     * @param data Data of the hospital
      */
     function registerHospital(
-        address hospital, 
-        bytes32 emailHash, 
-        string calldata domain, 
-        string calldata organizationName
+        Proof memory proof,
+        zkMedOrganizationProver.OrganizationRegistrationData memory data
     ) external {
-        hospitalRegistry.register(hospital, emailHash, domain, organizationName);
-        emit HospitalRegistered(hospital, domain, emailHash, organizationName);
+        hospitalRegistry.register(proof, data);
+        emit HospitalRegistered(data);
     }
 
     /**
      * @dev Register an insurer
-     * @param insurer Address of the insurer
-     * @param emailHash Email hash of the insurer
-     * @param domain Domain of the insurer
-     * @param organizationName Organization name of the insurer
+     * @param proof Proof of the insurer
+     * @param data Data of the insurer
      */
     function registerInsurer(
-        address insurer, 
-        bytes32 emailHash, 
-        string calldata domain, 
-        string calldata organizationName
+        Proof memory proof,
+        zkMedOrganizationProver.OrganizationRegistrationData memory data
     ) external {
-        insurerRegistry.register(insurer, emailHash, domain, organizationName);
-        emit InsurerRegistered(insurer, domain, emailHash, organizationName);
+        insurerRegistry.register(proof, data);
+        emit InsurerRegistered(data);
     }
 
     // ======== Admin Management ========

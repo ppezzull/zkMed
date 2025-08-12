@@ -3,6 +3,8 @@ pragma solidity ^0.8.21;
 
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Verifier} from "vlayer-0.1.0/Verifier.sol";
+import {Proof} from "vlayer-0.1.0/Proof.sol";
+import {zkMedOrganizationProver} from "../provers/zkMedOrganizationProver.sol";
 
 /// @title HospitalRegistry
 /// @notice Stores hospital registrations and activation state. Mutations restricted to controller.
@@ -49,29 +51,34 @@ contract HospitalRegistry is Verifier, Ownable {
     }
 
     function register(
-        address hospital,
-        bytes32 emailHash,
-        string calldata domain,
-        string calldata organizationName
-    ) external onlyController {
-        require(hospital != address(0), "invalid hospital");
-        require(emailHash != bytes32(0), "invalid email");
-        require(bytes(domain).length > 0, "invalid domain");
-        require(bytes(organizationName).length > 0, "invalid org");
-        require(records[hospital].userAddress == address(0), "already registered");
-        require(domainToHospital[domain] == address(0), "domain used");
-        require(!usedEmailHashes[emailHash], "email used");
+        Proof memory,
+        zkMedOrganizationProver.OrganizationRegistrationData memory data
+    ) 
+        external
+        onlyController
+        onlyVerified(
+            organizationProver, 
+            zkMedOrganizationProver.proveOrganizationDomain.selector
+        )
+    {
+        require(data.walletAddress != address(0), "invalid hospital");
+        require(data.emailHash != bytes32(0), "invalid email");
+        require(bytes(data.domain).length > 0, "invalid domain");
+        require(bytes(data.organizationName).length > 0, "invalid org");
+        require(records[data.walletAddress].userAddress == address(0), "already registered");
+        require(domainToHospital[data.domain] == address(0), "domain used");
+        require(!usedEmailHashes[data.emailHash], "email used");
 
-        records[hospital] = OrganizationRecord({
-            userAddress: hospital,
-            emailHash: emailHash,
+        records[data.walletAddress] = OrganizationRecord({
+            userAddress: data.walletAddress,
+            emailHash: data.emailHash,
             registrationTime: block.timestamp,
             isActive: false,
-            domain: domain,
-            organizationName: organizationName
+            domain: data.domain,
+            organizationName: data.organizationName
         });
-        usedEmailHashes[emailHash] = true;
-        domainToHospital[domain] = hospital;
+        usedEmailHashes[data.emailHash] = true;
+        domainToHospital[data.domain] = data.walletAddress;
         total += 1;
     }
 

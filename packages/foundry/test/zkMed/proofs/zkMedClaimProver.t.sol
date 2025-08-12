@@ -6,7 +6,7 @@ import {Proof} from "vlayer-0.1.0/Proof.sol";
 import {UnverifiedEmail, EmailProofLib, VerifiedEmail} from "vlayer-0.1.0/EmailProof.sol";
 import {zkMedClaimProver} from "../../../contracts/zkMed/provers/zkMedClaimProver.sol";
 
-contract EmailProofLibWrapper3 {
+contract EmailProofLibWrapperClaim {
     using EmailProofLib for UnverifiedEmail;
 
     function verify(UnverifiedEmail calldata email) public view returns (VerifiedEmail memory v) {
@@ -24,7 +24,7 @@ contract zkMedClaimProverTest is VTest {
 
     function test_proveClaimPayout_parsesSubjectAndHashes() public {
         // Arrange
-        EmailProofLibWrapper3 wrapper = new EmailProofLibWrapper3();
+        EmailProofLibWrapperClaim wrapper = new EmailProofLibWrapperClaim();
         zkMedClaimProver prover = new zkMedClaimProver();
         UnverifiedEmail memory email = getTestEmail(
             "testdata/claim/Claim payout of 100$ for operation 0DTJ0ZZ.eml"
