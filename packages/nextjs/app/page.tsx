@@ -1,15 +1,11 @@
 "use client";
 
 import type { NextPage } from "next";
-import { HealthcareHeader } from "~~/components/shared/HealthcareHeader";
 import { BackgroundPaths } from "~~/components/ui/background-paths";
 
 const Home: NextPage = () => {
   return (
     <>
-      {/* Healthcare Header */}
-      <HealthcareHeader />
-
       {/* Main Content - Single Section */}
       <main className="relative min-h-screen bg-slate-900 overflow-hidden">
         {/* Animated Background */}

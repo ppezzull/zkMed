@@ -114,26 +114,8 @@ export function useProver(): UseProverReturn {
 
         updateState({ currentStep: "Generating cryptographic proof..." });
 
-        // Structure the UnverifiedEmail parameter according to the contract ABI
-        const unverifiedEmail = {
-          email: preverifiedEmail.email,
-          dnsRecord: {
-            name: preverifiedEmail.dnsRecord.name,
-            recordType: Number(preverifiedEmail.dnsRecord.type), // Convert to uint8
-            data: preverifiedEmail.dnsRecord.data,
-            ttl: Number(preverifiedEmail.dnsRecord.ttl), // Convert bigint to uint64
-          },
-          verificationData: {
-            validUntil: Number(preverifiedEmail.verificationData.validUntil), // Convert bigint to uint64
-            signature: preverifiedEmail.verificationData.signature, // Already bytes format
-            pubKey: preverifiedEmail.verificationData.pubKey, // Already bytes format
-          },
-        };
-
-        console.log("🔍 DEBUG - Structured UnverifiedEmail:", unverifiedEmail);
-
-        // Call the vlayer prover with single tuple parameter (not array)
-        await callPatientProver(unverifiedEmail as any);
+        // Call the vlayer prover with a single tuple argument
+        await callPatientProver([preverifiedEmail as any]);
 
         updateState({
           currentStep: "Waiting for proof result...",
@@ -204,8 +186,8 @@ export function useProver(): UseProverReturn {
 
         console.log("🔍 DEBUG - Structured UnverifiedEmail:", unverifiedEmail);
 
-        // Call the vlayer prover with single tuple parameter (not array)
-        await callOrganizationProver(unverifiedEmail as any);
+        // Call the vlayer prover with a single tuple argument
+        await callOrganizationProver({ args: [unverifiedEmail as any] });
 
         updateState({
           currentStep: "Waiting for proof result...",

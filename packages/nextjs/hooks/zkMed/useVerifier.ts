@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useAccount, useChainId } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 interface RegistrationData {
@@ -40,10 +41,28 @@ export function useVerifier(): UseVerifierReturn {
   // Single core contract for all registrations
   const { writeContractAsync: writeCore, isMining: isCoreMining } = useScaffoldWriteContract({
     contractName: "zkMedCore",
+    // zk proof structs are large; local viem simulation often fails. We skip simulate and go straight to write.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    disableSimulate: true,
   });
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const requiredChainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 31337);
 
   const verifyPatientProof = useCallback(
     async (proof: any) => {
+      if (!isConnected || !address) {
+        console.warn("Wallet not connected");
+        // Soft exit without spamming error toasts
+        return null;
+      }
+      if (chainId !== requiredChainId) {
+        console.warn(`Wrong network: connected ${chainId}, required ${requiredChainId}`);
+        // Soft exit without spamming error toasts
+        return null;
+      }
+      if (state.isVerifying) return null;
       setState(prev => ({
         ...prev,
         isVerifying: true,
@@ -83,6 +102,10 @@ export function useVerifier(): UseVerifierReturn {
           args: [proofForContract, registrationData],
         });
 
+        if (!result) {
+          throw new Error("Transaction was not sent");
+        }
+
         console.log("🔍 DEBUG - Transaction result:", result);
         setState(prev => ({
           ...prev,
@@ -103,11 +126,22 @@ export function useVerifier(): UseVerifierReturn {
         return null;
       }
     },
-    [writeCore],
+    [writeCore, isConnected, address, chainId, requiredChainId, state.isVerifying],
   );
 
   const verifyOrganizationProof = useCallback(
     async (proof: any) => {
+      if (!isConnected || !address) {
+        console.warn("Wallet not connected");
+        // Soft exit without spamming error toasts
+        return null;
+      }
+      if (chainId !== requiredChainId) {
+        console.warn(`Wrong network: connected ${chainId}, required ${requiredChainId}`);
+        // Soft exit without spamming error toasts
+        return null;
+      }
+      if (state.isVerifying) return null;
       setState(prev => ({
         ...prev,
         isVerifying: true,
@@ -162,6 +196,10 @@ export function useVerifier(): UseVerifierReturn {
           });
         }
 
+        if (!result) {
+          throw new Error("Transaction was not sent");
+        }
+
         console.log("🔍 DEBUG - Transaction result:", result);
         setState(prev => ({
           ...prev,
@@ -182,7 +220,7 @@ export function useVerifier(): UseVerifierReturn {
         return null;
       }
     },
-    [writeCore],
+    [writeCore, isConnected, address, chainId, requiredChainId, state.isVerifying],
   );
 
   const resetVerificationState = useCallback(() => {

@@ -29,6 +29,7 @@
     "@uniswap/v2-sdk": "~4.6.1",
     "@vlayer/react": "^1.2.3",
     "@vlayer/sdk": "^1.2.3",
+    "@wagmi/connectors": "^5.8.5",
     "@wagmi/core": "^2.17.3",
     "blo": "~1.2.0",
     "burner-connector": "0.0.16",
