@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { usePrivy } from "@privy-io/react-auth";
 import { createWalletClient, http, parseEther } from "viem";
 import { hardhat } from "viem/chains";
 import { useAccount } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
-import { useTransactor } from "~~/hooks/scaffold-eth";
+import { useTargetNetwork, useTransactor } from "~~/hooks/scaffold-eth";
 import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
 
 // Number of ETH faucet sends to an address
@@ -21,7 +22,9 @@ const localWalletClient = createWalletClient({
  * FaucetButton button which lets you grab eth.
  */
 export const FaucetButton = () => {
-  const { address, chain: ConnectedChain } = useAccount();
+  const { address } = useAccount();
+  const { targetNetwork } = useTargetNetwork();
+  const { authenticated, ready } = usePrivy();
 
   const { data: balance } = useWatchBalance({ address });
 
@@ -45,10 +48,9 @@ export const FaucetButton = () => {
     }
   };
 
-  // Render only on local chain
-  if (ConnectedChain?.id !== hardhat.id) {
-    return null;
-  }
+  // Show only on local hardhat AND when user is authenticated
+  if (targetNetwork.id !== hardhat.id) return null;
+  if (!ready || !authenticated) return null;
 
   const isBalanceZero = balance && balance.value === 0n;
 
@@ -56,14 +58,23 @@ export const FaucetButton = () => {
     <div
       className={
         !isBalanceZero
-          ? "ml-1"
-          : "ml-1 tooltip tooltip-bottom tooltip-primary tooltip-open font-bold before:left-auto before:transform-none before:content-[attr(data-tip)] before:-translate-x-2/5"
+          ? "ml-2"
+          : "ml-2 tooltip tooltip-bottom tooltip-primary tooltip-open font-bold before:left-auto before:transform-none before:content-[attr(data-tip)] before:-translate-x-2/5"
       }
       data-tip="Grab funds from faucet"
     >
-      <button className="btn btn-secondary btn-sm px-2 rounded-full" onClick={sendETH} disabled={loading}>
+      <button
+        onClick={sendETH}
+        disabled={loading}
+        className="px-4 py-2 rounded-2xl border border-gray-500 text-gray-300 font-semibold hover:border-gray-400 hover:text-white transition-all duration-300 text-sm flex items-center gap-2"
+        aria-label="Faucet"
+        title="Faucet"
+      >
         {!loading ? (
-          <BanknotesIcon className="h-4 w-4" />
+          <>
+            <BanknotesIcon className="h-4 w-4" />
+            <span>Faucet</span>
+          </>
         ) : (
           <span className="loading loading-spinner loading-xs"></span>
         )}

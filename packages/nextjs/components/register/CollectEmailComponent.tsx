@@ -30,10 +30,10 @@ export function CollectEmailComponent({ emailId, role, onEmailReceived, onBack }
   }, [emlFetched, emlContent, onEmailReceived]);
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Header */}
-      <div className="bg-slate-800 shadow-sm border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="min-h-screen">
+      {/* Unified Header + Progress */}
+      <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl border border-slate-700 bg-slate-800">
+        <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">Join zkMed</h1>
@@ -44,12 +44,8 @@ export function CollectEmailComponent({ emailId, role, onEmailReceived, onBack }
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="bg-slate-800 border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center space-x-4 py-4">
+        <div className="px-6 py-4 border-t border-slate-700">
+          <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-cyan-300">
               <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
                 ✓
@@ -91,8 +87,8 @@ export function CollectEmailComponent({ emailId, role, onEmailReceived, onBack }
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-8">
+      <div className="max-w-4xl mx-auto py-8">
+        <div className="bg-slate-800 rounded-2xl shadow-lg border border-slate-700 p-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-6 text-white">Waiting for Email</h2>
 

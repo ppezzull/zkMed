@@ -56,17 +56,22 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
   // Don't render if user is not connected
   if (!user?.wallet?.address) {
     return (
-      <div className="flex items-center justify-center">
-        <div className="text-2xl font-bold text-white">Connect your wallet to continue</div>
+      <div className="min-h-screen w-full flex items-start justify-center px-4 pt-20">
+        <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-800 p-8 shadow-xl">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">Wallet Required</h2>
+          <p className="text-gray-300 text-base md:text-lg mb-5">Please connect your wallet to continue.</p>
+          <div className="text-sm text-gray-400">You can use the connect button in the header.</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Header */}
-      <div className="bg-slate-800 shadow-sm border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="min-h-screen">
+      {/* Header + Progress as a single unified card */}
+      <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl border border-slate-700 bg-slate-800">
+        {/* Header */}
+        <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">Join zkMed</h1>
@@ -77,12 +82,10 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Progress Bar */}
-      <div className="bg-slate-800 border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center space-x-4 py-4">
+        {/* Progress Bar */}
+        <div className="px-6 py-4 border-t border-slate-700">
+          <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-cyan-300">
               <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
                 1
@@ -94,8 +97,8 @@ export function RoleSelectionComponent({ onRoleSelect }: RoleSelectionProps) {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 p-8">
+      <div className="max-w-4xl mx-auto py-8">
+        <div className="bg-slate-800 rounded-2xl shadow-lg border border-slate-700 p-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-6 text-white">Choose Your Role</h2>
             <p className="text-gray-300 mb-8">Please select your role to get started with zkMed</p>

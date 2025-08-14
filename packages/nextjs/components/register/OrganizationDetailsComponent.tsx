@@ -29,7 +29,7 @@ export function OrganizationDetailsComponent({
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="bg-slate-800 shadow-sm border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">

@@ -15,11 +15,11 @@ interface RegisterLayoutProps {
  */
 export default function RegisterLayout({ children }: RegisterLayoutProps) {
   return (
-    <main className="relative min-h-screen bg-slate-900 overflow-hidden">
+    <main className="bg-slate-900">
       <div className="absolute inset-0">
         <BackgroundPaths />
       </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">{children}</div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</div>
     </main>
   );
 }

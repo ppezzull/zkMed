@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getUserVerificationData } from "~~/lib/actions/user";
 import { UserType, UserVerificationData } from "~~/types/healthcare";
-import { getUserDashboardPath } from "~~/utils/thirdweb/middleware";
+import { getUserVerificationData } from "~~/utils/actions/user";
+import { getUserDashboardPath } from "~~/utils/scaffold-eth/common";
 
 interface UseRegistrationStatusState {
   isLoading: boolean;
@@ -68,13 +68,13 @@ export function useRegistrationStatus(mockWalletAddress?: string): UseRegistrati
   }, [account?.address]);
 
   const redirectToDashboard = useCallback(() => {
-    if (state.verificationData?.isActive && state.userType !== null && account?.address) {
-      const dashboardPath = getUserDashboardPath(state.userType, state.verificationData.isAdmin, account.address);
+    if (state.verificationData?.isActive && state.userType !== null) {
+      const dashboardPath = getUserDashboardPath(state.userType, state.verificationData.isAdmin);
       // For demo purposes, we'll just log the redirect instead of actually redirecting
       console.log("Would redirect to:", dashboardPath);
       window.location.href = dashboardPath;
     }
-  }, [state.verificationData, state.userType, account?.address]);
+  }, [state.verificationData, state.userType]);
 
   const requiresRegistration = useCallback(() => {
     return !state.isRegistered && !!account?.address;
