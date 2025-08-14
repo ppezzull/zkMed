@@ -74,7 +74,10 @@ export function HeaderConnectButton() {
     return (
       <div className="flex items-center gap-2">
         <div className="text-sm">{user?.email?.address ? user?.email?.address : address}</div>
-        <button onClick={logout} className="btn btn-outline btn-sm">
+        <button
+          onClick={logout}
+          className="px-4 py-2 rounded-2xl border border-gray-500 text-gray-300 font-semibold hover:border-gray-400 hover:text-white transition-all duration-300"
+        >
           Disconnect
         </button>
       </div>
@@ -83,7 +86,10 @@ export function HeaderConnectButton() {
 
   // Show connect button for unauthenticated users
   return (
-    <button onClick={connectOrCreateWallet} className="btn btn-primary btn-sm">
+    <button
+      onClick={connectOrCreateWallet}
+      className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-2xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm"
+    >
       Connect Smart Wallet
     </button>
   );
