@@ -54,12 +54,16 @@ const PatientPage: NextPage = async () => {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <PatientDashboard
-        initialPatientData={initialPatientData}
-        initialHealthRecords={initialHealthRecords}
-        initialAppointments={initialAppointments}
-      />
+    <main className="relative min-h-screen bg-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl shadow-lg p-6 md:p-8">
+          <PatientDashboard
+            initialPatientData={initialPatientData}
+            initialHealthRecords={initialHealthRecords}
+            initialAppointments={initialAppointments}
+          />
+        </div>
+      </div>
     </main>
   );
 };

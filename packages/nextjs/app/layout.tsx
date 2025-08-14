@@ -4,8 +4,9 @@ import { ThemeProvider } from "~~/components/ThemeProvider";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  title: "zkMed - Revolutionary Healthcare Insurance Platform",
+  description:
+    "Privacy-preserving healthcare platform using vlayer MailProofs and Chainlink Automation on Base. First introduced at ETHGlobal Prague and developed at ETHGlobal Napuleth 2025.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {

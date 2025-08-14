@@ -63,7 +63,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         {/* Single wagmi provider */}
         <WagmiProvider config={wagmiConfig} reconnectOnMount>
           <ProofProvider config={proverConfig}>
-            <ProgressBar height="3px" color="#2299dd" />
+            <ProgressBar height="3px" color="#2299dd" options={{ showSpinner: false }} />
             <ChainConsistencyCheck />
             <ScaffoldEthApp>{children}</ScaffoldEthApp>
           </ProofProvider>
