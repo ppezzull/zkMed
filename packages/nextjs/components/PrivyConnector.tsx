@@ -42,7 +42,7 @@ export function HeaderConnectButton() {
       const role = (roleData as any)?.[0] || "UNREGISTERED";
       const isActive = (roleData as any)?.[1] || false;
       if (role === "UNREGISTERED" || !isActive) {
-        router.push("/register");
+        router.push("/register/role-selection");
       } else if (role === "PATIENT") {
         router.push("/patient");
       } else if (role === "HOSPITAL") {

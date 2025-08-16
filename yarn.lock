@@ -3185,6 +3185,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@privy-io/wagmi-connector@npm:^0.1.13":
+  version: 0.1.13
+  resolution: "@privy-io/wagmi-connector@npm:0.1.13"
+  peerDependencies:
+    "@privy-io/react-auth": ^1.33.0
+    react: ^18
+    react-dom: ^18
+    viem: ">=0.3.35"
+    wagmi: ">=1.4.12 <2"
+  checksum: 7d9bdae4729b2fc8d3aebbdf3d748ae842b9325237125b65e898cec6b8e740783f5be5ae6b9d7f953c37a91cc914007bad86e6443954ed0815b05c75e3eb13b0
+  languageName: node
+  linkType: hard
+
 "@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
   version: 1.1.2
   resolution: "@protobufjs/aspromise@npm:1.1.2"
@@ -3854,6 +3867,7 @@ __metadata:
     "@ethersproject/strings": ^5.8.0
     "@heroicons/react": ~2.1.5
     "@privy-io/react-auth": ^2.18.1
+    "@privy-io/wagmi-connector": ^0.1.13
     "@radix-ui/react-slot": ^1.2.3
     "@rainbow-me/rainbowkit": 2.2.7
     "@reown/appkit": ^1.7.15

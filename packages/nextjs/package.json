@@ -19,6 +19,7 @@
     "@ethersproject/strings": "^5.8.0",
     "@heroicons/react": "~2.1.5",
     "@privy-io/react-auth": "^2.18.1",
+    "@privy-io/wagmi-connector": "^0.1.13",
     "@radix-ui/react-slot": "^1.2.3",
     "@rainbow-me/rainbowkit": "2.2.7",
     "@reown/appkit": "^1.7.15",
