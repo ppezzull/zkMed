@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { WagmiProvider } from "wagmi";
 import { useChainId } from "wagmi";
 import { Header } from "~~/components/Header";
+import { NetworkSwitcher } from "~~/components/NetworkSwitcher";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import scaffoldConfig from "~~/scaffold.config";
 import { privyConfig } from "~~/services/web3/privyConfig";
@@ -21,6 +22,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className={`flex flex-col min-h-screen`}>
         <Header />
+        <NetworkSwitcher />
         <main className="relative flex flex-col flex-1 bg-slate-900">{children}</main>
       </div>
       <Toaster />

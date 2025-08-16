@@ -42,7 +42,6 @@ export function useVerifier(): UseVerifierReturn {
   const { writeContractAsync: writeCore, isMining: isCoreMining } = useScaffoldWriteContract({
     contractName: "zkMedCore",
     // zk proof structs are large; local viem simulation often fails. We skip simulate and go straight to write.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     disableSimulate: true,
   });
